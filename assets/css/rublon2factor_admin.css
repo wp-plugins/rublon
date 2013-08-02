@@ -1,0 +1,67 @@
+/* ********************* Page Wrapper */
+#rublon2factor_page 
+{
+	display: inline-block;
+}
+
+/* ********************* Info Box */
+.rublon2factor_info_box {
+  border: 1px solid #CCCCCC;
+  background-color: #777777;  
+  color: #fff;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+}
+
+/* ********************* Tables */
+.rublon2factor_table {
+  background-color: #efefef;
+  border: 1px solid #ccc;
+  margin: 0 0 25px;
+}
+
+.rublon2factor_table input[type="text"] {
+  border-color: #aaa;
+  min-width: 60em;
+  width: 100%;
+}
+
+.rublon2factor_table tr.row_head th {
+  font-size: 13px;
+  font-weight: bold;
+  background-color: #777777;
+  color: #fff;
+  text-shadow: 0 1px 0 #333;
+}
+
+.rublon2factor_table tr.row_head th a {
+  color: #F1EE10;
+}
+
+.rublon2factor_table tr.row_head th a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.rublon2factor_table tr.row_odd,
+.rublon2factor_table tr.row_odd td {
+  color: #222;
+  background-color: #ddd;
+  border-bottom: 1px dotted #BBBBBB;
+}
+
+.rublon2factor_table tr.row_even,
+.rublon2factor_table tr.row_even td {
+  color: #333;
+  background-color: #fff;
+  border-bottom: 1px dotted #bbb;
+}
+
+.rublon2factor_info_box a {
+    color: lightblue;
+    font-weight: bold;
+}
+
+input.api_params {
+	width: 150px !important;	
+}
