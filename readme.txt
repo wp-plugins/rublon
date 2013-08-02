@@ -55,7 +55,7 @@ The Rublon app for your smartphone is available free of charge. If you run a web
 
 = Do I have to use my smartphone at each sign in? =
 
-No! Your smartphone is only needed when you sign in from a new device. It is used to prove your identity and allows you to add such a device to your trusted devices. Any sign in from a trusted device works the same as before: simply enter your login credentials. Rublon works as an invisible security layer during the sign in process.
+No! Your smartphone is only needed when you sign in from a new device. It is used to prove your identity and allows you to add such a device to your trusted devices. Any sign in from a trusted device works the same way as before: simply enter your login credentials. Rublon works as an invisible security layer during the sign in process.
 
 == Screenshots ==
 
