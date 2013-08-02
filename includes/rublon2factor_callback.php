@@ -263,8 +263,8 @@ class Rublon2FactorCallback {
 	public function addInsecureAccountButton() {
 		Rublon2FactorHelper::saveReturnPageUrl();
 		$label = __('Disable Rublon security', 'rublon2factor');
-		$currentUser = get_current_user_id();		
-		$button = $this->service->createButtonDisable($label, $currentUser);
+		$currentUser = wp_get_current_user();		
+		$button = $this->service->createButtonDisable($label, $currentUser->rublon_profile_id);
 		echo $button;
 	}
 	
