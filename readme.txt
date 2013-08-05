@@ -29,11 +29,11 @@ You can protect your data by securing your account with Rublon on every web serv
 == Installation ==
 
 1. Login to your WordPress site using an administrator account.
-2. Go to "Plugins" -> "Add New" page and type in "Rublon" in the Search box, then press the "Search Plugins" button.
-3. Click the "Install Now" option next to the Rublon plugin in the search results and confirm the installation.
+2. Go to the "Plugins" -> "Add New" page, type "Rublon" in the search box and press the "Search Plugins" button.
+3. Click the "Install Now" link next to the Rublon plugin in the search results and confirm the installation.
 4. After a successful installation, click "Activate Plugin".
 5. Now click "Settings" under the plugin name on the list or use the configuration link displayed on top of the "Plugins" page.
-6. In order to activate Rublon in your Wordpress installation click "Activate Rublon" button. If you already have a System Token and Secret Key, please paste them into the input fields and save. 
+6. In order to activate Rublon for your WordPress installation click the "Activate Rublon" button. If you already have a System Token and Secret Key, please paste them into the input fields and click "Save". 
 
 == Frequently Asked Questions ==
 
