@@ -66,6 +66,8 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
+== Changelog ==
+
 = 1.0.1 =
 Code optimalization.
 
