@@ -4,7 +4,7 @@ Plugin Name: Rublon
 Text Domain: rublon2factor
 Plugin URI: https://rublon.com
 Description: Rublon protects your accounts from sign ins from unknown devices, even if your password gets stolen. It's a totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.
-Version: 1.0.0
+Version: 1.0.1
 Author: Rublon
 Author URI: https://rublon.com
 License:http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 

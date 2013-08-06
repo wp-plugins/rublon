@@ -3,7 +3,7 @@ Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security
 Requires at least: 3.3.x
 Tested up to: 3.6
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
@@ -65,5 +65,8 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 == Upgrade notice ==
 
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
+
+= 1.0.1 =
+Code optimalization.
 
 
