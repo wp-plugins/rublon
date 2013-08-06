@@ -8,14 +8,6 @@
  * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 
  */
 
-/**
- * Includes the Rublon JS Library on every theme page
- */
-add_action ('wp_enqueue_scripts', 'rublon2factor_add_script');
-function rublon2factor_add_script()
-{
-	Rublon2FactorHelper::addScript();
-}
 
 /**
  * Add the authentication by Rublon2Factor.
