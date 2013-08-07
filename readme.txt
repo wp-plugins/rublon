@@ -7,7 +7,7 @@ Stable tag: 1.0.1
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.
+Invisible Two-Factor Authentication: Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.
 
 == Description ==
 
