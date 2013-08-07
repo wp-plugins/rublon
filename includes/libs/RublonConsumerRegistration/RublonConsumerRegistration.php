@@ -18,7 +18,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		parent::finalSuccess();
 		$this->updateRublonSettings();
 		
-		Rublon2FactorHelper::setMessage(__('Rublon has been activated.', 'rublon2factor'));
+		Rublon2FactorHelper::setMessage(__('Rublon has been activated. Now go to your <a href="profile.php">profile</a> in order to secure your account with Rublon.', 'rublon2factor'));
 		Rublon2FactorHelper::setMessageType('updated');
 		
 		$this->_redirect('wp-admin/options-general.php?page=rublon');
@@ -37,7 +37,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	protected function finalError($msg = NULL) {
 		parent::finalError($msg);
 
-		Rublon2FactorHelper::setMessage(__('Rublon activation failed. Add your website manually in the Developer Dashboard on <a href="https://developers.rublon.com/" target="_blank">developers.rublon.com</a> or contact the Rublon Team.', 'rublon2factor'));
+		Rublon2FactorHelper::setMessage(__('Rublon activation failed. In order to get "System Token" and "Secret Key" add your website manually in the Developer Dashboard at <a href="https://developers.rublon.com/" target="_blank">developers.rublon.com</a> or contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor'));
 		Rublon2FactorHelper::setMessageType('error');
 
 		$this->_redirect('wp-admin/options-general.php?page=rublon');

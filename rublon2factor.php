@@ -76,11 +76,9 @@ function rublonDebug($value)
 */
 require_once(dirname (__FILE__) . '/includes/rublon2factor_helper.php');
 require_once(dirname (__FILE__) . '/includes/rublon2factor_callback.php');
-//require_once(dirname (__FILE__) . '/includes/rublon2factor_consumer_register.php');
 require_once(dirname (__FILE__) . '/includes/rublon2factor_initialization.php');
 require_once(dirname (__FILE__) . '/includes/rublon2factor_admin.php');
 require_once(dirname (__FILE__) . '/includes/rublon2factor_hooks.php');
-//require_once(dirname (__FILE__) . '/includes/rublon2factor_widget.php');
 /*
  * Include Rublon PHP libraries
 */
