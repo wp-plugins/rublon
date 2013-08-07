@@ -3,8 +3,8 @@
  * Code to be run as a callback from Rublon server
  *
  * @package   rublon2factor\includes
- * @author     Adips Sp. z o.o.
- * @copyright  Adips Sp. z o.o.
+ * @author     Rublon Developers http://www.rublon.com
+ * @copyright  Rublon Developers http://www.rublon.com
  * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
