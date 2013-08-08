@@ -11,7 +11,7 @@ Invisible Two-Factor Authentication: Rublon protects your account from sign ins 
 
 == Description ==
 
-Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It's totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.
+Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It's a totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.
 
 Your online accounts can be accessed from any device in the world, often without your knowledge. Rublon protects your personal data, as well as business and financial operations, by restricting access from unknown devices.
 
