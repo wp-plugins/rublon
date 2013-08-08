@@ -65,3 +65,16 @@
 input.api_params {
 	width: 150px !important;	
 }
+p.rublon_active {
+	padding: 0.5em 0;
+}
+
+p.rublon_active span {
+	display: inline-block;
+	padding: 1em;
+	color: #65C341;
+	font-size: 20px;
+	border: solid 1px #cccccc;
+	background: none;
+	width: auto;
+}

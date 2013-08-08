@@ -18,7 +18,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		parent::finalSuccess();
 		$this->updateRublonSettings();
 		
-		Rublon2FactorHelper::setMessage(__('Rublon has been activated. Now go to your <a href="profile.php">profile</a> in order to secure your account with Rublon.', 'rublon2factor'));
+		Rublon2FactorHelper::setMessage(__('Rublon has been activated. Now go to <a href="profile.php">your profile</a> in order to secure your account with Rublon.', 'rublon2factor'));
 		Rublon2FactorHelper::setMessageType('updated');
 		
 		$this->_redirect('wp-admin/options-general.php?page=rublon');
@@ -209,6 +209,14 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 */
 	public function setDomain($domain) {
 		$this->apiDomain = $domain;
+	}
+
+	public function getDomain() {
+		return $this->apiDomain;
+	}
+	
+	public function getActionUrl() {
+		return $this->actionUrl;
 	}
 
 	/**

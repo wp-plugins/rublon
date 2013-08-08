@@ -64,12 +64,18 @@ function rublon2factor_validate_settings($settings)
 	static $found_error = false;
 
 	$settings['uninstall_rublon_config'] = (bool) $settings['uninstall_rublon_config'];
+	$previous_settings = get_option(Rublon2FactorHelper::RUBLON_SETTINGS_KEY);
 	
 	if (!$found_error AND (empty($settings['rublon_system_token']) OR empty($settings['rublon_secret_key'])))
 	{
-		add_settings_error(Rublon2FactorHelper::RUBLON_SETTINGS_KEY, 'empty_rublon2factor_settings', __('In oredr to activate Rublon please provide "System Token" and "Secret Key".', 'rublon2factor'));
+		add_settings_error(Rublon2FactorHelper::RUBLON_SETTINGS_KEY, 'empty_rublon2factor_settings', __('In order to activate Rublon please provide "System Token" and "Secret Key".', 'rublon2factor'));
 		$found_error = true;
-		return $settings;
+		return $previous_settings;
+	} else {
+		if (!Rublon2FactorHelper::verifyConsumerSettings($settings)) {
+			add_settings_error(Rublon2FactorHelper::RUBLON_SETTINGS_KEY, 'invalid_rublon2factor_settings', __('Invalid "System Token" or "Secret Key". Please contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor'));
+			return $previous_settings;
+		}
 	}
 
 	return $settings;
@@ -91,38 +97,37 @@ function rublon2factor_create_settings_page() {
 			$settings = Rublon2FactorHelper::getSettings();
 			?>
 
-			<div class="rublon2factor_info_box">
-				<p>
-					<?php _e('Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It\'s totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.', 'rublon2factor'); ?>					
-				</p>
-			</div>
+			<p>
+				<?php _e('Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It\'s a totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.', 'rublon2factor'); ?>					
+			</p>
 			
-			<?php if (!Rublon2FactorHelper::isActive($settings)){ ?>
+			<?php if (!Rublon2FactorHelper::isActive($settings)): ?>
 			<table class="form-table rublon2factor_table">								
-				
+
+				<tr class="row_head">
+					<th colspan="2"><strong><?php _e('Rublon Activation', 'rublon2factor'); ?></strong></th>
+				</tr>
+
 				<tr class="row_even">
 					<td style="width: 50%">
-						<?php _e("In order to use this plugin, you need to activate Rublon for your WordPress installation. Click the button below:", 'rublon2factor'); ?>
+						<?php _e('In order to be able to secure your WordPress account with Rublon, you need to activate Rublon first. Click the button below:', 'rublon2factor'); ?>
 						<br /><br />
 						<input class="button button-primary button-hero" type="submit" name="<?php echo RublonConsumerRegistration::ACTION_INITIALIZE ?>" value="<?php _e('Activate Rublon', 'rublon2factor') ?>" />
 						<br /><br />
-						<?= _e('The API Settings will be filled out automatically.', 'rublon2factor') ?>
 					</td>
 				</tr>			
 			</table>
-			<?php } ?>
+			<?php else: ?>
+			
+			<p class="rublon_active">
+				<span><?php _e('Rublon is active', 'rublon2factor') ?></span>
+			</p>
 							
 			<table class="form-table rublon2factor_table">	
 				<tr class="row_head">
 					<th colspan="2"><strong><?php _e('API Settings', 'rublon2factor'); ?></strong></th>
 				</tr>
 				
-				<tr class="row_even">
-					<td colspan="2">
-						<?php _e("If you already have a System Token and Secret Key, please enter them below.", 'rublon2factor'); ?>
-					</td>
-				</tr>
-					
 				<tr class="row_even">
 					<td><label><?php _e('System Token', 'rublon2factor'); ?>:</label>
 					</td>
@@ -147,6 +152,7 @@ function rublon2factor_create_settings_page() {
 				</tr>				
 								
 			</table>
+			<?php endif; ?>
 			<?php if (false):?>
 			<table class="form-table rublon2factor_table">
 				<tr class="row_head">

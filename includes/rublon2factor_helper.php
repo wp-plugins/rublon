@@ -350,4 +350,27 @@ class Rublon2FactorHelper {
 	{
 		self::$registration->action($action);
 	}
+	
+	static public function verifyConsumerSettings($settings) {
+
+		$consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
+		$service = new RublonService2Factor($consumer);
+		$request = new RublonRequest($service);
+		$url = self::$registration->getDomain() . self::$registration->getActionUrl() . '/verify_consumer_settings' ;
+		$params = array('systemToken' => $settings['rublon_system_token']);
+		$response = $request->setRequestParams($url, $params)->getResponse();
+
+		try {
+			$response = json_decode($response, true);
+		} catch (Exception $e) {
+			$response = null;
+		}
+
+		if (!empty($response['status']) && $response['status'] == 'OK' && !empty($response['paramsValidity']))
+			return true;
+
+		return false;
+
+	}
+	
 }
