@@ -120,7 +120,7 @@ function rublon2factor_create_settings_page() {
 			<?php else: ?>
 			
 			<p class="rublon_active">
-				<span><?php _e('Rublon is active', 'rublon2factor') ?></span>
+				<span><?php _e('Rublon is active.', 'rublon2factor') ?></span>
 			</p>
 							
 			<table class="form-table rublon2factor_table">	
