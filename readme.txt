@@ -69,6 +69,7 @@ After a successful installation, the plugin can be updated automatically in the 
 
 = 1.1.2 =
 Compatibility update in the plugin automatic activation system.
+Administrators can now disable other users' two-factor authentication.
 
 = 1.1.1 =
 Minor text changes.
