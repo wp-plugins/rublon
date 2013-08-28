@@ -12,10 +12,24 @@
  * and compare with the signature of the message.
  * 
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonSignatureWrapper {
+	
 
+	/**
+	 * Default sign method
+	 */
+	const DEFAULT_SIGN_METHOD = "string-md5";
+	
+	
+	/**
+	 * Rublon message life time
+	 * 
+	 * @var int
+	 */
+	const MESSAGE_LIFETIME = 300;
+	
 	/**
 	 * Secret key for verifying signature
 	 *
@@ -48,23 +62,6 @@ class RublonSignatureWrapper {
 	public function __toString() {
 		return json_encode($this->getWrapper());
 	}
-
-
-
-
-	/**
-	 * Verify signature of raw input data
-	 *
-	 * @return boolean
-	 */
-	public function verify() {
-		@ $data = json_decode($this->rawData, true);
-		if ($data AND isset($data['data']) AND isset($data['sign'])) {
-			return self::verifyData($data['data'], $this->secretKey, $data['sign']);
-		}
-		return false;
-	}
-
 
 
 
@@ -138,13 +135,13 @@ class RublonSignatureWrapper {
 	/**
 	 * Verify data by signature and secret key
 	 *
-	 * @param mixed $data
-	 * @param string $secretKey
-	 * @param string $sign
+	 * @param mixed $data Data to sign
+	 * @param string $secretKey Secret key used to create the signature
+	 * @param string $sign Computed signature
 	 * @return bool
 	 */
 	public static function verifyData($data, $secretKey, $sign) {
-		$dataSign = self::signData($data, $secretKey);
+		$dataSign = self::signData($data, $secretKey, self::DEFAULT_SIGN_METHOD);
 		return ($dataSign == $sign);
 	}
 
@@ -154,22 +151,15 @@ class RublonSignatureWrapper {
 	/**
 	 * Sign data by secret key
 	 *
-	 * @param mixed $data
-	 * @param string $secretKey
+	 * @param string $data Data to sign
+	 * @param string $secretKey Secret key to create the signature
+	 * @param string $method (optional) Sinagure method
 	 * @return string
 	 */
-	public static function signData($data, $secretKey) {
-
-		if (!is_string($data)) {
-			if (is_array($data) OR is_object($data)) {
-				$data = json_encode($data);
-			}
+	public static function signData($data, $secretKey, $method = null) {
+		if ($method == self::DEFAULT_SIGN_METHOD) {
+			return md5($secretKey . $data);
 		}
-
-		$data = $secretKey . $data;
-
-		return md5($data);
-
 	}
 
 
@@ -177,14 +167,14 @@ class RublonSignatureWrapper {
 	/**
 	 * Wrap string message into wrapper with signature
 	 *
-	 * @param string $secretKey
-	 * @param mixed $body If not string - use json_encode to stringify
+	 * @param string $secretKey Secret key used to create a signature
+	 * @param string|array $body Body of the message
 	 * @param array $outerParams Extra outer params for output wrapper array (default null)
-	 * @return array Wrapper with signature and data fields (data is json with head and body fields)
+	 * @return array Wrapper with signature and data fields (data is JSON with head and body fields)
 	 */
 	public static function wrap($secretKey, $body, $outerParams = null) {
 
-		$signatureMethod = 'string-md5';
+		$signatureMethod = self::DEFAULT_SIGN_METHOD;
 
 		if (!is_string($body)) $body = json_encode($body);
 
@@ -210,6 +200,66 @@ class RublonSignatureWrapper {
 
 	}
 
+	
+
+	/**
+	 * Parse signed message
+	 *
+	 * @throws Exception
+	 * @param mixed $response
+	 * @param string $secretKey
+	 * @return mixed
+	 */
+	static function parseMessage($response, $secretKey) {
+		$response = json_decode($response, true);
+		if (!empty($response)) {
+			if (!empty($response['data']) AND !empty($response['sign'])) {
+				if (RublonSignatureWrapper::verifyData($response['data'], $secretKey, $response['sign'])) {
+					$data = json_decode($response['data'], true);
+					if (!empty($data) AND is_array($data)) {
+						if (isset($data['head']) AND is_array($data['head']) AND !empty($data['head'])) {
+							$head = $data['head'];
+							if (isset($head['time']) AND $head['time'] < time() + 60 AND $head['time'] > time() - self::MESSAGE_LIFETIME) {
+								if (isset($data['body']) AND is_string($data['body'])) {
+									
+									$body = json_decode($data['body'], true);
+									if (is_array($body) AND !empty($body)) {
+										return $body;
+									} else {
+										return $data['body'];
+									}
+									
+								} else {
+									throw new RublonException('Invalid response data (no body)');
+								}
+							} else {
+								throw new RublonException('Invalid message time');
+							}
+						} else {
+							throw new RublonException('Invalid response data (invalid header)');
+						}
+					} else {
+						throw new RublonException('Invalid response');
+					}
+				} else {
+					throw new RublonException('Invalid signature');
+				}
+			}
+			else if (!empty($response['status'])) {
+				if ($response['status'] == 'ERROR') {
+					throw new RublonException(isset($response['msg']) ? $response['status'] : 'Error response');
+				} else {
+					return $response;
+				}
+			} else {
+				throw new RublonException('Invalid response');
+			}
+		} else {
+			throw new RublonException('Empty response');
+		}
+	}
+	
+	
 
 
 

@@ -5,7 +5,7 @@
  * REST request class
  * 
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonRequest {
 
@@ -31,15 +31,15 @@ class RublonRequest {
 	protected $params = array();
 	
 	/**
-	 * Response
+	 * Raw response string
 	 * 
-	 * @var mixed
+	 * @var string
 	 */
-	protected $response = null;
+	protected $rawResponse = null;
 
 
 	/**
-	 * Constructor - set access parameters
+	 * Constructor
 	 *
 	 * @param RublonService $service
 	 */
@@ -64,15 +64,15 @@ class RublonRequest {
 	
 
 	/**
-	 * Perform request and get response string
+	 * Perform request and get raw response string
 	 *
 	 * @throws RublonException
 	 * @return string
 	 */
-	public function getResponse() {
+	public function getRawResponse() {
 		$this->getConsumer()->log(__METHOD__);
-		if (!empty($this->response)) {
-			return $this->response;
+		if (!empty($this->rawResponse)) {
+			return $this->rawResponse;
 		} else {
 			try {
 				return $this->_request($this->url, $this->params);
@@ -90,8 +90,8 @@ class RublonRequest {
 	/**
 	 * Perform HTTP request
 	 *
-	 * @param string $url
-	 * @param array $params POST params
+	 * @param string $url URL address
+	 * @param array $params Request parameters
 	 * @return string Response
 	 * @throws RublonException
 	 */
@@ -124,16 +124,23 @@ class RublonRequest {
 		}
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST , 0);
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Rublon Consumer ('. $this->getConsumer()->getVersion() .')');
 		
-		$response = curl_exec($ch);
+		// SSL options
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_CAINFO, realpath(__DIR__ .'/../cert/cacert.pem'));
+		
+		// Execute request
+		$this->rawResponse = curl_exec($ch);
+		
 		if (curl_error($ch)) {
 			throw new RublonException(curl_error($ch), RublonException::CODE_CURL_ERROR);
 		}
 		curl_close($ch);
-		return $response;
+		
+		return $this->rawResponse;
+		
 	}
 	
 	

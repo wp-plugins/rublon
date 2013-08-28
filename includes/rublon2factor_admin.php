@@ -113,6 +113,8 @@ function rublon2factor_create_settings_page() {
 						<?php _e('In order to be able to secure your WordPress account with Rublon, you need to activate Rublon first. Click the button below:', 'rublon2factor'); ?>
 						<br /><br />
 						<input class="button button-primary button-hero" type="submit" name="<?php echo RublonConsumerRegistration::ACTION_INITIALIZE ?>" value="<?php _e('Activate Rublon', 'rublon2factor') ?>" />
+						<input type="hidden" name="projectName" value="<?= get_bloginfo('title') ?>" />
+						<input type="hidden" name="projectTechnology" value="wordpress3" />
 						<br /><br />
 					</td>
 				</tr>			
@@ -209,6 +211,56 @@ function rublon2factor_add_script_on_profile_page()
 	}
 }
 add_action('admin_head', 'rublon2factor_add_script_on_profile_page');
+
+/**
+ * Displays the checkbox for disabling account security for users other than the logged in admin
+ * 
+ * @param WP_User $user Object containing the user whose profile is being displayed
+ */
+function rublon2factor_add_users_2factor_disabler($user) {
+
+	if (!empty($user) && Rublon2FactorHelper::isActive(Rublon2FactorHelper::getSettings())) {
+
+		if (Rublon2FactorHelper::isUserSecured($user)) {
+			?><h3><?php _e('Security', 'rublon2factor') ?></h3>
+				<table class="form-table">
+					<tr>
+						<th><?php _e('Two-Factor Authentication', 'rublon2factor'); ?></th>
+						<td>
+							<label for="rublon2factor_disable_users_security">
+								<input name="rublon2factor_disable_users_security" type="checkbox" id="rublon2factor_disable_users_security" value="false" />
+								<?php _e('Disable this user\'s Rublon Two-Factor Authentication', 'rublon2factor') ?>
+							</label>
+						</td>
+					</tr>
+				</table><?php
+		}
+
+	}
+
+}
+
+add_action('edit_user_profile', 'rublon2factor_add_users_2factor_disabler');
+
+/**
+ * Disable the currently updated user's Rublon 2factor 
+ *  
+ * @param int $user_id User id
+ */
+function rublon2factor_disable_users_2factor($user_id) {
+
+	if (!empty($user_id) && !empty($_POST['rublon2factor_disable_users_security'])) {
+		$wp_user = get_user_by('id', $user_id);
+		if (!empty($wp_user)) {
+			$rublonProfileId = $wp_user->get('rublon_profile_id');
+			if (!empty($rublonProfileId))
+				Rublon2FactorHelper::unconnectRublon2Factor($wp_user, $rublonProfileId);
+		}
+	}
+
+}
+
+add_action('edit_user_profile_update', 'rublon2factor_disable_users_2factor');
 
 /**
  * Displays Rublon secure account button

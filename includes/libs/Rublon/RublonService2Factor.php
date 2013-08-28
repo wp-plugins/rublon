@@ -11,7 +11,7 @@ require_once 'HTML/RublonButton.php';
  * Class provides methods used by `Rublon Two Factor` service process.
  *
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonService2Factor extends RublonService {
 	
@@ -40,8 +40,9 @@ class RublonService2Factor extends RublonService {
 			$authParams = new RublonAuthParams($this);
 		}
 		
-		$authParams->setConsumerParam('requireProfileId', $profileId);
+		$authParams->setActionFlag(RublonAuthParams::ACTION_FLAG_LOGIN);
 		$authParams->setConsumerParam('service', '2factor');
+		$authParams->setConsumerParam('requireProfileId', $profileId);
 		$url = $authParams->getUrl();
 		
 		header('Location: '. $url);
@@ -52,7 +53,7 @@ class RublonService2Factor extends RublonService {
 	
 	
 	/**
-	 * Authenticate user using one-time use access token and expected user's profile ID.
+	 * Authenticate user and get user's credentials using one-time use access token and expected user's profile ID.
 	 *
 	 * One-time use access token is a session identifier which will be deleted after first usage.
 	 * This method can be called only once in authentication process.

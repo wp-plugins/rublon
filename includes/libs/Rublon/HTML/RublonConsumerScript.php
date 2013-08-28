@@ -10,7 +10,7 @@
  * 
  * @see RublonButton
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonConsumerScript {
 	

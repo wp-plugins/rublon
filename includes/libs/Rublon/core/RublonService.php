@@ -10,7 +10,7 @@ require_once 'RublonResponse.php';
  * 
  * @abstract
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 abstract class RublonService {
 
@@ -28,9 +28,16 @@ abstract class RublonService {
 	 */
 	protected $consumer = null;
 	
+	/**
+	 * Cached credentials
+	 * 
+	 * @property array
+	 */
+	protected $cacheCredentials = array();
+	
 	
 	/**
-	 * Init native service with RublonConsumer instance.
+	 * Init service with RublonConsumer instance.
 	 *
 	 * @param RublonConsumer $consumer
 	 */
@@ -41,7 +48,7 @@ abstract class RublonService {
 	
 	
 	/**
-	 * Get consumer instance.
+	 * Get consumer instance
 	 * 
 	 * @return RublonConsumer
 	 */
@@ -52,13 +59,15 @@ abstract class RublonService {
 	
 
 	/**
-	 * Create button instance
+	 * Create a HTML button instance specific for this service
+	 * 
+	 * Returns instance of the RublonButton class that provides the HTML button.
 	 * 
 	 * @param string $label Button's label
-	 * @param string $actionFlag Action flag for the authentication parameters
-	 * @param string $tooltipFlag Tooltip flag of the button
-	 * @param array $consumerParams Other consumer parameters
-	 * @return RublonButton
+	 * @param string $actionFlag Action flag for the authentication parameters, see const RublonAuthParams::ACTION_FLAG_...
+	 * @param string $tooltipFlag Tooltip flag of the button, see const RublonButton::TOOLTIP_FLAG_...
+	 * @param array $consumerParams Consumer parameters
+	 * @return RublonButton instance that provides the HTML button.
 	 */
 	protected function _createButton($label, $actionFlag, $tooltipFlag, $consumerParams = array()) {
 		

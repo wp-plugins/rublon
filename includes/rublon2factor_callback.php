@@ -68,12 +68,27 @@ class Rublon2FactorCallback {
 	 * Rublon Code scanning.
 	 */
 	public function run($state, $token, $windowType) {
-		$this->accessToken = $token;
-		try {
-			$this->handleCallback();
-		} catch (RublonException $error) {
-			$this->handleError($error);
-		}
+
+		switch ($state) {
+			case 'ok':
+				$this->accessToken = $token;
+				try {
+					$this->handleCallback();
+				} catch (RublonException $error) {
+					$this->handleError($error);
+				}
+				break;
+			case 'error':
+				$error = new RublonException('', RublonException::CODE_INVALID_RESPONSE);
+				$this->handleError($error);
+				break;
+			default:
+				$this->returnToPage();				
+				break;
+		}		
+		
+		
+		
 	}
 
 	public function handleCallback()
@@ -173,10 +188,13 @@ class Rublon2FactorCallback {
 
 	private function returnToPage($sessionData = null, $url = null) {
 		$returnPageUrl = (isset($url)) ? $url : Rublon2FactorHelper::getReturnPageUrl();
-		if (isset($sessionData)) {
+		if (!empty($sessionData)) {
 			echo $this->htmlHelper->returnToPage($sessionData, $returnPageUrl);
 		} else {
-			echo header('Location: '. $returnPageUrl);
+			if (empty($returnPageUrl)) {
+				$returnPageUrl = '/';
+			}
+			header('Location: '. $returnPageUrl);
 		}
 	}
 

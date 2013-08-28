@@ -4,18 +4,31 @@
  * REST request: Credentials
  *
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonRequestCredentials extends RublonRequest {
 	
 	/**
-	 * URL of the request
+	 * URL path of the request
 	 *
 	 * @var string
 	 */
 	protected $urlPath = '/native/rest/Credentials';
+	
+	/**
+	 * Response object
+	 * 
+	 * @var RublonResponseCredentials
+	 */
+	protected $response = null;
 
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param RublonService $service
+	 * @param string $accessToken
+	 */
 	public function __construct(RublonService $service, $accessToken) {
 		
 		parent::__construct($service);
@@ -38,13 +51,11 @@ class RublonRequestCredentials extends RublonRequest {
 	 * @return RublonResponseCredentials
 	 */
 	public function getResponse() {
-		if (!empty($this->response)) {
-			return $this->response;
-		} else {
-			$response = parent::getResponse();
-			$this->response = new RublonResponseCredentials($this, $response);
-			return $this->response;
+		if (empty($this->response)) {
+			$rawResponse = parent::getRawResponse();
+			$this->response = new RublonResponseCredentials($this, $rawResponse);
 		}
+		return $this->response;
 	}
 
 }

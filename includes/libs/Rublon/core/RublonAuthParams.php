@@ -11,7 +11,7 @@
  * 
  * @see RublonButton
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonAuthParams {
 	
@@ -27,7 +27,7 @@ class RublonAuthParams {
 	protected $service = null;
 	
 	/**
-	 * Consumer parameters array.
+	 * Consumer parameters store.
 	 * 
 	 * These optional parameters can be set by the integrated website.
 	 * They will be signed with the Signature Wrapper (RublonSignatureWrapper class)
@@ -70,11 +70,27 @@ class RublonAuthParams {
 	protected $actionFlag = null;
 	
 	
-	// Available action flags
+	/**
+	 * Link accounts action
+	 */
 	const ACTION_FLAG_LINK_ACCOUNTS = 'link_accounts';
+	
+	/**
+	 * Unlink accounts action
+	 */
 	const ACTION_FLAG_UNLINK_ACCOUNTS = 'unlink_accounts';
+	
+	/**
+	 * Identity confirmation action
+	 */
 	const ACTION_FLAG_CONFIRM_ACTION = 'confirm_action';
+	
+	/**
+	 * Login action
+	 */
 	const ACTION_FLAG_LOGIN = 'login';
+	
+
 	
 
 	/**
@@ -97,12 +113,12 @@ class RublonAuthParams {
 	
 	
 	/**
-	 * Get URL of the auth request to perform simple HTTP redirection.
+	 * Get URL of the authentication request to perform simple HTTP redirection.
 	 * 
 	 * Returns a URL address that will start the Rublon
 	 * authentication process if redirected to.
 	 * 
-	 * @return string
+	 * @return string URL address
 	 */
 	public function getUrl() {
 		$this->getConsumer()->log(__METHOD__);
@@ -114,23 +130,24 @@ class RublonAuthParams {
 	
 	
 	/**
-	 * Get auth URL params string.
+	 * Get parameters string to apply in the authentication URL address
 	 * 
-	 * Returns the authentication parameters as a base64-encoded
-	 * JSON string.
+	 * Returns the authentication parameters as a base64-encoded JSON string
+	 * that will be passed with the URL address to the Rublon code window.
 	 * 
 	 * @return string
 	 */
-	public function getUrlParamsString() {
+	protected function getUrlParamsString() {
 		return base64_encode(json_encode($this->getUrlParams()));
 	}
 	
 	
 	/**
-	 * Get auth URL params array.
+	 * Get ready-made authentication parameters object to apply in the authentication URL address
 	 * 
-	 * Returns the authentication process parameters as an array
-	 * (including the Signature Wrapper-signed consumer params). 
+	 * Returns the authentication process parameters as an object
+	 * (including the Signature Wrapper-signed consumer params)
+	 * that will be passed with the URL address to the Rublon code window. 
 	 * 
 	 * @return array
 	 */
@@ -158,10 +175,10 @@ class RublonAuthParams {
 	}
 	
 	/**
-	 * Get the consumer parameters wrapper.
+	 * Get the consumer parameters wrapper to apply in the Rublon button.
 	 * 
-	 * Returns the Signature Wrapper-signed consumer params and/or
-	 * the outer params if they're set, null otherwise.
+	 * Returns the Signature Wrapper-signed consumer params
+	 * to apply in the HTML wrapper of the Rublon button.
 	 *
 	 * @return array|NULL
 	 */
@@ -182,14 +199,14 @@ class RublonAuthParams {
 	
 	
 	/**
-	 * Get the consumer parameters string.
+	 * Get the consumer parameters string to apply in the Rublon button.
 	 * 
 	 * Returns the Signature Wrapped-signed consumer params
-	 * as a JSON string, or null if consumer params are not set.
+	 * as a JSON string.
 	 * 
 	 * @return string|NULL
 	 */
-	public function getConsumerParamsString() {
+	public function getConsumerParamsWrapperString() {
 		return json_encode($this->getConsumerParamsWrapper());
 	}
 	
@@ -202,7 +219,7 @@ class RublonAuthParams {
 	 *
 	 * Sets the consumer parameters using the given array.
 	 *
-	 * @param array $consumerParams An array of consumer params
+	 * @param array $consumerParams An array of consumer parameters
 	 * @return RublonAuthParams
 	 */
 	public function setConsumerParams($consumerParams) {

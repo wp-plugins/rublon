@@ -17,9 +17,18 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	protected function finalSuccess() {
 		parent::finalSuccess();
 		$this->updateRublonSettings();
-		
-		Rublon2FactorHelper::setMessage(__('Rublon has been activated. Now go to <a href="profile.php">your profile</a> in order to secure your account with Rublon.', 'rublon2factor'));
+
+		$currentUser = wp_get_current_user();
+		$adminProfileId = $this->getAdminProfileId();
+		if (!empty($adminProfileId) && !Rublon2FactorHelper::isUserSecured($currentUser))
+			$success = Rublon2FactorHelper::connectRublon2Factor($currentUser, $adminProfileId);
+
 		Rublon2FactorHelper::setMessageType('updated');
+		if ($success) {
+			Rublon2FactorHelper::setMessage(__('Rublon has been activated and your account has been secured.', 'rublon2factor'));
+		} else {
+			Rublon2FactorHelper::setMessage(__('Rublon has been activated, but your account has not been secured with Rublon. Go to <a href="profile.php">your profile</a> in order to secure your account with Rublon.', 'rublon2factor'));
+		}
 		
 		$this->_redirect('wp-admin/options-general.php?page=rublon');
 	}
@@ -37,7 +46,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	protected function finalError($msg = NULL) {
 		parent::finalError($msg);
 
-		Rublon2FactorHelper::setMessage(__('Rublon activation failed. In order to get "System Token" and "Secret Key" add your website manually in the Developer Dashboard at <a href="https://developers.rublon.com/" target="_blank">developers.rublon.com</a> or contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor'));
+		Rublon2FactorHelper::setMessage(__('Rublon activation failed. Please contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor'));
 		Rublon2FactorHelper::setMessageType('error');
 
 		$this->_redirect('wp-admin/options-general.php?page=rublon');
@@ -77,7 +86,35 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		$config['systemToken'] = $systemToken;
 		return $this->_saveConfig($config);
 	}
-	
+
+
+	/**
+	 * Save profileId of the admin who activated the plugin
+	 * 
+	 * @param int $profileId
+	 */
+	protected function handleProfileId($profileId) {
+
+		$config = $this->getConfig();
+		$config['adminProfileId'] = $profileId;
+		return $this->_saveConfig($config);
+
+	}
+
+
+	/**
+	 * Return profileId of the admin who activated the plugin, if it was received
+	 * 
+	 * @return string
+	 */
+	protected function getAdminProfileId() {
+
+		$config = $this->getConfig();
+		return (isset($config['adminProfileId'])) ? $config['adminProfileId'] : NULL;
+
+	}
+
+
 	/**
 	 * Return local-stored secret key or NULL if empty.
 	 * 
@@ -238,7 +275,8 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	{
 		$settings = get_option(Rublon2FactorHelper::RUBLON_SETTINGS_KEY);
 		$settings['rublon_system_token'] = $this->getSystemToken();
-		$settings['rublon_secret_key'] = $this->getSecretKey();	
+		$settings['rublon_secret_key'] = $this->getSecretKey();
+
 		update_option(Rublon2FactorHelper::RUBLON_SETTINGS_KEY, $settings);
 	}
 }

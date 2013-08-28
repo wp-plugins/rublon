@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('__DIR__')) {
+	define('__DIR__', dirname(__FILE__));
+}
+
 require_once 'core/RublonException.php';
 require_once 'core/RublonSignatureWrapper.php';
 require_once 'core/RublonAuthParams.php';
@@ -13,12 +17,12 @@ require_once 'HTML/RublonHTMLHelper.php';
 /**
  * Rublon Consumer class.
  *
- * The main class used to perform requests to the Rublon API.
+ * The main class provides common methods for all Rublon services.
  * In order for the class to work properly, it must be initiated with two parameters: System Token and the Secret Key.
  * Both of parameters can be obtained from developer dashboard at developers.rublon.com. 
  *
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonConsumer {
 
@@ -27,7 +31,7 @@ class RublonConsumer {
 	 *
 	 * @var string
 	 */
-	const VERSION_DATE = '2013-07-05';
+	const VERSION_DATE = '2013-08-01';
 
 	/**
 	 * Enable log array storage.
@@ -54,9 +58,9 @@ class RublonConsumer {
 	protected $secretKey = null;
 
 	/**
-	 * Rublon Middle API domain.
+	 * Rublon API domain.
 	 * 
-	 * URL used to make requests to Rublon Middle API.
+	 * URL used to make requests to Rublon API.
 	 *
 	 * @var string
 	 */
@@ -65,6 +69,9 @@ class RublonConsumer {
 	/**
 	 * Language code
 	 * 
+	 * 2-letter language code compliant with <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO 639-1</a>.
+	 * 
+	 * @see https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	 * @var string
 	 */
 	protected $lang = 'en';
@@ -109,7 +116,7 @@ class RublonConsumer {
 
 
 	/**
-	 * Get Rublon Middle API domain.
+	 * Get Rublon API domain.
 	 *
 	 * @return string
 	 */
@@ -118,7 +125,7 @@ class RublonConsumer {
 	}
 
 	/**
-	 * Set Rublon Middle API domain.
+	 * Set Rublon API domain.
 	 *
 	 * @param string $domain
 	 * @return RublonConsumer
@@ -183,6 +190,9 @@ class RublonConsumer {
 	/**
 	 * Set language code
 	 * 
+	 * 2-letter language code compliant with <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO 639-1</a>.
+	 * 
+	 * @see https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	 * @param string $lang
 	 * @return RublonConsumer
 	 */
@@ -195,6 +205,9 @@ class RublonConsumer {
 	/**
 	 * Get language code
 	 * 
+	 * 2-letter language code compliant with <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO 639-1</a>.
+	 * 
+	 * @see https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	 * @return string
 	 */
 	public function getLang() {

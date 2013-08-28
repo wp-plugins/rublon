@@ -3,7 +3,7 @@ Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin
 Requires at least: 3.3.x
 Tested up to: 3.6
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
@@ -28,8 +28,7 @@ You can protect your data by securing your account with Rublon on every web serv
 3. Click the "Install Now" link next to the Rublon plugin in the search results and confirm the installation.
 4. After a successful installation, click "Activate Plugin".
 5. Now click "Settings" under the plugin name on the list or use the configuration link displayed on top of the "Plugins" page.
-6. In order to activate Rublon for your WordPress installation click the "Activate Rublon" button and scan the Rublon QR code that appears afterwards.
-7. After activating Rublon, you need to secure your account. Go to your user profile and click the "Secure your account with Rublon" button. 
+6. In order to activate Rublon for your WordPress installation click the "Activate Rublon" button and scan the Rublon QR code that appears afterwards. Your account will be automatically secured by Rublon.
 
 = Server requirements =
 - PHP version 5.3.3 or greater
@@ -68,14 +67,17 @@ After a successful installation, the plugin can be updated automatically in the 
 
 == Changelog ==
 
+= 1.1.2 =
+Compatibility update in the plugin automatic activation system.
+
 = 1.1.1 =
-Minor text changes
+Minor text changes.
 
 = 1.1.0 =
-Text and code optimalization
+Text and code optimalization.
 
 = 1.0.2 =
-Text optimalization
+Text optimalization.
 
 = 1.0.1 =
-Code optimalization
+Code optimalization.

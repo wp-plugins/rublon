@@ -4,14 +4,33 @@
  * Exception class
  * 
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonException extends Exception {
 
+	/**
+	 * CURL library is not available
+	 */
 	const CODE_CURL_NOT_AVAILABLE = 1;
+	
+	/**
+	 * Invalid response
+	 */
 	const CODE_INVALID_RESPONSE = 2;
+	
+	/**
+	 * Response error
+	 */
 	const CODE_RESPONSE_ERROR = 3;
+	
+	/**
+	 * CURL error
+	 */
 	const CODE_CURL_ERROR = 4;
+	
+	/**
+	 * Connection error
+	 */
 	const CODE_CONNECTION_ERROR = 5;
 
 

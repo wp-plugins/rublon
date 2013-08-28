@@ -23,18 +23,11 @@ abstract class RublonConsumerRegistrationTemplate {
 	const ACTION_PULL_SECRET_KEY = 'pull_secret_key';
 	
 	/**
-	 * Action to final check the registration process
-	 * 
-	 * @var string
-	 */
-	const ACTION_FINAL_CHECK = 'final_check';
-	
-	/**
 	 * Process lifetime in seconds
 	 * 
 	 * @var int
 	 */
-	const PROCESS_LIFETIME = 600; // seconds
+	const PROCESS_LIFETIME = 300; // seconds
 	
 	
 	/**
@@ -71,14 +64,8 @@ abstract class RublonConsumerRegistrationTemplate {
 			case 'initialize':
 				$this->initialize();
 				break;
-			case 'verify_domain': // Domain verification
-				$this->verifyDomain();
-				break;
 			case 'update_system_token': // Save the system token given for the module
 				$this->updateSystemToken();
-				break;
-			case 'final_check': // Final check method
-				$this->finalCheck();
 				break;
 			case 'final_success': // Final success
 				$this->finalSuccess();
@@ -170,28 +157,6 @@ abstract class RublonConsumerRegistrationTemplate {
 	
 	
 	/**
-	 * REST method for domain verification
-	 * 
-	 * As result return received by POST challenge string signed by temporary key.
-	 * 
-	 * @return void
-	 * @final
-	 */
-	final protected function verifyDomain() {
-		if ($this->_validateGeneral()) {
-			if ($challenge = $this->_post('challenge')) {
-				$response = array('challenge' => $challenge);
-			} else {
-				$response = $this->_RESTError('No challenge received');
-			}
-		} else {
-			$response = $this->_RESTError('Invalid process session');
-		}
-		$this->_RESTResponse($response, $this->getTempKey());
-	}
-	
-	
-	/**
 	 * Update system token
 	 * 
 	 * Save received by POST system token to local storage and call the secret key pulling method.
@@ -239,8 +204,8 @@ abstract class RublonConsumerRegistrationTemplate {
 			$request = new RublonRequest($service);
 			$url = $this->apiDomain . $this->actionUrl .'/'. self::ACTION_PULL_SECRET_KEY;
 			$params = array('systemToken' => $systemToken);
-			$response = $request->setRequestParams($url, $params)->getResponse();
-				
+			$response = $request->setRequestParams($url, $params)->getRawResponse();
+			
 			try {
 				$response = $this->_parseMessage($response, $this->getTempKey());
 			} catch (Exception $e) {
@@ -250,8 +215,9 @@ abstract class RublonConsumerRegistrationTemplate {
 			if (!empty($response['secretKey'])) {
 	
 				if ($this->saveSecretKey($response['secretKey'])) {
-					$url = $this->apiDomain . $this->actionUrl .'/'. self::ACTION_FINAL_CHECK;
-					$this->_redirect($url);
+					if (!empty($response['profileId']))
+						$this->handleProfileId($response['profileId']);
+					$this->finalSuccess();
 				} else {
 					$this->finalError('Failed to save the secret key');
 				}
@@ -264,49 +230,8 @@ abstract class RublonConsumerRegistrationTemplate {
 			$this->finalError('Invalid process session');
 		}
 	}
-	
-	
-	
-	
-	/**
-	 * REST method to perform the final check
-	 * 
-	 * Compare given by POST system token with local stored final system token and return response signed by local stored final secret key.
-	 * As result is the system token signed by final secret key.
-	 * 
-	 * @return void
-	 * @final
-	 */
-	final protected function finalCheck() {
-		$secretKey = NULL;
-		if ($this->_validateGeneral()) {
-			if ($secretKey = $this->getSecretKey()) {
-				if ($systemToken = $this->_post('systemToken')) {
-					if ($systemToken == $this->getSystemToken()) {
-						$response = array('status' => 'OK', 'systemToken' => $systemToken);
-					} else {
-						$response = $this->_RESTError('Invalid system token');
-					}
-				} else {
-					$response = $this->_RESTError('Missing POST parameter: systemToken');
-				}
-			} else {
-				$response = $this->_RESTError('No secret key');
-			}
-		} else {
-			$response = $this->_RESTError('Validation error');
-		}
-		$this->_RESTResponse($response, $secretKey);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
 	// --------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Minor protected methods - can be overriden
 	
@@ -402,14 +327,13 @@ abstract class RublonConsumerRegistrationTemplate {
 			'. $this->_getHidden('communicationUrl', $this->getCommunicationUrl()) .'
 			'. $this->_getHidden('callbackUrl', $this->getCallbackUrl()) .'
 			'. $this->_getHidden('tempKey', $this->getTempKey()) .'
+			'. $this->_getHidden('projectName', $this->_post('projectName')) .'
+			'. $this->_getHidden('projectTechnology', $this->_post('projectTechnology')) .'
 		<script>document.getElementById("RublonConsumerRegistration").submit();</script>
 		<noscript><input type="submit" value="Register" /></noscript>
 		</form>';
 		return $result;
-	}
-	
-	
-	
+	}			
 	
 	
 	/**
@@ -552,7 +476,6 @@ abstract class RublonConsumerRegistrationTemplate {
 	
 	
 	
-	
 	// --------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Abstract methods necessary to implement
 	
@@ -627,6 +550,16 @@ abstract class RublonConsumerRegistrationTemplate {
 	*/
 	abstract protected function saveSecretKey($secretKey);
 	
+	/**
+	 * Handle profileId of the user registering the consumer
+	 * 
+	 * If the user's profileId was received along with the secretKey, handle it accordingly
+	 * (e.g. secure the registering user's account if necessary).
+	 *  
+	 * @param int $profileId
+	 * @abstract
+	 */
+	abstract protected function handleProfileId($profileId);
 
 	/**
 	 * Get temporary key from local storage

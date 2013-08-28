@@ -49,12 +49,13 @@ class Rublon2FactorHelper {
 		}
 	}
 
-	static public function handleCallback($state, $token, $window_type)
-	{
-		if (!isset($state) || $state != 'ok' || !isset($token)) {
+	static public function handleCallback($state, $token, $window_type)	{
+
+		if (!isset($state) || !isset($token)) {
 			return;
 		}
 		self::getCallback()->run($state, $token, $window_type);
+
 	}
 
 	/**
@@ -358,7 +359,7 @@ class Rublon2FactorHelper {
 		$request = new RublonRequest($service);
 		$url = self::$registration->getDomain() . self::$registration->getActionUrl() . '/verify_consumer_settings' ;
 		$params = array('systemToken' => $settings['rublon_system_token']);
-		$response = $request->setRequestParams($url, $params)->getResponse();
+		$response = $request->setRequestParams($url, $params)->getRawResponse();
 
 		try {
 			$response = json_decode($response, true);

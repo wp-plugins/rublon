@@ -10,21 +10,13 @@
  *
  * @see RublonRequest
  * @author Rublon Developers
- * @version 2013-07-05
+ * @version 2013-08-01
  */
 class RublonResponse {
 
 
 	/**
-	 * Response status.
-	 *
-	 * @property string $status
-	 */
-	public $status = null;
-
-
-	/**
-	 * Response main data.
+	 * Response main data
 	 *
 	 * @property array $data
 	 */
@@ -32,11 +24,19 @@ class RublonResponse {
 
 
 	/**
-	 * Raw response data.
+	 * Raw response data
 	 *
 	 * @property string $rawResponse
 	 */
 	public $rawResponse = null;
+	
+	
+	/**
+	 * Response object
+	 * 
+	 * @property RublonResponse
+	 */
+	public $response = null;
 
 
 	/**
@@ -51,103 +51,24 @@ class RublonResponse {
 	 * Import and process the response string.
 	 *
 	 * @param RublonRequest $request An instance of a RublonRequest class
-	 * @param string|array $response Request response
+	 * @param string|array $rawResponse Raw response string
 	 * @throws RublonException
 	 */
-	public function __construct(RublonRequest $request, $response) {
+	public function __construct(RublonRequest $request, $rawResponse) {
 
 		$this->request = $request;
 		
 		$this->request->getService()->getConsumer()->log(__METHOD__);
-		$this->request->getService()->getConsumer()->log(print_r($response, true));
+		$this->request->getService()->getConsumer()->log(print_r($rawResponse, true));
 
-		$this->rawResponse = $response;
-
-		// Response may be array already
-		if (is_string($response)) {
-			$response = @json_decode($response, true);
+		$this->rawResponse = $rawResponse;
+		
+		try {
+			$this->data = RublonSignatureWrapper::parseMessage($rawResponse, $this->getConsumer()->getSecretKey());
+		} catch (RublonException $e) {
+			throw $e;
 		}
-
-		if (is_array($response) AND isset($response['status'])) { // valid array
-			if ($response['status'] == 'OK') { // valid status
-				if (isset($response['data'])) { // data present
-					if ($this->verifyResponse($response)) { // Valid signature
-
-						// Set status field
-						$this->status = $response['status'];
-
-						// Set data field
-						@ $data = json_decode($response['data'], true);
-						@ $this->data = json_decode($data['body'], true);
-
-						$this->request->getService()->getConsumer()->log(__METHOD__ .' -- success');
-
-					} else {
-						throw new RublonException(
-							'Invalid response signature.',
-							RublonException::CODE_INVALID_RESPONSE
-						);
-					}
-						
-				} else {
-					throw new RublonException(
-						'Empty response data.',
-						RublonException::CODE_INVALID_RESPONSE
-					);
-				}
-
-			} else {
-				$msg = '('. $response['status'] .') '. (isset($response['message']) ? $response['message'] : '');
-				throw new RublonException($msg, RublonException::CODE_RESPONSE_ERROR);
-			}
-		} else {
-			throw new RublonException(
-				'Invalid response.',
-				RublonException::CODE_INVALID_RESPONSE
-			);
-		}
-	}
-
-
-	/**
-	 * Handler for getting non-existing fields: look up in response data for given field and return value if found.
-	 *
-	 * @param string $name Field name.
-	 * @return mixed
-	 */
-	public function __get($name) {
-		if (isset($this->data[$name])) {
-			return $this->data[$name];
-		}
-		else if (isset($this->$name)) {
-			return $this->$name;
-		} else {
-			return null;
-		}
-	}
-
-
-	/**
-	 * Handler for setting non-existing fields: look up in response data for given field and set value if found
-	 *
-	 * @param string $name Field name
-	 * @param mixed $val Value to be set.
-	 */
-	public function __set($name, $val) {
-		if (isset($this->data[$name])) {
-			$this->data[$name] = $val;
-		} else $this->$name = $val;
-	}
-
-
-	/**
-	 * Handler for checking non-existing fields: look up in response data for given field and return isset() value
-	 *
-	 * @param string $name Field name
-	 * @return boolean
-	 */
-	public function __isset($name) {
-		return (isset($this->data[$name]) OR isset($this->$name));
+		
 	}
 
 
@@ -202,26 +123,6 @@ class RublonResponse {
 	}
 
 
-	/**
-	 * Verify the response.
-	 *
-	 * Checks if the received response is properly
-	 * signed by the Signature Wrapper witht the website's
-	 * secret key.
-	 * 
-	 * @see RublonSignatureWrapper
-	 * @param array $response Rublon authentication response array
-	 * @return boolean
-	 */
-	public function verifyResponse($response) {
-		if (isset($response['data']) AND isset($response['sign'])) {
-			$wrapper = new RublonSignatureWrapper;
-			$wrapper->setSecretKey($this->getConsumer()->getSecretKey());
-			$wrapper->setInput($this->rawResponse);
-			return $wrapper->verify();
-		}
-		return false;
-	}
 	
 	
 	/**
@@ -258,5 +159,7 @@ class RublonResponse {
 	public function getConsumer() {
 		return $this->getService()->getConsumer();
 	}
+	
+	
 
 }
