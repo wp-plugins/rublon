@@ -68,17 +68,20 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 1.1.2 =
-Compatibility update in the plugin automatic activation system.
-Administrators can now disable other users' two-factor authentication.
+* Administrator's account is automatically secured by Rublon upon plugin activation
+* Administrators can now disable other users' two-factor authentication
 
 = 1.1.1 =
-Minor text changes.
+* Minor text and translation updates.
 
 = 1.1.0 =
-Text and code optimalization.
+* Error handling and data verification in the admin settings.
 
 = 1.0.2 =
-Text optimalization.
+* Rublon library update.
 
 = 1.0.1 =
-Code optimalization.
+* Updated texts and translations.
+
+= 1.0 =
+* First version, implementing Rulon Two-Factor Authentication in WordPress.
