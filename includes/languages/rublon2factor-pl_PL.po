@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 1.1\n"
-"POT-Creation-Date: 2013-08-28 14:21+0100\n"
-"PO-Revision-Date: 2013-08-28 14:21+0100\n"
+"POT-Creation-Date: 2013-08-30 14:45+0100\n"
+"PO-Revision-Date: 2013-08-30 14:52+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -24,6 +24,8 @@ msgid "Settings"
 msgstr "Ustawienia"
 
 #: E:\eclipse-workspace\WordPress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:36
+#: E:\eclipse-workspace\WordPress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:228
+#: E:\eclipse-workspace\WordPress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:283
 msgid "Rublon"
 msgstr "Rublon"
 
@@ -129,14 +131,9 @@ msgstr ""
 msgid "Security"
 msgstr "Bezpieczeństwo"
 
-#: E:\eclipse-workspace\WordPress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:228
-#: E:\eclipse-workspace\WordPress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:283
-msgid "Two-Factor Authentication"
-msgstr "Dwuskładnikowe uwierzytelnianie"
-
 #: E:\eclipse-workspace\WordPress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:232
-msgid "Disable this user's Rublon Two-Factor Authentication"
-msgstr "Wyłącz dwuskładnikowe uwierzytelnianie Rublon dla tego użytkownika"
+msgid "Disable Rublon security for this account"
+msgstr "Wyłącz zabezpieczenie Rublonem dla tego konta"
 
 #: E:\eclipse-workspace\WordPress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:297
 #: E:\eclipse-workspace\WordPress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:317
@@ -252,6 +249,12 @@ msgid ""
 msgstr ""
 "Aktywacja Rublona nie powiodła się. Skontaktuj się z nami na <a href="
 "\"mailto:support@rublon.com\">support@rublon.com</a>."
+
+#~ msgid "Two-Factor Authentication"
+#~ msgstr "Dwuskładnikowe uwierzytelnianie"
+
+#~ msgid "Disable this user's Rublon Two-Factor Authentication"
+#~ msgstr "Wyłącz dwuskładnikowe uwierzytelnianie Rublon dla tego użytkownika"
 
 #~ msgid ""
 #~ "Rublon activation failed. In order to get \"System Token\" and \"Secret "

@@ -225,11 +225,11 @@ function rublon2factor_add_users_2factor_disabler($user) {
 			?><h3><?php _e('Security', 'rublon2factor') ?></h3>
 				<table class="form-table">
 					<tr>
-						<th><?php _e('Two-Factor Authentication', 'rublon2factor'); ?></th>
+						<th><?php _e('Rublon', 'rublon2factor'); ?></th>
 						<td>
 							<label for="rublon2factor_disable_users_security">
 								<input name="rublon2factor_disable_users_security" type="checkbox" id="rublon2factor_disable_users_security" value="false" />
-								<?php _e('Disable this user\'s Rublon Two-Factor Authentication', 'rublon2factor') ?>
+								<?php _e('Disable Rublon security for this account', 'rublon2factor') ?>
 							</label>
 						</td>
 					</tr>
@@ -280,7 +280,7 @@ _e('Security', 'rublon2factor');
 <tr>
 	<th>
 	<?php
-		_e('Two-Factor Authentication', 'rublon2factor');
+		_e('Rublon', 'rublon2factor');
 	?>
 	</th>
 	<td>
