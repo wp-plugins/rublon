@@ -68,7 +68,7 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 1.1.3 =
-* Minor text and translation changes
+* Minor text and translation changes.
 
 = 1.1.2 =
 * Administrator's account is automatically secured by Rublon upon plugin activation
