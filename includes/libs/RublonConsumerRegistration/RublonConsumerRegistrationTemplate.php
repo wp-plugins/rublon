@@ -204,8 +204,11 @@ abstract class RublonConsumerRegistrationTemplate {
 			$request = new RublonRequest($service);
 			$url = $this->apiDomain . $this->actionUrl .'/'. self::ACTION_PULL_SECRET_KEY;
 			$params = array('systemToken' => $systemToken);
+			try {
 			$response = $request->setRequestParams($url, $params)->getRawResponse();
-			
+			} catch (RublonException $e) {
+				$this->finalError('Failed to perform a Rublon request. ' . $e->getMessage());
+			}
 			try {
 				$response = $this->_parseMessage($response, $this->getTempKey());
 			} catch (Exception $e) {

@@ -23,11 +23,10 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		if (!empty($adminProfileId) && !Rublon2FactorHelper::isUserSecured($currentUser))
 			$success = Rublon2FactorHelper::connectRublon2Factor($currentUser, $adminProfileId);
 
-		Rublon2FactorHelper::setMessageType('updated');
 		if ($success) {
-			Rublon2FactorHelper::setMessage(__('Rublon has been activated and your account has been secured.', 'rublon2factor'));
+			Rublon2FactorHelper::setMessage(__('Rublon has been activated and your account has been secured.', 'rublon2factor'), 'updated');
 		} else {
-			Rublon2FactorHelper::setMessage(__('Rublon has been activated, but your account has not been secured with Rublon. Go to <a href="profile.php">your profile</a> in order to secure your account with Rublon.', 'rublon2factor'));
+			Rublon2FactorHelper::setMessage(__('Rublon has been activated, but your account has not been secured with Rublon. Go to <a href="profile.php">your profile</a> in order to secure your account with Rublon.', 'rublon2factor'), 'updated');
 		}
 		
 		$this->_redirect('wp-admin/options-general.php?page=rublon');
@@ -46,9 +45,11 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	protected function finalError($msg = NULL) {
 		parent::finalError($msg);
 
-		Rublon2FactorHelper::setMessage(__('Rublon activation failed. Please contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor'));
-		Rublon2FactorHelper::setMessageType('error');
-
+		$errorMessage = __('Rublon activation failed. Please contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor');
+		if (!empty($msg)) {
+			$errorMessage .= '<br />Rublon error message: [' . $msg . ']';
+		}
+		Rublon2FactorHelper::setMessage($errorMessage, 'error');
 		$this->_redirect('wp-admin/options-general.php?page=rublon');
 	}
 	

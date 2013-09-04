@@ -191,8 +191,11 @@ function rublon2factor_no_settings_warning()
 {
 	global $pagenow;
 
-	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isActive(Rublon2FactorHelper::getSettings()))
-	{
+	if ($pagenow == 'plugins.php' && !function_exists('curl_init')) {
+		echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon2factor') . '</strong> ' . __('It is a crucial component in the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon2factor') . '</p></div>';
+	}
+	
+	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isActive(Rublon2FactorHelper::getSettings())) 	{
 		echo "<div class='updated'><p><strong>" . __('Rublon is almost ready.', 'rublon2factor') . "</strong> " . sprintf(__('You must <a href="%1$s">configure</a> it before it can be used.', 'rublon2factor'), "options-general.php?page=rublon") . "</p></div>";
 	}
 }
@@ -345,11 +348,42 @@ add_action( 'show_user_profile', 'rublon2factor_secure_account_buttons');
  *
  */
 function rublon2factor_add_update_message() {
-	$message = Rublon2FactorHelper::getMessage();
-	$messageType = Rublon2FactorHelper::getMessageType();
+	$messages = Rublon2FactorHelper::getMessages();
 	
-	if ($message) {
-		echo "<div id='rublon-warning' class='". $messageType ." fade'><p>" . $message . "</p></div>";
+	if ($messages) {
+		foreach ($messages as $message)
+			echo "<div id='rublon-warning' class='". $message['message_type'] ." fade'><p>" . $message['message'] . "</p></div>";
 	}
 }
 add_action('admin_notices', 'rublon2factor_add_update_message');
+
+function rublon2factor_add_userlist_columns($columns) {
+
+	$new_columns = array();
+	foreach ($columns as $k => $v) {
+		$new_columns[$k] = $v;
+		if ($k == 'username') {
+			$new_columns['rublon2factor_status'] = __('Rublon security', 'rublon2factor');
+		}
+	}
+	return $new_columns;
+
+}
+
+add_filter('manage_users_columns', 'rublon2factor_add_userlist_columns');
+
+function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
+
+	if ($column_name == 'rublon2factor_status') {
+		$wp_user = get_user_by('id', $user_id);
+		if (!empty($wp_user)) {
+			$rublonProfileId = $wp_user->get('rublon_profile_id');
+			if (!empty($rublonProfileId))
+				$value = '<img src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account secured by Rublon', 'rublon2factor') . '" />';
+		}
+	}
+	return $value;
+
+}
+
+add_filter('manage_users_custom_column', 'rublon2factor_manage_rublon_columns', 10, 3);

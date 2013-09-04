@@ -37,6 +37,11 @@ class Rublon2FactorCallback {
 		try {
 			$this->consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
 			$this->consumer->setDomain(self::RUBLON_DOMAIN);
+			$language = get_bloginfo('language');
+			$language = strtolower(substr($language, 0, 2));
+			if (!in_array($language, array('pl')))
+				$language = 'en';
+			$this->consumer->setLang($language);
 			$this->init();
 		} catch (RublonException $error) {
 			$this->handleError($error);
@@ -144,16 +149,23 @@ class Rublon2FactorCallback {
 	function secureAccount() {
 		$credentials =  $this->getCredentials();
 		$rublonProfileId = $credentials->getProfileId();
+		$consumerParams = $this->getCredentials()->getConsumerParams();
 		$currentUser = wp_get_current_user();
 		
 		if (!Rublon2FactorHelper::isUserSecured($currentUser)) {
+			if (!empty($consumerParams['security_token'])) {
+				$securityToken = Rublon2FactorHelper::getSecurityToken();
+				if ($consumerParams['security_token'] !== $securityToken) {
+					Rublon2FactorHelper::setMessage(__('Warning: this may be a hijacking attempt! Security of this website might be compromised.', 'rublon2factor'), 'error');
+					$sessionData = $credentials->getSessionData();
+					$this->returnToPage($sessionData);
+				}
+			}
 			$success = Rublon2FactorHelper::connectRublon2Factor($currentUser, $rublonProfileId);
 			if ($success) {
-				Rublon2FactorHelper::setMessageType('updated');
-				Rublon2FactorHelper::setMessage(__('Your account has been secured by Rublon.', 'rublon2factor'));
+				Rublon2FactorHelper::setMessage(__('Your account has been secured by Rublon.', 'rublon2factor'), 'updated');
 			} else {
-				Rublon2FactorHelper::setMessageType('error');
-				Rublon2FactorHelper::setMessage(__('Unable to secure your account by Rublon.', 'rublon2factor'));
+				Rublon2FactorHelper::setMessage(__('Unable to secure your account by Rublon.', 'rublon2factor'), 'error');
 			}
 		}
 
@@ -173,11 +185,9 @@ class Rublon2FactorCallback {
 		if (Rublon2FactorHelper::isUserSecured($currentUser)) {
 			$success = Rublon2FactorHelper::unconnectRublon2Factor($currentUser, $rublonProfileId);
 			if ($success) {
-				Rublon2FactorHelper::setMessageType('updated');
-				Rublon2FactorHelper::setMessage(__('Rublon security has been disabled.', 'rublon2factor'));
+				Rublon2FactorHelper::setMessage(__('Rublon security has been disabled.', 'rublon2factor'), 'updated');
 			} else {
-				Rublon2FactorHelper::setMessageType('error');
-				Rublon2FactorHelper::setMessage(__('Unable to disable Rublon security.', 'rublon2factor'));
+				Rublon2FactorHelper::setMessage(__('Unable to disable Rublon security.', 'rublon2factor'), 'error');
 			}
 		}
 
@@ -195,6 +205,7 @@ class Rublon2FactorCallback {
 				$returnPageUrl = '/';
 			}
 			header('Location: '. $returnPageUrl);
+			exit;
 		}
 	}
 
@@ -254,8 +265,7 @@ class Rublon2FactorCallback {
 						$errorMessage = $error->getMessage();
 				}
 		}
-		Rublon2FactorHelper::setMessageType('error');
-		Rublon2FactorHelper::setMessage($errorMessage);
+		Rublon2FactorHelper::setMessage($errorMessage, 'error');
 		$this->returnToPage();
 	}
 
@@ -272,6 +282,9 @@ class Rublon2FactorCallback {
 	public function addSecureAccountButton() {
 		Rublon2FactorHelper::saveReturnPageUrl();
 		$button = $this->service->createButtonEnable(__('Secure your account with Rublon', 'rublon2factor'));
+		$securityToken = Rublon2FactorHelper::generateRandomString();
+		Rublon2FactorHelper::setSecurityToken($securityToken);
+		$button->getAuthParams()->setConsumerParam('security_token', $securityToken);
 		echo $button;
 	}
 	

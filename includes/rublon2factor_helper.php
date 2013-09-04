@@ -22,8 +22,8 @@ class Rublon2FactorHelper {
 	const RUBLON_REGISTRATION_SETTINGS_KEY = 'rublon2factor_registration_settings';
 	const RUBLON_SESSION_KEY_USER = 'rublon2factor_user';
 	const RUBLON_SESSION_KEY_RETURN_PAGE = 'rublon2factor_return_page';
-	const RUBLON_SESSION_KEY_MESSAGE = 'rublon2factor_message';
-	const RUBLON_SESSION_KEY_MESSAGE_TYPE = 'rublon2factor_message_type';
+	const RUBLON_SESSION_KEY_MESSAGES = 'rublon2factor_messages';
+	const RUBLON_SESSION_KEY_SECURITY_TOKEN = 'rublon2factor_security_token';
 	static private $callback = null;
 	static private $registration = null;
 
@@ -144,6 +144,50 @@ class Rublon2FactorHelper {
 	}
 
 	/**
+	 * Store the anti-CSRF security token
+	 * 
+	 * @param string $token Token to store
+	 */
+	static public function setSecurityToken($token) {
+
+		self::setSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKEN, $token);
+
+	}
+
+
+	/**
+	 * Retrieve the anti-CSRF security token
+	 * 
+	 * @return string
+	 */
+	static public function getSecurityToken() {
+
+		$key = self::RUBLON_SESSION_KEY_SECURITY_TOKEN;
+		$value = self::getSessionData($key);
+		self::clearSessionData($key);
+		return $value;
+
+	}
+
+	/**
+	 * Generate random string
+	 *
+	 * @param int $len (optional)
+	 * @return string
+	 */
+	static public function generateRandomString($len = 100) {
+
+		$chars = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
+		$max = strlen($chars) - 1;
+		$result = '';
+		for ($i=0; $i<$len; $i++) {
+			$result .= $chars[mt_rand(0, $max)];
+		}
+		return $result;
+
+	}
+
+	/**
 	 * Return the page url for redirection.
 	 *
 	 * @return WP_User
@@ -167,43 +211,35 @@ class Rublon2FactorHelper {
 	/**
 	 * Return the message.
 	 *
-	 * @return string
+	 * @return array
 	 */
-	static public function getMessage() {
-		$key = self::RUBLON_SESSION_KEY_MESSAGE;
-		$value = self::getSessionData($key);
+	static public function getMessages() {
+
+		$key = self::RUBLON_SESSION_KEY_MESSAGES;
+		$messages = self::getSessionData($key);
 		self::clearSessionData($key);
-		return $value;
+		return $messages;
+
 	}
 
 	/**
 	 * Store the message.
 	 *
 	 * @param string $message
+	 * @param string $type
 	 */
-	static public function setMessage($message) {
-		self::setSessionData(self::RUBLON_SESSION_KEY_MESSAGE, $message);
-	}
+	static public function setMessage($message, $type) {
 	
-	/**
-	 * Return the message type.
-	 *
-	 * @return string
-	 */
-	static public function getMessageType() {
-		$key = self::RUBLON_SESSION_KEY_MESSAGE_TYPE;
-		$value = self::getSessionData($key);
-		self::clearSessionData($key);
-		return $value;
-	}
+		$key = self::RUBLON_SESSION_KEY_MESSAGES;
+		$messages = self::getSessionData($key);
+		if (empty($messages))
+			$messages = array();
+		$messages[] = array(
+			'message' => $message,
+			'message_type' => $type,
+		);
+		self::setSessionData(self::RUBLON_SESSION_KEY_MESSAGES, $messages);
 
-	/**
-	 * Store the message type.
-	 *
-	 * @param string $messageType
-	 */
-	static public function setMessageType($messageType) {
-		self::setSessionData(self::RUBLON_SESSION_KEY_MESSAGE_TYPE, $messageType);
 	}
 
 	/**
@@ -316,7 +352,7 @@ class Rublon2FactorHelper {
 		$request_uri = ((!isset($_SERVER['REQUEST_URI'])) ? $_SERVER['PHP_SELF'] : $_SERVER['REQUEST_URI']);
 		$request_port = ((!empty($_SERVER['SERVER_PORT']) AND $_SERVER['SERVER_PORT'] <> '80') ? (":" . $_SERVER['SERVER_PORT']) : '');
 		$request_protocol = (self::isHttps() ? 'https' : 'http') . "://";
-
+			
 		return $request_protocol . $_SERVER['SERVER_NAME'] . $request_port . $request_uri;
 	}
 
