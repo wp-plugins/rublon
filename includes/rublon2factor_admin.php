@@ -192,7 +192,7 @@ function rublon2factor_no_settings_warning()
 	global $pagenow;
 
 	if ($pagenow == 'plugins.php' && !function_exists('curl_init')) {
-		echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon2factor') . '</strong> ' . __('It is a crucial component in the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon2factor') . '</p></div>';
+		echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon2factor') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon2factor') . '</p></div>';
 	}
 	
 	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isActive(Rublon2FactorHelper::getSettings())) 	{
