@@ -378,8 +378,12 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 		$wp_user = get_user_by('id', $user_id);
 		if (!empty($wp_user)) {
 			$rublonProfileId = $wp_user->get('rublon_profile_id');
+			
+			$language = get_bloginfo('language');
+			$language = strtolower(substr($language, 0, 2));			
+			
 			if (!empty($rublonProfileId))
-				$value = '<img src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account secured by Rublon', 'rublon2factor') . '" />';
+				$value = '<a href="https://www.rublon.com' . ($language=='pl'?'/pl/':'') . '" target="_blank"><img src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account secured by Rublon', 'rublon2factor') . '" /></a>';
 		}
 	}
 	return $value;
