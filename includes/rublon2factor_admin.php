@@ -100,6 +100,9 @@ function rublon2factor_create_settings_page() {
 			<p>
 				<?php _e('Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It\'s a totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.', 'rublon2factor'); ?>					
 			</p>
+			<p>					
+				<?php _e('Find out more: <a href="https://rublon.com" target="_blank">www.rublon.com</a>', 'rublon2factor'); ?>					
+			</p>
 			
 			<?php if (!Rublon2FactorHelper::isActive($settings)): ?>
 			<table class="form-table rublon2factor_table">								
