@@ -68,9 +68,9 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 1.1.4 =
-* Users secured by Rublon are marked by a Rublon icon on the user list in the Administration Panel
-* The process of securing a user's account with Rublon has been updated for security issues
-* Additional error handling in plugin activation
+* User accounts secured by Rublon are marked with a Rublon icon on the user list in the Administration Panel
+* The process of securing a user's account with Rublon has been technically improved
+* Advanced error handling during plugin activation
 
 = 1.1.3 =
 * Minor text and translation changes.

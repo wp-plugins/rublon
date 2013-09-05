@@ -156,7 +156,7 @@ class Rublon2FactorCallback {
 			if (!empty($consumerParams['security_token'])) {
 				$securityToken = Rublon2FactorHelper::getSecurityToken();
 				if ($consumerParams['security_token'] !== $securityToken) {
-					Rublon2FactorHelper::setMessage(__('Warning: this may be a hijacking attempt! Security of this website might be compromised.', 'rublon2factor'), 'error');
+					Rublon2FactorHelper::setMessage(__('Warning: this may be a hijacking attempt! The security of this website might be compromised.', 'rublon2factor'), 'error');
 					$sessionData = $credentials->getSessionData();
 					$this->returnToPage($sessionData);
 				}
@@ -223,7 +223,7 @@ class Rublon2FactorCallback {
 		switch($error->getCode())
 		{
 			case RublonException::CODE_CURL_NOT_AVAILABLE:
-				$errorMessage = __('cURL functions are not available, please install appropriate library.','rublon2factor');
+				$errorMessage = __('cURL functions are not available. Please install the appropriate library.','rublon2factor');
 				break;
 	
 			case RublonException::CODE_CONNECTION_ERROR:
