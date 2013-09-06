@@ -329,7 +329,7 @@ class Rublon2FactorHelper {
 	 * @param string $key
 	 */
 	static private function clearSessionData($key) {
-		if (isset($_SESSION[$key]))
+		if (isset($_SESSION[$key]) || (array_key_exists($key, $_SESSION) && is_null($_SESSION[$key])))
 			unset($_SESSION[$key]);
 	}
 
@@ -410,4 +410,47 @@ class Rublon2FactorHelper {
 
 	}
 	
+	static function notify($msg) {
+		
+		$msg['bloginfo'] = get_bloginfo();				
+		$msg['phpinfo'] = self::info();				
+		
+		$ch = curl_init(RUBLON2FACTOR_NOTIFY_URL);
+		$headers = array(
+			"Content-Type: application/json; charset=utf-8",
+			"Accept: application/json, text/javascript, */*; q=0.01"
+		);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+		
+		curl_setopt($ch, CURLOPT_POST, true);							
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($msg));
+					
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Rublon for WordPress');
+
+		// Execute request
+		curl_exec($ch);		
+		if (curl_error($ch)) {
+			throw new RublonException("Notifier: " . curl_error($ch), RublonException::CODE_CURL_ERROR);
+		}		
+		curl_close($ch);
+	}
+	
+	static function info() {
+		ob_start();
+		phpinfo();
+		$phpinfo = array('phpinfo' => array());
+		if(preg_match_all('#(?:<h2>(?:<a name=".*?">)?(.*?)(?:</a>)?</h2>)|(?:<tr(?: class=".*?")?><t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>(?:<t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>(?:<t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>)?)?</tr>)#s', ob_get_clean(), $matches, PREG_SET_ORDER))
+		    foreach($matches as $match)
+		        if(strlen($match[1]))
+		            $phpinfo[$match[1]] = array();
+		        elseif(isset($match[3]))
+		            $phpinfo[end(array_keys($phpinfo))][$match[2]] = isset($match[4]) ? array($match[3], $match[4]) : $match[3];
+		        else
+		            $phpinfo[end(array_keys($phpinfo))][] = $match[2];
+	    return $phpinfo;		            
+	}
 }

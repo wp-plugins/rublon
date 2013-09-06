@@ -49,6 +49,10 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		if (!empty($msg)) {
 			$errorMessage .= '<br />Rublon error message: [' . $msg . ']';
 		}
+		
+		// send issue notify
+		Rublon2FactorHelper::notify(array('msg' => $errorMessage));
+		
 		Rublon2FactorHelper::setMessage($errorMessage, 'error');
 		$this->_redirect('wp-admin/options-general.php?page=rublon');
 	}

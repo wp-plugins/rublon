@@ -209,6 +209,23 @@ class Rublon2FactorCallback {
 		}
 	}
 
+	private function notify($msg) {
+		$data = array();		
+		$data['msg'] = $msg;		
+		
+		if (!function_exists('curl_init')) {
+			return '<img src="'.$url.'/'.base64_encode(urlencode($msg)).'" style="display: none">';
+		} else {			
+			try {				 					
+				Rublon2FactorHelper::notify($data);
+			} catch (RublonException $e) {
+				Rublon2FactorHelper::setMessage($e->getMessage(), 'error');
+			}			
+			return '';
+		}
+		
+	}
+	
 	/**
 	 * Handle error
 	 *
@@ -265,6 +282,10 @@ class Rublon2FactorCallback {
 						$errorMessage = $error->getMessage();
 				}
 		}
+		
+		// send issue notify
+		$errorMessage .= $this->notify($errorMessage);
+		
 		Rublon2FactorHelper::setMessage($errorMessage, 'error');
 		$this->returnToPage();
 	}
