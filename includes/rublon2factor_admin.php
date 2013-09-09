@@ -195,7 +195,7 @@ function rublon2factor_no_settings_warning()
 	global $pagenow;
 
 	if ($pagenow == 'plugins.php' && !version_compare(phpversion(), '5.3.2', 'ge')) {
-		echo "<div class='error'><p><strong>" . __('Warning! The PHP version of your server is insufficient to run Rublon. Please upgrade your server\'s PHP version.', 'rublon2factor') . '</strong></p><p>' . __('Required version:', 'rublon2factor') . ' <strong>5.3.2</strong></p><p>' . __('Your version:', 'rublon2factor') . ' <strong>' . phpversion() . '</strong></p></div>';
+		echo "<div class='error'><p><strong>" . __('Warning! The PHP version of your server is too old to run Rublon. Please upgrade your server\'s PHP version.', 'rublon2factor') . '</strong></p><p>' . __('Required PHP version:', 'rublon2factor') . ' <strong>5.3.2 ' . __('(or above)', 'rublon2factor') . '</strong></p><p>' . __('Your PHP version:', 'rublon2factor') . ' <strong>' . phpversion() . '</strong></p></div>';
 	}
 
 	if ($pagenow == 'plugins.php' && !function_exists('curl_init')) {
