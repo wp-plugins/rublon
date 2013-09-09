@@ -77,7 +77,7 @@ After a successful installation, the plugin can be updated automatically in the 
 * Minor text and translation changes
 
 = 1.1.5 =
-* Improved error handling.
+* Improved error handling
 
 = 1.1.4 =
 * User accounts secured by Rublon are marked with a Rublon icon on the user list in the Administration Panel
@@ -85,23 +85,23 @@ After a successful installation, the plugin can be updated automatically in the 
 * Advanced error handling during plugin activation
 
 = 1.1.3 =
-* Minor text and translation changes.
+* Minor text and translation changes
 
 = 1.1.2 =
 * Administrator's account is automatically secured by Rublon upon plugin activation
 * Administrators can now disable other users' two-factor authentication
 
 = 1.1.1 =
-* Minor text and translation updates.
+* Minor text and translation updates
 
 = 1.1.0 =
 * Error handling and data verification in the admin settings.
 
 = 1.0.2 =
-* Rublon library update.
+* Rublon library update
 
 = 1.0.1 =
-* Updated texts and translations.
+* Updated texts and translations
 
 = 1.0 =
-* First version, implementing Rulon Two-Factor Authentication in WordPress.
+* First version, implementing Rulon Two-Factor Authentication in WordPress
