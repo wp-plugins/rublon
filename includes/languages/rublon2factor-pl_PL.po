@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 1.1\n"
-"POT-Creation-Date: 2013-09-09 13:59+0100\n"
-"PO-Revision-Date: 2013-09-09 14:00+0100\n"
+"POT-Creation-Date: 2013-09-09 16:13+0100\n"
+"PO-Revision-Date: 2013-09-09 16:14+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -11,38 +11,32 @@ msgstr ""
 "X-Generator: Poedit 1.5.5\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-SearchPath-0: e:\\eclipse-workspace\\Wordpress2FA RWEB-1358\n"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/rublon2factor.php:40
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/rublon2factor.php:40
 msgid ""
 "Plugin requires database modification but you do not have permission to do "
 "it."
 msgstr ""
 "Wtyczka wymaga zmian w bazie danych, ale brak uprawnień do jej modyfikacji."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/rublon2factor.php:61
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/rublon2factor.php:61
 msgid "Settings"
 msgstr "Ustawienia"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:36
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:238
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:293
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:36
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:238
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:293
 msgid "Rublon"
 msgstr "Rublon"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:71
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:71
 msgid ""
 "In order to activate Rublon please provide \"System Token\" and \"Secret Key"
 "\"."
 msgstr ""
 "Aby aktywować Rublona wprowadź proszę \"System Token\" oraz \"Secret Key\"."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:76
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:76
 msgid ""
 "Invalid \"System Token\" or \"Secret Key\". Please contact us at <a href="
 "\"mailto:support@rublon.com\">support@rublon.com</a>."
@@ -50,13 +44,11 @@ msgstr ""
 "Błędny System Token lub Secret Key. Skontaktuj się z nami na <a href="
 "\"mailto:support@rublon.com\">support@rublon.com</a>."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:92
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:92
 msgid "Rublon Settings"
 msgstr "Ustawienia Rublona"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:101
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:101
 msgid ""
 "Rublon protects your account from sign ins from unknown devices, even if "
 "your password gets stolen. It's a totally seamless way of securing your "
@@ -68,8 +60,7 @@ msgstr ""
 "zabezpieczania Twoich kont internetowych i najłatwiejsze rozwiązanie "
 "dwuskładnikowego uwierzytelniania na świecie."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:104
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:104
 msgid ""
 "Find out more: <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
 "com</a>"
@@ -77,13 +68,11 @@ msgstr ""
 "Dowiedz się więcej: <a href=\"https://rublon.com/pl/\" target=\"_blank\">www."
 "rublon.com/pl</a>"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:111
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:111
 msgid "Rublon Activation"
 msgstr "Aktywacja Rublona"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:116
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:116
 msgid ""
 "In order to be able to secure your WordPress account with Rublon, you need "
 "to activate Rublon first. Click the button below:"
@@ -91,53 +80,43 @@ msgstr ""
 "Aby korzystać z rozszerzenia, musisz najpierw uaktywnić Rublona dla Twojej "
 "instalacji WordPress. Kliknij w przycisk poniżej:"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:118
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:118
 msgid "Activate Rublon"
 msgstr "Aktywuj Rublona"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:128
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:128
 msgid "Rublon is active."
 msgstr "Rublon jest aktywny."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:133
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:133
 msgid "API Settings"
 msgstr "Ustawienia API"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:137
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:137
 msgid "System Token"
 msgstr "System Token"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:145
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:145
 msgid "Secret Key"
 msgstr "Secret Key"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:155
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:155
 msgid "Save"
 msgstr "Zapisz"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:164
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:164
 msgid "Additional settings"
 msgstr "Ustawienia dodatkowe"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:167
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:167
 msgid "During the uninstallation of this plugin"
 msgstr "Podczas odinstalowywania tej wtyczki"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:172
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:172
 msgid "delete all Rublon data"
 msgstr "usuń wszystkie dane Rublona"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:177
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:177
 msgid ""
 "keep the configuration and information about accounts already secured with "
 "Rublon"
@@ -145,32 +124,31 @@ msgstr ""
 "pozostaw dane konfiguracji i informacie o kontach już zabezpieczonych "
 "Rublonem"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:198
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:198
 msgid ""
-"Warning! The PHP version of your server is insufficient to run Rublon. "
-"Please upgrade your server's PHP version."
+"Warning! The PHP version of your server is too old to run Rublon. Please "
+"upgrade your server's PHP version."
 msgstr ""
 "Uwaga! Wersja PHP twojego serwera jest niewystarczająca, by uruchomić "
-"Rublona. Zainstaluj odpowiednią wersję PHP."
+"Rublona. Zainstaluj nową wersję PHP."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:198
-msgid "Required version:"
-msgstr "Wersja wymagana:"
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:198
+msgid "Required PHP version:"
+msgstr "Wymagana wersja PHP:"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:198
-msgid "Your version:"
-msgstr "Twoja wersja:"
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:198
+msgid "(or above)"
+msgstr "(lub wyższa)"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:202
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:198
+msgid "Your PHP version:"
+msgstr "Twoja wersja PHP:"
+
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:202
 msgid "Warning! The cURL library has not been found on this server."
 msgstr "Uwaga! Serwer nie obsługuje biblioteki cURL."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:202
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:202
 msgid ""
 "It is a crucial component of the Rublon plugin and its absence will prevent "
 "it from working properly. Please have the cURL library installed or consult "
@@ -180,37 +158,31 @@ msgstr ""
 "prawidłowe działanie. Zainstaluj bibliotekę cURL lub poproś o to "
 "administratora tego serwera."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:206
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:206
 msgid "Rublon is almost ready."
 msgstr "Rublon jest już prawie gotowy."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:206
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:206
 #, php-format
 msgid "You must <a href=\"%1$s\">configure</a> it before it can be used."
 msgstr ""
 "Musisz go tylko odpowiednio <a href=\"%1$s\">skonfigurować</a> przed użyciem."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:235
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:286
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:235
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:286
 msgid "Security"
 msgstr "Bezpieczeństwo"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:242
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:242
 msgid "Disable Rublon security for this account"
 msgstr "Wyłącz zabezpieczenie Rublonem dla tego konta"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:307
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:327
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:307
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:327
 msgid "Rublon Two-Factor Authentication"
 msgstr "Dwuskładnikowe uwierzytelnianie Rublon"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:309
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:309
 msgid ""
 "Since your account is protected by a password only, it can be accessed from "
 "any device in the world. Secure your account with Rublon in order to "
@@ -220,9 +192,8 @@ msgstr ""
 "możliwy z dowolnego urządzenia na świecie. Zabezpiecz konto Rublonem, aby "
 "ograniczyć dostęp z nieznanych urządzeń:"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:313
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:339
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:313
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:339
 msgid ""
 "Rublon is a tokenless two-factor authentication mechanism. Learn more at <a "
 "href=\"https://rublon.com/\" target=\"_blank\">www.rublon.com</a>."
@@ -231,28 +202,23 @@ msgstr ""
 "się więcej na <a href=\"https://rublon.com/pl/\" target=\"_blank\">www."
 "rublon.com/pl</a>."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:331
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:331
 msgid "Your account is secured by Rublon. "
 msgstr "Twoje konto jest zabezpieczone Rublonem. "
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:333
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:333
 msgid "It can be accessed from your Trusted Devices only."
 msgstr "Dostęp do niego jest możliwy jedynie z Twoich Urządzeń Zaufanych."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:373
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:373
 msgid "Rublon security"
 msgstr "Bezpieczeństwo - Rublon"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_admin.php:393
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_admin.php:393
 msgid "Account secured by Rublon"
 msgstr "Konto zabezpieczone Rublonem"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:158
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:158
 msgid ""
 "Warning: this may be a hijacking attempt! The security of this website might "
 "be compromised."
@@ -260,63 +226,52 @@ msgstr ""
 "Uwaga! Ktoś mógł próbować przejąć Twoje konto. Bezpieczeństwo tego portalu "
 "może być zagrożone."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:165
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:165
 msgid "Your account has been secured by Rublon."
 msgstr "Twoje konto zostało zabezpieczone Rublonem."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:168
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:168
 msgid "Unable to secure your account by Rublon."
 msgstr "Nie udało się zabezpieczyć konta Rublonem."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:188
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:188
 msgid "Rublon security has been disabled."
 msgstr "Zabezpieczenie Rublonem zostało wyłączone."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:190
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:190
 msgid "Unable to disable Rublon security."
 msgstr "Nie udało się usunąć Rublona z Twojego konta."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:243
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:243
 msgid ""
 "cURL functions are not available. Please install the appropriate library."
 msgstr ""
 "Funkcje cURL w PHP nie są dostępne na tym serwerze. Zainstaluj odpowiednią "
 "bibliotekę."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:247
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:247
 msgid "Rublon server connection problem.<br />"
 msgstr "Problem z połączeniem do serwerów Rublona.<br />"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:251
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:260
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:251
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:260
 msgid "Error details: "
 msgstr "Szczegóły błędu: "
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:255
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:276
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:255
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:276
 msgid "Rublon server error. Please try again in a moment."
 msgstr "Wystąpił błąd. Spróbuj ponownie."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:259
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:259
 msgid "Rublon server error.<br />"
 msgstr "Błąd serwerów Rublona.<br />"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:265
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:265
 msgid "Configuration error. Invalid secret key."
 msgstr "Błąd konfiguracji. Nieprawidłowy 'Secret Key'."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:279
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:279
 msgid ""
 "Rublon server internal error. Received parameters are invalid. Please try "
 "again in a moment."
@@ -324,23 +279,19 @@ msgstr ""
 "Błąd wewnętrzny Rublona. Otrzymane parametry są niewłaściwe. Spróbuj "
 "ponownie za chwilę."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:305
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:305
 msgid "Secure your account with Rublon"
 msgstr "Zabezpiecz konto Rublonem"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/rublon2factor_callback.php:316
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/rublon2factor_callback.php:316
 msgid "Disable Rublon security"
 msgstr "Wyłącz zabezpieczenie Rublonem"
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php:27
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php:27
 msgid "Rublon has been activated and your account has been secured."
 msgstr "Rublon został aktywowany, a Twoje konto zostało zabezpieczone."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php:29
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php:29
 msgid ""
 "Rublon has been activated, but your account has not been secured with "
 "Rublon. Go to <a href=\"profile.php\">your profile</a> in order to secure "
@@ -350,8 +301,7 @@ msgstr ""
 "Rublonem. Przejdź teraz do <a href=\"profile.php\">Twojego profilu</a>, żeby "
 "zabezpieczyć Twoje konto Rublonem."
 
-#: e:\eclipse-workspace\Wordpress2FA
-#: RWEB-1358/sources/Rublon-WordPress/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php:48
+#: e:\eclipse-workspace\Wordpress2FA/sources/Rublon-WordPress/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php:48
 msgid ""
 "Rublon activation failed. Please contact us at <a href=\"mailto:"
 "support@rublon.com\">support@rublon.com</a>."
