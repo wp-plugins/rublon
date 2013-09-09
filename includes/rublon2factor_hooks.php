@@ -25,3 +25,14 @@ function rublon2factor_authenticate($user, $username, $password)
 
 	Rublon2FactorHelper::authenticateWithRublon($systemUser);
 }
+function rublon2factor_login_message($message) {
+
+	$messages = Rublon2FactorHelper::getMessages();
+	if ($messages) {
+		foreach ($messages as $message)
+			echo '<div class="' . $message['message_type'] . ' fade" style="margin: 0 0 16px 8px; padding: 12px;">' . $message['message'] . '</div>';
+	}
+
+}
+
+add_filter('login_message', 'rublon2factor_login_message');

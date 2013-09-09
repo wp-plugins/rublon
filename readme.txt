@@ -3,7 +3,7 @@ Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin
 Requires at least: 3.3.x
 Tested up to: 3.6
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
@@ -11,27 +11,32 @@ Invisible Two-Factor Authentication: Rublon protects your account from sign ins 
 
 == Description ==
 
-Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It's a totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.
+Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It's a totally seamless way of protecting your online accounts and the easiest two-factor authentication solution in the world. Find out more at www.rublon.com.
+
+Rublon for WordPress requires the Rublon mobile app, which lets you define your Trusted Devices. Available for Android, BlackBerry, iPhone and Windows Phone: www.rublon.com/get
+
++++
 
 Your online accounts can be accessed from any device in the world, often without your knowledge. Rublon protects your personal data, as well as business and financial operations, by restricting access from unknown devices.
 
-Use Rublon to manage and define the devices you trust, such as your laptop, tablet and mobile phone. Rublon secured accounts will only be accessible from your Trusted Devices. The Rublon mobile app allows you to add or remove Trusted Devices at any time, anywhere you are.
+Use Rublon to manage and define the devices you trust, such as your laptop, tablet and mobile phone. Rublon protected accounts will only be accessible from your Trusted Devices. The Rublon mobile app allows you to add or remove Trusted Devices at any time, anywhere you are.
 
 Rublon is an additional security layer that verifies whether you are signing in from a Trusted Device. It works on top of any existing authentication process. This means that you still have to type your username and password or use a social login button to sign in, but it must be done on a Trusted Device in order to access your account. And if you want to sign in using a new device, simply confirm your identity using Rublon, and then add it to your Trusted Devices.
 
-You can protect your data by securing your account with Rublon on every web service that uses our security system. If your web service does not, please contact your system administrator and ask him to integrate Rublon.
+You can protect your data by protecting your account with Rublon on every web service that uses our security system. If your web service does not, please contact your system administrator and ask him to integrate Rublon.
 
 == Installation ==
 
-1. Login to your WordPress site using an administrator account.
-2. Go to the "Plugins" -> "Add New" page, type "Rublon" in the search box and press the "Search Plugins" button.
-3. Click the "Install Now" link next to the Rublon plugin in the search results and confirm the installation.
-4. After a successful installation, click "Activate Plugin".
-5. Now click "Settings" under the plugin name on the list or use the configuration link displayed on top of the "Plugins" page.
-6. In order to activate Rublon for your WordPress installation click the "Activate Rublon" button and scan the Rublon QR code that appears afterwards. Your account will be automatically secured by Rublon.
+1. Install the Rublon mobile app onto your smartphone and use it to create a Rublon account: https://rublon.com/get
+2. Sign in to your WordPress site using an administrator account.
+3. Go to the "Plugins" -> "Add New" page, type "Rublon" in the search box and press the "Search Plugins" button.
+4. Click the "Install Now" link next to the Rublon plugin in the search results and confirm the installation.
+5. After a successful installation, click "Activate Plugin".
+6. Now click "Settings" under the plugin name on the list or use the configuration link displayed on top of the "Plugins" page.
+7. In order to activate Rublon for your WordPress site click the "Activate Rublon" button and scan the QR code that appears afterwards, using the Rublon mobile app on your smartphone. Your user account will be automatically protected by Rublon.
 
 = Server requirements =
-- PHP version 5.3.3 or greater
+- PHP version 5.3.2 or greater
 - cURL PHP extension enabled
 
 == Frequently Asked Questions ==
@@ -66,6 +71,10 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.1.6 =
+* Improved error handling
+* Minor text and translation changes
 
 = 1.1.5 =
 * Improved error handling.

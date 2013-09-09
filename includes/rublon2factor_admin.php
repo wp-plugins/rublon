@@ -194,6 +194,10 @@ function rublon2factor_no_settings_warning()
 {
 	global $pagenow;
 
+	if ($pagenow == 'plugins.php' && !version_compare(phpversion(), '5.3.2', 'ge')) {
+		echo "<div class='error'><p><strong>" . __('Warning! The PHP version of your server is insufficient to run Rublon. Please upgrade your server\'s PHP version.', 'rublon2factor') . '</strong></p><p>' . __('Required version:', 'rublon2factor') . ' <strong>5.3.2</strong></p><p>' . __('Your version:', 'rublon2factor') . ' <strong>' . phpversion() . '</strong></p></div>';
+	}
+
 	if ($pagenow == 'plugins.php' && !function_exists('curl_init')) {
 		echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon2factor') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon2factor') . '</p></div>';
 	}
@@ -386,7 +390,7 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 			$language = strtolower(substr($language, 0, 2));			
 			
 			if (!empty($rublonProfileId))
-				$value = '<a href="https://www.rublon.com' . ($language=='pl'?'/pl/':'') . '" target="_blank"><img src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account secured by Rublon', 'rublon2factor') . '" /></a>';
+				$value = '<a href="https://www.rublon.com' . ($language=='pl'?'/pl/':'') . '" target="_blank"><img style="margin-top: 1px" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account secured by Rublon', 'rublon2factor') . '" /></a>';
 		}
 	}
 	return $value;

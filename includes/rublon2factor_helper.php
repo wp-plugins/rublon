@@ -23,7 +23,7 @@ class Rublon2FactorHelper {
 	const RUBLON_SESSION_KEY_USER = 'rublon2factor_user';
 	const RUBLON_SESSION_KEY_RETURN_PAGE = 'rublon2factor_return_page';
 	const RUBLON_SESSION_KEY_MESSAGES = 'rublon2factor_messages';
-	const RUBLON_SESSION_KEY_SECURITY_TOKEN = 'rublon2factor_security_token';
+	const RUBLON_SESSION_KEY_SECURITY_TOKENS = 'rublon2factor_security_tokens';
 	static private $callback = null;
 	static private $registration = null;
 
@@ -143,49 +143,60 @@ class Rublon2FactorHelper {
 		self::setSessionData(self::RUBLON_SESSION_KEY_RETURN_PAGE, $url);
 	}
 
-	/**
-	 * Store the anti-CSRF security token
-	 * 
-	 * @param string $token Token to store
-	 */
-	static public function setSecurityToken($token) {
-
-		self::setSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKEN, $token);
-
-	}
-
 
 	/**
-	 * Retrieve the anti-CSRF security token
-	 * 
-	 * @return string
-	 */
-	static public function getSecurityToken() {
-
-		$key = self::RUBLON_SESSION_KEY_SECURITY_TOKEN;
-		$value = self::getSessionData($key);
-		self::clearSessionData($key);
-		return $value;
-
-	}
-
-	/**
-	 * Generate random string
+	 * Generate random security token
 	 *
-	 * @param int $len (optional)
 	 * @return string
 	 */
-	static public function generateRandomString($len = 100) {
-
-		$chars = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
-		$max = strlen($chars) - 1;
-		$result = '';
-		for ($i=0; $i<$len; $i++) {
-			$result .= $chars[mt_rand(0, $max)];
-		}
-		return $result;
-
+	static private function generateSecurityToken() {
+	
+		return sha1(microtime() . serialize($_SERVER) . mt_rand(1, 999999999) . uniqid('', true));
+	
 	}
+
+
+	/**
+	 * Adds a new anti-CSRF security token to the session
+	 *
+	 * @param string $newToken
+	 */
+	static public function newSecurityToken() {
+	
+		$securityTokens = self::getSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS);
+		if (empty($securityTokens))
+			$securityTokens = array();
+		$newToken = self::generateSecurityToken();
+		$securityTokens[] = $newToken;
+		self::setSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS, $securityTokens);
+		return $newToken;
+	
+	}
+
+
+	/**
+	 * Validate the security token against CSRF attacks
+	 *
+	 * @param string $receivedToken Token received in the consumer params
+	 */
+	static public function validateSecurityToken($receivedToken) {
+	
+		$securityTokens = self::getSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS);
+		if (is_array($securityTokens) && in_array($receivedToken, $securityTokens)) {
+			$key = array_search($receivedToken, $securityTokens);
+			array_splice($securityTokens, $key, 1);
+			if (!empty($securityTokens))
+				self::setSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS, $securityTokens);
+			else
+				self::clearSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS);
+			return true;
+		} else {
+			return false;
+		}
+	
+	
+	}
+
 
 	/**
 	 * Return the page url for redirection.
@@ -332,6 +343,13 @@ class Rublon2FactorHelper {
 		if (isset($_SESSION[$key]) || (array_key_exists($key, $_SESSION) && is_null($_SESSION[$key])))
 			unset($_SESSION[$key]);
 	}
+
+	static public function clearSecurityTokens() {
+
+		self::clearSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS);		
+
+	}
+
 
 	/**
 	 * Store a session data for a given key.
