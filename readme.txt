@@ -95,7 +95,7 @@ After a successful installation, the plugin can be updated automatically in the 
 * Minor text and translation updates
 
 = 1.1.0 =
-* Error handling and data verification in the admin settings.
+* Error handling and data verification in the admin settings
 
 = 1.0.2 =
 * Rublon library update
@@ -104,4 +104,4 @@ After a successful installation, the plugin can be updated automatically in the 
 * Updated texts and translations
 
 = 1.0 =
-* First version, implementing Rulon Two-Factor Authentication in WordPress
+* Rublon for WordPress: Invisible Two-Factor Authentication
