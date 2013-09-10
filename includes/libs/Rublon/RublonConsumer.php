@@ -4,6 +4,10 @@ if (!defined('__DIR__')) {
 	define('__DIR__', dirname(__FILE__));
 }
 
+if (!defined('DIRECTORY_SEPARATOR')) {
+	define('DIRECTORY_SEPARATOR', '/');
+}
+
 require_once 'core/RublonException.php';
 require_once 'core/RublonSignatureWrapper.php';
 require_once 'core/RublonAuthParams.php';

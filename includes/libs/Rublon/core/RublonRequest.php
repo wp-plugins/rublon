@@ -129,7 +129,12 @@ class RublonRequest {
 		// SSL options
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_CAINFO, realpath(__DIR__ .'/../cert/cacert.pem'));
+		
+		$certPath = explode(DIRECTORY_SEPARATOR, __FILE__);		
+		array_pop($certPath);		
+		array_pop($certPath);
+		$certPath = implode(DIRECTORY_SEPARATOR, $certPath) . DIRECTORY_SEPARATOR.'cert'.DIRECTORY_SEPARATOR.'cacert.pem';				
+		curl_setopt($ch, CURLOPT_CAINFO, $certPath);
 		
 		// Execute request
 		$this->rawResponse = curl_exec($ch);

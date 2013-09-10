@@ -3,7 +3,7 @@ Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin
 Requires at least: 3.3.x
 Tested up to: 3.6
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
@@ -36,7 +36,7 @@ You can protect your data by protecting your account with Rublon on every web se
 7. In order to activate Rublon for your WordPress site click the "Activate Rublon" button and scan the QR code that appears afterwards, using the Rublon mobile app on your smartphone. Your user account will be automatically protected by Rublon.
 
 = Server requirements =
-- PHP version 5.3.2 or greater
+- PHP version 5.2.17 or greater
 - cURL PHP extension enabled
 
 == Frequently Asked Questions ==
@@ -71,6 +71,10 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.1.7 =
+* Fixed error when setting CAcert path in cURL in PHP 5.2.17
+* Confirmed compatibility with PHP version 5.2.17
 
 = 1.1.6 =
 * Improved error handling
