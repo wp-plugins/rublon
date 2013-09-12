@@ -36,6 +36,8 @@ class Rublon2FactorHelper {
 		//Initialize private session for storing data.
 		session_name(self::RUBLON_SESSION_NAME);
 		session_start();
+
+		self::versionMigrator();
 		
 		// Initialize localization
 		if (function_exists ('load_plugin_textdomain'))
