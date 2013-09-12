@@ -74,7 +74,7 @@ After a successful installation, the plugin can be updated automatically in the 
 
 = 1.1.8 =
 * Warning message about improper PHP version on PHP versions between 5.2.17 and 5.3.2 no longer displayed
-* Code updated to WordPress coding standards (thanks to Alex King from http://alexking.org)
+* Code updated to WordPress coding standards ( thanks to Alex King from http://alexking.org )
 
 = 1.1.7 =
 * Fixed error when setting CAcert path in cURL in PHP 5.2.17
