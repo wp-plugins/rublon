@@ -4,7 +4,7 @@ Plugin Name: Rublon
 Text Domain: rublon2factor
 Plugin URI: http://wordpress.org/plugins/rublon/
 Description: Rublon protects your accounts from sign ins from unknown devices, even if your password gets stolen. It's a totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.
-Version: 1.1.7
+Version: 1.1.8
 Author: Rublon
 Author URI: https://rublon.com
 License:http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 
@@ -16,39 +16,22 @@ License:http://opensource.org/licenses/gpl-license.php GNU Public License, versi
 define ('RUBLON2FACTOR_PLUGIN_URL', plugins_url () . '/' . basename (dirname (__FILE__)));
 define ('RUBLON2FACTOR_BASE_PATH', dirname (plugin_basename (__FILE__)));
 define ('RUBLON2FACTOR_NOTIFY_URL', 'https://code.rublon.com/issue_notifier/wp_notify');
+define ('RUBLON2FACTOR_REQUIRE_PHPVERSION', '5.2.17');
 
 /**
- * Ensure datamodel requirements before activating the plugin
-*/
-register_activation_hook (__FILE__, 'rublon2factor_plugin_activate');
-function rublon2factor_plugin_activate ()
-{
-	global $wpdb;
-	$user_fields = $wpdb->get_col("SHOW COLUMNS FROM $wpdb->users");
-	
-	$error_occured = false;
-	
-	if (!in_array('rublon_profile_id', $user_fields))
-	{
-		
-		$error_occured = $wpdb->query("ALTER TABLE $wpdb->users ADD rublon_profile_id INT(10)") === false;
-	}
-	
-	if($error_occured)
-	{
-		deactivate_plugins (basename (dirname (__FILE__)) . '/' . basename (__FILE__), true);
-		_e('Plugin requires database modification but you do not have permission to do it.', 'rublon2factor');
-		exit;
-	}
-	
+ * Ensure proper version migration
+**/
+
+function rublon2factor_plugin_activate() {
+
+	Rublon2FactorHelper::versionMigrator();
+
 }
 
-/**
- * Add Settings Link on "Installed plugins" list
-**/
-add_filter ('plugin_action_links', 'rublon2factor_add_settings_link', 10, 2);
-function rublon2factor_add_settings_link ($links, $file)
-{
+register_activation_hook (__FILE__, 'rublon2factor_plugin_activate');
+
+function rublon2factor_add_settings_link ($links, $file) {
+
 	static $rublon2factor_plugin = null;
 
 	if (is_null ($rublon2factor_plugin))
@@ -62,7 +45,10 @@ function rublon2factor_add_settings_link ($links, $file)
 		array_unshift ($links, $settings_link);
 	}
 	return $links;
+
 }
+
+add_filter ('plugin_action_links', 'rublon2factor_add_settings_link', 10, 2);
 
 /*
  * Include plug-in files

@@ -24,6 +24,7 @@ class Rublon2FactorHelper {
 	const RUBLON_SESSION_KEY_RETURN_PAGE = 'rublon2factor_return_page';
 	const RUBLON_SESSION_KEY_MESSAGES = 'rublon2factor_messages';
 	const RUBLON_SESSION_KEY_SECURITY_TOKENS = 'rublon2factor_security_tokens';
+	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	static private $callback = null;
 	static private $registration = null;
 
@@ -31,6 +32,7 @@ class Rublon2FactorHelper {
 	 * Initialize the consumer.
 	 */
 	static public function init() {
+
 		//Initialize private session for storing data.
 		session_name(self::RUBLON_SESSION_NAME);
 		session_start();
@@ -47,6 +49,7 @@ class Rublon2FactorHelper {
 		if (self::isActive($settings)) {
 			self::$callback = new Rublon2FactorCallback($settings);
 		}
+
 	}
 
 	static public function handleCallback($state, $token, $window_type)	{
@@ -95,11 +98,11 @@ class Rublon2FactorHelper {
 	}
 	
 	/**
-	 * Add Rublon insecure account button to the page code.
+	 * Add button for disabling Rublon security button to the page code.
 	 */
-	static public function addInsecureAccountButton() {
+	static public function addDisableAccountSecurityButton() {
 		if (self::isActive(self::getSettings())) {
-			self::getCallback()->addInsecureAccountButton();
+			self::getCallback()->addDisableAccountSecurityButton();
 		}
 	}
 	
@@ -107,10 +110,10 @@ class Rublon2FactorHelper {
 	 * Remove Rublon second factor protection from current user
 	 * account.
 	 */
-	static public function insecureAccount()
+	static public function disableAccountSecurity()
 	{
 		if (self::isActive(self::getSettings())) {
-			self::getCallback()->insecureAccount();
+			self::getCallback()->disableAccountSecurity();
 		}
 	}
 	
@@ -263,40 +266,40 @@ class Rublon2FactorHelper {
 	}
 
 	/**
-	 * Updates rublon_profile_id for a given user, to turn on 
-	 * second authentication factor.
+	 * Updates rublon_profile_id for a given user, to turn on second authentication factor.
 	 *
 	 * @param int $user
 	 * @param int $rublonProfileId
 	 * @return int|false Number of updated users or false on error
 	 */
 	static public function connectRublon2Factor($user, $rublonProfileId) {
-		global $wpdb;
 
-		$sql = "UPDATE $wpdb->users SET rublon_profile_id = %d WHERE ID = %d";
-		return $wpdb -> query($wpdb -> prepare($sql, $rublonProfileId, $user->id));
+		return add_user_meta($user->id, self::RUBLON_META_PROFILE_ID, $rublonProfileId, true);
+
 	}
 	
 	/**
-	 * Updates rublon_profile_id for a given user, to turn off 
-	 * second authentication factor.
+	 * Updates rublon_profile_id for a given user, to turn off second authentication factor.
 	 *
 	 * @param int $user
 	 * @param int $rublonProfileId
 	 * @return int|false Number of updated users or false on error
 	 */
-	static public function unconnectRublon2Factor($user, $rublonProfileId) {
-		global $wpdb;
+	static public function disconnectRublon2Factor($user, $rublonProfileId) {
 
-		$sql = "UPDATE $wpdb->users SET rublon_profile_id = %d WHERE ID = %d AND rublon_profile_id = %d";
-		return $wpdb -> query($wpdb -> prepare($sql, null, $user->id, $rublonProfileId));
+		$hasProfileId = get_user_meta($user->id, self::RUBLON_META_PROFILE_ID, true);
+		if ($hasProfileId && $hasProfileId == $rublonProfileId)
+			return delete_user_meta($user->id, self::RUBLON_META_PROFILE_ID);
+		else
+			return false;
+
 	}
 
 	/**
 	 * Specify and save url of the return page.
 	 */
-	static public function saveReturnPageUrl() {
-		self::setReturnPageUrl(self::getCurrentPageUrl());
+	static public function saveReturnPageUrl($url) {
+		self::setReturnPageUrl($url);
 	}
 
 	/**
@@ -316,7 +319,7 @@ class Rublon2FactorHelper {
 	 * @return boolean
 	 */
 	static public function isUserSecured($user) {
-		$rublonProfileId = $user -> rublon_profile_id;
+		$rublonProfileId = get_user_meta($user->id, self::RUBLON_META_PROFILE_ID, true);
 		return self::isActive(self::getSettings()) && !empty($rublonProfileId);
 	}
 
@@ -471,4 +474,29 @@ class Rublon2FactorHelper {
 		            $phpinfo[end(array_keys($phpinfo))][] = $match[2];
 	    return $phpinfo;		            
 	}
+
+
+	static public function versionMigrator() {
+
+		global $wpdb;
+
+		$user_fields = $wpdb->get_col('SHOW COLUMNS FROM ' . $wpdb->users);
+		if (in_array('rublon_profile_id', $user_fields)) {
+			$all_users = get_users();
+			foreach ($all_users as $user) {
+				if (!empty($user->rublon_profile_id)) {
+					add_user_meta($user->id, self::RUBLON_META_PROFILE_ID, $user->rublon_profile_id, true);
+				}
+			}
+			$db_error = $wpdb->query('ALTER TABLE ' . $wpdb->users . ' DROP COLUMN `rublon_profile_id`') === false;
+			if ($db_error) {
+				deactivate_plugins(basename (dirname (__FILE__)) . '/' . basename (__FILE__), true);
+				_e('Plugin requires database modification but you do not have permission to do it.', 'rublon2factor');
+				exit;
+			}
+		}
+
+	}
+
+
 }

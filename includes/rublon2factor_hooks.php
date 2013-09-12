@@ -14,10 +14,8 @@
  *
  * @return WP_User/WP_Error
  */
-remove_filter('authenticate', 'wp_authenticate_username_password', 20);
-add_filter('authenticate', 'rublon2factor_authenticate', 10, 3);
-function rublon2factor_authenticate($user, $username, $password)
-{
+function rublon2factor_authenticate($user, $username, $password) {
+
 	$systemUser = wp_authenticate_username_password($user, $username, $password);
 	if (is_wp_error($systemUser) || !Rublon2FactorHelper::isUserSecured($systemUser)) {
 		return $systemUser;
@@ -25,6 +23,20 @@ function rublon2factor_authenticate($user, $username, $password)
 
 	Rublon2FactorHelper::authenticateWithRublon($systemUser);
 }
+
+remove_filter('authenticate', 'wp_authenticate_username_password', 20);
+add_filter('authenticate', 'rublon2factor_authenticate', 10, 3);
+
+function rublon2factor_login_redirect($redirect_to) {
+
+	if (!empty($redirect_to))
+		Rublon2FactorHelper::saveReturnPageUrl($redirect_to);
+	return $redirect_to;
+
+}
+
+add_filter( 'login_redirect', 'rublon2factor_login_redirect', 10, 3);
+
 function rublon2factor_login_message($message) {
 
 	$messages = Rublon2FactorHelper::getMessages();

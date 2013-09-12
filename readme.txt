@@ -3,7 +3,7 @@ Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin
 Requires at least: 3.3.x
 Tested up to: 3.6
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
@@ -43,7 +43,7 @@ You can protect your data by protecting your account with Rublon on every web se
 
 = How to use Rublon? =
 
-In order to use Rublon please go to "Your Profile" section and click "Secure your account with Rublon".
+In order to use Rublon please go to "Your Profile" section and click "Protect your account".
 
 = Is Rublon available for my smartphone? =
 
@@ -64,13 +64,17 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 == Screenshots ==
 
 1. Activate Rublon for your WordPress installation.
-2. Secure your account with Rublon
+2. Protect your account with Rublon
 
 == Upgrade notice ==
 
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.1.8 =
+* Warning message about improper PHP version on PHP versions between 5.2.17 and 5.3.2 no longer displayed
+* Code updated to WordPress coding standards (thanks to Alex King from http://alexking.org)
 
 = 1.1.7 =
 * Fixed error when setting CAcert path in cURL in PHP 5.2.17
@@ -84,7 +88,7 @@ After a successful installation, the plugin can be updated automatically in the 
 * Improved error handling
 
 = 1.1.4 =
-* User accounts secured by Rublon are marked with a Rublon icon on the user list in the Administration Panel
+* User accounts protected by Rublon are marked with a Rublon icon on the user list in the Administration Panel
 * The process of securing a user's account with Rublon has been technically improved
 * Advanced error handling during plugin activation
 
@@ -92,7 +96,7 @@ After a successful installation, the plugin can be updated automatically in the 
 * Minor text and translation changes
 
 = 1.1.2 =
-* Administrator's account is automatically secured by Rublon upon plugin activation
+* Administrator's account is automatically protected by Rublon upon plugin activation
 * Administrators can now disable other users' two-factor authentication
 
 = 1.1.1 =

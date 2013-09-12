@@ -34,19 +34,16 @@ function rublon2factor_should_config_be_removed()
 /**
  * Perform database and options clean-up before deleting plug-in
  */
-function rublon2factor_plugin_uninstall()
-{
-	global $wpdb;
-	$user_fields = $wpdb->get_col("SHOW COLUMNS FROM $wpdb->users");
-	
-	//if ( rublon2factor_should_config_be_removed() ) {
-		delete_option('rublon2factor_settings');
-		
-		if (in_array('rublon_profile_id', $user_fields))
-		{
-			$wpdb->query("ALTER TABLE $wpdb->users DROP rublon_profile_id");
-		}		
-	//}
+function rublon2factor_plugin_uninstall() {
+
+	delete_option(Rublon2FactorHelper::RUBLON_SETTINGS_KEY);
+	delete_option(Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+
+	$all_user_ids = get_users('fields=id');
+	foreach ($all_user_ids as $user_id) {
+		delete_user_meta($user_id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID);
+	}
+
 }
 
 // Call the clean-up function

@@ -20,7 +20,6 @@
 class Rublon2FactorCallback {
 
 	const RUBLON_DOMAIN = 'https://code.rublon.com';
-	const RUBLON_INSECURE_ACCOUNT_ACTION = 'insecure_action';
 
 	private $consumer = null;
 	private $service = null;
@@ -88,7 +87,7 @@ class Rublon2FactorCallback {
 				$this->handleError($error);
 				break;
 			default:
-				$this->returnToPage();				
+				$this->returnToPage(null, admin_url('profile.php'));				
 				break;
 		}		
 		
@@ -118,10 +117,10 @@ class Rublon2FactorCallback {
 				$this->secureAccount();
 				break;
 			case RublonAuthParams::ACTION_FLAG_UNLINK_ACCOUNTS :
-				$this->insecureAccount();
+				$this->disableAccountSecurity();
 				break;
 			default :
-				$this->returnToPage();
+				$this->returnToPage(null, admin_url('profile.php'));
 				exit ;
 		}
 	}
@@ -130,15 +129,22 @@ class Rublon2FactorCallback {
 		$credentials = $this->getCredentials();
 		$rublonProfileId = $credentials->getProfileId();
 		$systemUser = Rublon2FactorHelper::getUserToAuthenticate();
-		
-		if ($systemUser && $rublonProfileId == $systemUser->rublon_profile_id){
+		$returnUrl = Rublon2FactorHelper::getReturnPageUrl();
+		$returnUrl = (!empty($returnUrl)) ? $returnUrl : admin_url();
+
+		if ($systemUser && $rublonProfileId == get_user_meta($systemUser->id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true)) {
 			wp_clear_auth_cookie();
 			wp_set_auth_cookie($systemUser->id, true);
 			do_action('wp_login', $systemUser->user_login, $systemUser);
+		} else {
+			$errorCode = 'AUTHENTICATE_ERROR';
+			Rublon2FactorHelper::setMessage(__('There was a problem during the authentication process.', 'rublon2factor'), 'error');
+			Rublon2FactorHelper::setMessage(__('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'error');
 		}
-		
+
 		$sessionData = $credentials->getSessionData();
-		$this->returnToPage($sessionData, admin_url());
+		$this->returnToPage($sessionData, $returnUrl);
+
 	}
 
 	/**
@@ -156,43 +162,57 @@ class Rublon2FactorCallback {
 			if (!empty($consumerParams['security_token'])) {
 				if (!Rublon2FactorHelper::validateSecurityToken($consumerParams['security_token'])) {
 					Rublon2FactorHelper::setMessage(__('Warning: this may be a hijacking attempt! The security of this website might be compromised.', 'rublon2factor'), 'error');
+					$errorCode = 'MISSING_SECURITY_TOKEN';
+					Rublon2FactorHelper::setMessage(__('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'error');
 					$sessionData = $credentials->getSessionData();
-					$this->returnToPage($sessionData);
+					$this->returnToPage($sessionData, admin_url('profile.php'));
 				}
 			}
 			$success = Rublon2FactorHelper::connectRublon2Factor($currentUser, $rublonProfileId);
 			if ($success) {
-				Rublon2FactorHelper::setMessage(__('Your account has been secured by Rublon.', 'rublon2factor'), 'updated');
+				Rublon2FactorHelper::setMessage(__('Your account has been protected by Rublon.', 'rublon2factor'), 'updated');
 				Rublon2FactorHelper::clearSecurityTokens();
 			} else {
-				Rublon2FactorHelper::setMessage(__('Unable to secure your account by Rublon.', 'rublon2factor'), 'error');
+				Rublon2FactorHelper::setMessage(__('Unable to protect your account with Rublon.', 'rublon2factor'), 'error');
+				$errorCode = 'CANNOT_PROTECT_ACCOUNT';
+				Rublon2FactorHelper::setMessage(__('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'error');
 			}
+		} else {
+			$errorCode = 'ALREADY_PROTECTED';
+			Rublon2FactorHelper::setMessage(__('You cannot protect an account already protected by Rublon.', 'rublon2factor'), 'error');
+			Rublon2FactorHelper::setMessage(__('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'error');
 		}
 
 		$sessionData = $credentials->getSessionData();
-		$this->returnToPage($sessionData);
+		$this->returnToPage($sessionData, admin_url('profile.php'));
 	}
 	
 	/**
 	 * Remove Rublon second factor authorization from current
 	 * user account.
 	 */
-	function insecureAccount() {
+	function disableAccountSecurity() {
 		$credentials =  $this->getCredentials();
 		$rublonProfileId = $credentials->getProfileId();
 		$currentUser = wp_get_current_user();
-
+		
 		if (Rublon2FactorHelper::isUserSecured($currentUser)) {
-			$success = Rublon2FactorHelper::unconnectRublon2Factor($currentUser, $rublonProfileId);
+			$success = Rublon2FactorHelper::disconnectRublon2Factor($currentUser, $rublonProfileId);
 			if ($success) {
 				Rublon2FactorHelper::setMessage(__('Rublon security has been disabled.', 'rublon2factor'), 'updated');
 			} else {
 				Rublon2FactorHelper::setMessage(__('Unable to disable Rublon security.', 'rublon2factor'), 'error');
+				$errorCode = 'CANNOT_DISABLE_ACCOUNT_SECURITY';
+				Rublon2FactorHelper::setMessage(__('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'error');
 			}
+		} else {
+			$errorCode = 'USER_NOT_PROTECTED';
+			Rublon2FactorHelper::setMessage(__('You cannot disable Rublon protection on a non-protected account.', 'rublon2factor'), 'error');
+			Rublon2FactorHelper::setMessage(__('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'error');
 		}
 
 		$sessionData = $credentials->getSessionData();
-		$this->returnToPage($sessionData);
+		$this->returnToPage($sessionData, admin_url('profile.php'));
 	}
 	
 
@@ -287,7 +307,7 @@ class Rublon2FactorCallback {
 		$errorMessage .= $this->notify($errorMessage);
 		
 		Rublon2FactorHelper::setMessage($errorMessage, 'error');
-		$this->returnToPage();
+		$this->returnToPage(null, admin_url('profile.php'));
 	}
 
 	/**
@@ -301,21 +321,19 @@ class Rublon2FactorCallback {
 	 * Add Rublon secure account button to the page code.
 	 */
 	public function addSecureAccountButton() {
-		Rublon2FactorHelper::saveReturnPageUrl();
-		$button = $this->service->createButtonEnable(__('Secure your account with Rublon', 'rublon2factor'));
+		$button = $this->service->createButtonEnable(__('Protect your account', 'rublon2factor'));
 		$securityToken = Rublon2FactorHelper::newSecurityToken();
 		$button->getAuthParams()->setConsumerParam('security_token', $securityToken);
 		echo $button;
 	}
 	
 	/**
-	 * Add Rublon insecure account button to the page code.
+	 * Add button for disabling Rublon security to the page code.
 	 */
-	public function addInsecureAccountButton() {
-		Rublon2FactorHelper::saveReturnPageUrl();
-		$label = __('Disable Rublon security', 'rublon2factor');
-		$currentUser = wp_get_current_user();		
-		$button = $this->service->createButtonDisable($label, $currentUser->rublon_profile_id);
+	public function addDisableAccountSecurityButton() {
+		$label = __('Disable account protection', 'rublon2factor');
+		$currentUser = wp_get_current_user();
+		$button = $this->service->createButtonDisable($label, get_user_meta($currentUser->id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true));
 		echo $button;
 	}
 	
@@ -323,12 +341,14 @@ class Rublon2FactorCallback {
 	 * Perform authorization by Rublon2Factor.
 	 */
 	public function authenticateWithRublon($user) {
-		Rublon2FactorHelper::saveReturnPageUrl();
+
 		Rublon2FactorHelper::setUserToAuthenticate($user);
 
 		$authParams = new RublonAuthParams($this->service);
 		$authParams->setConsumerParam('action', RublonAuthParams::ACTION_FLAG_LOGIN);
 
-		$this->service->initAuthorization($user->rublon_profile_id, $authParams);
+		$this->service->initAuthorization(get_user_meta($user->id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true), $authParams);
 	}
+
+
 }
