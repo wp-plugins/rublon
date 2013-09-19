@@ -35,6 +35,7 @@ You can protect your data by protecting your account with Rublon on every web se
 6. Now click "Settings" under the plugin name on the list or use the configuration link displayed on top of the "Plugins" page.
 7. In order to activate Rublon for your WordPress site click the "Activate Rublon" button and scan the QR code that appears afterwards, using the Rublon mobile app on your smartphone. Your user account will be automatically protected by Rublon.
 
+
 = Server requirements =
 - PHP version 5.2.17 or greater
 - cURL PHP extension enabled
