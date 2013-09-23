@@ -27,6 +27,12 @@ function rublon2factor_authenticate($user, $username, $password) {
 remove_filter('authenticate', 'wp_authenticate_username_password', 20);
 add_filter('authenticate', 'rublon2factor_authenticate', 10, 3);
 
+/**
+ * Save the page the user needs to be redirected to after a successful authentication
+ * 
+ * @param string $redirect_to
+ * @return string
+ */
 function rublon2factor_login_redirect($redirect_to) {
 
 	if (!empty($redirect_to))
@@ -37,6 +43,11 @@ function rublon2factor_login_redirect($redirect_to) {
 
 add_filter( 'login_redirect', 'rublon2factor_login_redirect', 10, 3);
 
+/**
+ * Display the Rublon messages on the login screen
+ * 
+ * @param array $message
+ */
 function rublon2factor_login_message($message) {
 
 	$messages = Rublon2FactorHelper::getMessages();

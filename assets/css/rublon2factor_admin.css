@@ -78,3 +78,10 @@ p.rublon_active span {
 	background: none;
 	width: auto;
 }
+
+h2.rublon-header {
+	padding-left: 38px;
+	background: url('../images/R_32x32.png') no-repeat 0 9px;
+	margin-bottom: 14px;
+	line-height: 32px;
+}

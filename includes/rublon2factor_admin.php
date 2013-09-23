@@ -13,17 +13,15 @@
  **/
 function rublon2factor_admin_css ()
 {
-	if (!wp_style_is ('rublon2factor_admin_css', 'registered'))
-	{
-		wp_register_style ('rublon2factor_admin_css', RUBLON2FACTOR_PLUGIN_URL . "/assets/css/rublon2factor_admin.css");
+	if (!wp_style_is ('rublon2factor_admin_css', 'registered')) {
+		$currentPluginVersion = Rublon2FactorHelper::getCurrentPluginVersion();
+		wp_register_style ('rublon2factor_admin_css', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_admin.css?rbv=' . $currentPluginVersion);
 	}
 
-	if (did_action ('wp_print_styles'))
-	{
+	if (did_action ('wp_print_styles'))	{
 		wp_print_styles ('rublon2factor_admin_css');
 	}
-	else
-	{
+	else {
 		wp_enqueue_style ('rublon2factor_admin_css');
 	}
 }
@@ -34,7 +32,7 @@ function rublon2factor_admin_css ()
 function rublon2factor_add_settings_page()
 {
 	$title = __('Rublon', 'rublon2factor');
-	$settings_page = add_options_page($title, $title, 'manage_options', /*'rublon2factor_settings'*/ 'rublon' , 'rublon2factor_create_settings_page');
+	$settings_page = add_plugins_page($title, $title, 'manage_options', 'rublon' , 'rublon2factor_create_settings_page');
 	add_action ('admin_print_styles-' . $settings_page, 'rublon2factor_admin_css');
 }
 add_action('admin_menu', 'rublon2factor_add_settings_page');
@@ -64,7 +62,7 @@ function rublon2factor_validate_settings($settings)
 	static $found_error = false;
 
 	$settings['uninstall_rublon_config'] = (bool) $settings['uninstall_rublon_config'];
-	$previous_settings = get_option(Rublon2FactorHelper::RUBLON_SETTINGS_KEY);
+	$previous_settings = Rublon2FactorHelper::getSettings();
 	
 	if (!$found_error AND (empty($settings['rublon_system_token']) OR empty($settings['rublon_secret_key'])))
 	{
@@ -88,8 +86,8 @@ function rublon2factor_create_settings_page() {
 	?>
 <div class="wrap">
 	<div id="rublon2factor_page" class="rublon2factor_settings">
-		<h2>
-			<?php _e('Rublon Settings', 'rublon2factor'); ?>
+		<h2 class="rublon-header">
+			<?php _e('Rublon', 'rublon2factor'); ?>
 		</h2>
 		<form method="post" action="options.php">
 			<?php	
@@ -116,8 +114,6 @@ function rublon2factor_create_settings_page() {
 						<?php _e('In order to be able to protect your WordPress account with Rublon, you need to activate Rublon first. Click the button below:', 'rublon2factor'); ?>
 						<br /><br />
 						<input class="button button-primary button-hero" type="submit" name="<?php echo RublonConsumerRegistration::ACTION_INITIALIZE ?>" value="<?php _e('Activate Rublon', 'rublon2factor') ?>" />
-						<input type="hidden" name="projectName" value="<?= get_bloginfo('title') ?>" />
-						<input type="hidden" name="projectTechnology" value="wordpress3" />
 						<br /><br />
 					</td>
 				</tr>			
@@ -194,6 +190,8 @@ function rublon2factor_no_settings_warning()
 {
 	global $pagenow;
 
+	$screen = get_current_screen();
+
 	if ($pagenow == 'plugins.php' && !version_compare(phpversion(), RUBLON2FACTOR_REQUIRE_PHPVERSION, 'ge')) {
 		echo "<div class='error'><p><strong>" . __('Warning! The PHP version of your server is too old to run Rublon. Please upgrade your server\'s PHP version.', 'rublon2factor') . '</strong></p><p>' . __('Required PHP version:', 'rublon2factor') . ' <strong>'.RUBLON2FACTOR_REQUIRE_PHPVERSION.' ' . __('(or above)', 'rublon2factor') . '</strong></p><p>' . __('Your PHP version:', 'rublon2factor') . ' <strong>' . phpversion() . '</strong></p></div>';
 	}
@@ -202,8 +200,8 @@ function rublon2factor_no_settings_warning()
 		echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon2factor') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon2factor') . '</p></div>';
 	}
 	
-	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isActive(Rublon2FactorHelper::getSettings())) 	{
-		echo "<div class='updated'><p><strong>" . __('Rublon is almost ready.', 'rublon2factor') . "</strong> " . sprintf(__('You must <a href="%1$s">configure</a> it before it can be used.', 'rublon2factor'), "options-general.php?page=rublon") . "</p></div>";
+	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isActive(Rublon2FactorHelper::getSettings()) && $screen->base != 'plugins_page_rublon') 	{
+		echo "<div class='updated'><p><strong>" . __('Rublon is almost ready.', 'rublon2factor') . "</strong> " . sprintf(__('You must <a href="%1$s">configure</a> it before it can be used.', 'rublon2factor'), "plugins.php?page=rublon") . "</p></div>";
 	}
 }
 add_action('admin_notices', 'rublon2factor_no_settings_warning');
@@ -239,7 +237,7 @@ function rublon2factor_add_users_2factor_disabler($user) {
 						<td>
 							<label for="rublon2factor_disable_users_security">
 								<input name="rublon2factor_disable_users_security" type="checkbox" id="rublon2factor_disable_users_security" value="false" />
-								<?php _e('Disable Rublon security for this account', 'rublon2factor') ?>
+								<?php _e('Disable Rublon protection for this account', 'rublon2factor') ?>
 							</label>
 						</td>
 					</tr>
@@ -362,13 +360,19 @@ function rublon2factor_add_update_message() {
 }
 add_action('admin_notices', 'rublon2factor_add_update_message');
 
+/**
+ * Add a Rublon column to the admin's user list
+ * 
+ * @param array $columns Existing user list columns
+ * @return array
+ */
 function rublon2factor_add_userlist_columns($columns) {
 
 	$new_columns = array();
 	foreach ($columns as $k => $v) {
 		$new_columns[$k] = $v;
 		if ($k == 'username') {
-			$new_columns['rublon2factor_status'] = __('Rublon security', 'rublon2factor');
+			$new_columns['rublon2factor_status'] = __('Rublon', 'rublon2factor');
 		}
 	}
 	return $new_columns;
@@ -377,12 +381,24 @@ function rublon2factor_add_userlist_columns($columns) {
 
 add_filter('manage_users_columns', 'rublon2factor_add_userlist_columns');
 
+/**
+ * Handle the additional Rublon columns for a given user
+ * 
+ * @param mixed $value Current column value
+ * @param string $column_name Column name
+ * @param int $user_id User's ID 
+ * @return string
+ */
 function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 
 	if ($column_name == 'rublon2factor_status') {
 		$wp_user = get_user_by('id', $user_id);
+		
 		if (!empty($wp_user)) {
-			$rublonProfileId = get_user_meta($wp_user->id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true);
+						
+			$wp_user_id = Rublon2FactorHelper::getUserId($wp_user);
+			
+			$rublonProfileId = get_user_meta($wp_user_id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true);
 			
 			$language = get_bloginfo('language');
 			$language = strtolower(substr($language, 0, 2));			

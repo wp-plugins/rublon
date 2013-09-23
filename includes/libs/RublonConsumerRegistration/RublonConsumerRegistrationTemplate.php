@@ -330,8 +330,7 @@ abstract class RublonConsumerRegistrationTemplate {
 			'. $this->_getHidden('communicationUrl', $this->getCommunicationUrl()) .'
 			'. $this->_getHidden('callbackUrl', $this->getCallbackUrl()) .'
 			'. $this->_getHidden('tempKey', $this->getTempKey()) .'
-			'. $this->_getHidden('projectName', $this->_post('projectName')) .'
-			'. $this->_getHidden('projectTechnology', $this->_post('projectTechnology')) .'
+			'. $this->_getHidden('projectData', $this->getProjectData()) .'
 		<script>document.getElementById("RublonConsumerRegistration").submit();</script>
 		<noscript><input type="submit" value="Register" /></noscript>
 		</form>';
@@ -349,10 +348,27 @@ abstract class RublonConsumerRegistrationTemplate {
 	protected function _getHidden($name, $value) {
 		return '<input type="hidden" name="'. htmlspecialchars($name) .'" value="'. htmlspecialchars($value) .'" />';
 	}
+
+
+	/**
+	 * Get project's additional data
+	 *
+	 * The data returned will be used upon consumer's registration
+	 * and are required. If any additional data is needed,
+	 * this method may be overwritten.
+	 *
+	 * @return string
+	 */
+	protected function getProjectData() {
 	
+		return json_encode(array(
+				'project-name' => 'New Rublon PHP Project',
+				'project-technology' => 'rublon-php-sdk'
+		), true);
 	
-	
-	
+	}
+
+
 	// --------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Core private methods
 
@@ -658,10 +674,8 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @abstract
 	 */
 	abstract protected function getCallbackUrl();
-	
-	
-	
-	
+
+
 }
 
 

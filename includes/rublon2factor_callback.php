@@ -95,6 +95,10 @@ class Rublon2FactorCallback {
 		
 	}
 
+	/**
+	 * Handle the callback for an "OK" state
+	 * 
+	 */
 	public function handleCallback()
 	{
 		$consumerParams = $this->getCredentials()->getConsumerParams();
@@ -125,6 +129,10 @@ class Rublon2FactorCallback {
 		}
 	}
 
+	/**
+	 * Clear the second factor in user authentication
+	 * 
+	 */
 	function authenticateLogin() {
 		$credentials = $this->getCredentials();
 		$rublonProfileId = $credentials->getProfileId();
@@ -132,9 +140,9 @@ class Rublon2FactorCallback {
 		$returnUrl = Rublon2FactorHelper::getReturnPageUrl();
 		$returnUrl = (!empty($returnUrl)) ? $returnUrl : admin_url();
 
-		if ($systemUser && $rublonProfileId == get_user_meta($systemUser->id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true)) {
+		if ($systemUser && $rublonProfileId == get_user_meta(Rublon2FactorHelper::getUserId($systemUser), Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true)) {
 			wp_clear_auth_cookie();
-			wp_set_auth_cookie($systemUser->id, true);
+			wp_set_auth_cookie(Rublon2FactorHelper::getUserId($systemUser), true);
 			do_action('wp_login', $systemUser->user_login, $systemUser);
 		} else {
 			$errorCode = 'AUTHENTICATE_ERROR';
@@ -148,7 +156,7 @@ class Rublon2FactorCallback {
 	}
 
 	/**
-	 * Links currently authorized (already logged in) WP user with
+	 * Links currently authenticated (already logged in) WP user with
 	 * Rublon account.
 	 *
 	 */
@@ -188,7 +196,7 @@ class Rublon2FactorCallback {
 	}
 	
 	/**
-	 * Remove Rublon second factor authorization from current
+	 * Remove Rublon second factor authentication from current
 	 * user account.
 	 */
 	function disableAccountSecurity() {
@@ -199,9 +207,9 @@ class Rublon2FactorCallback {
 		if (Rublon2FactorHelper::isUserSecured($currentUser)) {
 			$success = Rublon2FactorHelper::disconnectRublon2Factor($currentUser, $rublonProfileId);
 			if ($success) {
-				Rublon2FactorHelper::setMessage(__('Rublon security has been disabled.', 'rublon2factor'), 'updated');
+				Rublon2FactorHelper::setMessage(__('Rublon protection has been disabled.', 'rublon2factor'), 'updated');
 			} else {
-				Rublon2FactorHelper::setMessage(__('Unable to disable Rublon security.', 'rublon2factor'), 'error');
+				Rublon2FactorHelper::setMessage(__('Unable to disable Rublon protection.', 'rublon2factor'), 'error');
 				$errorCode = 'CANNOT_DISABLE_ACCOUNT_SECURITY';
 				Rublon2FactorHelper::setMessage(__('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'error');
 			}
@@ -216,6 +224,12 @@ class Rublon2FactorCallback {
 	}
 	
 
+	/**
+	 * Perform a safe redirection to a given URL or retrieve it from Rublon session data
+	 * 
+	 * @param array $sessionData Rublon session data
+	 * @param string $url URL address to redirect to
+	 */
 	private function returnToPage($sessionData = null, $url = null) {
 		$returnPageUrl = (isset($url)) ? $url : Rublon2FactorHelper::getReturnPageUrl();
 		if (!empty($sessionData)) {
@@ -229,6 +243,12 @@ class Rublon2FactorCallback {
 		}
 	}
 
+	/**
+	 * Send an error notifier request to Rublon (use a workaround if cURL not present)
+	 * 
+	 * @param string $msg
+	 * @return string
+	 */
 	private function notify($msg) {
 		$data = array();		
 		$data['msg'] = $msg;		
@@ -328,12 +348,12 @@ class Rublon2FactorCallback {
 	}
 	
 	/**
-	 * Add button for disabling Rublon security to the page code.
+	 * Add button for disabling Rublon protection to the page code.
 	 */
 	public function addDisableAccountSecurityButton() {
 		$label = __('Disable account protection', 'rublon2factor');
-		$currentUser = wp_get_current_user();
-		$button = $this->service->createButtonDisable($label, get_user_meta($currentUser->id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true));
+		$currentUser = wp_get_current_user();		
+		$button = $this->service->createButtonDisable($label, get_user_meta(Rublon2FactorHelper::getUserId($currentUser), Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true));
 		echo $button;
 	}
 	
@@ -347,7 +367,7 @@ class Rublon2FactorCallback {
 		$authParams = new RublonAuthParams($this->service);
 		$authParams->setConsumerParam('action', RublonAuthParams::ACTION_FLAG_LOGIN);
 
-		$this->service->initAuthorization(get_user_meta($user->id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true), $authParams);
+		$this->service->initAuthorization(get_user_meta(Rublon2FactorHelper::getUserId($user), Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true), $authParams);
 	}
 
 

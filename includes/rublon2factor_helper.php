@@ -37,23 +37,30 @@ class Rublon2FactorHelper {
 		session_name(self::RUBLON_SESSION_NAME);
 		session_start();
 
-		self::versionMigrator();
-		
 		// Initialize localization
 		if (function_exists ('load_plugin_textdomain'))
 		{
 			load_plugin_textdomain ('rublon2factor', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
 		}
 		
-		self::$registration = new RublonConsumerRegistration();		
-		
+		self::$registration = new RublonConsumerRegistration();
+
 		$settings = self::getSettings();
 		if (self::isActive($settings)) {
 			self::$callback = new Rublon2FactorCallback($settings);
 		}
 
+		self::updateChecker();
+
 	}
 
+	/**
+	 * Handle the Rublon callback
+	 * 
+	 * @param string|NULL $state Callback state
+	 * @param string $token Access token
+	 * @param string $window_type Window type (window, popup)
+	 */
 	static public function handleCallback($state, $token, $window_type)	{
 
 		if (!isset($state) || !isset($token)) {
@@ -100,7 +107,7 @@ class Rublon2FactorHelper {
 	}
 	
 	/**
-	 * Add button for disabling Rublon security button to the page code.
+	 * Add button for disabling Rublon protection button to the page code.
 	 */
 	static public function addDisableAccountSecurityButton() {
 		if (self::isActive(self::getSettings())) {
@@ -126,6 +133,17 @@ class Rublon2FactorHelper {
 	{
 		return get_option(self::RUBLON_SETTINGS_KEY);
 	}
+
+
+	/**
+	 * Save the Rublon plugin settings
+	 */
+	static public function saveSettings($settings) {
+
+		update_option(self::RUBLON_SETTINGS_KEY, $settings);
+
+	}
+
 
 	/**
 	 * Return the page url for redirection.
@@ -267,6 +285,51 @@ class Rublon2FactorHelper {
 		return !empty($settings) && !empty($settings['rublon_system_token']) && !empty($settings['rublon_secret_key']);
 	}
 
+	
+	/**
+	 * Retrieves plugin's version from the settings
+	 *
+	 * @return string
+	 */
+	static public function getSavedPluginVersion() {
+
+		$settings = self::getSettings();
+		return (!empty($settings) && !empty($settings['rublon_plugin_version'])) ? $settings['rublon_plugin_version'] : '';
+
+	}
+
+	/**
+	 * Retrieve plugin's version from the plugin's file
+	 * 
+	 * @return string
+	 */
+	static public function getCurrentPluginVersion() {
+
+		if (!function_exists('get_plugin_data'))
+			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		$pluginData = get_plugin_data(RUBLON2FACTOR_PLUGIN_PATH);
+		return (!empty($pluginData) && !empty($pluginData['Version'])) ? $pluginData['Version'] : '';
+		
+
+	}
+
+
+	/**
+	 * Update the rublon_plugin_version field in the plugin's options
+	 * 
+	 * @param string $version Plugin's current version
+	 */
+	static public function setPluginVersion($version) {
+
+		$settings = self::getSettings();
+		if (empty($settings))
+			$settings = array();
+		$settings['rublon_plugin_version'] = $version;
+		self::saveSettings($settings);
+
+	}
+
+
 	/**
 	 * Updates rublon_profile_id for a given user, to turn on second authentication factor.
 	 *
@@ -276,7 +339,7 @@ class Rublon2FactorHelper {
 	 */
 	static public function connectRublon2Factor($user, $rublonProfileId) {
 
-		return add_user_meta($user->id, self::RUBLON_META_PROFILE_ID, $rublonProfileId, true);
+		return add_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, $rublonProfileId, true);
 
 	}
 	
@@ -289,9 +352,9 @@ class Rublon2FactorHelper {
 	 */
 	static public function disconnectRublon2Factor($user, $rublonProfileId) {
 
-		$hasProfileId = get_user_meta($user->id, self::RUBLON_META_PROFILE_ID, true);
+		$hasProfileId = get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
 		if ($hasProfileId && $hasProfileId == $rublonProfileId)
-			return delete_user_meta($user->id, self::RUBLON_META_PROFILE_ID);
+			return delete_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID);
 		else
 			return false;
 
@@ -321,7 +384,7 @@ class Rublon2FactorHelper {
 	 * @return boolean
 	 */
 	static public function isUserSecured($user) {
-		$rublonProfileId = get_user_meta($user->id, self::RUBLON_META_PROFILE_ID, true);
+		$rublonProfileId = get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
 		return self::isActive(self::getSettings()) && !empty($rublonProfileId);
 	}
 
@@ -406,11 +469,22 @@ class Rublon2FactorHelper {
 		return false;
 	}
 	
+	/**
+	 * Perform a consumer registration action
+	 * 
+	 * @param string $action
+	 */
 	static public function consumerRegistrationAction($action)
 	{
 		self::$registration->action($action);
 	}
 	
+	/**
+	 * Validate System Token and Secret Key on Rublon servers 
+	 * 
+	 * @param array $settings
+	 * @return boolean
+	 */
 	static public function verifyConsumerSettings($settings) {
 
 		$consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
@@ -432,7 +506,40 @@ class Rublon2FactorHelper {
 		return false;
 
 	}
+
+	/**
+	 * Send a request with plugin's history to Rublon servers
+	 * 
+	 * @param array $data Plugin's history data
+	 */
+	static public function pluginHistoryRequest($data) {
+
+		$settings = self::getSettings();
+		$consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
+		$service = new RublonService2Factor($consumer);
+		$request = new RublonRequest($service);
+		$data['systemToken'] = $settings['rublon_system_token'];
+		$url = self::$registration->getDomain() . self::$registration->getActionUrl() . '/add_history';
+		$response = $request->setRequestParams($url, $data)->getRawResponse();
+
+		try {
+			$response = json_decode($response, true);
+		} catch (Exception $e) {
+			$response = null;
+		}
+
+		if (!empty($response['status']) && $response['status'] == 'OK' && !empty($response['historyAdded']))
+			return true;
+
+		return false;
+
+	}
 	
+	/**
+	 * Send an error report via cURL
+	 * 
+	 * @param string $msg Error info
+	 */
 	static function notify($msg) {
 		
 		$msg['bloginfo'] = get_bloginfo();				
@@ -462,6 +569,11 @@ class Rublon2FactorHelper {
 		curl_close($ch);
 	}
 	
+	/**
+	 * Prepare server's PHP info for error reporting
+	 * 
+	 * @return array
+	 */
 	static function info() {
 		ob_start();
 		phpinfo();
@@ -478,7 +590,11 @@ class Rublon2FactorHelper {
 	}
 
 
-	static public function versionMigrator() {
+	/**
+	 * Remove any scheme modifications from older versions and migrate data to user meta
+	 * 
+	 */
+	static private function dbMigrate() {
 
 		global $wpdb;
 
@@ -487,12 +603,12 @@ class Rublon2FactorHelper {
 			$all_users = get_users();
 			foreach ($all_users as $user) {
 				if (!empty($user->rublon_profile_id)) {
-					add_user_meta($user->id, self::RUBLON_META_PROFILE_ID, $user->rublon_profile_id, true);
+					add_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, $user->rublon_profile_id, true);
 				}
 			}
 			$db_error = $wpdb->query('ALTER TABLE ' . $wpdb->users . ' DROP COLUMN `rublon_profile_id`') === false;
 			if ($db_error) {
-				deactivate_plugins(basename (dirname (__FILE__)) . '/' . basename (__FILE__), true);
+				deactivate_plugins(plugin_basename(RUBLON2FACTOR_PLUGIN_PATH), true);
 				_e('Plugin requires database modification but you do not have permission to do it.', 'rublon2factor');
 				exit;
 			}
@@ -500,5 +616,86 @@ class Rublon2FactorHelper {
 
 	}
 
+	/**
+	 * Perform any necessary actions on plugin update
+	 * 
+	 * @param string $from Version the plugin's being updated from
+	 * @param string $to Plugin's Version the plugin's being updated to
+	 */
+	static private function performUpdate($from, $to) {
+
+		// migrate old database entries into user meta
+		self::dbMigrate();
+
+		// send update info to Rublon
+		$pluginMeta = self::preparePluginMeta();
+		$pluginMeta['action'] = 'update';
+		$pluginMeta['meta']['previous-version'] = $from;
+		self::pluginHistoryRequest($pluginMeta);
+
+	}
+
+	/**
+	 * Check if the plugin has been updated and if so, act accordingly
+	 * 
+	 */
+	static private function updateChecker() {
+
+		$savedPluginVersion = self::getSavedPluginVersion();
+		$currentPluginVersion = self::getCurrentPluginVersion();
+		if (version_compare($savedPluginVersion, $currentPluginVersion, 'l')) {
+			self::performUpdate($savedPluginVersion, $currentPluginVersion);
+			self::setPluginVersion($currentPluginVersion);
+		}
+
+	}
+
+	
+	/**
+	 * Prepare plugin meta data to be reported
+	 * 
+	 * @return array
+	 */
+	static public function preparePluginMeta() {
+
+		// prepare meta for plugin history request
+		$all_users = get_users();
+		$roles = array();
+		foreach ($all_users as $user) {
+			if (!empty($user->roles))
+				foreach ($user->roles as $role) {
+				if (!isset($roles[$role]))
+					$roles[$role] = 0;
+				$roles[$role]++;
+			}
+		}
+		$pluginMeta = array(
+				'wordpress-version' => get_bloginfo('version'),
+				'plugin-version' => Rublon2FactorHelper::getCurrentPluginVersion(),
+		);
+		foreach ($roles as $role => $count) {
+			$pluginMeta['registered-' . $role . 's'] = $count;
+		}
+		$metaHeader = array(
+				'meta' => $pluginMeta,
+		);
+		return $metaHeader;
+		
+
+	}
+
+	/**
+	 * Returns WordPress User Id.
+	 * 
+	 * Translate uppercased key "ID" which exist in old WordPress versions (3.0-3.2).
+	 * 
+	 * @param WP_User $user User object 
+	 */
+	static public function getUserId($user) {
+
+		return isset($user->ID) ? $user->ID : $user->id;
+
+	}
+	
 
 }
