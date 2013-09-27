@@ -7,11 +7,11 @@ Stable tag: 1.1.9
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-Invisible Two-Factor Authentication: Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.
+Stronger security for online accounts: Rublon protects your accounts from sign ins from unknown devices, even if your passwords get stolen.
 
 == Description ==
 
-Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It's a totally seamless way of protecting your online accounts and the easiest two-factor authentication solution in the world. Find out more at www.rublon.com.
+Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen. Find out more at http://www.rublon.com.
 
 Rublon for WordPress requires the Rublon mobile app, which lets you define your Trusted Devices. Available for Android, BlackBerry, iPhone and Windows Phone: www.rublon.com/get
 
@@ -27,7 +27,7 @@ You can protect your data by protecting your account with Rublon on every web se
 
 == Installation ==
 
-1. Install the Rublon mobile app onto your smartphone and use it to create a Rublon account: https://rublon.com/get
+1. Install the Rublon mobile app onto your smartphone and use it to create a Rublon account: http://rublon.com/get
 2. Sign in to your WordPress site using an administrator account.
 3. Go to the "Plugins" -> "Add New" page, type "Rublon" in the search box and press the "Search Plugins" button.
 4. Click the "Install Now" link next to the Rublon plugin in the search results and confirm the installation.
@@ -71,6 +71,15 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.2.0 =
+* Simplified setup process — protect your account right away after activating the plugin
+* An administrator needs to protect his account with Rublon before any other user will be able to do it
+* Rublon Seal shows up on sign-in page
+* Rublon now has an own section inside the main menu of the administration panel
+* If your account is protected, the Rublon icon shows up at the top right corner of any page in the administration panel
+* Users unfamiliar with Rublon are now being informed that they need the Rublon mobile app
+* Visual improvements
 
 = 1.1.9 =
 * Rublon settings page moved from the "Settings" to "Plugins" section of the administration area

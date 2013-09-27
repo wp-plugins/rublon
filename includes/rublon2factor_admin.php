@@ -13,9 +13,10 @@
  **/
 function rublon2factor_admin_css ()
 {
+	
 	if (!wp_style_is ('rublon2factor_admin_css', 'registered')) {
 		$currentPluginVersion = Rublon2FactorHelper::getCurrentPluginVersion();
-		wp_register_style ('rublon2factor_admin_css', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_admin.css?rbv=' . $currentPluginVersion);
+		wp_register_style ('rublon2factor_admin_css', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_admin.css', false, $currentPluginVersion);
 	}
 
 	if (did_action ('wp_print_styles'))	{
@@ -32,8 +33,8 @@ function rublon2factor_admin_css ()
 function rublon2factor_add_settings_page()
 {
 	$title = __('Rublon', 'rublon2factor');
-	$settings_page = add_plugins_page($title, $title, 'manage_options', 'rublon' , 'rublon2factor_create_settings_page');
-	add_action ('admin_print_styles-' . $settings_page, 'rublon2factor_admin_css');
+	$settings_page = add_menu_page($title, $title, 'read', 'rublon' , 'rublon2factor_create_settings_page', 'div', 81);
+	add_action ('admin_print_styles', 'rublon2factor_admin_css');
 }
 add_action('admin_menu', 'rublon2factor_add_settings_page');
 
@@ -89,95 +90,78 @@ function rublon2factor_create_settings_page() {
 		<h2 class="rublon-header">
 			<?php _e('Rublon', 'rublon2factor'); ?>
 		</h2>
-		<form method="post" action="options.php">
+
 			<?php	
-			settings_fields ('rublon2factor_settings_group');
-			$settings = Rublon2FactorHelper::getSettings();
+				$settings = Rublon2FactorHelper::getSettings();
 			?>
 
-			<p>
-				<?php _e('Rublon protects your account from sign ins from unknown devices, even if your password gets stolen. It\'s a totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.', 'rublon2factor'); ?>					
-			</p>
-			<p>					
-				<?php _e('Find out more: <a href="https://rublon.com" target="_blank">www.rublon.com</a>', 'rublon2factor'); ?>					
-			</p>
+			<?php if (!Rublon2FactorHelper::isActive($settings)): // START_BLOCK: Is Rublon active? ?>
+
+			<?php
+				$current_user = wp_get_current_user();
+				if (user_can($current_user, 'manage_options')): // START_BLOCK: Is user authorized to manage plugins?
+			?>
+
+			<form method="post" action="options.php" id="rublon-plugin-admin-activation">
+			<?php settings_fields('rublon2factor_settings_group');
 			
-			<?php if (!Rublon2FactorHelper::isActive($settings)): ?>
-			<table class="form-table rublon2factor_table">								
-
-				<tr class="row_head">
-					<th colspan="2"><strong><?php _e('Rublon Activation', 'rublon2factor'); ?></strong></th>
-				</tr>
-
-				<tr class="row_even">
-					<td style="width: 50%">
-						<?php _e('In order to be able to protect your WordPress account with Rublon, you need to activate Rublon first. Click the button below:', 'rublon2factor'); ?>
-						<br /><br />
-						<input class="button button-primary button-hero" type="submit" name="<?php echo RublonConsumerRegistration::ACTION_INITIALIZE ?>" value="<?php _e('Activate Rublon', 'rublon2factor') ?>" />
-						<br /><br />
-					</td>
-				</tr>			
-			</table>
-			<?php else: ?>
+				echo '<div class="updated rublon-activation-mere-user">'
+					. __('Before any of your users will be able to use Rublon, you or another administrator needs to protect his account first.', 'rublon2factor')
+					. '</div>';
+				echo '<div class="rublon-button-header">'
+					. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon2factor')
+					. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon2factor') . '</div>';
+ 				echo '<div class="rublon-button-content">';
+    			echo Rublon2FactorHelper::constructRublonButton(__('Protect your account', 'rublon2factor'), 'document.getElementById(\'rublon-plugin-admin-activation\').submit();return false;');
+    			echo Rublon2FactorHelper::appInfoBox(false);
+				echo '</div><div class="rublon-clear"></div>';
 			
-			<p class="rublon_active">
-				<span><?php _e('Rublon is active.', 'rublon2factor') ?></span>
-			</p>
-							
-			<table class="form-table rublon2factor_table">	
-				<tr class="row_head">
-					<th colspan="2"><strong><?php _e('API Settings', 'rublon2factor'); ?></strong></th>
-				</tr>
-				
-				<tr class="row_even">
-					<td><label><?php _e('System Token', 'rublon2factor'); ?>:</label>
-					</td>
-					<td><input class="api_params" type="text"
-						name="rublon2factor_settings[rublon_system_token]"
-						value="<?php echo (isset ($settings['rublon_system_token']) ? esc_attr($settings['rublon_system_token']) : ''); ?>" />
-					</td>
-				</tr>
-				<tr class="row_odd">
-					<td><label><?php _e ('Secret Key', 'rublon2factor'); ?>:</label>
-					</td>
-					<td><input class="api_params" type="text"
-						name="rublon2factor_settings[rublon_secret_key]"
-						value="<?php echo (isset ($settings['rublon_secret_key']) ? esc_attr($settings['rublon_secret_key']) : ''); ?>" />
-					</td>
-				</tr>
-				
-				<tr class="row_even">
-					<td colspan="2">
-						<input type="submit" class="button-primary" value="<?php _e('Save', 'rublon2factor') ?>" />
-					</td>
-				</tr>				
-								
-			</table>
-			<?php endif; ?>
-			<?php if (false):?>
-			<table class="form-table rublon2factor_table">
-				<tr class="row_head">
-					<th><strong><?php _e('Additional settings', 'rublon2factor'); ?></strong></th>
-				</tr>
-	  			<tr class="row_odd">
-					<td><label><?php _e('During the uninstallation of this plugin', 'rublon2factor'); ?>:</label>
-					</td>
-					<td>
-						<label for="rublon2factor_settings[uninstall_rublon_config]yes">
-							<input id="rublon2factor_settings[uninstall_rublon_config]yes" type="radio" <?php checked(true, (bool) $settings['uninstall_rublon_config']) ?> value="1" name="rublon2factor_settings[uninstall_rublon_config]">
-							<span><?php _e('delete all Rublon data', 'rublon2factor'); ?></span>
-						</label>
-						<br>
-						<label for="rublon2factor_settings[uninstall_rublon_config]no">
-							<input id="rublon2factor_settings[uninstall_rublon_config]no" type="radio" <?php checked(false, (bool) $settings['uninstall_rublon_config']) ?> value="0" name="rublon2factor_settings[uninstall_rublon_config]">
-							<span><?php _e('keep the configuration and information about accounts already protected with Rublon', 'rublon2factor'); ?></span>
-						</label>
-					</td>
-				</tr>
-			</table>
-			<?php endif;?>						
+			?>
 
-		</form>
+			<input style="display: none !important;" type="hidden" name="<?php echo RublonConsumerRegistration::ACTION_INITIALIZE ?>" value="<?php _e('Activate Rublon and protect your account', 'rublon2factor') ?>" />
+
+			</form>
+			<?php else: // ELSE_BLOCK: Is user authorized to manage plugins?
+
+				$admin_email = get_option('admin_email');
+				$admin_url = admin_url('admin.php?page=rublon');
+				echo '<div class="updated rublon-activation-mere-user">'
+					. __('Rublon will be available to you once your administrator protects his account.', 'rublon2factor')
+					. ' <strong>' . __('Contact your administrator', 'rublon2factor') . ':' . ' <a href="mailto:' . $admin_email . '?subject=' . __('Protect your account with Rublon', 'rublon2factor') . '&body=' . sprintf(__('Hey, could you please protect your account with Rublon on %s? I want to protect my account, but I won\'t be able to do this until an administrator will.', 'rublon2factor'), $admin_url) . '">' . $admin_email . '</a></strong>'
+					. '</div>';
+				echo '<div class="rublon-button-header">'
+					. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon2factor')
+					. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon2factor') . '</div>';
+				echo '<div class="rublon-clear"></div>';
+			
+			?>
+
+			<?php endif; // END_BLOCK: Is user authorized to manage plugins? ?>
+
+			<?php else: // ELSE_BLOCK: Is Rublon active? ?>
+			
+			<?php if (Rublon2FactorHelper::isCurrentUserSecured()) {
+
+				echo '<div class="rublon-button-header">'
+					. __('<strong>Your account is protected by Rublon</strong>. It can be accessed from your Trusted Devices only.', 'rublon2factor')
+					. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon2factor') . '</div>';
+				echo '<div class="rublon-button-content">';
+				Rublon2FactorHelper::addDisableAccountSecurityButton('rublon');
+				echo '</div><div class="rublon-clear"></div>';
+
+			} else {
+
+				echo '<div class="rublon-button-header">'
+					. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon2factor')
+					. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon2factor') . '</div>';
+ 				echo '<div class="rublon-button-content">';
+    			Rublon2FactorHelper::addSecureAccountButton('rublon');
+    			echo Rublon2FactorHelper::appInfoBox();
+				echo '</div><div class="rublon-clear"></div>';
+			
+			} ?>
+
+			<?php endif; // END_BLOCK: Is Rublon active? ?>
 	</div>
 </div>
 <?php 
@@ -200,8 +184,8 @@ function rublon2factor_no_settings_warning()
 		echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon2factor') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon2factor') . '</p></div>';
 	}
 	
-	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isActive(Rublon2FactorHelper::getSettings()) && $screen->base != 'plugins_page_rublon') 	{
-		echo "<div class='updated'><p><strong>" . __('Rublon is almost ready.', 'rublon2factor') . "</strong> " . sprintf(__('You must <a href="%1$s">configure</a> it before it can be used.', 'rublon2factor'), "plugins.php?page=rublon") . "</p></div>";
+	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isActive(Rublon2FactorHelper::getSettings()) && $screen->base == 'plugins') {
+		Rublon2FactorHelper::activationRibbon();
 	}
 }
 add_action('admin_notices', 'rublon2factor_no_settings_warning');
@@ -213,7 +197,7 @@ function rublon2factor_add_script_on_profile_page()
 {
 	global $pagenow;
 
-	if($pagenow == 'profile.php')
+	if($pagenow == 'profile.php' || ($pagenow == 'admin.php' && get_current_screen()->base == 'toplevel_page_rublon'))
 	{
 		Rublon2FactorHelper::addScript();
 	}
@@ -279,62 +263,34 @@ function rublon2factor_secure_account_buttons()
 		?>
 <h3>
 <?php
-_e('Security', 'rublon2factor'); 
+	_e('Rublon', 'rublon2factor'); 
 ?>
 </h3>
 <table class="form-table">
 <tr>
 	<th>
-	<?php
-		_e('Rublon', 'rublon2factor');
-	?>
 	</th>
 	<td>
 <?php 
 if ( !Rublon2FactorHelper::isCurrentUserSecured() ) { 	
- 	
- 	echo '<div style="margin:0em;
-            padding:2em;
-            border:solid 1px #cccccc;
-            background:none;
-            font:normal 12px Helvetica, Arial;
-            width: 40%;
-            ">
-		    <h2 style="font:bold 16px Helvetica, Arial;">' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '</h2>     
-		    <p>' .
-		     __('Since your account is protected by a password only, it can be accessed from any device in the world. Protect your account with Rublon in order to restrict access from unknown devices:', 'rublon2factor')
-		    . '</p><p>';		 
-		    Rublon2FactorHelper::addSecureAccountButton();		             
-	   echo '</p><p>' .
-		      __('Rublon is a tokenless two-factor authentication mechanism. Learn more at <a href="https://rublon.com/" target="_blank">www.rublon.com</a>.', 'rublon2factor')
-		    . '</p>
-		 
-		</div>';
+
+	echo '<div class="rublon-button-header">'
+		. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon2factor')
+		. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon2factor') . '</div>';
+ 	echo '<div class="rublon-button-content">';
+    Rublon2FactorHelper::addSecureAccountButton();
+    echo Rublon2FactorHelper::appInfoBox();
+	echo '</div><div class="rublon-clear"></div>';
  	
 } else {	
 	
-	echo '<div style="margin:0em;
-            padding:2em;
-            border:solid 1px #cccccc;
-            background:#B2E1A0;
-            font:normal 12px Helvetica,Arial;
-            width: 40%;
-            ">
-		   <h2 style="font:bold 16px Helvetica, Arial;">' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '</h2>
-		 
-		   <p>
-		    <strong>' .
-		     __('Your account is protected by Rublon. ', 'rublon2factor')
-		    . '</strong>' .
-		     __('It can be accessed from your Trusted Devices only.', 'rublon2factor')
-		   . '</p>		 
-		   <p>';
-			Rublon2FactorHelper::addDisableAccountSecurityButton();		 
-	 echo '</p>
-		   <p>' .
-		    __('Rublon is a tokenless two-factor authentication mechanism. Learn more at <a href="https://rublon.com/" target="_blank">www.rublon.com</a>.', 'rublon2factor')
-		   . '</p>
-		</div>';
+	echo '<div class="rublon-button-header">'
+		. __('<strong>Your account is protected by Rublon</strong>. It can be accessed from your Trusted Devices only.', 'rublon2factor')
+		. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon2factor') . '</div>';
+	echo '<div class="rublon-button-content">';
+	Rublon2FactorHelper::addDisableAccountSecurityButton();
+	echo '</div><div class="rublon-clear"></div>';
+
 }
 ?>
 	</td>	
@@ -400,11 +356,10 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 			
 			$rublonProfileId = get_user_meta($wp_user_id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true);
 			
-			$language = get_bloginfo('language');
-			$language = strtolower(substr($language, 0, 2));			
+			$lang = Rublon2FactorHelper::getBlogLanguage();
 			
 			if (!empty($rublonProfileId))
-				$value = '<a href="https://www.rublon.com' . ($language=='pl'?'/pl/':'') . '" target="_blank"><img style="margin-top: 1px" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account protected by Rublon', 'rublon2factor') . '" /></a>';
+				$value = '<a href="http://rublon.com' . ($lang != 'en' ? '/' . $lang . '/' : '') . '" target="_blank"><img style="margin-top: 1px" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account protected by Rublon', 'rublon2factor') . '" /></a>';
 		}
 	}
 	return $value;
@@ -412,3 +367,73 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 }
 
 add_filter('manage_users_custom_column', 'rublon2factor_manage_rublon_columns', 10, 3);
+
+function rublon2factor_modify_admin_toolbar() {
+
+	global $wp_admin_bar;
+	
+	if (Rublon2FactorHelper::isCurrentUserSecured()) {
+
+		// add a Rublon icon to the my-account node
+		$my_account = $wp_admin_bar->get_node('my-account');
+		$my_account->title = $my_account->title . '<img id="rublon-toolbar-logo" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_16x16.png' . '" />';
+ 		$wp_admin_bar->remove_node('my-account');
+ 		$wp_admin_bar->add_node($my_account);
+
+ 		// remove all my-account subnodes except user-info
+ 		$nodes = $wp_admin_bar->get_nodes();
+ 		$removed_nodes = array();
+ 		foreach ($nodes as $node) {
+ 			if (!empty($node->title) && $node->parent == 'user-actions' && $node->id != 'user-info') {
+ 				array_push($removed_nodes, $node);
+ 				$wp_admin_bar->remove_node($node->id);
+ 			}
+ 		}
+ 		
+ 		// add Rublon node
+ 		$wp_admin_bar->add_node(array(
+ 				'id' => 'rublon',
+ 				'title' => __('Protected by Rublon', 'rublon2factor'),
+ 				'href' => admin_url('admin.php?page=rublon'),
+ 				'parent' => 'user-actions',
+ 		
+ 		));
+ 		
+		// restore all removed nodes
+ 		foreach ($removed_nodes as $node) {
+ 			$wp_admin_bar->add_node($node);
+ 		}
+
+ 	}
+	
+
+}
+
+add_action( 'wp_before_admin_bar_render', 'rublon2factor_modify_admin_toolbar', 999);
+
+function rublon2factor_add_frontend_styles() {
+
+	$currentPluginVersion = Rublon2FactorHelper::getCurrentPluginVersion();
+	wp_enqueue_style('rublon2factor_frontend', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_frontend.css', false, $currentPluginVersion);
+
+}
+
+add_action('wp_enqueue_scripts', 'rublon2factor_add_frontend_styles');
+add_action('login_enqueue_scripts', 'rublon2factor_add_frontend_styles');
+
+function rublon2factor_modify_login_form() {
+
+	$rublonSealUrl = 'http://rublon.com/img/rublon_seal_79x30.png';
+	$lang = Rublon2FactorHelper::getBlogLanguage();
+	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="http://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '">'
+		. '<img src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '" /></a></div></div>';
+	echo '<script>//<![CDATA[
+		var rublonSeal = document.getElementById(\'rublon-seal\');
+		rublonSeal.parentNode.removeChild(rublonSeal);
+		document.querySelector(\'#loginform p.submit\').appendChild(rublonSeal);
+		rublonSeal.style.display = \'block\';
+	//]]></script>';
+
+}
+
+add_action('login_footer', 'rublon2factor_modify_login_form');

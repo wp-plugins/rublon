@@ -1,0 +1,17 @@
+#rublon-toolbar-logo {
+	border: 0 !important;
+	background: transparent !important;
+}
+
+.rublon-seal-link {
+	float: right;
+}
+
+#rublon-seal {
+	padding-top: 10px;
+	clear: both;
+}
+
+.rublon-clear {
+	clear: both;
+}

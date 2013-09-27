@@ -36,8 +36,7 @@ class Rublon2FactorCallback {
 		try {
 			$this->consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
 			$this->consumer->setDomain(self::RUBLON_DOMAIN);
-			$language = get_bloginfo('language');
-			$language = strtolower(substr($language, 0, 2));
+			$language = Rublon2FactorHelper::getBlogLanguage();
 			if (!in_array($language, array('pl')))
 				$language = 'en';
 			$this->consumer->setLang($language);
@@ -87,7 +86,14 @@ class Rublon2FactorCallback {
 				$this->handleError($error);
 				break;
 			default:
-				$this->returnToPage(null, admin_url('profile.php'));				
+				$page = 'profile.php';
+				if (!empty($_GET['custom']))
+					switch($_GET['custom']) {
+						case 'rublon':
+							$page = 'admin.php?page=rublon';
+							break;
+					}
+				$this->returnToPage(null, admin_url($page));				
 				break;
 		}		
 		
@@ -178,7 +184,7 @@ class Rublon2FactorCallback {
 			}
 			$success = Rublon2FactorHelper::connectRublon2Factor($currentUser, $rublonProfileId);
 			if ($success) {
-				Rublon2FactorHelper::setMessage(__('Your account has been protected by Rublon.', 'rublon2factor'), 'updated');
+				Rublon2FactorHelper::setMessage(__('Your account is now protected by Rublon.', 'rublon2factor'), 'updated');
 				Rublon2FactorHelper::clearSecurityTokens();
 			} else {
 				Rublon2FactorHelper::setMessage(__('Unable to protect your account with Rublon.', 'rublon2factor'), 'error');
@@ -192,7 +198,14 @@ class Rublon2FactorCallback {
 		}
 
 		$sessionData = $credentials->getSessionData();
-		$this->returnToPage($sessionData, admin_url('profile.php'));
+		$page = 'profile.php';
+		if (!empty($_GET['custom']))
+			switch ($_GET['custom']) {
+				case 'rublon':
+					$page = 'admin.php?page=rublon';
+					break;
+			}
+		$this->returnToPage($sessionData, admin_url($page));
 	}
 	
 	/**
@@ -207,7 +220,7 @@ class Rublon2FactorCallback {
 		if (Rublon2FactorHelper::isUserSecured($currentUser)) {
 			$success = Rublon2FactorHelper::disconnectRublon2Factor($currentUser, $rublonProfileId);
 			if ($success) {
-				Rublon2FactorHelper::setMessage(__('Rublon protection has been disabled.', 'rublon2factor'), 'updated');
+				Rublon2FactorHelper::setMessage(__('Rublon protection has been disabled. You are now protected by a password only, which may result in unauthorized access to your account. We strongly encourage you to protect your account with Rublon.', 'rublon2factor'), 'updated');
 			} else {
 				Rublon2FactorHelper::setMessage(__('Unable to disable Rublon protection.', 'rublon2factor'), 'error');
 				$errorCode = 'CANNOT_DISABLE_ACCOUNT_SECURITY';
@@ -220,7 +233,14 @@ class Rublon2FactorCallback {
 		}
 
 		$sessionData = $credentials->getSessionData();
-		$this->returnToPage($sessionData, admin_url('profile.php'));
+		$page = 'profile.php';
+		if (!empty($_GET['custom']))
+			switch ($_GET['custom']) {
+				case 'rublon':
+					$page = 'admin.php?page=rublon';
+					break;
+		}
+		$this->returnToPage($sessionData, admin_url($page));
 	}
 	
 
@@ -340,20 +360,22 @@ class Rublon2FactorCallback {
 	/**
 	 * Add Rublon secure account button to the page code.
 	 */
-	public function addSecureAccountButton() {
+	public function addSecureAccountButton($page) {
 		$button = $this->service->createButtonEnable(__('Protect your account', 'rublon2factor'));
 		$securityToken = Rublon2FactorHelper::newSecurityToken();
 		$button->getAuthParams()->setConsumerParam('security_token', $securityToken);
+		$button->getAuthParams()->setConsumerparam('customURIParam', $page);
 		echo $button;
 	}
 	
 	/**
 	 * Add button for disabling Rublon protection to the page code.
 	 */
-	public function addDisableAccountSecurityButton() {
+	public function addDisableAccountSecurityButton($page) {
 		$label = __('Disable account protection', 'rublon2factor');
 		$currentUser = wp_get_current_user();		
 		$button = $this->service->createButtonDisable($label, get_user_meta(Rublon2FactorHelper::getUserId($currentUser), Rublon2FactorHelper::RUBLON_META_PROFILE_ID, true));
+		$button->getAuthParams()->setConsumerparam('customURIParam', $page);
 		echo $button;
 	}
 	

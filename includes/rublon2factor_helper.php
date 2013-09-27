@@ -42,7 +42,7 @@ class Rublon2FactorHelper {
 		{
 			load_plugin_textdomain ('rublon2factor', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
 		}
-		
+
 		self::$registration = new RublonConsumerRegistration();
 
 		$settings = self::getSettings();
@@ -53,6 +53,7 @@ class Rublon2FactorHelper {
 		self::updateChecker();
 
 	}
+
 
 	/**
 	 * Handle the Rublon callback
@@ -99,19 +100,23 @@ class Rublon2FactorHelper {
 	
 	/**
 	 * Add Rublon secure account button to the page code.
+	 * 
+	 * @param string $page Optional parameter setting the return page
 	 */
-	static public function addSecureAccountButton() {
+	static public function addSecureAccountButton($page = 'profile') {
 		if (self::isActive(self::getSettings())) {
-			self::getCallback()->addSecureAccountButton();
+			self::getCallback()->addSecureAccountButton($page);
 		}
 	}
 	
 	/**
 	 * Add button for disabling Rublon protection button to the page code.
+	 * 
+	 * @param string $page Optional parameter setting the return page
 	 */
-	static public function addDisableAccountSecurityButton() {
+	static public function addDisableAccountSecurityButton($page = 'profile') {
 		if (self::isActive(self::getSettings())) {
-			self::getCallback()->addDisableAccountSecurityButton();
+			self::getCallback()->addDisableAccountSecurityButton($page);
 		}
 	}
 	
@@ -694,6 +699,119 @@ class Rublon2FactorHelper {
 	static public function getUserId($user) {
 
 		return isset($user->ID) ? $user->ID : $user->id;
+
+	}
+
+
+	/**
+	 * Returns the blog language code
+	 *
+	 * $returns string
+	 */
+	static public function getBlogLanguage() {
+	
+		$language = get_bloginfo('language');
+		$language = strtolower(substr($language, 0, 2));
+		return $language;
+	
+	}
+
+
+	/**
+	 * Prepare HTML code for displaying the plugin activation ribblon on the "Plugins" page
+	 * 
+	 */
+	static public function activationRibbon() {
+
+		$ribbonStart = '<div class="updated" style="padding: 0; margin: 0; border: none; background: none;">';
+		$ribbonStart .= '<div class="rublon-activate-ribbon">';
+		$ribbonStart .= '<form method="post" action="options.php" id="rublon-plugin-admin-activation">';
+		echo $ribbonStart;
+		settings_fields('rublon2factor_settings_group');
+		$ribbonEnd = '<div class="rublon-activate-description-wrapper">' . self::constructRublonButton(__('Protect your account', 'rublon2factor'), 'document.getElementById(\'rublon-plugin-admin-activation\').submit();return false;') . '</div>';
+		$ribbonEnd .= '<input type="hidden" name="' . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="' . __('Protect your account', 'rublon2factor') . '" />';
+		$lang = self::getBlogLanguage(); 
+		$ribbonEnd .= '<div class="rublon-activate-description-wrapper"><div class="rublon-activate-description">' . __('Rublon mobile app required', 'rublon2factor') . '.' . sprintf('<strong><a href="http://rublon.com%s/get" target="_blank"><span style=color:#5bba36> ',  (($lang != 'en') ? ('/' . $lang) : '')) . __('Free Download', 'rublon2factor') . ' &raquo;</span></a></strong></div></div>';
+		$ribbonEnd .= '<div class="rublon-activate-image"><a href="http://rublon.com'. (($lang != 'en') ? '/' . $lang . '/' : '') . '" target="_blank"><img src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon-ribbon-text.png" /></a></div>';
+		$ribbonEnd .= '<div class="rublon-clear"></div>';
+		$ribbonEnd .= '</form></div></div>';
+		echo $ribbonEnd;
+
+	}
+
+
+	/**
+	 * Create a Rublon button with a dynamic text
+	 */
+	static public function constructRublonButton($text, $onClick) {
+
+		$button = '<a href="http://rublon.com" onclick="' . $onClick . '" style="width:auto;height:30px;background: url(' . Rublon2FactorCallback::RUBLON_DOMAIN
+			. '/public/img/buttons/rublon-btn-bg-dark-medium.png) left top repeat-x;font-weight:bold;font-size:13px;font-family:&quot;Helvetica&quot;'
+			. ' &quot;Nimbus Sans&quot; &quot;Arial&quot; &quot;sans-serif&quot;;color:#ffffff;text-decoration:none;display:inline-block;position:relative;padding:0 8px;'
+			. 'margin:0 8px;"><span style="display:block;width:33px;height:30px;background:url(' . Rublon2FactorCallback::RUBLON_DOMAIN
+			. '/public/img/buttons/rublon-btn-bg-begin-dark-medium.png) left top no-repeat;position:absolute;left:-8px;top:0;padding:0;margin:0;"></span><span'
+			. ' style="display:block;width:22px;height:30px;background:url(' . Rublon2FactorCallback::RUBLON_DOMAIN . '/public/img/buttons/rublon-btn-bg-end-dark-medium.png)'
+			. ' left top no-repeat;position:absolute;right:-8px;top:0;padding:0;margin:0;"></span><span style="display:block;margin:0;padding:5px 22px 0 33px;font-weight:bold;'
+			. 'line-height:17px;height:17px;font-size:13px;font-family: Helvetica, &quot;Nimbus Sans&quot;, Arial, sans-serif;color:#ffffff;white-space:nowrap;'
+			. '">'
+			. $text . '</span></a>';
+		return $button;
+
+	}
+
+
+	/**
+	 * Displays the app info box (to be displayed under the Rublon buttons when a Trusted Device is not present)
+	 * 
+	 * @return string
+	 */
+	static public function appInfoBox($hidden = true) {
+
+		$infoBox = '<div class="rublon-app-info-box"' . ((!$hidden) ? ' style="display: block;"' : '') . '>';
+		$infoBox .= '<p class="rublon-app-info-text"><strong>' . __('Rublon mobile app required:', 'rublon2factor') . '</strong></p>';
+		$infoBox .= '<div class="rublon-app-info-icons"></div>';
+		$lang = self::getBlogLanguage();
+		$infoBox .= '<p class="rublon-app-info-link"><strong>' . sprintf('<a href="http://rublon.com%s/get" target="_blank">', (($lang != 'en') ? ('/' . $lang) : '')) . __('Free Download', 'rublon2factor') . '</a></strong></p>';
+		$infoBox .= '</div>';
+		if ($hidden) {
+			$infoBox .= '<script>//<![CDATA[
+				var checkTrustedDevices = function() {
+					if (window.RublonConfigure && !window.RublonConfigure.trustedDevices) {
+							var elements = document.querySelectorAll(\'.rublon-app-info-box\');
+						for (var i = 0; i < elements.length; i++)
+							elements[i].style.display = \'block\';
+					}
+				};
+				if (window.RublonConfigure) {
+					checkTrustedDevices();
+				} else {
+					if (document.addEventListener) {
+						document.addEventListener(\'RublonJSSDKInit\', function() {
+							checkTrustedDevices();
+						}, false);
+					} else {
+						document.documentElement.RublonJSSDKInit = 0;
+						document.documentElement.attachEvent(\'onpropertychange\', function(event) {
+							if (event.propertyName == \'RublonJSSDKInit\' && event.srcElement.RublonJSSDKInit > 0) {
+								checkTrustedDevices();
+							}
+						});
+					}
+				}
+			//]]></script>';
+		}
+		return $infoBox;		
+
+	}
+
+
+	/**
+	 * This function SHOULD NOT BE USED. It exists for l18n purposes only.
+	 * 
+	 */
+	static private function additionalTranslations() {
+
+		$translation = __('Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen.', 'rublon2factor');
 
 	}
 	

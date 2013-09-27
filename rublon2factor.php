@@ -3,21 +3,21 @@
 Plugin Name: Rublon
 Text Domain: rublon2factor
 Plugin URI: http://wordpress.org/plugins/rublon/
-Description: Rublon protects your accounts from sign ins from unknown devices, even if your password gets stolen. It's a totally seamless way of securing your online accounts and the easiest two-factor authentication solution in the world.
-Version: 1.1.9
+Description: Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen.
+Version: 1.2.0
 Author: Rublon
-Author URI: https://rublon.com
-License:http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 
+Author URI: http://rublon.com
+License: http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 
 */
 
 /*
  * Define some constants for future usage
 */
-define ('RUBLON2FACTOR_PLUGIN_URL', plugins_url () . '/' . basename (dirname (__FILE__)));
-define ('RUBLON2FACTOR_BASE_PATH', dirname (plugin_basename (__FILE__)));
-define ('RUBLON2FACTOR_PLUGIN_PATH', __FILE__);
-define ('RUBLON2FACTOR_NOTIFY_URL', 'https://code.rublon.com/issue_notifier/wp_notify');
-define ('RUBLON2FACTOR_REQUIRE_PHPVERSION', '5.2.17');
+define('RUBLON2FACTOR_PLUGIN_URL', plugins_url () . '/' . basename (dirname (__FILE__)));
+define('RUBLON2FACTOR_BASE_PATH', dirname (plugin_basename (__FILE__)));
+define('RUBLON2FACTOR_PLUGIN_PATH', __FILE__);
+define('RUBLON2FACTOR_NOTIFY_URL', 'https://code.rublon.com/issue_notifier/wp_notify');
+define('RUBLON2FACTOR_REQUIRE_PHPVERSION', '5.2.17');
 
 /**
  * Ensure proper version migration
@@ -34,7 +34,7 @@ function rublon2factor_add_settings_link ($links, $file) {
 
 	if ($file == $rublon2factor_plugin)
 	{
-		$settings_link = '<a href="plugins.php?page=rublon">' . __('Settings', 'rublon2factor') . '</a>';
+		$settings_link = '<a href="admin.php?page=rublon">' . __('Settings', 'rublon2factor') . '</a>';
 		array_unshift ($links, $settings_link);
 	}
 	return $links;
