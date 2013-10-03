@@ -63,13 +63,13 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 
 == Screenshots ==
 
-1.Plugins page with "Protect your account" button, which is only available to administrators until one of them protects their account with Rublon
-2.Rublon page viewed by an administrator before protecting his account
-3.Protecting your account requires you to confirm your identity by scanning a Rublon QR code with your smartphone, using the Rublon mobile app available for Android, BlackBerry, iPhone and Windows Phone.
-4.A protected account features a Rublon icon visible at the top right corner of every page inside the administration panel, placed next to the current user's avatar.
-5.Rublon page viewed by a user after an administrator has protected his account
-6.Login page with Rublon Seal
-7.On a protected account, Rublon verifies if the user who provided correct login credentials is logging in from a Trusted Device.
+1. Plugins page with "Protect your account" button, which is only available to administrators until one of them protects their account with Rublon
+2. Rublon page viewed by an administrator before protecting his account
+3. Protecting your account requires you to confirm your identity by scanning a Rublon QR code with your smartphone, using the Rublon mobile app available for Android, BlackBerry, iPhone and Windows Phone.
+4. A protected account features a Rublon icon visible at the top right corner of every page inside the administration panel, placed next to the current user's avatar.
+5. Rublon page viewed by a user after an administrator has protected his account
+6. Login page with Rublon Seal
+7. On a protected account, Rublon verifies if the user who provided correct login credentials is logging in from a Trusted Device.
 
 == Upgrade notice ==
 
