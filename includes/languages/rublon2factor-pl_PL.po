@@ -1,0 +1,208 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rublon 1.2\n"
+"POT-Creation-Date: 2013-10-10 11:45+0100\n"
+"PO-Revision-Date: 2013-10-10 11:46+0100\n"
+"Last-Translator: Rublon Team <developers@rublon.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+
+msgid "Settings"
+msgstr "Ustawienia"
+
+msgid "Rublon"
+msgstr "Rublon"
+
+msgid ""
+"Before any of your users will be able to use Rublon, you or another "
+"administrator needs to protect his account first."
+msgstr ""
+"Zanim którykolwiek z Twoich użytkowników będzie mógł korzystać z Rublona, Ty "
+"lub inny administrator musi najpierw zabezpieczyć swoje konto."
+
+msgid ""
+"Since your account is protected by a password only, it can be accessed from "
+"any device in the world. Rublon protects your account from sign ins from "
+"unknown devices, even if your password gets stolen."
+msgstr ""
+"Ponieważ Twoje konto jest chronione tylko hasłem, dostęp do niego jest "
+"możliwy z dowolnego urządzenia na świecie. Rublonem zabezpieczysz Twoje "
+"konto przed dostępem z nieznanych urządzeń, nawet w przypadku kradzieży "
+"hasła."
+
+msgid ""
+"Learn more at <a href=\"http://rublon.com\" target=\"_blank\">www.rublon."
+"com</a>."
+msgstr ""
+"Dowiedz się więcej: <a href=\"http://rublon.com/pl/\" target=\"_blank\">www."
+"rublon.com/pl/</a>."
+
+msgid "Protect your account"
+msgstr "Zabezpiecz konto"
+
+msgid ""
+"Rublon will be available to you once your administrator protects his account."
+msgstr ""
+"Będziesz mógł skorzystać z Rublona, kiedy administrator zabezpieczy swoje "
+"konto."
+
+msgid "Contact your administrator"
+msgstr "Skontaktuj się z administratorem"
+
+msgid "Protect your account with Rublon"
+msgstr "Zabezpiecz konto Rublonem"
+
+msgid ""
+"Hey, could you please protect your account with Rublon on %s? I want to "
+"protect my account, but I won't be able to do this until an administrator "
+"will."
+msgstr ""
+"Hej, zabezpieczysz proszę Twoje konto Rublonem na %s? Chcę zabezpieczyć moje "
+"konto, ale nie mogę tego zrobić, dopóki administrator tego nie zrobi."
+
+msgid ""
+"<strong>Your account is protected by Rublon</strong>. It can be accessed "
+"from your Trusted Devices only."
+msgstr ""
+"<strong>Twoje konto jest zabezpieczone Rublonem</strong>. Dostęp do niego "
+"jest możliwy jedynie z Twoich Urządzeń Zaufanych."
+
+msgid ""
+"Warning! The PHP version of your server is too old to run Rublon. Please "
+"upgrade your server's PHP version."
+msgstr ""
+"Uwaga! Wersja PHP twojego serwera jest niewystarczająca, by uruchomić "
+"Rublona. Zainstaluj nową wersję PHP."
+
+msgid "Required PHP version:"
+msgstr "Wymagana wersja PHP:"
+
+msgid "(or above)"
+msgstr "(lub wyższa)"
+
+msgid "Your PHP version:"
+msgstr "Twoja wersja PHP:"
+
+msgid "Warning! The cURL library has not been found on this server."
+msgstr "Uwaga! Serwer nie obsługuje biblioteki cURL."
+
+msgid ""
+"It is a crucial component of the Rublon plugin and its absence will prevent "
+"it from working properly. Please have the cURL library installed or consult "
+"your server administrator about it."
+msgstr ""
+"Stanowi ona niezbędny komponent pluginu Rublona, a jej brak uniemożliwi jego "
+"prawidłowe działanie. Zainstaluj bibliotekę cURL lub poproś o to "
+"administratora tego serwera."
+
+msgid "Security"
+msgstr "Bezpieczeństwo"
+
+msgid "Disable Rublon protection for this account"
+msgstr "Wyłącz zabezpieczenie Rublonem dla tego konta"
+
+msgid "Account protected by Rublon"
+msgstr "Konto zabezpieczone Rublonem"
+
+msgid "Protected by Rublon"
+msgstr "Konto zabezpieczone Rublonem"
+
+msgid "Rublon Two-Factor Authentication"
+msgstr "Uwierzytelnianie dwuskładnikowe Rublon"
+
+msgid "Disable account protection"
+msgstr "Wyłącz zabezpieczenie"
+
+msgid "There was a problem during the authentication process."
+msgstr "Wystąpił błąd podczas procesu uwierzytelniania."
+
+msgid ""
+"Rublon activation failed. Please try again. Should the error occur again, "
+"contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+msgstr ""
+"Aktywacja Rublona nie powiodła się. Spróbuj ponownie. Jeśli błąd się "
+"powtórzy, skontaktuj się z nami na <a href=\"mailto:support@rublon.com"
+"\">support@rublon.com</a>."
+
+msgid "You cannot protect an account already protected by Rublon."
+msgstr "Nie można zabezpieczyć konta już zabezpieczonego Rublonem."
+
+msgid "Unable to protect your account with Rublon."
+msgstr "Nie udało się zabezpieczyć konta Rublonem."
+
+msgid "Unable to disable Rublon protection."
+msgstr "Nie udało się usunąć Rublona z Twojego konta."
+
+msgid ""
+"The version of Rublon for Wordpress that you are trying to activate is "
+"outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
+"the newest version or"
+msgstr ""
+"Używana przez Ciebie wersja wtyczki Rublon dla WordPress jest przestarzała. "
+"Przejdź do strony <a href=\"%s\">Zainstalowane wtyczki</a> i zaktualizuj "
+"Rublona do najnowszej wersji lub"
+
+msgid "update now"
+msgstr "zaktualizuj teraz"
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon. "
+"However, there has been a problem with protecting your account. Go to <a "
+"href=\"%s\">Rublon page</a> in order to protect your account."
+msgstr ""
+"Dziękujemy! Teraz wszyscy Twoi użytkownicy mogą zabezpieczyć swoje konta "
+"Rublonem, jednak nie udało się zabezpieczyć Twojego konta. Przejdź do <a "
+"href=\"%s\">sekcji Rublon</a> by zabezpieczyć konto."
+
+msgid "Rublon error code: "
+msgstr "Kod błędu: "
+
+msgid "Your account is now protected by Rublon."
+msgstr "Twoje konto jest teraz zabezpieczone Rublonem. "
+
+msgid ""
+"Rublon protection has been disabled. You are now protected by a password "
+"only, which may result in unauthorized access to your account. We strongly "
+"encourage you to protect your account with Rublon."
+msgstr ""
+"Zabezpieczenie Rublonem zostało wyłączone. Chroni Cię już tylko hasło, co "
+"może doprowadzić do nieautoryzowanego dostępu do Twojego konta. Zdecydowanie "
+"zalecamy zabezpieczyć konto Rublonem."
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon."
+msgstr ""
+"Dziękujemy! Teraz wszyscy Twoi użytkownicy mogą zabezpieczyć swoje konta "
+"Rublonem."
+
+msgid ""
+"Plugin requires database modification but you do not have permission to do "
+"it."
+msgstr ""
+"Wtyczka wymaga zmian w bazie danych, ale brak uprawnień do jej modyfikacji."
+
+msgid "Rublon mobile app required"
+msgstr "Wymagana aplikacja mobilna Rublon"
+
+msgid "Free Download"
+msgstr "Pobierz za darmo"
+
+msgid "Rublon mobile app required:"
+msgstr "Wymagana aplikacja Rublon:"
+
+msgid ""
+"Rublon provides stronger security for online accounts through invisible two-"
+"factor authentication. It protects your accounts from sign-ins from unknown "
+"devices, even if your passwords get stolen."
+msgstr ""
+"Rublon zapewnia większe bezpieczeństwo dla kont internetowych poprzez "
+"niewidoczne uwierzytelnianie dwuskładnikowe. Chroni Twoje konta przed "
+"dostępem z nieznanych urządzeń, nawet jeśli Twoje hasła zostaną skradzione."
+
+msgid "Error details: "
+msgstr "Szczegóły błędu: "

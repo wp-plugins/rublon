@@ -1,0 +1,221 @@
+/* ********************* Page Wrapper */
+#rublon2factor_page 
+{
+	display: inline-block;
+	width: 100%;
+}
+
+/* ********************* Info Box */
+.rublon2factor_info_box {
+  border: 1px solid #CCCCCC;
+  background-color: #777777;  
+  color: #fff;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+}
+
+/* ********************* Tables */
+.rublon2factor_table {
+  background-color: #efefef;
+  border: 1px solid #ccc;
+  margin: 0 0 25px;
+}
+
+.rublon2factor_table input[type="text"] {
+  border-color: #aaa;
+  min-width: 60em;
+  width: 100%;
+}
+
+.rublon2factor_table tr.row_head th {
+  font-size: 13px;
+  font-weight: bold;
+  background-color: #777777;
+  color: #fff;
+  text-shadow: 0 1px 0 #333;
+}
+
+.rublon2factor_table tr.row_head th a {
+  color: #F1EE10;
+}
+
+.rublon2factor_table tr.row_head th a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.rublon2factor_table tr.row_odd,
+.rublon2factor_table tr.row_odd td {
+  color: #222;
+  background-color: #ddd;
+  border-bottom: 1px dotted #BBBBBB;
+}
+
+.rublon2factor_table tr.row_even,
+.rublon2factor_table tr.row_even td {
+  color: #333;
+  background-color: #fff;
+  border-bottom: 1px dotted #bbb;
+}
+
+.rublon2factor_info_box a {
+    color: lightblue;
+    font-weight: bold;
+}
+
+input.api_params {
+	width: 150px !important;	
+}
+p.rublon_active {
+	padding: 0.5em 0;
+}
+
+p.rublon_active span {
+	display: inline-block;
+	padding: 1em;
+	color: #65C341;
+	font-size: 20px;
+	border: solid 1px #cccccc;
+	background: none;
+	width: auto;
+}
+
+h2.rublon-header {
+	padding-left: 38px;
+	background: url('../images/R_32x32.png') no-repeat 0 9px;
+	margin-bottom: 14px;
+	line-height: 32px;
+}
+
+li#toplevel_page_rublon div.wp-menu-image {
+	background-image: url('../images/R_16x16.png');
+	background-position: 7px 7px;
+	opacity: .6;
+}
+
+li#toplevel_page_rublon:hover div.wp-menu-image {
+	opacity: 1;
+}
+
+li#toplevel_page_rublon.current div.wp-menu-image {
+	opacity: 1;
+}
+
+.rublon-activation-ribbon {
+	padding: 10px !important;
+}
+
+.rublon-activation-mere-user {
+	padding: 10px !important;
+	margin-top: 10px !important;
+}
+
+.rublon-activation-ribbon .button {
+	font-weight: bold;
+}
+
+.rublon-activation-ribbon div {
+	display: inline-block;
+	margin-left: 20px;
+	font-size: 15px;
+}
+
+.rublon-button-header {
+	width: 100%;
+}
+
+.rublon-button-content {
+	margin: 1em 0 0;
+	padding: 0.5em 0;
+	background: none;
+	font: normal 12px Helvetica, Arial;
+	text-align: center;
+	float: left;
+}
+
+.rublon-app-info-boxlink {
+	text-decoration: none;
+}
+
+.rublon-app-info-box {
+	width: 195px;
+	height: 101px;
+	margin: 5px auto 0;
+	background-image: url('../images/app_info_box_bg.png');
+	background-repeat: no-repeat;
+	text-align: center;
+	display: none;
+}
+
+.rublon-app-info-box p.rublon-app-info-text {
+	padding-top: 20px;
+	margin: 0;
+	text-align: center;
+	color: #000;
+}
+
+.rublon-app-info-box div.rublon-app-info-icons {
+	text-align: center;
+	width: 91px;
+	height: 18px;
+	margin: 10px auto 10px;
+	padding: 0;
+	background-image: url('../images/app_info_box_icons.png');
+	background-repeat: no-repeat;
+}
+
+.rublon-app-info-box p.rublon-app-info-link {
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	text-decoration: underline;
+	font-size: 1.1em;
+}
+
+.rublon-clear {
+	clear: both;
+}
+
+.rublon-activate-ribbon {
+	min-width:825px;
+	border:1px solid #d9d9d9;
+	padding: 13px;
+	margin: 15px 0;
+	background: #f1f1f1;
+	background: #ededed; /* Old browsers */
+	background: -moz-linear-gradient(left,  #ededed 58%, #2f3284 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(58%,#ededed), color-stop(100%,#2f3284)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, #ededed 58%,#2f3284 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left,  #ededed 58%,#2f3284 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left,  #ededed 58%,#2f3284 100%); /* IE10+ */
+	background: linear-gradient(to right,  #ededed 58%,#2f3284 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#2f3284',GradientType=1 ); /* IE6-9 */
+	-moz-border-radius:3px;
+	border-radius:3px;
+	-webkit-border-radius:3px;
+	position:relative;overflow:hidden
+	}
+
+.rublon-activate-description-wrapper {
+	float: left;	
+}
+
+.rublon-activate-description {
+	margin-top: 7px;
+	margin-left: 15px;
+	color:#000000;
+	font-size:15px;
+	z-index:1000;
+}
+
+.rublon-activate-image {
+	float: right;
+	line-height: 0;
+	margin: 0;
+	padding: 0;	
+}
+
+#rublon-toolbar-logo {
+	border: 0 !important;
+	background: transparent !important;
+}
