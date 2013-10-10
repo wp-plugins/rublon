@@ -15,25 +15,29 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 * @return void
 	 */
 	protected function finalSuccess() {
+
 		parent::finalSuccess();
+		
+		$adminProfileId = $this->getAdminProfileId();
 		$this->updateRublonSettings();
 
 		$currentUser = wp_get_current_user();
-		$adminProfileId = $this->getAdminProfileId();
 		if (!empty($adminProfileId) && !Rublon2FactorHelper::isUserSecured($currentUser))
 			$success = Rublon2FactorHelper::connectRublon2Factor($currentUser, $adminProfileId);
 
 		if ($success) {
-			Rublon2FactorHelper::setMessage(__('Thank you! Now all of your users can protect their accounts with Rublon.', 'rublon2factor'), 'updated');
+			$updateMessage = 'PLUGIN_REGISTERED';
+			Rublon2FactorHelper::setMessage($updateMessage, 'updated', 'CR');
 		} else {
-			Rublon2FactorHelper::setMessage(sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon2factor'), admin_url('admin.php?page=rublon')), 'error');
+			$errorCode = 'PLUGIN_REGISTERED_NO_PROTECTION';
+			Rublon2FactorHelper::setMessage($errorCode, 'error', 'CR');
 		}
 
 		$pluginMeta = Rublon2FactorHelper::preparePluginMeta();
 		$pluginMeta['action'] = 'activation';
 		Rublon2FactorHelper::pluginHistoryRequest($pluginMeta);
 		
-		$this->_redirect('wp-admin/admin.php?page=rublon');
+		$this->_redirect(admin_url('admin.php?page=rublon'));
 	}
 	
 	/**
@@ -47,51 +51,28 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 * @return void
 	 */
 	protected function finalError($msg = NULL) {
+
 		parent::finalError($msg);
 
 		if (!$msg)
 			$msg = $this->_get('error');
 
-		$errorMessage = __('Rublon activation failed. Please try again. Should the error occur again, contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor');
-		$notifierMessage = $errorMessage;
+		$notifierMessage = 'Consumer registration error.<br /><br />';
+		$errorCode = 'API_ERROR';
 		if (!empty($msg)) {
 			if (stripos($msg, 'ERROR_CODE:') !== false) {
-				Rublon2FactorHelper::setMessage($errorMessage, 'error');
 				$errorCode = str_replace('ERROR_CODE: ', '', $msg);
-				$errorCodeMessage = $this->handleErrorCode($errorCode);
-				if ($errorCodeMessage) {
-					Rublon2FactorHelper::setMessage($errorCodeMessage, 'error');
-					$notifierMessage .= '<br />' . $errorCodeMessage;
-				} else {
-					Rublon2FactorHelper::setMessage(__('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'error');
-					$notifierMessage .= '<br />' . $errorCode;
-				}
+				$notifierMessage .= __('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>';
 			} else {
-				$notifierMessage = $errorMessage . '<br />Rublon error message: [' . $msg . ']';
-				Rublon2FactorHelper::setMessage($notifierMessage, 'error');
+				$notifierMessage .= 'Rublon error message: [' . $msg . ']';
 			}
-		} else {
-			Rublon2FactorHelper::setMessage($errorMessage, 'error');
 		}
+		Rublon2FactorHelper::setMessage($errorCode, 'error', 'CR');
 		
 		// send issue notify
-		Rublon2FactorHelper::notify(array('msg' => $notifierMessage));
-		
-		$this->_redirect('wp-admin/admin.php?page=rublon');
-	}
+		echo $this->_notify($notifierMessage);
 
-
-	protected function handleErrorCode($errorCode = '') {
-
-		switch ($errorCode) {
-			case 'PLUGIN_OUTDATED':
-				return sprintf(__('The version of Rublon for Wordpress that you are trying to activate is outdated. Please go to the <a href="%s">Plugins</a> page and update it to the newest version or', 'rublon2factor'), admin_url('plugins.php'))
-					. '<a href="' . esc_attr(wp_nonce_url( self_admin_url('update.php?action=upgrade-plugin&plugin=') . plugin_basename(RUBLON2FACTOR_PLUGIN_PATH), 'upgrade-plugin_' . plugin_basename(RUBLON2FACTOR_PLUGIN_PATH))) . '">'
-					. ' <strong>' . __('update now', 'rublon2factor') . '</strong></a>.'; 
-				break;
-			default:
-				return null; 
-		}
+		$this->_redirect(admin_url('admin.php?page=rublon'));
 
 	}
 
@@ -245,7 +226,9 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 * @return string
 	 */
 	protected function getCommunicationUrl() {
-		return trailingslashit(site_url());
+
+		return $this->_getRublonActionUrl('register');
+
 	}
 	
 	/**
@@ -256,7 +239,9 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 * @return string
 	 */
 	protected function getProjectUrl() {
+
 		return trailingslashit(site_url());
+
 	}
 	
 	/**
@@ -269,7 +254,27 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 * @return string
 	 */
 	protected function getCallbackUrl() {
-		return trailingslashit(site_url());
+
+		return $this->_getRublonActionUrl('callback');
+
+	}
+
+
+	/**
+	 * Prepare the URL for executing Rublon actions
+	 * 
+	 * @param string $action Action to be passed in the URL via GET
+	 */
+	private function _getRublonActionUrl($action) {
+
+		$rublonActionUrl = trailingslashit(site_url());
+		if (strpos($rublonActionUrl, '?') !== false)
+			$rublonActionUrl .= '&';
+		else
+			$rublonActionUrl .= '?';
+		$rublonActionUrl .= 'rublon=' . $action;
+		return $rublonActionUrl;		
+
 	}
 	
 	/**
@@ -317,11 +322,24 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 * 
 	 * @return array
 	 */
-	private function getConfig()
-	{
+	private function getConfig() {
+
 		$config = get_option(Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 		return (isset($config)) ? $config : array();
+
 	}
+
+
+	/**
+	 * Clear any temporary config data
+	 * 
+	 */
+	private function _clearConfig() {
+
+		delete_option(Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+
+	}
+
 	
 	/**
 	 * Update Rublon plugin settings using 'systemToken' and 'secretKey' from
@@ -332,6 +350,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		$settings = Rublon2FactorHelper::getSettings();
 		$settings['rublon_system_token'] = $this->getSystemToken();
 		$settings['rublon_secret_key'] = $this->getSecretKey();
+		$this->_clearConfig();
 
 		Rublon2FactorHelper::saveSettings($settings);
 
@@ -350,9 +369,35 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 
 		return json_encode(array(
 				'project-name' => get_bloginfo('title'),
+				'project-description' => get_bloginfo('description'),
 				'project-technology' => 'wordpress3',
 				'plugin-version' => Rublon2FactorHelper::getCurrentPluginVersion(),
+				'lang-code' => Rublon2FactorHelper::getBlogLanguage()
 		));
+
+	}
+
+/**
+	 * Send an error notifier request to Rublon (use a workaround if cURL not present)
+	 *
+	 * @param string $msg
+	 * @return string
+	 */
+	private function _notify($msg) {
+
+		$data = array();
+		$data['msg'] = $msg;
+		
+		if (!function_exists('curl_init')) {
+			return '<img src="' . RUBLON2FACTOR_NOTIFY_URL . '/' . base64_encode(urlencode($msg)) . '" style="display: none">';
+		} else {
+			try {
+				Rublon2FactorHelper::notify($data);
+			} catch (RublonException $e) {
+				// Should an error occur here, don't inform the user about it, too low-level
+			}
+			return '';
+		}
 
 	}
 

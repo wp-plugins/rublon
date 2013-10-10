@@ -19,16 +19,17 @@ require_once(dirname (__FILE__) . '/includes/rublon2factor_helper.php');
  *
  * @return boolean
  */
-function rublon2factor_should_config_be_removed()
-{
+function rublon2factor_should_config_be_removed() {
+
 	$settings = Rublon2FactorHelper::getSettings();	
-	if (!Rublon2FactorHelper::isActive($settings)) {
+	if (!Rublon2FactorHelper::isRegistered($settings)) {
 		return true;
 	}
-	
+
 	$uninstall_rublon_config = isset( $settings['uninstall_rublon_config'] ) ? (bool) $settings['uninstall_rublon_config'] : false;
-	
+
 	return $uninstall_rublon_config;
+
 }
 
 /**

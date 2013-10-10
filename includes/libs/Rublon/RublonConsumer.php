@@ -1,9 +1,5 @@
 <?php
 
-if (!defined('__DIR__')) {
-	define('__DIR__', dirname(__FILE__));
-}
-
 if (!defined('DIRECTORY_SEPARATOR')) {
 	define('DIRECTORY_SEPARATOR', '/');
 }

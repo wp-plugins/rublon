@@ -4,11 +4,12 @@ Plugin Name: Rublon
 Text Domain: rublon2factor
 Plugin URI: http://wordpress.org/plugins/rublon/
 Description: Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen.
-Version: 1.2.0
+Version: 1.2.1
 Author: Rublon
 Author URI: http://rublon.com
 License: http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 
 */
+
 
 /*
  * Define some constants for future usage
@@ -47,7 +48,8 @@ add_filter ('plugin_action_links', 'rublon2factor_add_settings_link', 10, 2);
  * Include plug-in files
 */
 require_once(dirname (__FILE__) . '/includes/rublon2factor_helper.php');
-require_once(dirname (__FILE__) . '/includes/rublon2factor_callback.php');
+require_once(dirname (__FILE__) . '/includes/libs/Rublon/Rublon2FactorCallbackTemplate.php');
+require_once(dirname (__FILE__) . '/includes/libs/RublonCallback/Rublon2FactorCallback.php');
 require_once(dirname (__FILE__) . '/includes/rublon2factor_initialization.php');
 require_once(dirname (__FILE__) . '/includes/rublon2factor_admin.php');
 require_once(dirname (__FILE__) . '/includes/rublon2factor_hooks.php');
@@ -63,6 +65,5 @@ require_once(dirname (__FILE__) . '/includes/libs/Rublon/HTML/RublonHTMLHelper.p
 require_once(dirname (__FILE__) . '/includes/libs/RublonConsumerRegistration/RublonConsumerRegistrationTemplate.php');
 require_once(dirname (__FILE__) . '/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php');
 
-
 // Initialize rublon2factor plug-in
-add_action ('init', 'rublon2factor_init', 9);
+add_action ('plugins_loaded', 'rublon2factor_init', 9);

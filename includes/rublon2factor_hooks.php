@@ -50,12 +50,31 @@ add_filter( 'login_redirect', 'rublon2factor_login_redirect', 10, 3);
  */
 function rublon2factor_login_message($message) {
 
+	if (!is_user_logged_in())
+		Rublon2FactorHelper::cookieTransfer();
 	$messages = Rublon2FactorHelper::getMessages();
 	if ($messages) {
 		foreach ($messages as $message)
-			echo '<div class="' . $message['message_type'] . ' fade" style="margin: 0 0 16px 8px; padding: 12px;">' . $message['message'] . '</div>';
+			echo '<div class="' . $message['type'] . ' fade" style="margin: 0 0 16px 8px; padding: 12px;">' . $message['message'] . '</div>';
 	}
 
 }
 
 add_filter('login_message', 'rublon2factor_login_message');
+
+function rublon2factor_plugin_activated_mefirst() {
+
+	Rublon2FactorHelper::meFirst();
+
+}
+
+add_action('activated_plugin', 'rublon2factor_plugin_activated_mefirst');
+
+function rublon2factor_pre_headers() {
+
+	if (is_user_logged_in())
+		Rublon2FactorHelper::cookieTransfer();
+
+}
+
+add_action('init', 'rublon2factor_pre_headers');

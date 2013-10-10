@@ -28,13 +28,29 @@ class RublonService2Factor extends RublonService {
 	 * 
 	 * Method performs an HTTP redirection for the Rublon authorization process.
 	 * 
-	 * @param int $profileId Rublon user's profile ID
+	 * @param int $profileId Required Rublon user's profile ID
 	 * @param RublonAuthParams $authParams
 	 * @return void
 	 */
 	public function initAuthorization($profileId, RublonAuthParams $authParams = null) {
 		
 		$this->consumer->log(__METHOD__);
+		
+		header('Location: '. $this->getAuthWebURL($profileId, $authParams));
+		exit;
+		
+	}
+	
+	
+	
+	/**
+	 * Get web-based authorization URL address
+	 * 
+	 * @param int $profileId Required Rublon user's profile ID
+	 * @param RublonAuthParams $authParams
+	 * @return string
+	 */
+	public function getAuthWebURL($profileId, RublonAuthParams $authParams = null) {
 		
 		if (empty($authParams)) {
 			$authParams = new RublonAuthParams($this);
@@ -43,10 +59,8 @@ class RublonService2Factor extends RublonService {
 		$authParams->setActionFlag(RublonAuthParams::ACTION_FLAG_LOGIN);
 		$authParams->setConsumerParam('service', '2factor');
 		$authParams->setConsumerParam('requireProfileId', $profileId);
-		$url = $authParams->getUrl();
 		
-		header('Location: '. $url);
-		exit;
+		return $authParams->getUrl();
 		
 	}
 	
@@ -77,7 +91,7 @@ class RublonService2Factor extends RublonService {
 	
 	
 	/**
-	 * Create instance of button to enable 2FA for user's account (Secure account button).
+	 * Create instance of button to enable 2FA for user's account (Protect account button).
 	 * 
 	 * If you have to change any authentication parameters for the ready-made button get the RublonAuthParams reference by using:
 	 * 

@@ -133,6 +133,10 @@ li#toplevel_page_rublon.current div.wp-menu-image {
 	float: left;
 }
 
+.rublon-app-info-boxlink {
+	text-decoration: none;
+}
+
 .rublon-app-info-box {
 	width: 195px;
 	height: 101px;
@@ -147,6 +151,7 @@ li#toplevel_page_rublon.current div.wp-menu-image {
 	padding-top: 20px;
 	margin: 0;
 	text-align: center;
+	color: #000;
 }
 
 .rublon-app-info-box div.rublon-app-info-icons {
@@ -163,6 +168,7 @@ li#toplevel_page_rublon.current div.wp-menu-image {
 	padding: 0;
 	margin: 0;
 	text-align: center;
+	text-decoration: underline;
 	font-size: 1.1em;
 }
 

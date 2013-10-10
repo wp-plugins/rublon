@@ -17,37 +17,41 @@
 
 class Rublon2FactorHelper {
 
-	const RUBLON_SESSION_NAME = 'rublon2factor_session';
+
+	const RUBLON_API_DOMAIN = 'https://code.rublon.com';
+
+	const RUBLON_COOKIE_PREFIX = 'Rublon-WP_';
+	const RUBLON_COOKIE_MESSAGES = 'messages';
+	const RUBLON_COOKIE_RETURNURL = 'return_url';
 	const RUBLON_SETTINGS_KEY = 'rublon2factor_settings';
 	const RUBLON_REGISTRATION_SETTINGS_KEY = 'rublon2factor_registration_settings';
-	const RUBLON_SESSION_KEY_USER = 'rublon2factor_user';
-	const RUBLON_SESSION_KEY_RETURN_PAGE = 'rublon2factor_return_page';
-	const RUBLON_SESSION_KEY_MESSAGES = 'rublon2factor_messages';
-	const RUBLON_SESSION_KEY_SECURITY_TOKENS = 'rublon2factor_security_tokens';
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
-	static private $callback = null;
-	static private $registration = null;
+	const RUBLON_ACTION_PREFIX = 'rublon_';
+	const RUBLON_AUTH_TIME = 5;
+
 
 	/**
-	 * Initialize the consumer.
+	 * An instance of the RublonService2Factor class
+	 * 
+	 */
+	static private $service;
+
+
+	/**
+	 * Plugin cookies
+	 * 
+	 */
+	static public $cookies;
+
+
+	/**
+	 * Load i18n files and check for possible plugin update
 	 */
 	static public function init() {
 
-		//Initialize private session for storing data.
-		session_name(self::RUBLON_SESSION_NAME);
-		session_start();
-
 		// Initialize localization
-		if (function_exists ('load_plugin_textdomain'))
-		{
+		if (function_exists ('load_plugin_textdomain')) {
 			load_plugin_textdomain ('rublon2factor', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
-		}
-
-		self::$registration = new RublonConsumerRegistration();
-
-		$settings = self::getSettings();
-		if (self::isActive($settings)) {
-			self::$callback = new Rublon2FactorCallback($settings);
 		}
 
 		self::updateChecker();
@@ -56,83 +60,137 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Handle the Rublon callback
+	 * Transfer plugin data from cookies to a private field
 	 * 
-	 * @param string|NULL $state Callback state
-	 * @param string $token Access token
-	 * @param string $window_type Window type (window, popup)
 	 */
-	static public function handleCallback($state, $token, $window_type)	{
+	static public function cookieTransfer() {
 
-		if (!isset($state) || !isset($token)) {
-			return;
-		}
-		self::getCallback()->run($state, $token, $window_type);
+		$cookies = array();
+		$messages = self::getMessagesFromCookie();
+		if (!empty($messages))
+			$cookies['messages'] = $messages;
+		self::$cookies = $cookies;
 
 	}
+
 
 	/**
-	 * Return the initialized callback.
-	 *
-	 * @return Rublon2FactorCallback
+	 * Check for any Rublon actions in the URI
+	 * 
 	 */
-	static public function getCallback() {
-		return self::$callback;
+	static public function checkForActions() {
+
+		$rublonAction = self::uriGet('rublon');
+		if (isset($rublonAction)) {
+			switch (strtolower($rublonAction)) {
+				case 'register':
+					$rublonRegAction = self::uriGet('action');
+					if (isset($rublonRegAction)) {
+						self::consumerRegistrationAction($rublonRegAction);
+					}
+					break;
+				case 'callback':
+					$accessToken = self::uriGet('token');
+					$responseState = self::uriGet('state');
+					if (isset($accessToken) && isset($responseState)) {
+						self::handleCallback();
+					}
+					break;
+			}
+			exit;
+		} else {
+			$settings = self::getSettings();
+			if (self::isRegistered($settings)) {
+				$consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
+				$consumer->setDomain(self::getAPIDomain());
+				$consumer->setLang(self::getBlogLanguage());
+				self::$service = new RublonService2Factor($consumer);
+			} 
+		}
+
 	}
-	
+
+
+	/**
+	 * Handle the Rublon callback
+	 * 
+	 */
+	static public function handleCallback()	{
+
+		$callback = new Rublon2FactorCallback();
+		$callback->run();
+
+	}
+
+
 	/**
 	 * Add the Rublon JS Library to the page code.
 	 */
 	static public function addScript() {
-		if (self::isActive(self::getSettings())) {
-			self::getCallback()->addScript();
+
+		if (!empty(self::$service)) {
+			echo new RublonConsumerScript(self::$service);
 		}
+
 	}
-	
+
+
 	/**
-	 * Perform authorization by Rublon2Factor.
+	 * Perform Rublon2Factor authentication
 	 */
 	static public function authenticateWithRublon($user) {
-		if (self::isActive(self::getSettings())) {
-			self::getCallback()->authenticateWithRublon($user);
+
+		if (!empty(self::$service)) {
+			$rublonProfileId = self::getUserProfileId($user);
+			$authParams = new RublonAuthParams(self::$service);
+			$authParams->setConsumerParam('wp_user', self::getUserId($user));
+			$authParams->setConsumerParam('wp_auth_time', time());
+			self::$service->initAuthorization($rublonProfileId, $authParams);
 		}
+
 	}
-	
+
+
 	/**
-	 * Add Rublon secure account button to the page code.
+	 * Add Rublon secure account button to the page code
 	 * 
 	 * @param string $page Optional parameter setting the return page
 	 */
 	static public function addSecureAccountButton($page = 'profile') {
-		if (self::isActive(self::getSettings())) {
-			self::getCallback()->addSecureAccountButton($page);
+
+		if (!empty(self::$service)) {
+			$currentUser = wp_get_current_user();
+			$button = self::$service->createButtonEnable(__('Protect your account', 'rublon2factor'));
+			$button->getAuthParams()->setConsumerParam('customURIParam', $page);
+			$button->getAuthParams()->setConsumerParam('wp_user', self::getUserId($currentUser));
+			echo $button;
 		}
+
 	}
-	
+
+
 	/**
 	 * Add button for disabling Rublon protection button to the page code.
 	 * 
 	 * @param string $page Optional parameter setting the return page
 	 */
 	static public function addDisableAccountSecurityButton($page = 'profile') {
-		if (self::isActive(self::getSettings())) {
-			self::getCallback()->addDisableAccountSecurityButton($page);
+
+		if (!empty(self::$service)) {
+			$currentUser = wp_get_current_user();
+			$rublonProfileId = self::getUserProfileId($currentUser);
+			$label = __('Disable account protection', 'rublon2factor');
+			$button = self::$service->createButtonDisable($label, $rublonProfileId);
+			$button->getAuthParams()->setConsumerParam('customURIParam', $page);
+			$button->getAuthParams()->setConsumerParam('wp_user', self::getUserId($currentUser));
+			echo $button;
 		}
+
 	}
-	
+
+
 	/**
-	 * Remove Rublon second factor protection from current user
-	 * account.
-	 */
-	static public function disableAccountSecurity()
-	{
-		if (self::isActive(self::getSettings())) {
-			self::getCallback()->disableAccountSecurity();
-		}
-	}
-	
-	/**
-	 * Return actual settings of Rublon plug-in. 
+	 * Return the plugin settings 
 	 */
 	static public function getSettings()
 	{
@@ -141,7 +199,7 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Save the Rublon plugin settings
+	 * Save the plugin settings
 	 */
 	static public function saveSettings($settings) {
 
@@ -151,146 +209,140 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Return the page url for redirection.
-	 *
-	 * @return string
-	 */
-	static public function getReturnPageUrl() {
-		$key = self::RUBLON_SESSION_KEY_RETURN_PAGE;
-		$value = self::getSessionData($key);
-		self::clearSessionData($key);
-		return $value;
-	}
-	
-	/**
-	 * Store the page url for redirection.
-	 *
-	 * @param string $url
-	 */
-	static public function setReturnPageUrl($url) {
-		self::setSessionData(self::RUBLON_SESSION_KEY_RETURN_PAGE, $url);
-	}
-
-
-	/**
-	 * Generate random security token
-	 *
-	 * @return string
-	 */
-	static private function generateSecurityToken() {
-	
-		return sha1(microtime() . serialize($_SERVER) . mt_rand(1, 999999999) . uniqid('', true));
-	
-	}
-
-
-	/**
-	 * Adds a new anti-CSRF security token to the session
-	 *
-	 * @param string $newToken
-	 */
-	static public function newSecurityToken() {
-	
-		$securityTokens = self::getSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS);
-		if (empty($securityTokens))
-			$securityTokens = array();
-		$newToken = self::generateSecurityToken();
-		$securityTokens[] = $newToken;
-		self::setSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS, $securityTokens);
-		return $newToken;
-	
-	}
-
-
-	/**
-	 * Validate the security token against CSRF attacks
-	 *
-	 * @param string $receivedToken Token received in the consumer params
-	 */
-	static public function validateSecurityToken($receivedToken) {
-	
-		$securityTokens = self::getSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS);
-		if (is_array($securityTokens) && in_array($receivedToken, $securityTokens)) {
-			$key = array_search($receivedToken, $securityTokens);
-			array_splice($securityTokens, $key, 1);
-			if (!empty($securityTokens))
-				self::setSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS, $securityTokens);
-			else
-				self::clearSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS);
-			return true;
-		} else {
-			return false;
-		}
-	
-	
-	}
-
-
-	/**
-	 * Return the page url for redirection.
-	 *
-	 * @return WP_User
-	 */
-	static public function getUserToAuthenticate() {
-		$key = self::RUBLON_SESSION_KEY_USER;
-		$value = self::getSessionData($key);
-		self::clearSessionData($key);
-		return $value;
-	}
-
-	/**
-	 * Store the user to be authenticated.
-	 *
-	 * @param WP_User $user
-	 */
-	static public function setUserToAuthenticate($user) {
-		self::setSessionData(self::RUBLON_SESSION_KEY_USER, $user);
-	}
-
-	/**
-	 * Return the message.
+	 * Retrieve messages from plugin cookie
 	 *
 	 * @return array
 	 */
-	static public function getMessages() {
+	static public function getMessagesFromCookie() {
 
-		$key = self::RUBLON_SESSION_KEY_MESSAGES;
-		$messages = self::getSessionData($key);
-		self::clearSessionData($key);
+		$cookieName = self::RUBLON_COOKIE_PREFIX . self::RUBLON_COOKIE_MESSAGES;
+		$messages = self::getCookieData($cookieName);
+		self::clearCookieData($cookieName);
+		$messages = explode(':', $messages);
 		return $messages;
 
 	}
 
+
 	/**
-	 * Store the message.
-	 *
-	 * @param string $message
-	 * @param string $type
+	 * Retrieve message codes from helper and prepare them for viewing
+	 * 
+	 * @return array|null
 	 */
-	static public function setMessage($message, $type) {
-	
-		$key = self::RUBLON_SESSION_KEY_MESSAGES;
-		$messages = self::getSessionData($key);
-		if (empty($messages))
-			$messages = array();
-		$messages[] = array(
-			'message' => $message,
-			'message_type' => $type,
-		);
-		self::setSessionData(self::RUBLON_SESSION_KEY_MESSAGES, $messages);
+	static public function getMessages() {
+
+		if (!empty(self::$cookies['messages'])) {
+			$messages = self::$cookies['messages'];
+			unset(self::$cookies['messages']);
+			return self::explainMessages($messages);
+		}
+		return null;
 
 	}
 
+
 	/**
-	 * Checks if Rublon2factor module is active.
+	 * Store a message in plugin cookie
+	 *
+	 * @param string $code Message code
+	 * @param string $type Message type
+	 * @param string $origin Message origin
+	 */
+	static public function setMessage($code, $type, $origin) {
+	
+		$cookieName = self::RUBLON_COOKIE_PREFIX . self::RUBLON_COOKIE_MESSAGES;
+		$msg = $type . '__' . $origin . '__' . $code;
+		$messages = self::getCookieData($cookieName);
+		if (empty($messages))
+			$messages = array();
+		else
+			$messages = explode(':', $messages);
+		array_push($messages, $msg);
+		$messages = implode(':', $messages);
+		self::setCookieData($cookieName, $messages);
+
+	}
+
+
+	/**
+	 * Transform message codes into messages themselves
+	 * 
+	 * @param array $messages Message "headers" retrieved from plugin cookie
+	 * @return array
+	 */
+	static private function explainMessages($messages) {
+
+		$result = array();
+		foreach ($messages as $message) {
+			$msg = explode('__', $message);
+			$msgType = $msg[0];
+			$msgOrigin = $msg[1];
+			$msgCode = $msg[2];
+			if ($msgType == 'error') {
+				switch ($msgOrigin) {
+					case 'RC':
+						$errorMessage = __('There was a problem during the authentication process.', 'rublon2factor');
+						break;
+					case 'CR':
+						$errorMessage = __('Rublon activation failed. Please try again. Should the error occur again, contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor');
+						break;
+				}
+				$errorCode = $msgOrigin . '_' . $msgCode;
+				switch ($errorCode) {
+					case 'RC_ALREADY_PROTECTED':
+						$errorMessage = __('You cannot protect an account already protected by Rublon.', 'rublon2factor');
+						break;
+					case 'RC_CANNOT_PROTECT_ACCOUNT':
+						$errorMessage = __('Unable to protect your account with Rublon.', 'rublon2factor');
+						break;
+					case 'RC_CANNOT_DISABLE_ACCOUNT_PROTECTION':
+						$errorMessage = __('Unable to disable Rublon protection.', 'rublon2factor');
+						break;
+					case 'CR_PLUGIN_OUTDATED':
+						$errorMessage = sprintf(__('The version of Rublon for Wordpress that you are trying to activate is outdated. Please go to the <a href="%s">Plugins</a> page and update it to the newest version or', 'rublon2factor'), admin_url('plugins.php'))
+						. '<a href="' . esc_attr(wp_nonce_url( self_admin_url('update.php?action=upgrade-plugin&plugin=') . plugin_basename(RUBLON2FACTOR_PLUGIN_PATH), 'upgrade-plugin_' . plugin_basename(RUBLON2FACTOR_PLUGIN_PATH))) . '">'
+								. ' <strong>' . __('update now', 'rublon2factor') . '</strong></a>.';
+						break;
+					case 'CR_PLUGIN_REGISTERED_NO_PROTECTION':
+						$errorMessage = sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon2factor'), admin_url('admin.php?page=rublon'));
+						break;
+				}
+				$result[] = array('message' => $errorMessage, 'type' => $msgType);
+				$result[] = array('message' => __('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'type' => $msgType);
+			} elseif ($msgType == 'updated') {
+				$updatedMessage = '';
+				$updatedCode = $msgOrigin . '_' . $msgCode;
+				switch ($updatedCode) {
+					case 'RC_ACCOUNT_PROTECTED':
+						$updatedMessage = __('Your account is now protected by Rublon.', 'rublon2factor');
+						break;
+					case 'RC_PROTECTION_DISABLED':
+						$updatedMessage = __('Rublon protection has been disabled. You are now protected by a password only, which may result in unauthorized access to your account. We strongly encourage you to protect your account with Rublon.', 'rublon2factor');
+						break;
+					case 'CR_PLUGIN_REGISTERED':
+						$updatedMessage = __('Thank you! Now all of your users can protect their accounts with Rublon.', 'rublon2factor');
+						break;
+				}
+				$result[] = array('message' => $updatedMessage, 'type' => $msgType);
+			}
+		}
+		return $result;
+
+	}
+
+
+	/**
+	 * Check if plugin is registered
 	 *
 	 * @return boolean
 	 */
-	static public function isActive($settings) {
+	static public function isRegistered($settings) {
+
 		return !empty($settings) && !empty($settings['rublon_system_token']) && !empty($settings['rublon_secret_key']);
+
 	}
 
-	
+
 	/**
 	 * Retrieves plugin's version from the settings
 	 *
@@ -302,6 +354,7 @@ class Rublon2FactorHelper {
 		return (!empty($settings) && !empty($settings['rublon_plugin_version'])) ? $settings['rublon_plugin_version'] : '';
 
 	}
+
 
 	/**
 	 * Retrieve plugin's version from the plugin's file
@@ -338,179 +391,211 @@ class Rublon2FactorHelper {
 	/**
 	 * Updates rublon_profile_id for a given user, to turn on second authentication factor.
 	 *
-	 * @param int $user
-	 * @param int $rublonProfileId
-	 * @return int|false Number of updated users or false on error
+	 * @param WP_User $user WordPress user object
+	 * @param int $rublonProfileId User's Rublon profile ID
+	 * @return int|boolean
 	 */
 	static public function connectRublon2Factor($user, $rublonProfileId) {
 
 		return add_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, $rublonProfileId, true);
 
 	}
-	
+
+
 	/**
 	 * Updates rublon_profile_id for a given user, to turn off second authentication factor.
 	 *
 	 * @param int $user
-	 * @param int $rublonProfileId
-	 * @return int|false Number of updated users or false on error
+	 * @return boolean
 	 */
-	static public function disconnectRublon2Factor($user, $rublonProfileId) {
+	static public function disconnectRublon2Factor($user) {
 
 		$hasProfileId = get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
-		if ($hasProfileId && $hasProfileId == $rublonProfileId)
+		if ($hasProfileId)
 			return delete_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID);
 		else
 			return false;
 
 	}
 
-	/**
-	 * Specify and save url of the return page.
-	 */
-	static public function saveReturnPageUrl($url) {
-		self::setReturnPageUrl($url);
-	}
 
 	/**
-	 * Checks if current users account is secured by Rublon2Factor.
+	 * Save the return page url in the plugin cookies
+	 */
+	static public function saveReturnPageUrl($url) {
+
+		$cookieName = self::RUBLON_COOKIE_PREFIX . self::RUBLON_COOKIE_RETURNURL;
+		self::setCookieData($cookieName, $url);
+
+	}
+
+
+	/**
+	 * Retrieve the return page url from the plugin cookies
+	 *
+	 * @return string
+	 */
+	static public function getReturnPageUrl() {
+
+		$cookieName = self::RUBLON_COOKIE_PREFIX . self::RUBLON_COOKIE_RETURNURL;
+		$url = self::getCookieData($cookieName);
+		self::clearCookieData($cookieName);
+		return $url;
+
+	}
+
+
+	/**
+	 * Check if the current user's account is protected by Rublon
 	 *
 	 * @return boolean
 	 */
 	static public function isCurrentUserSecured() {
-		$current_user = wp_get_current_user();
-		return self::isUserSecured($current_user);
+
+		$currentUser = wp_get_current_user();
+		return self::isUserSecured($currentUser);
+
 	}
 
+
 	/**
-	 * Checks if given user is secured by Rublon2Factor.
+	 * Check if the given user is protected by Rublon
 	 *
 	 * @param WP_User $user
 	 * @return boolean
 	 */
 	static public function isUserSecured($user) {
+
 		$rublonProfileId = get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
-		return self::isActive(self::getSettings()) && !empty($rublonProfileId);
-	}
-
-	/**
-	 * Return a session data for a given key.
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
-	static private function getSessionData($key) {
-		if (isset($_SESSION[$key])) {
-			$data = $_SESSION[$key];
-			return $data;
-		}
-		return false;
-	}
-
-	/**
-	 * Clear a session data for a given key.
-	 *
-	 * @param string $key
-	 */
-	static private function clearSessionData($key) {
-		if (isset($_SESSION[$key]) || (array_key_exists($key, $_SESSION) && is_null($_SESSION[$key])))
-			unset($_SESSION[$key]);
-	}
-
-	static public function clearSecurityTokens() {
-
-		self::clearSessionData(self::RUBLON_SESSION_KEY_SECURITY_TOKENS);		
+		return self::isRegistered(self::getSettings()) && !empty($rublonProfileId);
 
 	}
 
 
 	/**
-	 * Store a session data for a given key.
-	 *
-	 * @param string $key Key under which the data will be stored
-	 * @param mixed $value Data to store
+	 * Retrieve a user's Rublon profile ID from user meta
+	 * 
+	 * @param unknown $user
 	 */
-	static private function setSessionData($key, $value) {
-		$_SESSION[$key] = $value;
+	static public function getUserProfileId($user) {
+
+		if (!empty($user))
+			return get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
+
 	}
+
 
 	/**
-	 * Returns the current page url
-	 *
-	 * @return string
+	 * Get cookie params from WordPress settings
+	 * 
 	 */
-	static public function getCurrentPageUrl() {
-		$request_uri = ((!isset($_SERVER['REQUEST_URI'])) ? $_SERVER['PHP_SELF'] : $_SERVER['REQUEST_URI']);
-		$request_port = ((!empty($_SERVER['SERVER_PORT']) AND $_SERVER['SERVER_PORT'] <> '80') ? (":" . $_SERVER['SERVER_PORT']) : '');
-		$request_protocol = (self::isHttps() ? 'https' : 'http') . "://";
-			
-		return $request_protocol . $_SERVER['SERVER_NAME'] . $request_port . $request_uri;
+	static private function getCookieParams() {
+
+		// set domains and paths in case they're not defined
+		$cookieDomain = false;
+		if (defined('COOKIE_DOMAIN'))
+			$cookieDomain = COOKIE_DOMAIN;
+		$cookiePath = preg_replace('|https?://[^/]+|i', '', get_option('home') . '/');
+		if (defined('COOKIEPATH'))
+			$cookiePath = COOKIEPATH;
+		$cookieSitePath = preg_replace('|https?://[^/]+|i', '', get_option('siteurl') . '/');
+		if (defined('SITECOOKIEPATH'))
+			$cookieSitePath = SITECOOKIEPATH;
+
+		// other cookie params
+		$cookieExpires = time() + 14 * 24 * 60 * 60;
+		$cookieSecure = is_ssl();
+
+		return array(
+				'cookie_domain' => $cookieDomain,
+				'cookie_path' => $cookiePath,
+				'cookie_site_path' => $cookieSitePath,
+				'cookie_expires' => $cookieExpires,
+				'cookie_secure' => $cookieSecure
+		);
+
 	}
 
-	/**
-	 * Checks if the current connection is being made over https
-	 *
-	 * @return boolean
-	 */
-	static private function isHttps() {
-		if (!empty($_SERVER['SERVER_PORT'])) {
-			if (trim($_SERVER['SERVER_PORT']) == '443') {
-				return true;
-			}
-		}
-
-		if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-			if (strtolower(trim($_SERVER['HTTP_X_FORWARDED_PROTO'])) == 'https') {
-				return true;
-			}
-		}
-
-		if (!empty($_SERVER['HTTPS'])) {
-			if (strtolower(trim($_SERVER['HTTPS'])) == 'on' OR trim($_SERVER['HTTPS']) == '1') {
-				return true;
-			}
-		}
-
-		return false;
-	}
 	
+	/**
+	 * Set Rublon cookie data
+	 * 
+	 * @param string $name Cookie name
+	 * @param string $data Cookie data
+	 */
+	static private function setCookieData($name, $data) {
+
+		$cp = self::getCookieParams();
+
+		// set cookie
+		setcookie($name, $data, $cp['cookie_expires'], $cp['cookie_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
+		if ($cp['cookie_path'] != $cp['cookie_site_path'])
+			setcookie($name, $data, $cp['cookie_expires'], $cp['cookie_site_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
+
+	}
+
+
+	/**
+	 * Retrieve Rublon cookie data
+	 * 
+	 * @param string $name Cookie name
+	 * @return array|NULL
+	 */
+	static private function getCookieData($name) {
+
+		if (isset($_COOKIE[$name])) {
+			$cookieData = $_COOKIE[$name];
+			return $cookieData;
+		}
+
+	}
+
+
+	/**
+	 * Clear Rublon cookie data
+	 * 
+	 * @param string $name Cookie name
+	 */
+	static private function clearCookieData($name) {
+
+		if (isset($_COOKIE[$name])) {
+			$cp = self::getCookieParams();
+			setcookie($name, '', time() - 3600, $cp['cookie_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
+			if ($cp['cookie_path'] != $cp['cookie_site_path'])
+				setcookie($name, '', time() - 3600, $cp['cookie_site_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
+			unset($_COOKIE[$name]);
+		}
+
+	}
+
+
 	/**
 	 * Perform a consumer registration action
 	 * 
 	 * @param string $action
 	 */
-	static public function consumerRegistrationAction($action)
-	{
-		self::$registration->action($action);
+	static public function consumerRegistrationAction($action) {
+
+		$consumerRegistration = new RublonConsumerRegistration();
+		$consumerRegistration->action($action);
+
 	}
-	
+
 	/**
-	 * Validate System Token and Secret Key on Rublon servers 
+	 * Prepare url pieces needed for the plugin history request
 	 * 
-	 * @param array $settings
-	 * @return boolean
+	 * @return array
 	 */
-	static public function verifyConsumerSettings($settings) {
+	static public function getConsumerRegistrationData() {
 
-		$consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
-		$service = new RublonService2Factor($consumer);
-		$request = new RublonRequest($service);
-		$url = self::$registration->getDomain() . self::$registration->getActionUrl() . '/verify_consumer_settings' ;
-		$params = array('systemToken' => $settings['rublon_system_token']);
-		$response = $request->setRequestParams($url, $params)->getRawResponse();
-
-		try {
-			$response = json_decode($response, true);
-		} catch (Exception $e) {
-			$response = null;
-		}
-
-		if (!empty($response['status']) && $response['status'] == 'OK' && !empty($response['paramsValidity']))
-			return true;
-
-		return false;
+		$consumerRegistration = new RublonConsumerRegistration();
+		return array(
+				'url' => $consumerRegistration->getDomain(),
+				'action' => $consumerRegistration->getActionUrl()
+		);
 
 	}
+
 
 	/**
 	 * Send a request with plugin's history to Rublon servers
@@ -524,7 +609,8 @@ class Rublon2FactorHelper {
 		$service = new RublonService2Factor($consumer);
 		$request = new RublonRequest($service);
 		$data['systemToken'] = $settings['rublon_system_token'];
-		$url = self::$registration->getDomain() . self::$registration->getActionUrl() . '/add_history';
+		$consumerRegistrationData = self::getConsumerRegistrationData();
+		$url = $consumerRegistrationData['url'] . $consumerRegistrationData['action'] . '/add_history';
 		$response = $request->setRequestParams($url, $data)->getRawResponse();
 
 		try {
@@ -539,7 +625,8 @@ class Rublon2FactorHelper {
 		return false;
 
 	}
-	
+
+
 	/**
 	 * Send an error report via cURL
 	 * 
@@ -557,7 +644,7 @@ class Rublon2FactorHelper {
 		);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 		
 		curl_setopt($ch, CURLOPT_POST, true);							
 		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($msg));
@@ -573,7 +660,8 @@ class Rublon2FactorHelper {
 		}		
 		curl_close($ch);
 	}
-	
+
+
 	/**
 	 * Prepare server's PHP info for error reporting
 	 * 
@@ -621,6 +709,7 @@ class Rublon2FactorHelper {
 
 	}
 
+
 	/**
 	 * Perform any necessary actions on plugin update
 	 * 
@@ -632,13 +721,20 @@ class Rublon2FactorHelper {
 		// migrate old database entries into user meta
 		self::dbMigrate();
 
+		// make sure that Rublon is run before other plugins
+		self::meFirst();
+
 		// send update info to Rublon
-		$pluginMeta = self::preparePluginMeta();
-		$pluginMeta['action'] = 'update';
-		$pluginMeta['meta']['previous-version'] = $from;
-		self::pluginHistoryRequest($pluginMeta);
+		$settings = self::getSettings();
+		if (self::isRegistered($settings)) {
+			$pluginMeta = self::preparePluginMeta();
+			$pluginMeta['action'] = 'update';
+			$pluginMeta['meta']['previous-version'] = $from;
+			self::pluginHistoryRequest($pluginMeta);
+		}
 
 	}
+
 
 	/**
 	 * Check if the plugin has been updated and if so, act accordingly
@@ -655,7 +751,7 @@ class Rublon2FactorHelper {
 
 	}
 
-	
+
 	/**
 	 * Prepare plugin meta data to be reported
 	 * 
@@ -676,7 +772,7 @@ class Rublon2FactorHelper {
 		}
 		$pluginMeta = array(
 				'wordpress-version' => get_bloginfo('version'),
-				'plugin-version' => Rublon2FactorHelper::getCurrentPluginVersion(),
+				'plugin-version' => self::getCurrentPluginVersion(),
 		);
 		foreach ($roles as $role => $count) {
 			$pluginMeta['registered-' . $role . 's'] = $count;
@@ -689,8 +785,9 @@ class Rublon2FactorHelper {
 
 	}
 
+
 	/**
-	 * Returns WordPress User Id.
+	 * Returns WordPress User Id
 	 * 
 	 * Translate uppercased key "ID" which exist in old WordPress versions (3.0-3.2).
 	 * 
@@ -718,6 +815,17 @@ class Rublon2FactorHelper {
 
 
 	/**
+	 * Return the Rublon API domain
+	 * 
+	 */
+	static public function getAPIDomain() {
+
+		return self::RUBLON_API_DOMAIN;
+
+	}
+
+
+	/**
 	 * Prepare HTML code for displaying the plugin activation ribblon on the "Plugins" page
 	 * 
 	 */
@@ -729,7 +837,8 @@ class Rublon2FactorHelper {
 		echo $ribbonStart;
 		settings_fields('rublon2factor_settings_group');
 		$ribbonEnd = '<div class="rublon-activate-description-wrapper">' . self::constructRublonButton(__('Protect your account', 'rublon2factor'), 'document.getElementById(\'rublon-plugin-admin-activation\').submit();return false;') . '</div>';
-		$ribbonEnd .= '<input type="hidden" name="' . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="' . __('Protect your account', 'rublon2factor') . '" />';
+		$ribbonEnd .= '<input type="hidden" name="' . Rublon2FactorHelper::RUBLON_ACTION_PREFIX . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="1" />';
+		$ribbonEnd .= '<input type="hidden" name="' . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="1" />';
 		$lang = self::getBlogLanguage(); 
 		$ribbonEnd .= '<div class="rublon-activate-description-wrapper"><div class="rublon-activate-description">' . __('Rublon mobile app required', 'rublon2factor') . '.' . sprintf('<strong><a href="http://rublon.com%s/get" target="_blank"><span style=color:#5bba36> ',  (($lang != 'en') ? ('/' . $lang) : '')) . __('Free Download', 'rublon2factor') . ' &raquo;</span></a></strong></div></div>';
 		$ribbonEnd .= '<div class="rublon-activate-image"><a href="http://rublon.com'. (($lang != 'en') ? '/' . $lang . '/' : '') . '" target="_blank"><img src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon-ribbon-text.png" /></a></div>';
@@ -745,12 +854,13 @@ class Rublon2FactorHelper {
 	 */
 	static public function constructRublonButton($text, $onClick) {
 
-		$button = '<a href="http://rublon.com" onclick="' . $onClick . '" style="width:auto;height:30px;background: url(' . Rublon2FactorCallback::RUBLON_DOMAIN
+		$rublonDomain = self::RUBLON_API_DOMAIN;
+		$button = '<a href="http://rublon.com" onclick="' . $onClick . '" style="width:auto;height:30px;background: url(' . $rublonDomain
 			. '/public/img/buttons/rublon-btn-bg-dark-medium.png) left top repeat-x;font-weight:bold;font-size:13px;font-family:&quot;Helvetica&quot;'
 			. ' &quot;Nimbus Sans&quot; &quot;Arial&quot; &quot;sans-serif&quot;;color:#ffffff;text-decoration:none;display:inline-block;position:relative;padding:0 8px;'
-			. 'margin:0 8px;"><span style="display:block;width:33px;height:30px;background:url(' . Rublon2FactorCallback::RUBLON_DOMAIN
+			. 'margin:0 8px;"><span style="display:block;width:33px;height:30px;background:url(' . $rublonDomain
 			. '/public/img/buttons/rublon-btn-bg-begin-dark-medium.png) left top no-repeat;position:absolute;left:-8px;top:0;padding:0;margin:0;"></span><span'
-			. ' style="display:block;width:22px;height:30px;background:url(' . Rublon2FactorCallback::RUBLON_DOMAIN . '/public/img/buttons/rublon-btn-bg-end-dark-medium.png)'
+			. ' style="display:block;width:22px;height:30px;background:url(' . $rublonDomain . '/public/img/buttons/rublon-btn-bg-end-dark-medium.png)'
 			. ' left top no-repeat;position:absolute;right:-8px;top:0;padding:0;margin:0;"></span><span style="display:block;margin:0;padding:5px 22px 0 33px;font-weight:bold;'
 			. 'line-height:17px;height:17px;font-size:13px;font-family: Helvetica, &quot;Nimbus Sans&quot;, Arial, sans-serif;color:#ffffff;white-space:nowrap;'
 			. '">'
@@ -765,39 +875,18 @@ class Rublon2FactorHelper {
 	 * 
 	 * @return string
 	 */
-	static public function appInfoBox($hidden = true) {
+	static public function constructAppInfoBox($hidden = true) {
 
-		$infoBox = '<div class="rublon-app-info-box"' . ((!$hidden) ? ' style="display: block;"' : '') . '>';
+		$lang = self::getBlogLanguage();
+		$infoBox = sprintf('<a class="rublon-app-info-boxlink" href="http://rublon.com%s/get" target="_blank">', (($lang != 'en') ? ('/' . $lang) : '')) . '<div class="rublon-app-info-box"' . ((!$hidden) ? ' style="display: block;"' : '') . '>';
 		$infoBox .= '<p class="rublon-app-info-text"><strong>' . __('Rublon mobile app required:', 'rublon2factor') . '</strong></p>';
 		$infoBox .= '<div class="rublon-app-info-icons"></div>';
-		$lang = self::getBlogLanguage();
-		$infoBox .= '<p class="rublon-app-info-link"><strong>' . sprintf('<a href="http://rublon.com%s/get" target="_blank">', (($lang != 'en') ? ('/' . $lang) : '')) . __('Free Download', 'rublon2factor') . '</a></strong></p>';
-		$infoBox .= '</div>';
+		$infoBox .= '<p class="rublon-app-info-link"><strong>' . '' . __('Free Download', 'rublon2factor') . '</strong></p>';
+		$infoBox .= '</div></a>';
 		if ($hidden) {
 			$infoBox .= '<script>//<![CDATA[
-				var checkTrustedDevices = function() {
-					if (window.RublonConfigure && !window.RublonConfigure.trustedDevices) {
-							var elements = document.querySelectorAll(\'.rublon-app-info-box\');
-						for (var i = 0; i < elements.length; i++)
-							elements[i].style.display = \'block\';
-					}
-				};
-				if (window.RublonConfigure) {
-					checkTrustedDevices();
-				} else {
-					if (document.addEventListener) {
-						document.addEventListener(\'RublonJSSDKInit\', function() {
-							checkTrustedDevices();
-						}, false);
-					} else {
-						document.documentElement.RublonJSSDKInit = 0;
-						document.documentElement.attachEvent(\'onpropertychange\', function(event) {
-							if (event.propertyName == \'RublonJSSDKInit\' && event.srcElement.RublonJSSDKInit > 0) {
-								checkTrustedDevices();
-							}
-						});
-					}
-				}
+				if (RublonWP)
+					RublonWP.handleAppInfoBox();
 			//]]></script>';
 		}
 		return $infoBox;		
@@ -814,6 +903,56 @@ class Rublon2FactorHelper {
 		$translation = __('Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen.', 'rublon2factor');
 
 	}
-	
+
+
+	/**
+	 * Retrieve a GET-passed parameter
+	 * 
+	 * @param string $key
+	 * @return mixed
+	 */
+	static public function uriGet($key) {
+
+		return ((isset($_GET[$key])) ? $_GET[$key] : null);
+
+	}
+
+
+	/**
+	 * Retrieve return page in the Admin Panel received via GET
+	 * 
+	 */
+	static public function getReturnPage() {
+
+		$page = 'profile.php';
+		$custom = self::uriGet('custom');
+		if (!empty($custom))
+			switch ($custom) {
+				case 'rublon':
+					$page = 'admin.php?page=rublon';
+					break;
+		}
+		return $page;
+
+	}
+
+
+	/**
+	 * Re-orders the active plugin list so that Rublon is always run first
+	 * 
+	 */
+	static public function meFirst() {
+
+		$plugin_list = get_option('active_plugins');
+		$me = plugin_basename(RUBLON2FACTOR_PLUGIN_PATH);
+		$my_plugin_position = array_search($me, $plugin_list);
+		if ($my_plugin_position) {
+			array_splice($plugin_list, $my_plugin_position, 1);
+			array_unshift($plugin_list, $me);
+			update_option('active_plugins', $plugin_list);
+		}
+
+	}
+
 
 }

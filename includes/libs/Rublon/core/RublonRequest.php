@@ -78,7 +78,7 @@ class RublonRequest {
 				return $this->_request($this->url, $this->params);
 			} catch (RublonException $e) {
 				throw new RublonException(
-					$e->getMessage(),
+					'Connection problem.',
 					RublonException::CODE_CONNECTION_ERROR,
 					$e
 				);

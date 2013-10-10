@@ -1,6 +1,6 @@
 === Rublon ===
 Contributors: Rublon
-Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin
+Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification
 Requires at least: 3.3.x
 Tested up to: 3.6.1
 Stable tag: 1.2.0
@@ -24,6 +24,13 @@ Use Rublon to manage and define the devices you trust, such as your laptop, tabl
 Rublon is an additional security layer that verifies whether you are signing in from a Trusted Device. It works on top of any existing authentication process. This means that you still have to type your username and password or use a social login button to sign in, but it must be done on a Trusted Device in order to access your account. And if you want to sign in using a new device, simply confirm your identity using Rublon, and then add it to your Trusted Devices.
 
 You can protect your data by protecting your account with Rublon on every web service that uses our security system. If your web service does not, please contact your system administrator and ask him to integrate Rublon.
+
++++
+
+Supported languages:
+* English
+* German
+* Polish
 
 == Installation ==
 
@@ -76,6 +83,12 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.2.1 =
+* German language support added
+* Improved compatibility with a few unusual server configuration types
+* Added compatibility with some maintenance mode plugins
+* Added compatibility with the Better WP Security plugin 
 
 = 1.2.0 =
 * Simplified setup process — protect your account right away after activating the plugin

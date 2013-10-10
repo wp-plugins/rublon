@@ -144,13 +144,13 @@ abstract class RublonConsumerRegistrationTemplate {
 				if ($this->saveInitialParameters($this->_generateRandomString(), time())) {
 					$this->_echo($this->getRegistrationForm());
 				} else {
-					$this->finalError('Failed to save initial parameters');
+					$this->finalError('ERROR_CODE: INITIAL_PARAMS_SAVE_FAILURE');
 				}
 			} else {
-				$this->finalError('Method must be invoked by POST request');
+				$this->finalError('ERROR_CODE: NOT_A_POST_REQUEST');
 			}
 		} else {
-			$this->finalError('Unauthorized');
+			$this->finalError('ERROR_CODE: USER_NOT_AUTHORIZED');
 		}
 	}
 	
@@ -172,16 +172,16 @@ abstract class RublonConsumerRegistrationTemplate {
 					if ($this->saveSystemToken($systemToken)) {
 						$this->pullSecretKey($systemToken);
 					} else {
-						$this->finalError('Failed to save system token');
+						$this->finalError('ERROR_CODE: SYSTEM_TOKEN_SAVE_FAILURE');
 					}
 				} else {
-					$this->finalError('No system token received');
+					$this->finalError('ERROR_CODE: NO_SYSTEM_TOKEN_RECEIVED');
 				}
 			} else {
-				$this->finalError('Unauthorized');
+				$this->finalError('ERROR_CODE: USER_NOT_AUTHORIZED');
 			}
 		} else {
-			$this->finalError('Invalid process session');
+			$this->finalError('ERROR_CODE: INVALID_PROCESS_SESSION');
 		}
 	}
 	
@@ -207,12 +207,32 @@ abstract class RublonConsumerRegistrationTemplate {
 			try {
 			$response = $request->setRequestParams($url, $params)->getRawResponse();
 			} catch (RublonException $e) {
-				$this->finalError('Failed to perform a Rublon request. ' . $e->getMessage());
+				$errorCode = 'ERROR_CODE: RUBLON_EXCEPTION_';
+				switch ($e->getCode()) {
+					case RublonException::CODE_CURL_NOT_AVAILABLE:
+						$errorCode . 'CODE_CURL_NOT_AVAILABLE';
+						break;
+					case RublonException::CODE_INVALID_RESPONSE:
+						$errorCode . 'CODE_INVALID_RESPONSE';
+						break;
+					case RublonException::CODE_RESPONSE_ERROR:
+						$errorCode . 'CODE_RESPONSE_ERROR';
+						break;
+					case RublonException::CODE_CURL_ERROR:
+						$errorCode . 'CODE_CURL_ERROR';
+						break;
+					case RublonException::CODE_CONNECTION_ERROR:
+						$errorCode . 'CODE_CONNECTION_ERROR';
+						break;
+					default:
+						$errorCode . 'OTHER_REQUEST_ERROR';
+				}
+				$this->finalError($errorCode);
 			}
 			try {
 				$response = $this->_parseMessage($response, $this->getTempKey());
 			} catch (Exception $e) {
-				$this->finalError('Invalid response');
+				$this->finalError('ERROR_CODE: INVALID_RESPONSE');
 			}
 				
 			if (!empty($response['secretKey'])) {
@@ -222,15 +242,15 @@ abstract class RublonConsumerRegistrationTemplate {
 						$this->handleProfileId($response['profileId']);
 					$this->finalSuccess();
 				} else {
-					$this->finalError('Failed to save the secret key');
+					$this->finalError('ERROR_CODE: SECRET_KEY_SAVE_FAILURE');
 				}
 	
 			} else {
-				$this->finalError('No secret key received');
+				$this->finalError('ERROR_CODE: NO_SECRET_KEY_RECEIVED');
 			}
 				
 		} else {
-			$this->finalError('Invalid process session');
+			$this->finalError('ERROR_CODE: INVALID_PROCESS_SESSION');
 		}
 	}
 

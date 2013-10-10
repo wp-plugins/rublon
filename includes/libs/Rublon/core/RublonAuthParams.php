@@ -56,7 +56,7 @@ class RublonAuthParams {
 	 * 
 	 * @property string $originUrl
 	 */
-	protected $originUrl = null;
+	protected $originUrl = 'https://rublon.com/';
 	
 	/**
 	 * Action flag.

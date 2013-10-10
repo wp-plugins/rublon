@@ -4,11 +4,12 @@
 }
 
 .rublon-seal-link {
-	float: right;
+	float: left;
 }
 
 #rublon-seal {
 	padding-top: 10px;
+	padding-bottom: 8px;
 	clear: both;
 }
 
