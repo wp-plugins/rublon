@@ -20,9 +20,6 @@ class Rublon2FactorHelper {
 
 	const RUBLON_API_DOMAIN = 'https://code.rublon.com';
 
-	const RUBLON_COOKIE_PREFIX = 'Rublon-WP_';
-	const RUBLON_COOKIE_MESSAGES = 'messages';
-	const RUBLON_COOKIE_RETURNURL = 'return_url';
 	const RUBLON_SETTINGS_KEY = 'rublon2factor_settings';
 	const RUBLON_REGISTRATION_SETTINGS_KEY = 'rublon2factor_registration_settings';
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
@@ -60,13 +57,13 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Transfer plugin data from cookies to a private field
+	 * Transfer plugin messages from cookie to a private field
 	 * 
 	 */
 	static public function cookieTransfer() {
 
 		$cookies = array();
-		$messages = self::getMessagesFromCookie();
+		$messages = Rublon2FactorCookies::getMessagesFromCookie();
 		if (!empty($messages))
 			$cookies['messages'] = $messages;
 		self::$cookies = $cookies;
@@ -145,6 +142,8 @@ class Rublon2FactorHelper {
 			$authParams = new RublonAuthParams(self::$service);
 			$authParams->setConsumerParam('wp_user', self::getUserId($user));
 			$authParams->setConsumerParam('wp_auth_time', time());
+			$here = '[[CUSTOM]]' . urlencode($_SERVER['REQUEST_URI']);
+			$authParams->setConsumerParam('customURIParam', $here);
 			self::$service->initAuthorization($rublonProfileId, $authParams);
 		}
 
@@ -209,22 +208,6 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Retrieve messages from plugin cookie
-	 *
-	 * @return array
-	 */
-	static public function getMessagesFromCookie() {
-
-		$cookieName = self::RUBLON_COOKIE_PREFIX . self::RUBLON_COOKIE_MESSAGES;
-		$messages = self::getCookieData($cookieName);
-		self::clearCookieData($cookieName);
-		$messages = explode(':', $messages);
-		return $messages;
-
-	}
-
-
-	/**
 	 * Retrieve message codes from helper and prepare them for viewing
 	 * 
 	 * @return array|null
@@ -242,7 +225,7 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Store a message in plugin cookie
+	 * Store a message in the plugin cookies
 	 *
 	 * @param string $code Message code
 	 * @param string $type Message type
@@ -250,16 +233,8 @@ class Rublon2FactorHelper {
 	 */
 	static public function setMessage($code, $type, $origin) {
 	
-		$cookieName = self::RUBLON_COOKIE_PREFIX . self::RUBLON_COOKIE_MESSAGES;
 		$msg = $type . '__' . $origin . '__' . $code;
-		$messages = self::getCookieData($cookieName);
-		if (empty($messages))
-			$messages = array();
-		else
-			$messages = explode(':', $messages);
-		array_push($messages, $msg);
-		$messages = implode(':', $messages);
-		self::setCookieData($cookieName, $messages);
+		Rublon2FactorCookies::storeMessageInCookie($msg);
 
 	}
 
@@ -420,32 +395,6 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Save the return page url in the plugin cookies
-	 */
-	static public function saveReturnPageUrl($url) {
-
-		$cookieName = self::RUBLON_COOKIE_PREFIX . self::RUBLON_COOKIE_RETURNURL;
-		self::setCookieData($cookieName, $url);
-
-	}
-
-
-	/**
-	 * Retrieve the return page url from the plugin cookies
-	 *
-	 * @return string
-	 */
-	static public function getReturnPageUrl() {
-
-		$cookieName = self::RUBLON_COOKIE_PREFIX . self::RUBLON_COOKIE_RETURNURL;
-		$url = self::getCookieData($cookieName);
-		self::clearCookieData($cookieName);
-		return $url;
-
-	}
-
-
-	/**
 	 * Check if the current user's account is protected by Rublon
 	 *
 	 * @return boolean
@@ -473,6 +422,18 @@ class Rublon2FactorHelper {
 
 
 	/**
+	 * Check if a user has been authenticated by Rublon
+	 * 
+	 * @param WP_User $user
+	 */
+	static public function isUserAuthenticated($user) {
+		
+		return Rublon2FactorCookies::isAuthCookieSet($user);
+
+	}
+
+
+	/**
 	 * Retrieve a user's Rublon profile ID from user meta
 	 * 
 	 * @param unknown $user
@@ -481,90 +442,6 @@ class Rublon2FactorHelper {
 
 		if (!empty($user))
 			return get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
-
-	}
-
-
-	/**
-	 * Get cookie params from WordPress settings
-	 * 
-	 */
-	static private function getCookieParams() {
-
-		// set domains and paths in case they're not defined
-		$cookieDomain = false;
-		if (defined('COOKIE_DOMAIN'))
-			$cookieDomain = COOKIE_DOMAIN;
-		$cookiePath = preg_replace('|https?://[^/]+|i', '', get_option('home') . '/');
-		if (defined('COOKIEPATH'))
-			$cookiePath = COOKIEPATH;
-		$cookieSitePath = preg_replace('|https?://[^/]+|i', '', get_option('siteurl') . '/');
-		if (defined('SITECOOKIEPATH'))
-			$cookieSitePath = SITECOOKIEPATH;
-
-		// other cookie params
-		$cookieExpires = time() + 14 * 24 * 60 * 60;
-		$cookieSecure = is_ssl();
-
-		return array(
-				'cookie_domain' => $cookieDomain,
-				'cookie_path' => $cookiePath,
-				'cookie_site_path' => $cookieSitePath,
-				'cookie_expires' => $cookieExpires,
-				'cookie_secure' => $cookieSecure
-		);
-
-	}
-
-	
-	/**
-	 * Set Rublon cookie data
-	 * 
-	 * @param string $name Cookie name
-	 * @param string $data Cookie data
-	 */
-	static private function setCookieData($name, $data) {
-
-		$cp = self::getCookieParams();
-
-		// set cookie
-		setcookie($name, $data, $cp['cookie_expires'], $cp['cookie_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
-		if ($cp['cookie_path'] != $cp['cookie_site_path'])
-			setcookie($name, $data, $cp['cookie_expires'], $cp['cookie_site_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
-
-	}
-
-
-	/**
-	 * Retrieve Rublon cookie data
-	 * 
-	 * @param string $name Cookie name
-	 * @return array|NULL
-	 */
-	static private function getCookieData($name) {
-
-		if (isset($_COOKIE[$name])) {
-			$cookieData = $_COOKIE[$name];
-			return $cookieData;
-		}
-
-	}
-
-
-	/**
-	 * Clear Rublon cookie data
-	 * 
-	 * @param string $name Cookie name
-	 */
-	static private function clearCookieData($name) {
-
-		if (isset($_COOKIE[$name])) {
-			$cp = self::getCookieParams();
-			setcookie($name, '', time() - 3600, $cp['cookie_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
-			if ($cp['cookie_path'] != $cp['cookie_site_path'])
-				setcookie($name, '', time() - 3600, $cp['cookie_site_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
-			unset($_COOKIE[$name]);
-		}
 
 	}
 
@@ -633,8 +510,11 @@ class Rublon2FactorHelper {
 	 * @param string $msg Error info
 	 */
 	static function notify($msg) {
-		
-		$msg['bloginfo'] = get_bloginfo();				
+
+		$msg['bloginfo'] = get_bloginfo();
+		$pluginMeta = self::preparePluginMeta();
+		if (!empty($pluginMeta['meta']))
+			$msg['plugin-info'] = $pluginMeta['meta'];
 		$msg['phpinfo'] = self::info();				
 		
 		$ch = curl_init(RUBLON2FACTOR_NOTIFY_URL);
@@ -733,6 +613,15 @@ class Rublon2FactorHelper {
 			self::pluginHistoryRequest($pluginMeta);
 		}
 
+		// remove any deprecated cookies
+		Rublon2FactorCookies::cookieCleanup(array('return_url'));
+
+		$user = wp_get_current_user();
+		$settings = self::getSettings();
+		if (self::isRegistered($settings) && is_user_logged_in() && is_admin() && self::isUserSecured($user) && !self::isUserAuthenticated($user)) {
+ 			Rublon2FactorCookies::setAuthCookie($user, true);
+		}
+
 	}
 
 
@@ -792,6 +681,7 @@ class Rublon2FactorHelper {
 	 * Translate uppercased key "ID" which exist in old WordPress versions (3.0-3.2).
 	 * 
 	 * @param WP_User $user User object 
+	 * @return int 
 	 */
 	static public function getUserId($user) {
 
@@ -854,8 +744,8 @@ class Rublon2FactorHelper {
 	 */
 	static public function constructRublonButton($text, $onClick) {
 
-		$rublonDomain = self::RUBLON_API_DOMAIN;
-		$button = '<a href="http://rublon.com" onclick="' . $onClick . '" style="width:auto;height:30px;background: url(' . $rublonDomain
+		$rublonDomain = htmlspecialchars(self::RUBLON_API_DOMAIN);
+		$button = '<a href="http://rublon.com" onclick="' . htmlspecialchars($onClick) . '" style="width:auto;height:30px;background: url(' . $rublonDomain
 			. '/public/img/buttons/rublon-btn-bg-dark-medium.png) left top repeat-x;font-weight:bold;font-size:13px;font-family:&quot;Helvetica&quot;'
 			. ' &quot;Nimbus Sans&quot; &quot;Arial&quot; &quot;sans-serif&quot;;color:#ffffff;text-decoration:none;display:inline-block;position:relative;padding:0 8px;'
 			. 'margin:0 8px;"><span style="display:block;width:33px;height:30px;background:url(' . $rublonDomain
@@ -864,7 +754,7 @@ class Rublon2FactorHelper {
 			. ' left top no-repeat;position:absolute;right:-8px;top:0;padding:0;margin:0;"></span><span style="display:block;margin:0;padding:5px 22px 0 33px;font-weight:bold;'
 			. 'line-height:17px;height:17px;font-size:13px;font-family: Helvetica, &quot;Nimbus Sans&quot;, Arial, sans-serif;color:#ffffff;white-space:nowrap;'
 			. '">'
-			. $text . '</span></a>';
+			. htmlspecialchars($text) . '</span></a>';
 		return $button;
 
 	}
@@ -889,7 +779,7 @@ class Rublon2FactorHelper {
 					RublonWP.handleAppInfoBox();
 			//]]></script>';
 		}
-		return $infoBox;		
+		return $infoBox;
 
 	}
 
@@ -924,13 +814,18 @@ class Rublon2FactorHelper {
 	 */
 	static public function getReturnPage() {
 
-		$page = 'profile.php';
+		$page = admin_url();
 		$custom = self::uriGet('custom');
 		if (!empty($custom))
 			switch ($custom) {
 				case 'rublon':
-					$page = 'admin.php?page=rublon';
+					$page = admin_url('admin.php?page=rublon');
 					break;
+				case 'profile':
+					$page = admin_url('profile.php');
+					break;
+				default:
+					$page = urldecode(str_replace('[[CUSTOM]]', '', $custom));
 		}
 		return $page;
 

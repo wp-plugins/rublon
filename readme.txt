@@ -84,6 +84,15 @@ After a successful installation, the plugin can be updated automatically in the 
 
 == Changelog ==
 
+= 1.2.2 =
+* Rublon can now serve as an additional authentication factor for Clef
+* Rublon can now serve as an additional authentication factor for Authy
+* Rublon can now serve as an additional authentication factor for Duo Security
+* Rublon can now serve as an additional authentication factor for Google Authenticator
+* Rublon can now serve as an additional authentication factor for LaunchKey
+* Rublon can now serve as an additional authentication factor for various social plugins (e.g. Facebook Connect) 
+* Updated core Rublon libraries
+
 = 1.2.1 =
 * German language support added
 * Improved compatibility with a few unusual server configuration types

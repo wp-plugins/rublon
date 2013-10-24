@@ -100,7 +100,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 		echo $this->_notify($notifierMessage);
 
 		$returnPage = Rublon2FactorHelper::getReturnPage();
-		$this->_returnToPage(admin_url($returnPage));
+		$this->_returnToPage($returnPage);
 
 	}
 	
@@ -181,8 +181,10 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 				} else {
 					Rublon2FactorHelper::connectRublon2Factor($this->_user, $rublonProfileId);
 				}
+				Rublon2FactorCookies::setAuthCookie();
 			} else {
 				Rublon2FactorHelper::disconnectRublon2Factor($this->_user);
+				Rublon2FactorCookies::clearAuthCookie();
 			}
 		}
 
@@ -197,7 +199,8 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 
 		if ($this->_user) {
 			wp_clear_auth_cookie();
-			wp_set_auth_cookie(Rublon2FactorHelper::getUserId($this->_user), true);
+			Rublon2FactorCookies::setLoggedInCookie(Rublon2FactorHelper::getUserId($this->_user));
+			Rublon2FactorCookies::setAuthCookie($this->_user);
 			do_action('wp_login', $this->_user->user_login, $this->_user);
 		}
 
@@ -214,7 +217,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	protected function cancel() {
 
 		$page = Rublon2FactorHelper::getReturnPage();
-		$this->_returnToPage(admin_url($page));
+		$this->_returnToPage($page);
 
 	}
 
@@ -229,7 +232,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 		$flag = $consumerParams[self::FIELD_ACTION_FLAG];
 		switch ($flag) {
 			case RublonAuthParams::ACTION_FLAG_LOGIN:
-				$returnUrl = Rublon2FactorHelper::getReturnPageUrl();
+				$returnUrl = Rublon2FactorHelper::getReturnPage();
 				$returnUrl = (!empty($returnUrl)) ? $returnUrl : admin_url();
 				$sessionData = $this->response->getSessionData();
 				$this->_returnToPage($returnUrl, $sessionData);
@@ -245,7 +248,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 				}
 				$sessionData = $this->response->getSessionData();
 				$page = Rublon2FactorHelper::getReturnPage();
-				$this->_returnToPage(admin_url($page), $sessionData);
+				$this->_returnToPage($page, $sessionData);
 				break;
 			case RublonAuthParams::ACTION_FLAG_UNLINK_ACCOUNTS:
 				$currentUser = $this->_user;
@@ -258,7 +261,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 				}
 				$sessionData = $this->response->getSessionData();
 				$page = Rublon2FactorHelper::getReturnPage();
-				$this->_returnToPage(admin_url($page), $sessionData);
+				$this->_returnToPage($page, $sessionData);
 				break;
 		}
 
@@ -348,16 +351,12 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	 * @param array $sessionData Rublon session data
 	 * @param string $url URL address to redirect to
 	 */
-	private function _returnToPage($url = null, $sessionData = null) {
+	private function _returnToPage($url, $sessionData = null) {
 
-		$returnPageUrl = (isset($url)) ? $url : Rublon2FactorHelper::getReturnPageUrl();
 		if (!empty($sessionData)) {
-			echo $this->_htmlHelper->returnToPage($sessionData, $returnPageUrl);
+			echo $this->_htmlHelper->returnToPage($sessionData, $url);
 		} else {
-			if (empty($returnPageUrl)) {
-				$returnPageUrl = '/';
-			}
-			header('Location: '. $returnPageUrl);
+			wp_safe_redirect($url);
 			exit;
 		}
 

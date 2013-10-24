@@ -3,6 +3,14 @@
 require_once 'RublonConsumer.php';
 require_once 'RublonService2Factor.php';
 
+/**
+ * Template Method to handle Rublon callback script
+ * 
+ * You have to create a subclass which extends this abstract class
+ * and implement the abstract methods. Then you can write the callback script
+ * by creating an class instance and calling the run() method.
+ *
+ */
 abstract class Rublon2FactorCallbackTemplate {
 	
 	

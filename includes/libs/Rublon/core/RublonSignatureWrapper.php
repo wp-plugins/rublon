@@ -3,11 +3,11 @@
 /**
  * Signature wrapper for input and output data
  *
- * Body of the message is signed by the MD5 hash of the string formed of
+ * Body of the message is signed by the HMAC-SHA256 hash of the string formed of
  * concatenation of the consumer's secret key and the body string.
  * Body and its signature are wrapped into a JSON structure.
  *
- * To verify the input message it's necessary to compute the MD5 hash
+ * To verify the input message it's necessary to compute the HMAC-SHA256 hash
  * of the consumer's secret key concatenated with the message body string
  * and compare with the signature of the message.
  * 
@@ -17,12 +17,6 @@
 class RublonSignatureWrapper {
 	
 
-	/**
-	 * Default sign method
-	 */
-	const DEFAULT_SIGN_METHOD = "string-md5";
-	
-	
 	/**
 	 * Rublon message life time
 	 * 
@@ -141,7 +135,7 @@ class RublonSignatureWrapper {
 	 * @return bool
 	 */
 	public static function verifyData($data, $secretKey, $sign) {
-		$dataSign = self::signData($data, $secretKey, self::DEFAULT_SIGN_METHOD);
+		$dataSign = self::signData($data, $secretKey);
 		return ($dataSign == $sign);
 	}
 
@@ -153,13 +147,10 @@ class RublonSignatureWrapper {
 	 *
 	 * @param string $data Data to sign
 	 * @param string $secretKey Secret key to create the signature
-	 * @param string $method (optional) Sinagure method
 	 * @return string
 	 */
-	public static function signData($data, $secretKey, $method = null) {
-		if ($method == self::DEFAULT_SIGN_METHOD) {
-			return md5($secretKey . $data);
-		}
+	public static function signData($data, $secretKey) {
+		return hash_hmac('SHA256', $data, $secretKey);
 	}
 
 
@@ -174,8 +165,6 @@ class RublonSignatureWrapper {
 	 */
 	public static function wrap($secretKey, $body, $outerParams = null) {
 
-		$signatureMethod = self::DEFAULT_SIGN_METHOD;
-
 		if (!is_string($body)) $body = json_encode($body);
 
 		if (!empty($outerParams) AND is_array($outerParams)) {
@@ -187,7 +176,6 @@ class RublonSignatureWrapper {
 		$data['head'] = array(
 			'size' => strlen($body),
 			'time' => time(),
-			'signMethod' => $signatureMethod,
 		);
 		$data['body'] = $body;
 
@@ -195,7 +183,7 @@ class RublonSignatureWrapper {
 
 		return array(
 			'data' => $data,
-			'sign' => self::signData($data, $secretKey, $signatureMethod),
+			'sign' => self::signData($data, $secretKey),
 		);
 
 	}

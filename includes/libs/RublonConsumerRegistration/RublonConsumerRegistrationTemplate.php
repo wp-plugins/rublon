@@ -9,6 +9,13 @@
 abstract class RublonConsumerRegistrationTemplate {
 	
 	/**
+	 * Library version date
+	 * 
+	 * @var string
+	 */
+	const VERSION = '2013-10-03';
+	
+	/**
 	 * Action to initialize process
 	 * 
 	 * @var string
@@ -28,6 +35,12 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @var int
 	 */
 	const PROCESS_LIFETIME = 300; // seconds
+	
+	
+	// Common technology flags
+	const TECHNOLOGY_PHP_SDK = 'rublon-php-sdk';
+	const TECHNOLOGY_JAVA_SDK = 'rublon-java-sdk';
+	const TECHNOLOGY_OTHER = 'other';
 	
 	
 	/**
@@ -203,9 +216,9 @@ abstract class RublonConsumerRegistrationTemplate {
 			$service = new RublonService2Factor($consumer);
 			$request = new RublonRequest($service);
 			$url = $this->apiDomain . $this->actionUrl .'/'. self::ACTION_PULL_SECRET_KEY;
-			$params = array('systemToken' => $systemToken);
+			$params = array('systemToken' => $systemToken, 'lib-version' => self::VERSION);
 			try {
-			$response = $request->setRequestParams($url, $params)->getRawResponse();
+				$response = $request->setRequestParams($url, $params)->getRawResponse();
 			} catch (RublonException $e) {
 				$errorCode = 'ERROR_CODE: RUBLON_EXCEPTION_';
 				switch ($e->getCode()) {
@@ -345,13 +358,13 @@ abstract class RublonConsumerRegistrationTemplate {
 	 */
 	protected function getRegistrationForm() {
 		$action = $this->apiDomain . $this->actionUrl .'/'. self::ACTION_INITIALIZE;
-		$result = '<form action="'. htmlspecialchars($action) .'" method="post" id="RublonConsumerRegistration">
-			'. $this->_getHidden('projectUrl', $this->getProjectUrl()) .'
-			'. $this->_getHidden('communicationUrl', $this->getCommunicationUrl()) .'
-			'. $this->_getHidden('callbackUrl', $this->getCallbackUrl()) .'
-			'. $this->_getHidden('tempKey', $this->getTempKey()) .'
-			'. $this->_getHidden('projectData', $this->getProjectData()) .'
-		<script>document.getElementById("RublonConsumerRegistration").submit();</script>
+		$result = '<form action="'. htmlspecialchars($action) .'" method="post" id="RublonConsumerRegistration">'
+			. $this->_getHidden('projectUrl', $this->getProjectUrl())
+			. $this->_getHidden('communicationUrl', $this->getCommunicationUrl())
+			. $this->_getHidden('callbackUrl', $this->getCallbackUrl())
+			. $this->_getHidden('tempKey', $this->getTempKey())
+			. $this->_getHidden('projectData', json_encode($this->getProjectData()))
+			. '<script>document.getElementById("RublonConsumerRegistration").submit();</script>
 		<noscript><input type="submit" value="Register" /></noscript>
 		</form>';
 		return $result;
@@ -380,12 +393,11 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @return string
 	 */
 	protected function getProjectData() {
-	
-		return json_encode(array(
-				'project-name' => 'New Rublon PHP Project',
-				'project-technology' => 'rublon-php-sdk'
-		), true);
-	
+		return array(
+			'project-name' => $this->getProjectName(),
+			'project-technology' => $this->getProjectTechnology(),
+			'lib-version' => self::VERSION,
+		);
 	}
 
 
@@ -501,6 +513,7 @@ abstract class RublonConsumerRegistrationTemplate {
 	
 	/**	 
 	 * Get System Token from base64 parameter
+	 * 
 	 * @param string $data Base64 decoded data
 	 * @return bool If the sign is valid return true the false
 	 */
@@ -694,6 +707,28 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @abstract
 	 */
 	abstract protected function getCallbackUrl();
+	
+	
+	/**
+	 * Get name of the project
+	 *
+	 * Returns name of the project that will be set in Rublon Developers Dashboard.
+	 *
+	 * @return string
+	 */
+	abstract protected function getProjectName();
+	
+	
+	
+	/**
+	 * Get project's technology
+	 *
+	 * Returns technology, module or library name to set in project.
+	 *
+	 * @return string
+	*/
+	abstract protected function getProjectTechnology();
+	
 
 
 }

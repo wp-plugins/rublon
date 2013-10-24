@@ -31,7 +31,7 @@ class RublonConsumer {
 	 *
 	 * @var string
 	 */
-	const VERSION_DATE = '2013-08-01';
+	const VERSION_DATE = '2013-10-03';
 
 	/**
 	 * Enable log array storage.

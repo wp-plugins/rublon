@@ -157,9 +157,6 @@ class RublonAuthParams {
 		$outerParams = $this->getOuterParams();
 		
 		$params = array();
-		$params['systemToken'] = $this->getConsumer()->getSystemToken();
-		$params['lang'] = $this->getConsumer()->getLang();
-		$params['url'] = $this->getOriginUrl();
 		
 		if (!empty($consumerParams) OR !empty($outerParams)) {
 			$wrapper = RublonSignatureWrapper::wrap(
@@ -256,6 +253,10 @@ class RublonAuthParams {
 		if ($actionFlag = $this->getActionFlag()) {
 			$consumerParams['actionFlag'] = $actionFlag;
 		}
+		$consumerParams['lang'] = $this->getConsumer()->getLang();
+		$consumerParams['systemToken'] = $this->getConsumer()->getSystemToken();
+		$consumerParams['originUrl'] = $this->originUrl;
+		$consumerParams['version'] = $this->getConsumer()->getVersion();
 		return $consumerParams;
 	}
 	

@@ -11,7 +11,7 @@
 /**
  * Initialize
  */
-function rublon2factor_init() {
+function rublon2factor_plugins_loaded() {
 
 	// Initialize Rublon2Factor plug-in helper
 	Rublon2FactorHelper::init();

@@ -32,6 +32,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 			$errorCode = 'PLUGIN_REGISTERED_NO_PROTECTION';
 			Rublon2FactorHelper::setMessage($errorCode, 'error', 'CR');
 		}
+		Rublon2FactorCookies::setAuthCookie();
 
 		$pluginMeta = Rublon2FactorHelper::preparePluginMeta();
 		$pluginMeta['action'] = 'activation';
@@ -359,21 +360,19 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	/**
 	 * Get project's additional data
 	 *
-	 * Return the blog name as project name,
-	 * "wordpress3" as project technology and plugin's
-	 * version.
+	 * Adds additional project data related to WordPress:
+	 * blog's description, plugin's current version and
+	 * blog's language.
 	 *
-	 * @return string
+	 * @return array
 	 */
 	protected function getProjectData() {
 
-		return json_encode(array(
-				'project-name' => get_bloginfo('title'),
-				'project-description' => get_bloginfo('description'),
-				'project-technology' => 'wordpress3',
-				'plugin-version' => Rublon2FactorHelper::getCurrentPluginVersion(),
-				'lang-code' => Rublon2FactorHelper::getBlogLanguage()
-		));
+		$projectData = parent::getProjectData();
+		$projectData['project-description'] = get_bloginfo('description');
+		$projectData['plugin-version'] = Rublon2FactorHelper::getCurrentPluginVersion();
+		$projectData['lang-code'] = Rublon2FactorHelper::getBlogLanguage();
+		return $projectData;
 
 	}
 
@@ -400,5 +399,34 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		}
 
 	}
+
+
+	/**
+	 * Get name of the project
+	 *
+	 * Returns name of the project that will be set in Rublon Developers Dashboard.
+	 *
+	 * @return string
+	 */
+	protected function getProjectName() {
+
+		return get_bloginfo('title');
+
+	}
+
+
+	/**
+	 * Get project's technology
+	 *
+	 * Returns technology, module or library name to set in project.
+	 *
+	 * @return string
+	*/
+	protected function getProjectTechnology() {
+
+		return 'wordpress3';
+
+	}
+
 
 }

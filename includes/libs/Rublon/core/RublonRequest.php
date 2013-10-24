@@ -108,7 +108,9 @@ class RublonRequest {
 		$ch = curl_init($url);
 		$headers = array(
 			"Content-Type: application/json; charset=utf-8",
-			"Accept: application/json, text/javascript, */*; q=0.01"
+			"Accept: application/json, text/javascript, */*; q=0.01",
+			"X-Rublon-Technology: php-sdk",
+			"X-Rublon-Version: ". $this->getConsumer()->getVersion(),
 		);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
@@ -124,7 +126,7 @@ class RublonRequest {
 		}
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Rublon Consumer ('. $this->getConsumer()->getVersion() .')');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Rublon PHP SDK ('. $this->getConsumer()->getVersion() .')');
 		
 		// SSL options
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -133,7 +135,7 @@ class RublonRequest {
 		$certPath = explode(DIRECTORY_SEPARATOR, __FILE__);		
 		array_pop($certPath);		
 		array_pop($certPath);
-		$certPath = implode(DIRECTORY_SEPARATOR, $certPath) . DIRECTORY_SEPARATOR.'cert'.DIRECTORY_SEPARATOR.'cacert.pem';				
+		$certPath = implode(DIRECTORY_SEPARATOR, $certPath) . DIRECTORY_SEPARATOR .'cert'. DIRECTORY_SEPARATOR .'cacert.pem';		
 		curl_setopt($ch, CURLOPT_CAINFO, $certPath);
 		
 		// Execute request
