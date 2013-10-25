@@ -85,7 +85,7 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 1.2.2 =
-* Rublon can now also serve as an additional authentication factor for any other authentication method
+* Rublon can now also serve as an additional factor for any other authentication method, e.g. social login through Facebook
 * Core Rublon libraries updated
 
 = 1.2.1 =
