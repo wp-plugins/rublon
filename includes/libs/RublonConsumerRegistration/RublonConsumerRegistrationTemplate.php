@@ -34,7 +34,7 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * 
 	 * @var int
 	 */
-	const PROCESS_LIFETIME = 300; // seconds
+	const PROCESS_LIFETIME = 3600; // seconds
 	
 	
 	// Common technology flags
