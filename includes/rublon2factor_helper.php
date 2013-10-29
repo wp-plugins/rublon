@@ -486,6 +486,7 @@ class Rublon2FactorHelper {
 		$service = new RublonService2Factor($consumer);
 		$request = new RublonRequest($service);
 		$data['systemToken'] = $settings['rublon_system_token'];
+		$data['lib-version'] = $consumer->getVersion();
 		$consumerRegistrationData = self::getConsumerRegistrationData();
 		$url = $consumerRegistrationData['url'] . $consumerRegistrationData['action'] . '/add_history';
 		$response = $request->setRequestParams($url, $data)->getRawResponse();
