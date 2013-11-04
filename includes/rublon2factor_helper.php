@@ -25,6 +25,7 @@ class Rublon2FactorHelper {
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	const RUBLON_ACTION_PREFIX = 'rublon_';
 	const RUBLON_AUTH_TIME = 5;
+	const RUBLON_PAGE = 'admin.php?page=rublon';
 
 
 	/**
@@ -97,7 +98,7 @@ class Rublon2FactorHelper {
 			exit;
 		} else {
 			$settings = self::getSettings();
-			if (self::isRegistered($settings)) {
+			if (self::isPluginRegistered()) {
 				$consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
 				$consumer->setDomain(self::getAPIDomain());
 				$consumer->setLang(self::getBlogLanguage());
@@ -190,9 +191,10 @@ class Rublon2FactorHelper {
 
 	/**
 	 * Return the plugin settings 
+	 *  
 	 */
-	static public function getSettings()
-	{
+	static public function getSettings() {
+
 		return get_option(self::RUBLON_SETTINGS_KEY);
 	}
 
@@ -203,6 +205,34 @@ class Rublon2FactorHelper {
 	static public function saveSettings($settings) {
 
 		update_option(self::RUBLON_SETTINGS_KEY, $settings);
+
+	}
+
+
+	/**
+	 * Checks if the plugin has ever been activated
+	 * 
+	 * @return boolean
+	 */
+	static public function wasPluginEverActivated() {
+
+		$settings = self::getSettings();
+		return !empty($settings['plugin-activated']);
+
+	}
+
+
+	/**
+	 * Registers the fact of the plugin's activation
+	 * 
+	 */
+	static public function registerPluginActivation() {
+
+		$settings = self::getSettings();
+		if (!$settings)
+			$settings = array();
+		$settings['plugin-activated'] = true;
+		self::saveSettings($settings);
 
 	}
 
@@ -279,7 +309,7 @@ class Rublon2FactorHelper {
 								. ' <strong>' . __('update now', 'rublon2factor') . '</strong></a>.';
 						break;
 					case 'CR_PLUGIN_REGISTERED_NO_PROTECTION':
-						$errorMessage = sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon2factor'), admin_url('admin.php?page=rublon'));
+						$errorMessage = sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon2factor'), admin_url(self::RUBLON_PAGE));
 						break;
 				}
 				$result[] = array('message' => $errorMessage, 'type' => $msgType);
@@ -311,9 +341,10 @@ class Rublon2FactorHelper {
 	 *
 	 * @return boolean
 	 */
-	static public function isRegistered($settings) {
+	static public function isPluginRegistered() {
 
-		return !empty($settings) && !empty($settings['rublon_system_token']) && !empty($settings['rublon_secret_key']);
+		$settings = self::getSettings();
+		return (!empty($settings) && !empty($settings['rublon_system_token']) && !empty($settings['rublon_secret_key']));
 
 	}
 
@@ -416,7 +447,7 @@ class Rublon2FactorHelper {
 	static public function isUserSecured($user) {
 
 		$rublonProfileId = get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
-		return self::isRegistered(self::getSettings()) && !empty($rublonProfileId);
+		return self::isPluginRegistered() && !empty($rublonProfileId);
 
 	}
 
@@ -606,21 +637,21 @@ class Rublon2FactorHelper {
 		self::meFirst();
 
 		// send update info to Rublon
-		$settings = self::getSettings();
-		if (self::isRegistered($settings)) {
+		if (self::isPluginRegistered()) {
 			$pluginMeta = self::preparePluginMeta();
 			$pluginMeta['action'] = 'update';
 			$pluginMeta['meta']['previous-version'] = $from;
 			self::pluginHistoryRequest($pluginMeta);
+			if (!self::wasPluginEverActivated())
+				self::registerPluginActivation();
 		}
 
 		// remove any deprecated cookies
 		Rublon2FactorCookies::cookieCleanup(array('return_url'));
 
 		$user = wp_get_current_user();
-		$settings = self::getSettings();
-		if (self::isRegistered($settings) && is_user_logged_in() && is_admin() && self::isUserSecured($user) && !self::isUserAuthenticated($user)) {
- 			Rublon2FactorCookies::setAuthCookie($user, true);
+		if (self::isPluginRegistered() && is_user_logged_in() && is_admin() && self::isUserSecured($user) && !self::isUserAuthenticated($user)) {
+ 			Rublon2FactorCookies::setAuthCookie($user);
 		}
 
 	}
@@ -728,7 +759,7 @@ class Rublon2FactorHelper {
 		echo $ribbonStart;
 		settings_fields('rublon2factor_settings_group');
 		$ribbonEnd = '<div class="rublon-activate-description-wrapper">' . self::constructRublonButton(__('Protect your account', 'rublon2factor'), 'document.getElementById(\'rublon-plugin-admin-activation\').submit();return false;') . '</div>';
-		$ribbonEnd .= '<input type="hidden" name="' . Rublon2FactorHelper::RUBLON_ACTION_PREFIX . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="1" />';
+		$ribbonEnd .= '<input type="hidden" name="' . self::RUBLON_ACTION_PREFIX . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="1" />';
 		$ribbonEnd .= '<input type="hidden" name="' . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="1" />';
 		$lang = self::getBlogLanguage(); 
 		$ribbonEnd .= '<div class="rublon-activate-description-wrapper"><div class="rublon-activate-description">' . __('Rublon mobile app required', 'rublon2factor') . '.' . sprintf('<strong><a href="http://rublon.com%s/get" target="_blank"><span style=color:#5bba36> ',  (($lang != 'en') ? ('/' . $lang) : '')) . __('Free Download', 'rublon2factor') . ' &raquo;</span></a></strong></div></div>';
@@ -820,7 +851,7 @@ class Rublon2FactorHelper {
 		if (!empty($custom))
 			switch ($custom) {
 				case 'rublon':
-					$page = admin_url('admin.php?page=rublon');
+					$page = admin_url(self::RUBLON_PAGE);
 					break;
 				case 'profile':
 					$page = admin_url('profile.php');

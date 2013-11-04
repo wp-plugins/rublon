@@ -113,3 +113,15 @@ function rublon2factor_wp_logout() {
 }
 
 add_action('wp_logout', 'rublon2factor_wp_logout');
+/**
+ * Register the fact that the plugin has been activated
+ * 
+ */
+function rublon2factor_plugin_activation() {
+
+	if (Rublon2FactorHelper::isPluginRegistered() && !Rublon2FactorHelper::wasPluginEverActivated())
+		Rublon2FactorHelper::registerPluginActivation();
+
+}
+
+register_activation_hook(RUBLON2FACTOR_PLUGIN_PATH, 'rublon2factor_plugin_activation');
