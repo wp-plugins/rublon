@@ -40,7 +40,7 @@ class Rublon2FactorCookies {
 	/**
 	 * Store a message in the message cookie
 	 * 
-	 * @param unknown $msg
+	 * @param string $msg
 	 */
 	static public function storeMessageInCookie($msg) {
 
@@ -112,7 +112,7 @@ class Rublon2FactorCookies {
 	 * @param WP_User $user User whose authentication should be checked
 	 * @return string
 	 */
-	static public function setAuthCookie($user = null, $addToTable = false) {
+	static public function setAuthCookie($user = null) {
 
 		$cookieName = self::COOKIE_PREFIX . self::COOKIE_AUTHENTICATED;
 		$cookieParams = self::_getAuthCookieParams();
@@ -121,8 +121,6 @@ class Rublon2FactorCookies {
 			$user = wp_get_current_user();
 		$cookieData = self::_prepareAuthCookieData($user);
 		self::_setCookieData($cookieName, $cookieData, $cookieParams);
-		if ($addToTable)
-			if (empty($_COOKIE[$cookieName]))
 				$_COOKIE[$cookieName] = $cookieData;
 		return $cookieData;
 

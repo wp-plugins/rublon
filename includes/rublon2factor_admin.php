@@ -53,21 +53,32 @@ function rublon2factor_admin_scripts() {
 add_action('admin_enqueue_scripts', 'rublon2factor_admin_scripts');
 
 /**
- * Register plugin settings
+ * Register plugin settings and redirect to plugin page if this is the first activation
 */
 function rublon2factor_register_settings() {
 
-	register_setting('rublon2factor_settings_group', Rublon2FactorHelper::RUBLON_SETTINGS_KEY, 'rublon2factor_registration_check');
+	register_setting('rublon2factor_settings_group', Rublon2FactorHelper::RUBLON_SETTINGS_KEY, 'rublon2factor_sanitize_settings');
 	register_setting('rublon2factor_settings_group', Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+
+	if (Rublon2FactorHelper::isPluginRegistered() && !Rublon2FactorHelper::wasPluginEverActivated())
+		Rublon2FactorHelper::registerPluginActivation();
+	if (!Rublon2FactorHelper::wasPluginEverActivated()) {
+		Rublon2FactorHelper::registerPluginActivation();
+		wp_redirect(admin_url(Rublon2FactorHelper::RUBLON_PAGE));
+		exit;
+	}
 
 }
 
 add_action('admin_init', 'rublon2factor_register_settings');
 
 /**
- * Check for plugin registration
+ * Sanitize plugin settings
+ * 
+ * @param array $settings
+ * @return array
  */
-function rublon2factor_registration_check($settings) {
+function rublon2factor_sanitize_settings($settings) {
 
 	$action = RublonConsumerRegistration::ACTION_INITIALIZE;
 	if (isset($_POST[Rublon2FactorHelper::RUBLON_ACTION_PREFIX . $action])) {
@@ -90,11 +101,7 @@ function rublon2factor_create_settings_page() {
 			<?php _e('Rublon', 'rublon2factor'); ?>
 		</h2>
 
-			<?php	
-				$settings = Rublon2FactorHelper::getSettings();
-			?>
-
-			<?php if (!Rublon2FactorHelper::isRegistered($settings)): // START_BLOCK: Is Rublon active? ?>
+			<?php if (!Rublon2FactorHelper::isPluginRegistered()): // START_BLOCK: Is Rublon active? ?>
 
 			<?php
 				$current_user = wp_get_current_user();
@@ -124,7 +131,7 @@ function rublon2factor_create_settings_page() {
 			<?php else: // ELSE_BLOCK: Is user authorized to manage plugins?
 
 				$admin_email = get_option('admin_email');
-				$admin_url = admin_url('admin.php?page=rublon');
+				$admin_url = admin_url(Rublon2FactorHelper::RUBLON_PAGE);
 				echo '<div class="updated rublon-activation-mere-user">'
 					. __('Rublon will be available to you once your administrator protects his account.', 'rublon2factor')
 					. ' <strong>' . __('Contact your administrator', 'rublon2factor') . ':' . ' <a href="mailto:' . $admin_email . '?subject=' . __('Protect your account with Rublon', 'rublon2factor') . '&body=' . sprintf(__('Hey, could you please protect your account with Rublon on %s? I want to protect my account, but I won\'t be able to do this until an administrator will.', 'rublon2factor'), $admin_url) . '">' . $admin_email . '</a></strong>'
@@ -184,7 +191,7 @@ function rublon2factor_no_settings_warning() {
 		echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon2factor') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon2factor') . '</p></div>';
 	}
 	
-	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isRegistered(Rublon2FactorHelper::getSettings()) && $screen->base == 'plugins') {
+	if ( $pagenow == 'plugins.php' AND !Rublon2FactorHelper::isPluginRegistered() && $screen->base == 'plugins') {
 		Rublon2FactorHelper::activationRibbon();
 	}
 
@@ -214,7 +221,7 @@ add_action('admin_head', 'rublon2factor_add_script_on_profile_page');
  */
 function rublon2factor_add_users_2factor_disabler($user) {
 
-	if (!empty($user) && Rublon2FactorHelper::isRegistered(Rublon2FactorHelper::getSettings())) {
+	if (!empty($user) && Rublon2FactorHelper::isPluginRegistered()) {
 
 		if (Rublon2FactorHelper::isUserSecured($user)) {
 			?><h3><?php _e('Security', 'rublon2factor') ?></h3>
@@ -260,7 +267,7 @@ add_action('edit_user_profile_update', 'rublon2factor_disable_users_2factor');
 */
 function rublon2factor_secure_account_buttons() {
 	
-	if(Rublon2FactorHelper::isRegistered(Rublon2FactorHelper::getSettings())): // START_BLOCK: Is the plugin registered?
+	if(Rublon2FactorHelper::isPluginRegistered()): // START_BLOCK: Is the plugin registered?
 		?>
 <h3>
 <?php
@@ -404,7 +411,7 @@ function rublon2factor_modify_admin_toolbar() {
  		$wp_admin_bar->add_node(array(
  				'id' => 'rublon',
  				'title' => __('Protected by Rublon', 'rublon2factor'),
- 				'href' => admin_url('admin.php?page=rublon'),
+ 				'href' => admin_url(Rublon2FactorHelper::RUBLON_PAGE),
  				'parent' => 'user-actions',
  		
  		));

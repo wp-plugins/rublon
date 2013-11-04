@@ -38,7 +38,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		$pluginMeta['action'] = 'activation';
 		Rublon2FactorHelper::pluginHistoryRequest($pluginMeta);
 		
-		$this->_redirect(admin_url('admin.php?page=rublon'));
+		$this->_redirect(admin_url(Rublon2FactorHelper::RUBLON_PAGE));
 	}
 	
 	/**
@@ -73,7 +73,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		// send issue notify
 		echo $this->_notify($notifierMessage);
 
-		$this->_redirect(admin_url('admin.php?page=rublon'));
+		$this->_redirect(admin_url(Rublon2FactorHelper::RUBLON_PAGE));
 
 	}
 
