@@ -22,23 +22,23 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		$this->updateRublonSettings();
 
 		$currentUser = wp_get_current_user();
-		if (!empty($adminProfileId) && !Rublon2FactorHelper::isUserSecured($currentUser))
-			$success = Rublon2FactorHelper::connectRublon2Factor($currentUser, $adminProfileId);
+		if (!empty($adminProfileId) && !RublonHelper::isUserSecured($currentUser))
+			$success = RublonHelper::connectRublon2Factor($currentUser, $adminProfileId);
 
 		if ($success) {
 			$updateMessage = 'PLUGIN_REGISTERED';
-			Rublon2FactorHelper::setMessage($updateMessage, 'updated', 'CR');
+			RublonHelper::setMessage($updateMessage, 'updated', 'CR');
 		} else {
 			$errorCode = 'PLUGIN_REGISTERED_NO_PROTECTION';
-			Rublon2FactorHelper::setMessage($errorCode, 'error', 'CR');
+			RublonHelper::setMessage($errorCode, 'error', 'CR');
 		}
-		Rublon2FactorCookies::setAuthCookie();
+		RublonCookies::setAuthCookie();
 
-		$pluginMeta = Rublon2FactorHelper::preparePluginMeta();
+		$pluginMeta = RublonHelper::preparePluginMeta();
 		$pluginMeta['action'] = 'activation';
-		Rublon2FactorHelper::pluginHistoryRequest($pluginMeta);
+		RublonHelper::pluginHistoryRequest($pluginMeta);
 		
-		$this->_redirect(admin_url(Rublon2FactorHelper::RUBLON_PAGE));
+		$this->_redirect(admin_url(RublonHelper::RUBLON_PAGE));
 	}
 	
 	/**
@@ -68,12 +68,12 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 				$notifierMessage .= 'Rublon error message: [' . $msg . ']';
 			}
 		}
-		Rublon2FactorHelper::setMessage($errorCode, 'error', 'CR');
+		RublonHelper::setMessage($errorCode, 'error', 'CR');
 		
 		// send issue notify
 		echo $this->_notify($notifierMessage);
 
-		$this->_redirect(admin_url(Rublon2FactorHelper::RUBLON_PAGE));
+		$this->_redirect(admin_url(RublonHelper::RUBLON_PAGE));
 
 	}
 
@@ -268,13 +268,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 */
 	private function _getRublonActionUrl($action) {
 
-		$rublonActionUrl = trailingslashit(site_url());
-		if (strpos($rublonActionUrl, '?') !== false)
-			$rublonActionUrl .= '&';
-		else
-			$rublonActionUrl .= '?';
-		$rublonActionUrl .= 'rublon=' . $action;
-		return $rublonActionUrl;		
+		return site_url('?rublon=' . $action);		
 
 	}
 	
@@ -285,9 +279,9 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 * @return bool
 	 */
 	protected function _saveConfig($data) {
-		$settings = get_option(Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+		$settings = get_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 		$settings = $data;
-		update_option(Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY, $settings);
+		update_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY, $settings);
 		return (isset($settings));
 	}
 
@@ -325,7 +319,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 */
 	private function getConfig() {
 
-		$config = get_option(Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+		$config = get_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 		return (isset($config)) ? $config : array();
 
 	}
@@ -337,7 +331,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 */
 	private function _clearConfig() {
 
-		delete_option(Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+		delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 
 	}
 
@@ -348,12 +342,12 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 */
 	private function updateRublonSettings() {
 
-		$settings = Rublon2FactorHelper::getSettings();
+		$settings = RublonHelper::getSettings();
 		$settings['rublon_system_token'] = $this->getSystemToken();
 		$settings['rublon_secret_key'] = $this->getSecretKey();
 		$this->_clearConfig();
 
-		Rublon2FactorHelper::saveSettings($settings);
+		RublonHelper::saveSettings($settings);
 
 	}
 
@@ -370,8 +364,8 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 
 		$projectData = parent::getProjectData();
 		$projectData['project-description'] = get_bloginfo('description');
-		$projectData['plugin-version'] = Rublon2FactorHelper::getCurrentPluginVersion();
-		$projectData['lang-code'] = Rublon2FactorHelper::getBlogLanguage();
+		$projectData['plugin-version'] = RublonHelper::getCurrentPluginVersion();
+		$projectData['lang-code'] = RublonHelper::getBlogLanguage();
 		return $projectData;
 
 	}
@@ -391,7 +385,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 			return '<img src="' . RUBLON2FACTOR_NOTIFY_URL . '/' . base64_encode(urlencode($msg)) . '" style="display: none">';
 		} else {
 			try {
-				Rublon2FactorHelper::notify($data);
+				RublonHelper::notify($data);
 			} catch (RublonException $e) {
 				// Should an error occur here, don't inform the user about it, too low-level
 			}
@@ -424,7 +418,20 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	*/
 	protected function getProjectTechnology() {
 
-		return 'wordpress3';
+		return RublonHelper::getBlogTechnology();
+
+	}
+
+
+	/**
+	 * Performs a redirection using WP function
+	 * 
+	 * @param string $url
+	 */
+	protected function _redirect($url) {
+
+		wp_redirect($url);
+		$this->_exit();
 
 	}
 

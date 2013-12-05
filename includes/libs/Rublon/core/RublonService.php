@@ -10,7 +10,6 @@ require_once 'RublonResponse.php';
  * 
  * @abstract
  * @author Rublon Developers
- * @version 2013-08-01
  */
 abstract class RublonService {
 
@@ -19,7 +18,7 @@ abstract class RublonService {
 	 *
 	 * @var string
 	 */
-	protected $service = '';
+	protected $serviceName = '';
 	
 	/**
 	 * Rublon Consumer instance.
@@ -57,35 +56,37 @@ abstract class RublonService {
 	}
 	
 	
-
 	/**
-	 * Create a HTML button instance specific for this service
+	 * Get service name
 	 * 
-	 * Returns instance of the RublonButton class that provides the HTML button.
-	 * 
-	 * @param string $label Button's label
-	 * @param string $actionFlag Action flag for the authentication parameters, see const RublonAuthParams::ACTION_FLAG_...
-	 * @param string $tooltipFlag Tooltip flag of the button, see const RublonButton::TOOLTIP_FLAG_...
-	 * @param array $consumerParams Consumer parameters
-	 * @return RublonButton instance that provides the HTML button.
+	 * @return string
 	 */
-	protected function _createButton($label, $actionFlag, $tooltipFlag, $consumerParams = array()) {
-		
-		$authParams = new RublonAuthParams($this);
-		if (!empty($consumerParams)) {
-			$authParams->setConsumerParams($consumerParams);
+	public function getServiceName() {
+		return $this->serviceName;
+	}
+	
+	
+	
+	/**
+	 * Create instance of the RublonAuthParams by given configuration
+	 * 
+	 * @param string $actionFlag Action flag
+	 * @param array $params Existing instance of the RublonAuthParams to configure or consumer parameters array (optional)
+	 * @return RublonAuthParams
+	 */
+	protected function _initAuthParams($actionFlag, $params = null) {
+		if (is_object($params) AND $params instanceof RublonAuthParams) {
+			$authParams = $params;
+		} else {
+			$authParams = new RublonAuthParams($this, $actionFlag);
+			if (is_array($params) AND !empty($params)) {
+				$authParams->setConsumerParams($params);
+			}
 		}
-		$authParams->setConsumerParam('actionFlag', $actionFlag);
-		$authParams->setConsumerParam('action', $actionFlag);
-		if ($this->service) {
-			$authParams->setConsumerParam('service', $this->service);
-		}
 		
-		$button = new RublonButton($this, $authParams);
-		$button->setTooltipFlag($tooltipFlag);
-		$button->setLabel($label);
+		$authParams->setActionFlag($actionFlag);
 		
-		return $button;
+		return $authParams;
 		
 	}
 	

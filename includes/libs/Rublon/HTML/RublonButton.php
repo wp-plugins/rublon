@@ -10,7 +10,6 @@
  * 
  * @see RublonConsumerScript
  * @author Rublon Developers
- * @version 2013-08-01
  */
 class RublonButton {
 	
@@ -44,7 +43,7 @@ class RublonButton {
 	 * 
 	 * @property string $label 
 	 */
-	protected $label = 'Enter';
+	protected $label = null;
 	
 	/**
 	 * Size of the button.
@@ -84,6 +83,14 @@ class RublonButton {
 	 * @var array $attributes
 	 */
 	protected $attributes = array();
+	
+	
+	/**
+	 * HTML content of the button
+	 * 
+	 * @var string
+	 */
+	protected $content = '<a href="https://rublon.com/">Rublon</a>';
 	
 	
 	// Available sizes
@@ -156,16 +163,40 @@ class RublonButton {
 			$attributes['data-rublonconsumerparams'] = json_encode($consumerParamsWrapper);
 		}
 		
-		$attributes['title'] = $this->getLabel();
+		if ($title = $this->getLabel()) {
+			$attributes['title'] = $title;
+		}
 		
 		$result = '<div';
 		foreach ($attributes as $name => $val) {
 			$result .= ' '. $name .'="'. htmlspecialchars($val) .'"';
 		}
-		$result .= '><a href="https://rublon.com/">Rublon</a></div>';
+		$result .= '>'. $this->getContent() .'</div>';
 		
 		return $result;
 		
+	}
+	
+	
+	/**
+	 * Get HTML content of the button
+	 * 
+	 * @return string
+	 */
+	public function getContent() {
+		return $this->content;
+	}
+	
+	
+	/**
+	 * Set HTML content of the button
+	 * 
+	 * @param string $content
+	 * @return RublonButton
+	 */
+	public function setContent($content) {
+		$this->content = $content;
+		return $this;
 	}
 	
 	

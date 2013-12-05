@@ -12,7 +12,6 @@
  * and compare with the signature of the message.
  * 
  * @author Rublon Developers
- * @version 2013-08-01
  */
 class RublonSignatureWrapper {
 	
@@ -207,7 +206,7 @@ class RublonSignatureWrapper {
 					if (!empty($data) AND is_array($data)) {
 						if (isset($data['head']) AND is_array($data['head']) AND !empty($data['head'])) {
 							$head = $data['head'];
-							if (isset($head['time']) AND $head['time'] < time() + 60 AND $head['time'] > time() - self::MESSAGE_LIFETIME) {
+							if (isset($head['time']) AND abs(time() - $head['time']) <= self::MESSAGE_LIFETIME) {
 								if (isset($data['body']) AND is_string($data['body'])) {
 									
 									$body = json_decode($data['body'], true);
@@ -221,7 +220,7 @@ class RublonSignatureWrapper {
 									throw new RublonException('Invalid response data (no body)');
 								}
 							} else {
-								throw new RublonException('Invalid message time');
+								throw new RublonException('Invalid message time', RublonException::CODE_TIMESTAMP_ERROR);
 							}
 						} else {
 							throw new RublonException('Invalid response data (invalid header)');

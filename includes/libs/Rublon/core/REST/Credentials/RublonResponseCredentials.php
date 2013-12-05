@@ -7,7 +7,6 @@
  * for retrieving Rublon user's credentials.
  * 
  * @author Rublon Developers
- * @version 2013-08-01
  */
 class RublonResponseCredentials extends RublonResponse {
 

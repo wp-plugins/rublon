@@ -22,7 +22,6 @@ require_once 'HTML/RublonHTMLHelper.php';
  * Both of parameters can be obtained from developer dashboard at developers.rublon.com. 
  *
  * @author Rublon Developers
- * @version 2013-08-01
  */
 class RublonConsumer {
 
@@ -31,7 +30,7 @@ class RublonConsumer {
 	 *
 	 * @var string
 	 */
-	const VERSION_DATE = '2013-10-03';
+	const VERSION_DATE = '2013-11-22';
 
 	/**
 	 * Enable log array storage.
@@ -42,6 +41,27 @@ class RublonConsumer {
 	 * @var boolean
 	 */
 	const LOG_ENABLED = true;
+	
+	/**
+	 * Default API domain.
+	 *
+	 * @var string
+	 */
+	const DEFAULT_API_DOMAIN = "https://code.rublon.com";
+	
+	/**
+	 * Default technology code name.
+	 * 
+	 * @var string
+	 */
+	const DEFAULT_TECHNOLOGY = "rublon-php-sdk";
+
+	/**
+	 * Default language code name.
+	 *
+	 * @var string
+	 */
+	const DEFAULT_LANG = "en";
 
 	/**
 	 * System token
@@ -64,7 +84,7 @@ class RublonConsumer {
 	 *
 	 * @var string
 	 */
-	protected $domain = 'https://code.rublon.com';
+	protected $domain = null;
 	
 	/**
 	 * Language code
@@ -74,7 +94,14 @@ class RublonConsumer {
 	 * @see https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	 * @var string
 	 */
-	protected $lang = 'en';
+	protected $lang = null;
+	
+	/**
+	 * Module's technology
+	 * 
+	 * @var string
+	 */
+	protected $technology = null;
 	
 	/**
 	 * Log store
@@ -101,6 +128,10 @@ class RublonConsumer {
 	public function __construct($systemToken, $secretKey) {
 		
 		$this->log(__METHOD__);
+		
+		$this->domain = self::DEFAULT_API_DOMAIN;
+		$this->lang = self::DEFAULT_LANG;
+		$this->technology = self::DEFAULT_TECHNOLOGY;
 		
 		$this->systemToken = $systemToken;
 		$this->secretKey = $secretKey;
@@ -212,6 +243,30 @@ class RublonConsumer {
 	 */
 	public function getLang() {
 		return $this->lang;
+	}
+	
+	
+	/**
+	 * Set module's technology tag
+	 * 
+	 * If using SDK directly do not change this value.
+	 * 
+	 * @param string $technology
+	 * @return RublonConsumer
+	 */
+	public function setTechnology($technology) {
+		$this->technology = $technology;
+		return $this;
+	}
+	
+	
+	/**
+	 * Get module's technology
+	 * 
+	 * @return string
+	 */
+	public function getTechnology() {
+		return $this->technology;
 	}
 
 

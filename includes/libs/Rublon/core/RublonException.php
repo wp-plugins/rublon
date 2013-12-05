@@ -4,7 +4,6 @@
  * Exception class
  * 
  * @author Rublon Developers
- * @version 2013-08-01
  */
 class RublonException extends Exception {
 
@@ -32,6 +31,11 @@ class RublonException extends Exception {
 	 * Connection error
 	 */
 	const CODE_CONNECTION_ERROR = 5;
+
+	/**
+	 * Timestamp error
+	 */
+	const CODE_TIMESTAMP_ERROR = 6;
 
 
 	/**

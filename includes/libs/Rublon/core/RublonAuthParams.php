@@ -11,7 +11,6 @@
  * 
  * @see RublonButton
  * @author Rublon Developers
- * @version 2013-08-01
  */
 class RublonAuthParams {
 	
@@ -91,6 +90,69 @@ class RublonAuthParams {
 	const ACTION_FLAG_LOGIN = 'login';
 	
 
+	/**
+	 * Field name for access token parameter
+	 */
+	const FIELD_ACCESS_TOKEN = "accessToken";
+	
+	
+	/**
+	 * Field name for "requireProfileId" parameter
+	 */
+	const FIELD_REQUIRE_PROFILE_ID = "requireProfileId";
+	
+	/**
+	 * Field name for "service" parameter
+	 */
+	const FIELD_SERVICE = "service";
+	
+	/**
+	 * Field name for "systemToken" parameter
+	 */
+	const FIELD_SYSTEM_TOKEN = "systemToken";
+	
+	/**
+	 * Field name for language parameter
+	 */
+	const FIELD_LANG = "lang";
+	
+	/**
+	 * Field name for origin URL address parameter
+	 */
+	const FIELD_ORIGIN_URL = "originUrl";
+	
+	/**
+	 * Field name for consumer parameters
+	 */
+	const FIELD_CONSUMER_PARAMS = "consumerParams";
+	
+	
+	/**
+	 * Field name for action flag parameter
+	 */
+	const FIELD_ACTION_FLAG = "actionFlag";
+	
+	/**
+	 * Field name for action parameter
+	 */
+	const FIELD_ACTION = "action";
+	
+	/**
+	 * Field name for tooltip flag parameter
+	 */
+	const FIELD_TOOLTIP_FLAG = "tooltipFlag";
+	
+	/**
+	 * Field name for version parameter
+	 */
+	const FIELD_VERSION = "version";
+	
+	/**
+	 * URL path to authentication code
+	 */
+	const URL_PATH_CODE = "/code/native/";
+	
+
 	
 
 	/**
@@ -100,12 +162,16 @@ class RublonAuthParams {
 	 * the object to work.
 	 *
 	 * @param RublonService $service An instance of the RublonService class
+	 * @param string $actionFlag Action flag
 	 */
-	public function __construct(RublonService $service) {
+	public function __construct(RublonService $service, $actionFlag = null) {
+		
 		$service->getConsumer()->log(__METHOD__);
 		$this->service = $service;
 		
-		if (isset($_SERVER['REQUEST_URI'])) {
+		$this->setActionFlag($actionFlag);
+		
+		if (isset($_SERVER['HTTP_HOST']) AND isset($_SERVER['REQUEST_URI'])) {
 			$this->originUrl = 'http://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		}
 		
@@ -123,7 +189,7 @@ class RublonAuthParams {
 	public function getUrl() {
 		$this->getConsumer()->log(__METHOD__);
 		return $this->getConsumer()->getDomain() .
-			'/code/native/' .
+			self::URL_PATH_CODE .
 			urlencode($this->getUrlParamsString());
 	}
 	
@@ -155,7 +221,6 @@ class RublonAuthParams {
 		
 		$consumerParams = $this->getConsumerParams();
 		$outerParams = $this->getOuterParams();
-		
 		$params = array();
 		
 		if (!empty($consumerParams) OR !empty($outerParams)) {
@@ -164,7 +229,7 @@ class RublonAuthParams {
 				$consumerParams,
 				$outerParams
 			);
-			$params['consumerParams'] = $wrapper;
+			$params[self::FIELD_CONSUMER_PARAMS] = $wrapper;
 		}
 		
 		return $params;
@@ -208,9 +273,6 @@ class RublonAuthParams {
 	}
 	
 	
-	
-	
-	
 	/**
 	 * Set consumer parameters.
 	 *
@@ -249,15 +311,26 @@ class RublonAuthParams {
 	 * @return array
 	 */
 	public function getConsumerParams() {
+		
 		$consumerParams = $this->consumerParams;
+		
+		// Set action flag
 		if ($actionFlag = $this->getActionFlag()) {
-			$consumerParams['actionFlag'] = $actionFlag;
+			$consumerParams[self::FIELD_ACTION_FLAG] = $actionFlag;
 		}
-		$consumerParams['lang'] = $this->getConsumer()->getLang();
-		$consumerParams['systemToken'] = $this->getConsumer()->getSystemToken();
-		$consumerParams['originUrl'] = $this->originUrl;
-		$consumerParams['version'] = $this->getConsumer()->getVersion();
+		
+		// Set service name
+		if ($serviceName = $this->getService()->getServiceName()) {
+			$consumerParams[self::FIELD_SERVICE] = $serviceName;
+		}
+		
+		$consumerParams[self::FIELD_LANG] = $this->getConsumer()->getLang();
+		$consumerParams[self::FIELD_SYSTEM_TOKEN] = $this->getConsumer()->getSystemToken();
+		$consumerParams[self::FIELD_ORIGIN_URL] = $this->getOriginUrl();
+		$consumerParams[self::FIELD_VERSION] = $this->getConsumer()->getVersion();
+		
 		return $consumerParams;
+		
 	}
 	
 	
@@ -322,7 +395,7 @@ class RublonAuthParams {
 	/**
 	 * Get the URL of the origin window.
 	 * 
-	 * Returns the value of the originURL property.
+	 * Returns the value of the originUrl property.
 	 * 
 	 * @return string
 	 */

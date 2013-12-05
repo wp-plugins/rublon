@@ -21,7 +21,7 @@ require_once(dirname (__FILE__) . '/includes/rublon2factor_helper.php');
  */
 function rublon2factor_should_config_be_removed() {
 
-	if (!Rublon2FactorHelper::isPluginRegistered()) {
+	if (!RublonHelper::isPluginRegistered()) {
 		return true;
 	}
 
@@ -36,12 +36,13 @@ function rublon2factor_should_config_be_removed() {
  */
 function rublon2factor_plugin_uninstall() {
 
-	delete_option(Rublon2FactorHelper::RUBLON_SETTINGS_KEY);
-	delete_option(Rublon2FactorHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+	delete_option(RublonHelper::RUBLON_SETTINGS_KEY);
+	delete_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
+	delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 
 	$all_user_ids = get_users('fields=id');
 	foreach ($all_user_ids as $user_id) {
-		delete_user_meta($user_id, Rublon2FactorHelper::RUBLON_META_PROFILE_ID);
+		delete_user_meta($user_id, RublonHelper::RUBLON_META_PROFILE_ID);
 	}
 
 }

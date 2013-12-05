@@ -12,11 +12,12 @@
  * Contains methods used for cookie handling
  * 
  */
-class Rublon2FactorCookies {
+class RublonCookies {
 
 
 	const COOKIE_PREFIX = 'Rublon-WP_';
 	const COOKIE_MESSAGES = 'messages';
+	const COOKIE_NONCE = 'nonce';
 	const COOKIE_AUTHENTICATED = 'auth';
 
 
@@ -58,6 +59,32 @@ class Rublon2FactorCookies {
 
 
 	/**
+	 * Store a nonce in cookie
+	 * 
+	 * The nonce is used in the plugin registration process.
+	 * 
+	 * @param string $nonce
+	 */
+	static public function storeNonceInCookie($nonce) {
+
+		$cookieName = self::COOKIE_PREFIX . self::COOKIE_NONCE;
+		self::_clearCookieData($cookieName);
+		self::_setCookieData($cookieName, $nonce);
+
+	}
+
+
+	static public function getNonceFromCookie() {
+
+		$cookieName = self::COOKIE_PREFIX . self::COOKIE_NONCE;
+		$nonce = self::_getCookieData($cookieName);
+		self::_clearCookieData($cookieName);
+		return $nonce;
+
+	}
+
+
+	/**
 	 * Retrieve auth cookie params (if they're set)
 	 *
 	 */
@@ -67,7 +94,7 @@ class Rublon2FactorCookies {
 				'secure' => '',
 				'remember' => false,
 		);
-		$settings = Rublon2FactorHelper::getSettings();
+		$settings = RublonHelper::getSettings();
 		if (!empty($settings['wp_cookie_params'])) {
 			$cookieParams = $settings['wp_cookie_params'];
 		}
@@ -84,7 +111,7 @@ class Rublon2FactorCookies {
 	static private function _getAuthCookieExpiration() {
 
 		$expiration = 0;
-		$settings = Rublon2FactorHelper::getSettings();
+		$settings = RublonHelper::getSettings();
 		if (!empty($settings['wp_cookie_expiration'])) {
 			$expiration = $settings['wp_cookie_expiration'];
 		}
@@ -121,7 +148,7 @@ class Rublon2FactorCookies {
 			$user = wp_get_current_user();
 		$cookieData = self::_prepareAuthCookieData($user);
 		self::_setCookieData($cookieName, $cookieData, $cookieParams);
-				$_COOKIE[$cookieName] = $cookieData;
+		$_COOKIE[$cookieName] = $cookieData;
 		return $cookieData;
 
 	}
@@ -147,11 +174,11 @@ class Rublon2FactorCookies {
 	 */
 	static private function _prepareAuthCookieData($user) {
 
-		$userId = Rublon2FactorHelper::getUserId($user);
-		$userProfileId = Rublon2FactorHelper::getUserProfileId($user);
+		$userId = RublonHelper::getUserId($user);
+		$userProfileId = RublonHelper::getUserProfileId($user);
 		$userLogin = $user->user_login;
 		$userData = $userLogin . $userId . $userProfileId;
-		$settings = Rublon2FactorHelper::getSettings();
+		$settings = RublonHelper::getSettings();
 		$cookieData = hash_hmac('SHA256', $userData, $settings['rublon_secret_key']);
 		return $cookieData;
 

@@ -1,7 +1,5 @@
 <?php
 
-require_once(dirname(__FILE__) . '/../Rublon/Rublon2FactorCallbackTemplate.php');
-
 class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 
 
@@ -36,7 +34,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	 */
 	protected function getState() {
 
-		return Rublon2FactorHelper::uriGet('state');
+		return RublonHelper::uriGet('state');
 
 	}
 
@@ -48,7 +46,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	*/
 	protected function getAccessToken() {
 
-		return Rublon2FactorHelper::uriGet('token');
+		return RublonHelper::uriGet('token');
 
 	}
 
@@ -67,8 +65,13 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 				break;
 			case self::ERROR_REST_CREDENTIALS:
 				$errorCode = 'REST_CREDENTIALS_FAILURE';
-				if (isset($details))
-					$additionalErrorMessage = __('Error details: ', 'rublon2factor') . $details->getMessage();
+				if (isset($details)) {
+					if ($details->getCode() == RublonException::CODE_TIMESTAMP_ERROR) {
+						$errorCode = 'CODE_TIMESTAMP_ERROR';
+					} else {
+						$additionalErrorMessage = __('Error details: ', 'rublon2factor') . $details->getMessage();
+					}
+				}
 				break;
 			case self::ERROR_UNKNOWN_ACTION_FLAG:
 				$errorCode = 'UNKNOWN_ACTION_FLAG';
@@ -89,7 +92,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 				$errorCode = 'API_ERROR';
 		}
 
-		Rublon2FactorHelper::setMessage($errorCode, 'error', 'RC');
+		RublonHelper::setMessage($errorCode, 'error', 'RC');
 
 		// prepare message for issue notifier
 		$notifierMessage = 'RublonCallback error.<br /><br />' . __('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>';
@@ -99,7 +102,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 		// send issue notify
 		echo $this->_notify($notifierMessage);
 
-		$returnPage = Rublon2FactorHelper::getReturnPage();
+		$returnPage = RublonHelper::getReturnPage();
 		$this->_returnToPage($returnPage);
 
 	}
@@ -126,10 +129,10 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 
 		$consumerParams = $this->response->getConsumerParams();
 		if (!empty($consumerParams['wp_user'])) {
-			if (isset($consumerParams[self::FIELD_ACTION_FLAG])) {
-				if ($consumerParams[self::FIELD_ACTION_FLAG] == RublonAuthParams::ACTION_FLAG_LOGIN) {
+			if (isset($consumerParams[RublonAuthParams::FIELD_ACTION_FLAG])) {
+				if ($consumerParams[RublonAuthParams::FIELD_ACTION_FLAG] == RublonAuthParams::ACTION_FLAG_LOGIN) {
 					if (!empty($consumerParams['wp_auth_time']))
-						$timeOK = (time() - $consumerParams['wp_auth_time'] <= Rublon2FactorHelper::RUBLON_AUTH_TIME * 60);
+						$timeOK = (time() - $consumerParams['wp_auth_time'] <= RublonHelper::RUBLON_AUTH_TIME * 60);
 					else
 						$timeOK = false;
 				} else {
@@ -159,7 +162,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	protected function getRublonProfileId() {
 
 		if ($this->_user) {
-			return Rublon2FactorHelper::getUserProfileId($this->_user);
+			return RublonHelper::getUserProfileId($this->_user);
 		}
 		return '';
 
@@ -175,16 +178,16 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 
 		if ($this->_user) {
 			if (!empty($rublonProfileId)) {
-				if (Rublon2FactorHelper::isUserSecured($this->_user)) {
+				if (RublonHelper::isUserSecured($this->_user)) {
 					$errorCode = 'ALREADY_PROTECTED';
-					Rublon2FactorHelper::setMessage($errorCode, 'error', 'RC');
+					RublonHelper::setMessage($errorCode, 'error', 'RC');
 				} else {
-					Rublon2FactorHelper::connectRublon2Factor($this->_user, $rublonProfileId);
+					RublonHelper::connectRublon2Factor($this->_user, $rublonProfileId);
 				}
-				Rublon2FactorCookies::setAuthCookie();
+				RublonCookies::setAuthCookie();
 			} else {
-				Rublon2FactorHelper::disconnectRublon2Factor($this->_user);
-				Rublon2FactorCookies::clearAuthCookie();
+				RublonHelper::disconnectRublon2Factor($this->_user);
+				RublonCookies::clearAuthCookie();
 			}
 		}
 
@@ -199,8 +202,8 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 
 		if ($this->_user) {
 			wp_clear_auth_cookie();
-			Rublon2FactorCookies::setLoggedInCookie(Rublon2FactorHelper::getUserId($this->_user));
-			Rublon2FactorCookies::setAuthCookie($this->_user);
+			RublonCookies::setLoggedInCookie(RublonHelper::getUserId($this->_user));
+			RublonCookies::setAuthCookie($this->_user);
 			do_action('wp_login', $this->_user->user_login, $this->_user);
 		}
 
@@ -216,7 +219,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	 */
 	protected function cancel() {
 
-		$page = Rublon2FactorHelper::getReturnPage();
+		$page = RublonHelper::getReturnPage();
 		$this->_returnToPage($page);
 
 	}
@@ -229,38 +232,38 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	protected function finalSuccess() {
 
 		$consumerParams = $this->response->getConsumerParams();
-		$flag = $consumerParams[self::FIELD_ACTION_FLAG];
+		$flag = $consumerParams[RublonAuthParams::FIELD_ACTION_FLAG];
 		switch ($flag) {
 			case RublonAuthParams::ACTION_FLAG_LOGIN:
-				$returnUrl = Rublon2FactorHelper::getReturnPage();
+				$returnUrl = RublonHelper::getReturnPage();
 				$returnUrl = (!empty($returnUrl)) ? $returnUrl : admin_url();
 				$sessionData = $this->response->getSessionData();
 				$this->_returnToPage($returnUrl, $sessionData);
 				break;
 			case RublonAuthParams::ACTION_FLAG_LINK_ACCOUNTS:
 				$currentUser = $this->_user;
-				if (!Rublon2FactorHelper::isUserSecured($currentUser)) {
+				if (!RublonHelper::isUserSecured($currentUser)) {
 					$errorCode = 'CANNOT_PROTECT_ACCOUNT';
-					Rublon2FactorHelper::setMessage($errorCode, 'error', 'RC');
+					RublonHelper::setMessage($errorCode, 'error', 'RC');
 				} else {
 					$updateMessage = 'ACCOUNT_PROTECTED';
-					Rublon2FactorHelper::setMessage($updateMessage, 'updated', 'RC');
+					RublonHelper::setMessage($updateMessage, 'updated', 'RC');
 				}
 				$sessionData = $this->response->getSessionData();
-				$page = Rublon2FactorHelper::getReturnPage();
+				$page = RublonHelper::getReturnPage();
 				$this->_returnToPage($page, $sessionData);
 				break;
 			case RublonAuthParams::ACTION_FLAG_UNLINK_ACCOUNTS:
 				$currentUser = $this->_user;
-				if (!Rublon2FactorHelper::isUserSecured($currentUser)) {
+				if (!RublonHelper::isUserSecured($currentUser)) {
 					$updateMessage = 'PROTECTION_DISABLED';
-					Rublon2FactorHelper::setMessage($updateMessage, 'updated', 'RC');
+					RublonHelper::setMessage($updateMessage, 'updated', 'RC');
 				} else {
 					$errorCode = 'CANNOT_DISABLE_ACCOUNT_PROTECTION';
-					Rublon2FactorHelper::setMessage($errorCode, 'error', 'RC');
+					RublonHelper::setMessage($errorCode, 'error', 'RC');
 				}
 				$sessionData = $this->response->getSessionData();
-				$page = Rublon2FactorHelper::getReturnPage();
+				$page = RublonHelper::getReturnPage();
 				$this->_returnToPage($page, $sessionData);
 				break;
 		}
@@ -275,7 +278,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	*/
 	protected function getSystemToken() {
 
-		$settings = Rublon2FactorHelper::getSettings();
+		$settings = RublonHelper::getSettings();
 		return (!empty($settings['rublon_system_token'])) ? $settings['rublon_system_token'] : '';
 
 	}
@@ -288,7 +291,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	*/
 	protected function getSecretKey() {
 
-		$settings = Rublon2FactorHelper::getSettings();
+		$settings = RublonHelper::getSettings();
 		return (!empty($settings['rublon_secret_key'])) ? $settings['rublon_secret_key'] : '';
 
 	}
@@ -303,7 +306,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	 */
 	protected function getAPIDomain() {
 
-		return Rublon2FactorHelper::getAPIDomain();
+		return RublonHelper::getAPIDomain();
 
 	}
 
@@ -315,7 +318,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 	 */
 	protected function getLang() {
 
-		return Rublon2FactorHelper::getBlogLanguage();
+		return RublonHelper::getBlogLanguage();
 
 	}
 
@@ -335,7 +338,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 			return '<img src="' . RUBLON2FACTOR_NOTIFY_URL . '/' . base64_encode(urlencode($msg)) . '" style="display: none">';
 		} else {
 			try {
-				Rublon2FactorHelper::notify($data);
+				RublonHelper::notify($data);
 			} catch (RublonException $e) {
 				// Should an error occur here, don't inform the user about it, too low-level
 			}

@@ -2,7 +2,7 @@
 Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification
 Requires at least: 3.3.x
-Tested up to: 3.6.1
+Tested up to: 3.7.1
 Stable tag: 1.2.2
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
@@ -27,7 +27,7 @@ You can protect your data by protecting your account with Rublon on every web se
 
 +++
 
-= Supported languages =
+Supported languages:
 * English
 * German
 * Polish
@@ -83,6 +83,10 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.2.3 =
+* XML-RPC API disabled by default with the option to enable it back on the plugin's settings page
+* Rublon internal libraries updated
 
 = 1.2.2 =
 * Rublon can now also serve as an additional factor for any other authentication method, e.g. social login through Facebook

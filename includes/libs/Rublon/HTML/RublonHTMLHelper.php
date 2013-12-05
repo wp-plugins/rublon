@@ -8,7 +8,6 @@
  * regarding (but not limited to) the Rublon QR Code window.
  *
  * @author Rublon Developers
- * @version 2013-08-01
  */
 class RublonHTMLHelper {
 	

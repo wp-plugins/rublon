@@ -14,9 +14,9 @@
 function rublon2factor_plugins_loaded() {
 
 	// Initialize Rublon2Factor plug-in helper
-	Rublon2FactorHelper::init();
+	RublonHelper::init();
 
 	// check for Rublon-type actions
-	Rublon2FactorHelper::checkForActions();
+	RublonHelper::checkForActions();
 
 }

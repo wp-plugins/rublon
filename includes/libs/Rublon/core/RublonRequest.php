@@ -5,9 +5,15 @@
  * REST request class
  * 
  * @author Rublon Developers
- * @version 2013-08-01
  */
 class RublonRequest {
+	
+	/**
+	 * Connection timeout in seconds
+	 * 
+	 * @var int
+	 */
+	const TIMEOUT = 20; // sec
 
 	/**
 	 * Rublon service instance
@@ -109,12 +115,12 @@ class RublonRequest {
 		$headers = array(
 			"Content-Type: application/json; charset=utf-8",
 			"Accept: application/json, text/javascript, */*; q=0.01",
-			"X-Rublon-Technology: php-sdk",
+			"X-Rublon-Technology: ". $this->getConsumer()->getTechnology(),
 			"X-Rublon-Version: ". $this->getConsumer()->getVersion(),
 		);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::TIMEOUT);
+		curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
 		if (!empty($params)) {
 			curl_setopt($ch, CURLOPT_POST, true);
 			$wrapper = new RublonSignatureWrapper;

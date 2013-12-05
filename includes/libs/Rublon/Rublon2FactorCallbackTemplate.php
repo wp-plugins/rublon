@@ -23,11 +23,6 @@ abstract class Rublon2FactorCallbackTemplate {
 	const ERROR_DIFFERENT_USER = 6;
 	const ERROR_API_ERROR = 7;
 	
-	/**
-	 * Field name of the action flag in consumer params
-	 */
-	const FIELD_ACTION_FLAG = 'actionFlag';
-	
 	
 	/**
 	 * Instance of the Rublon service (2-factor)
@@ -54,35 +49,41 @@ abstract class Rublon2FactorCallbackTemplate {
 	 * Create and initialize consumer and service instances
 	 */
 	public function __construct() {
+		$this->service = $this->getServiceInstance();
+	}
+	
+	
+	/**
+	 * Construct Rublon PHP SDK library and return 2FA service instance.
+	 * 
+	 * @return RublonService2Factor
+	 */
+	protected function getServiceInstance() {
 		$consumer = new RublonConsumer($this->getSystemToken(), $this->getSecretKey());
 		$consumer->setLang($this->getLang());
 		$consumer->setDomain($this->getAPIDomain());
-		$this->service = new RublonService2Factor($consumer);
+		$consumer->setTechnology($this->getTechnology());
+		return new RublonService2Factor($consumer);
 	}
 
 
 	/**
-	 * Return the (optional) Rublon API domain
-	 * 
+	 * Return the (optional) Rublon API domain.
 	 * Default domain can be replaced by testing configuration.
 	 *
 	 * @return string
 	 */
 	protected function getAPIDomain() {
-		return 'https://code.rublon.com';
+		return RublonConsumer::DEFAULT_API_DOMAIN;
 	}
-	
-	
+
+
 	/**
-	 * Get current language
-	 * 
-	 * @return string
+	 * Get technology code name.
 	 */
-	protected function getLang() {
-		return 'en';
+	protected function getTechnology() {
+		return RublonConsumer::DEFAULT_TECHNOLOGY;
 	}
-
-
 	
 	
 	
@@ -93,6 +94,15 @@ abstract class Rublon2FactorCallbackTemplate {
 	
 	
 	
+
+	/**
+	 * Get current language code.
+	 * 
+	 * 2-letter language code compliant with <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO 639-1</a>.
+	 *
+	 * @return string
+	 */
+	abstract protected function getLang();
 
 	/**
 	 * Get state from GET parameters or NULL if not present
@@ -244,8 +254,9 @@ abstract class Rublon2FactorCallbackTemplate {
 				$this->response = $this->service->getCredentials($accessToken);
 			} catch (RublonException $e) {
 				$this->finalError(self::ERROR_REST_CREDENTIALS, $e);
+				return;
 			}
-				
+			
 			$consumerParams = $this->response->getConsumerParams();
 			$sessionData = $this->response->getSessionData();
 			
@@ -259,9 +270,9 @@ abstract class Rublon2FactorCallbackTemplate {
 			
 			// Check auth status
 			if ($this->isUserAuthorizedByFirstFactor()) {
-				if (isset($consumerParams[self::FIELD_ACTION_FLAG])) {
+				if (isset($consumerParams[RublonAuthParams::FIELD_ACTION_FLAG])) {
 						
-					switch ($consumerParams[self::FIELD_ACTION_FLAG]) {
+					switch ($consumerParams[RublonAuthParams::FIELD_ACTION_FLAG]) {
 						case RublonAuthParams::ACTION_FLAG_LOGIN:
 							$this->login();
 							break;
@@ -273,6 +284,7 @@ abstract class Rublon2FactorCallbackTemplate {
 							break;
 						default:
 							$this->finalError(self::ERROR_UNKNOWN_ACTION_FLAG);
+							return;
 					}
 						
 					// If all is good - return back

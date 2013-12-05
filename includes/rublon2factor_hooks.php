@@ -18,8 +18,8 @@
 function rublon2factor_login_message($message) {
 
 	if (!is_user_logged_in())
-		Rublon2FactorHelper::cookieTransfer();
-	$messages = Rublon2FactorHelper::getMessages();
+		RublonHelper::cookieTransfer();
+	$messages = RublonHelper::getMessages();
 	if ($messages) {
 		foreach ($messages as $message)
 			echo '<div class="' . $message['type'] . ' fade" style="margin: 0 0 16px 8px; padding: 12px;">' . $message['message'] . '</div>';
@@ -36,7 +36,7 @@ add_filter('login_message', 'rublon2factor_login_message');
  */
 function rublon2factor_plugin_activated_mefirst() {
 
-	Rublon2FactorHelper::meFirst();
+	RublonHelper::meFirst();
 
 }
 
@@ -55,11 +55,11 @@ function rublon2factor_init() {
 	if (is_user_logged_in()) {
 		$user = wp_get_current_user();
 		if ($user) {
-			if (Rublon2FactorHelper::isUserSecured($user) && !Rublon2FactorHelper::isUserAuthenticated($user)) {
+			if (RublonHelper::isUserSecured($user) && !RublonHelper::isUserAuthenticated($user)) {
 				wp_clear_auth_cookie();
-				Rublon2FactorHelper::authenticateWithRublon($user);
+				RublonHelper::authenticateWithRublon($user);
 			}
-			Rublon2FactorHelper::cookieTransfer();
+			RublonHelper::cookieTransfer();
 		}
 	}
 
@@ -85,15 +85,15 @@ function rublon2factor_store_auth_cookie_params($auth_cookie, $expire, $expirati
 
 	if ($user_id) {
 		$user = get_user_by('id', $user_id);
-		if ($user && Rublon2FactorHelper::isUserSecured($user) && !Rublon2FactorHelper::isUserAuthenticated($user)) {
+		if ($user && RublonHelper::isUserSecured($user) && !RublonHelper::isUserAuthenticated($user)) {
 			$cookieParams = array(
 					'secure' => ($scheme == 'secure_auth'),
 					'remember' => ($expire > 0),
 			);
-			$settings = Rublon2FactorHelper::getSettings();
+			$settings = RublonHelper::getSettings();
 			$settings['wp_cookie_params'] = $cookieParams;
 			$settings['wp_cookie_expiration'] = $expire;
-			Rublon2FactorHelper::saveSettings($settings);
+			RublonHelper::saveSettings($settings);
 		}
 	}
 
@@ -108,19 +108,20 @@ add_action('set_auth_cookie', 'rublon2factor_store_auth_cookie_params', 10, 5);
  */
 function rublon2factor_wp_logout() {
 
-	Rublon2FactorCookies::clearAuthCookie();
+	RublonCookies::clearAuthCookie();
 
 }
 
 add_action('wp_logout', 'rublon2factor_wp_logout');
+
 /**
  * Register the fact that the plugin has been activated
  * 
  */
 function rublon2factor_plugin_activation() {
 
-	if (Rublon2FactorHelper::isPluginRegistered() && !Rublon2FactorHelper::wasPluginEverActivated())
-		Rublon2FactorHelper::registerPluginActivation();
+	if (RublonHelper::isPluginRegistered() && !RublonHelper::wasPluginEverActivated())
+		RublonHelper::registerPluginActivation();
 
 }
 

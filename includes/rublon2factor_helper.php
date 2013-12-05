@@ -9,19 +9,20 @@
  */
 
 /**
- * Rublon2FactorHelper class
+ * RublonHelper class
  *
  * It provides helper functionalities for Rublon2Facror module.
  *
  */
 
-class Rublon2FactorHelper {
+class RublonHelper {
 
 
 	const RUBLON_API_DOMAIN = 'https://code.rublon.com';
 
 	const RUBLON_SETTINGS_KEY = 'rublon2factor_settings';
 	const RUBLON_REGISTRATION_SETTINGS_KEY = 'rublon2factor_registration_settings';
+	const RUBLON_ADDITIONAL_SETTINGS_KEY = 'rublon2factor_additional_settings';
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	const RUBLON_ACTION_PREFIX = 'rublon_';
 	const RUBLON_AUTH_TIME = 5;
@@ -31,28 +32,43 @@ class Rublon2FactorHelper {
 	/**
 	 * An instance of the RublonService2Factor class
 	 * 
+	 * @var RublonService2Factor
 	 */
 	static private $service;
 
 
 	/**
 	 * Plugin cookies
-	 * 
+	 *
+	 * @var array
 	 */
 	static public $cookies;
 
 
 	/**
+	 * Nonce used in the validation of the plugin registration process
+	 * 
+	 * @var string
+	 */
+	static private $nonce;
+
+
+	/**
 	 * Load i18n files and check for possible plugin update
+	 * 
 	 */
 	static public function init() {
 
 		// Initialize localization
-		if (function_exists ('load_plugin_textdomain')) {
-			load_plugin_textdomain ('rublon2factor', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
+		if (function_exists('load_plugin_textdomain')) {
+			load_plugin_textdomain('rublon2factor', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
 		}
 
-		self::updateChecker();
+		// check for a possible update
+		self::_updateChecker();
+
+		// prevent XML-RPC access if it was disabled in plugin settings 
+		self::_checkXMLRPCStatus();
 
 	}
 
@@ -64,7 +80,7 @@ class Rublon2FactorHelper {
 	static public function cookieTransfer() {
 
 		$cookies = array();
-		$messages = Rublon2FactorCookies::getMessagesFromCookie();
+		$messages = RublonCookies::getMessagesFromCookie();
 		if (!empty($messages))
 			$cookies['messages'] = $messages;
 		self::$cookies = $cookies;
@@ -94,6 +110,16 @@ class Rublon2FactorHelper {
 						self::handleCallback();
 					}
 					break;
+				case 'init-registration':
+					$nonce = self::uriGet('rublon_nonce');
+					$nonceCookie = RublonCookies::getNonceFromCookie();
+					if (!empty($nonce) && wp_verify_nonce($nonce, 'rublon=init-registration') && $nonce == $nonceCookie) {
+						self::consumerRegistrationAction('initialize');
+					} else {
+						self::setMessage('NONCE_VERIFICATION_FAILED', 'error', 'CR');
+						wp_redirect(admin_url(self::RUBLON_PAGE));
+					}
+					break;
 			}
 			exit;
 		} else {
@@ -102,6 +128,7 @@ class Rublon2FactorHelper {
 				$consumer = new RublonConsumer($settings['rublon_system_token'], $settings['rublon_secret_key']);
 				$consumer->setDomain(self::getAPIDomain());
 				$consumer->setLang(self::getBlogLanguage());
+				$consumer->setTechnology(self::getBlogTechnology());
 				self::$service = new RublonService2Factor($consumer);
 			} 
 		}
@@ -122,19 +149,8 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Add the Rublon JS Library to the page code.
-	 */
-	static public function addScript() {
-
-		if (!empty(self::$service)) {
-			echo new RublonConsumerScript(self::$service);
-		}
-
-	}
-
-
-	/**
 	 * Perform Rublon2Factor authentication
+	 * 
 	 */
 	static public function authenticateWithRublon($user) {
 
@@ -190,21 +206,43 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Return the plugin settings 
-	 *  
+	 * Return the plugin settings
+	 * 
+	 * @param string $group Settings group
 	 */
-	static public function getSettings() {
+	static public function getSettings($group = '') {
 
-		return get_option(self::RUBLON_SETTINGS_KEY);
+		switch ($group) {
+			case 'additional':
+				$key = self::RUBLON_ADDITIONAL_SETTINGS_KEY;
+				break;
+			default:
+				$key = self::RUBLON_SETTINGS_KEY;
+		}
+		$settings = get_option($key);
+		if (!$settings)
+			$settings = array();
+		return $settings;
+
 	}
 
 
 	/**
 	 * Save the plugin settings
+	 * 
+	 * @param array $settings Settings to be saved
+	 * @param string $group Settings group 
 	 */
-	static public function saveSettings($settings) {
+	static public function saveSettings($settings, $group = '') {
 
-		update_option(self::RUBLON_SETTINGS_KEY, $settings);
+		switch ($group) {
+			case 'additional':
+				$key = self::RUBLON_ADDITIONAL_SETTINGS_KEY;
+				break;
+			default:
+				$key = self::RUBLON_SETTINGS_KEY;
+		}
+		update_option($key, $settings);
 
 	}
 
@@ -229,8 +267,6 @@ class Rublon2FactorHelper {
 	static public function registerPluginActivation() {
 
 		$settings = self::getSettings();
-		if (!$settings)
-			$settings = array();
 		$settings['plugin-activated'] = true;
 		self::saveSettings($settings);
 
@@ -247,7 +283,7 @@ class Rublon2FactorHelper {
 		if (!empty(self::$cookies['messages'])) {
 			$messages = self::$cookies['messages'];
 			unset(self::$cookies['messages']);
-			return self::explainMessages($messages);
+			return self::_explainMessages($messages);
 		}
 		return null;
 
@@ -264,7 +300,7 @@ class Rublon2FactorHelper {
 	static public function setMessage($code, $type, $origin) {
 	
 		$msg = $type . '__' . $origin . '__' . $code;
-		Rublon2FactorCookies::storeMessageInCookie($msg);
+		RublonCookies::storeMessageInCookie($msg);
 
 	}
 
@@ -275,7 +311,7 @@ class Rublon2FactorHelper {
 	 * @param array $messages Message "headers" retrieved from plugin cookie
 	 * @return array
 	 */
-	static private function explainMessages($messages) {
+	static private function _explainMessages($messages) {
 
 		$result = array();
 		foreach ($messages as $message) {
@@ -310,6 +346,11 @@ class Rublon2FactorHelper {
 						break;
 					case 'CR_PLUGIN_REGISTERED_NO_PROTECTION':
 						$errorMessage = sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon2factor'), admin_url(self::RUBLON_PAGE));
+						break;
+					case 'CR_SYSTEM_TOKEN_INVALID_RESPONSE_TIMESTAMP':
+					case 'CR_INVALID_RESPONSE_TIMESTAMP':
+					case 'RC_CODE_TIMESTAMP_ERROR':
+						$errorMessage = __('Your server\'s time seems out of sync. Please check that it is properly synchronized - Rublon won\'t be able to verify your website\'s security otherwise.', 'rublon2factor');
 						break;
 				}
 				$result[] = array('message' => $errorMessage, 'type' => $msgType);
@@ -354,7 +395,7 @@ class Rublon2FactorHelper {
 	 *
 	 * @return string
 	 */
-	static public function getSavedPluginVersion() {
+	static private function _getSavedPluginVersion() {
 
 		$settings = self::getSettings();
 		return (!empty($settings) && !empty($settings['rublon_plugin_version'])) ? $settings['rublon_plugin_version'] : '';
@@ -383,11 +424,9 @@ class Rublon2FactorHelper {
 	 * 
 	 * @param string $version Plugin's current version
 	 */
-	static public function setPluginVersion($version) {
+	static private function _setPluginVersion($version) {
 
 		$settings = self::getSettings();
-		if (empty($settings))
-			$settings = array();
 		$settings['rublon_plugin_version'] = $version;
 		self::saveSettings($settings);
 
@@ -458,8 +497,8 @@ class Rublon2FactorHelper {
 	 * @param WP_User $user
 	 */
 	static public function isUserAuthenticated($user) {
-		
-		return Rublon2FactorCookies::isAuthCookieSet($user);
+
+		return RublonCookies::isAuthCookieSet($user);
 
 	}
 
@@ -547,7 +586,7 @@ class Rublon2FactorHelper {
 		$pluginMeta = self::preparePluginMeta();
 		if (!empty($pluginMeta['meta']))
 			$msg['plugin-info'] = $pluginMeta['meta'];
-		$msg['phpinfo'] = self::info();				
+		$msg['phpinfo'] = self::_info();				
 		
 		$ch = curl_init(RUBLON2FACTOR_NOTIFY_URL);
 		$headers = array(
@@ -579,7 +618,7 @@ class Rublon2FactorHelper {
 	 * 
 	 * @return array
 	 */
-	static function info() {
+	static private function _info() {
 		ob_start();
 		phpinfo();
 		$phpinfo = array('phpinfo' => array());
@@ -599,7 +638,7 @@ class Rublon2FactorHelper {
 	 * Remove any scheme modifications from older versions and migrate data to user meta
 	 * 
 	 */
-	static private function dbMigrate() {
+	static private function _dbMigrate() {
 
 		global $wpdb;
 
@@ -628,10 +667,10 @@ class Rublon2FactorHelper {
 	 * @param string $from Version the plugin's being updated from
 	 * @param string $to Plugin's Version the plugin's being updated to
 	 */
-	static private function performUpdate($from, $to) {
+	static private function _performUpdate($from, $to) {
 
 		// migrate old database entries into user meta
-		self::dbMigrate();
+		self::_dbMigrate();
 
 		// make sure that Rublon is run before other plugins
 		self::meFirst();
@@ -647,12 +686,21 @@ class Rublon2FactorHelper {
 		}
 
 		// remove any deprecated cookies
-		Rublon2FactorCookies::cookieCleanup(array('return_url'));
+		RublonCookies::cookieCleanup(array('return_url'));
 
 		$user = wp_get_current_user();
 		if (self::isPluginRegistered() && is_user_logged_in() && is_admin() && self::isUserSecured($user) && !self::isUserAuthenticated($user)) {
- 			Rublon2FactorCookies::setAuthCookie($user);
+ 			RublonCookies::setAuthCookie($user);
 		}
+
+		// disable XML-RPC by default
+		$additionalSettings = self::getSettings('additional');
+		if (!isset($additionalSettings['disable-xmlrpc'])) {
+			$additionalSettings['disable-xmlrpc'] = 'on';
+			self::saveSettings($additionalSettings, 'additional');
+		}
+
+		
 
 	}
 
@@ -661,13 +709,13 @@ class Rublon2FactorHelper {
 	 * Check if the plugin has been updated and if so, act accordingly
 	 * 
 	 */
-	static private function updateChecker() {
+	static private function _updateChecker() {
 
-		$savedPluginVersion = self::getSavedPluginVersion();
+		$savedPluginVersion = self::_getSavedPluginVersion();
 		$currentPluginVersion = self::getCurrentPluginVersion();
 		if (version_compare($savedPluginVersion, $currentPluginVersion, 'l')) {
-			self::performUpdate($savedPluginVersion, $currentPluginVersion);
-			self::setPluginVersion($currentPluginVersion);
+			self::_performUpdate($savedPluginVersion, $currentPluginVersion);
+			self::_setPluginVersion($currentPluginVersion);
 		}
 
 	}
@@ -712,7 +760,7 @@ class Rublon2FactorHelper {
 	 * 
 	 * Translate uppercased key "ID" which exist in old WordPress versions (3.0-3.2).
 	 * 
-	 * @param WP_User $user User object 
+	 * @param WP_User $user User object
 	 * @return int 
 	 */
 	static public function getUserId($user) {
@@ -725,7 +773,7 @@ class Rublon2FactorHelper {
 	/**
 	 * Returns the blog language code
 	 *
-	 * $returns string
+	 * @return string
 	 */
 	static public function getBlogLanguage() {
 	
@@ -737,8 +785,21 @@ class Rublon2FactorHelper {
 
 
 	/**
+	 * Returns the blog's technology
+	 *
+	 * @return string
+	 */
+	static public function getBlogTechnology() {
+
+		return 'wordpress3';
+
+	}
+
+
+	/**
 	 * Return the Rublon API domain
 	 * 
+	 * @return string
 	 */
 	static public function getAPIDomain() {
 
@@ -748,79 +809,10 @@ class Rublon2FactorHelper {
 
 
 	/**
-	 * Prepare HTML code for displaying the plugin activation ribblon on the "Plugins" page
-	 * 
-	 */
-	static public function activationRibbon() {
-
-		$ribbonStart = '<div class="updated" style="padding: 0; margin: 0; border: none; background: none;">';
-		$ribbonStart .= '<div class="rublon-activate-ribbon">';
-		$ribbonStart .= '<form method="post" action="options.php" id="rublon-plugin-admin-activation">';
-		echo $ribbonStart;
-		settings_fields('rublon2factor_settings_group');
-		$ribbonEnd = '<div class="rublon-activate-description-wrapper">' . self::constructRublonButton(__('Protect your account', 'rublon2factor'), 'document.getElementById(\'rublon-plugin-admin-activation\').submit();return false;') . '</div>';
-		$ribbonEnd .= '<input type="hidden" name="' . self::RUBLON_ACTION_PREFIX . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="1" />';
-		$ribbonEnd .= '<input type="hidden" name="' . RublonConsumerRegistration::ACTION_INITIALIZE . '" value="1" />';
-		$lang = self::getBlogLanguage(); 
-		$ribbonEnd .= '<div class="rublon-activate-description-wrapper"><div class="rublon-activate-description">' . __('Rublon mobile app required', 'rublon2factor') . '.' . sprintf('<strong><a href="http://rublon.com%s/get" target="_blank"><span style=color:#5bba36> ',  (($lang != 'en') ? ('/' . $lang) : '')) . __('Free Download', 'rublon2factor') . ' &raquo;</span></a></strong></div></div>';
-		$ribbonEnd .= '<div class="rublon-activate-image"><a href="http://rublon.com'. (($lang != 'en') ? '/' . $lang . '/' : '') . '" target="_blank"><img src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon-ribbon-text.png" /></a></div>';
-		$ribbonEnd .= '<div class="rublon-clear"></div>';
-		$ribbonEnd .= '</form></div></div>';
-		echo $ribbonEnd;
-
-	}
-
-
-	/**
-	 * Create a Rublon button with a dynamic text
-	 */
-	static public function constructRublonButton($text, $onClick) {
-
-		$rublonDomain = htmlspecialchars(self::RUBLON_API_DOMAIN);
-		$button = '<a href="http://rublon.com" onclick="' . htmlspecialchars($onClick) . '" style="width:auto;height:30px;background: url(' . $rublonDomain
-			. '/public/img/buttons/rublon-btn-bg-dark-medium.png) left top repeat-x;font-weight:bold;font-size:13px;font-family:&quot;Helvetica&quot;'
-			. ' &quot;Nimbus Sans&quot; &quot;Arial&quot; &quot;sans-serif&quot;;color:#ffffff;text-decoration:none;display:inline-block;position:relative;padding:0 8px;'
-			. 'margin:0 8px;"><span style="display:block;width:33px;height:30px;background:url(' . $rublonDomain
-			. '/public/img/buttons/rublon-btn-bg-begin-dark-medium.png) left top no-repeat;position:absolute;left:-8px;top:0;padding:0;margin:0;"></span><span'
-			. ' style="display:block;width:22px;height:30px;background:url(' . $rublonDomain . '/public/img/buttons/rublon-btn-bg-end-dark-medium.png)'
-			. ' left top no-repeat;position:absolute;right:-8px;top:0;padding:0;margin:0;"></span><span style="display:block;margin:0;padding:5px 22px 0 33px;font-weight:bold;'
-			. 'line-height:17px;height:17px;font-size:13px;font-family: Helvetica, &quot;Nimbus Sans&quot;, Arial, sans-serif;color:#ffffff;white-space:nowrap;'
-			. '">'
-			. htmlspecialchars($text) . '</span></a>';
-		return $button;
-
-	}
-
-
-	/**
-	 * Displays the app info box (to be displayed under the Rublon buttons when a Trusted Device is not present)
-	 * 
-	 * @return string
-	 */
-	static public function constructAppInfoBox($hidden = true) {
-
-		$lang = self::getBlogLanguage();
-		$infoBox = sprintf('<a class="rublon-app-info-boxlink" href="http://rublon.com%s/get" target="_blank">', (($lang != 'en') ? ('/' . $lang) : '')) . '<div class="rublon-app-info-box"' . ((!$hidden) ? ' style="display: block;"' : '') . '>';
-		$infoBox .= '<p class="rublon-app-info-text"><strong>' . __('Rublon mobile app required:', 'rublon2factor') . '</strong></p>';
-		$infoBox .= '<div class="rublon-app-info-icons"></div>';
-		$infoBox .= '<p class="rublon-app-info-link"><strong>' . '' . __('Free Download', 'rublon2factor') . '</strong></p>';
-		$infoBox .= '</div></a>';
-		if ($hidden) {
-			$infoBox .= '<script>//<![CDATA[
-				if (RublonWP)
-					RublonWP.handleAppInfoBox();
-			//]]></script>';
-		}
-		return $infoBox;
-
-	}
-
-
-	/**
 	 * This function SHOULD NOT BE USED. It exists for l18n purposes only.
 	 * 
 	 */
-	static private function additionalTranslations() {
+	static private function _additionalTranslations() {
 
 		$translation = __('Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen.', 'rublon2factor');
 
@@ -831,11 +823,24 @@ class Rublon2FactorHelper {
 	 * Retrieve a GET-passed parameter
 	 * 
 	 * @param string $key
-	 * @return mixed
+	 * @return mixed|null
 	 */
 	static public function uriGet($key) {
 
 		return ((isset($_GET[$key])) ? $_GET[$key] : null);
+
+	}
+
+
+	/**
+	 * Retrieve a POST-passed parameter
+	 * 
+	 * @param string $key
+	 * @return mixed|null
+	 */
+	static public function formGet($key) {
+
+		return ((isset($_POST[$key])) ? $_POST[$key] : null);
 
 	}
 
@@ -878,6 +883,48 @@ class Rublon2FactorHelper {
 			array_unshift($plugin_list, $me);
 			update_option('active_plugins', $plugin_list);
 		}
+
+	}
+
+
+	/**
+	 * Sets the XML-RPC API access status
+	 * 
+	 * Checks if XML-RPC API has been disabled in the plugin settings
+	 * and if yes, prevents any access to it.
+	 * 
+	 */
+	static private function _checkXMLRPCStatus() {
+
+		$settings = self::getSettings('additional');
+		if(!empty($settings['disable-xmlrpc']) && $settings['disable-xmlrpc'] == 'on') {
+			add_filter('xmlrpc_enabled', '__return_false');
+		}
+
+	}
+
+
+	/**
+	 * Create and store a new nonce for further use once headers are sent
+	 * 
+	 */
+	static public function newNonce() {
+
+		$nonce = wp_create_nonce('rublon=init-registration');
+		self::$nonce = $nonce;
+		RublonCookies::storeNonceInCookie($nonce);
+
+	}
+
+
+	/**
+	 * Retrieve nonce and clear it
+	 * 
+	 * @return string
+	 */
+	static public function getNonce() {
+
+		return self::$nonce;
 
 	}
 
