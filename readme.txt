@@ -62,7 +62,7 @@ Go to http://rublon.com, click the big green button ("Free download") and follow
 
 = How much does it cost to use Rublon? =
 
-The Rublon app for your smartphone is available free of charge. If you run a web service and want to provide Rublon to your users, please contact us at sales@rublon.com.
+Rublon is available free of charge.
 
 = Do I have to use my smartphone at each sign in? =
 
