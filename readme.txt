@@ -27,7 +27,7 @@ You can protect your data by protecting your account with Rublon on every web se
 
 +++
 
-Supported languages:
+= Supported languages =
 - English
 - German
 - Polish
