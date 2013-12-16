@@ -32,6 +32,7 @@ Supported languages:
 - German
 - Polish
 
+
 == Installation ==
 
 1. Install the Rublon mobile app onto your smartphone and use it to create a Rublon account: http://rublon.com/get
