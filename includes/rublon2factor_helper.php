@@ -11,7 +11,7 @@
 /**
  * RublonHelper class
  *
- * It provides helper functionalities for Rublon2Facror module.
+ * It provides helper functionalities for Rublon2Factor module.
  *
  */
 

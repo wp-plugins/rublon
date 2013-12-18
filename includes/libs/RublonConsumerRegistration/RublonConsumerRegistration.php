@@ -309,7 +309,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 	 * @return string
 	 */
 	public function getActionUrl() {
-		return $this->actionUrl;
+		return self::URL_PATH_ACTION;
 	}
 
 	/**

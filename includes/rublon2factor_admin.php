@@ -14,15 +14,29 @@
 function rublon2factor_admin_css() {
 
 	$currentPluginVersion = RublonHelper::getCurrentPluginVersion();
+	
+	// check if the site is running WordPress 3.8+, which brought
+	// some visual style changes
+	$wp_version = get_bloginfo('version');
+	$addCompatStyles = false;
+	if (version_compare($wp_version, '3.8', 'ge'))
+		$addCompatStyles = true;
+	
 	if (!wp_style_is ('rublon2factor_admin_css', 'registered')) {
 		wp_register_style ('rublon2factor_admin_css', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_admin.css', false, $currentPluginVersion);
+		if ($addCompatStyles)
+			wp_register_style ('rublon2factor_admin_wp_3.8_plus_css', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_admin_wp_3.8_plus.css', false, $currentPluginVersion);
 	}
 
 	if (did_action ('wp_print_styles'))	{
 		wp_print_styles ('rublon2factor_admin_css');
+		if ($addCompatStyles)
+			wp_print_styles ('rublon2factor_admin_wp_3.8_plus_css');
 	}
 	else {
 		wp_enqueue_style ('rublon2factor_admin_css');
+		if ($addCompatStyles)
+			wp_enqueue_style ('rublon2factor_admin_wp_3.8_plus_css');
 	}
 
 }
@@ -405,7 +419,7 @@ function rublon2factor_modify_login_form() {
 	$rublonSealUrl = 'https://rublon.com/img/rublon_seal_79x30.png';
 	$lang = RublonHelper::getBlogLanguage();
 	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="http://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '">'
-		. '<img src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '" /></a></div></div>';
+		. '<img class="rublon-seal-image" src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '" /></a></div></div>';
 	echo '<script>//<![CDATA[
 		if (RublonWP)
 			RublonWP.showSeal();

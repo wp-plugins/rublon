@@ -13,6 +13,7 @@ h2.rublon-header {
 li#toplevel_page_rublon div.wp-menu-image {
 	background-image: url('../images/R_16x16.png');
 	background-position: 7px 7px;
+	background-repeat: no-repeat;
 	opacity: .6;
 }
 

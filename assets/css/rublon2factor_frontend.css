@@ -5,12 +5,17 @@
 
 .rublon-seal-link {
 	float: left;
+	position: relative;
 }
 
 #rublon-seal {
 	padding-top: 10px;
 	padding-bottom: 8px;
 	clear: both;
+}
+
+.rublon-seal-image {
+	position: absolute;
 }
 
 .rublon-clear {

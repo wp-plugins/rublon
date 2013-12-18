@@ -2,16 +2,16 @@
 Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification
 Requires at least: 3.3.x
-Tested up to: 3.7.1
+Tested up to: 3.8
 Stable tag: 1.2.3
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-Stronger security for online accounts: Rublon protects your accounts from sign ins from unknown devices, even if your passwords get stolen.
+Stronger protection for online accounts: Rublon protects your users' accounts from hackers, even if they steal their passwords.
 
 == Description ==
 
-Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen. Find out more at http://www.rublon.com.
+Rublon is seamless provides stronger protection for all users of your WordPress website through invisible two-factor authentication. It protects their accounts from sign-ins from unknown devices, even if your passwords get stolen. Find out more at http://www.rublon.com.
 
 Rublon for WordPress requires the Rublon mobile app, which lets you define your Trusted Devices. Available for Android, BlackBerry, iPhone and Windows Phone: www.rublon.com/get
 
@@ -27,11 +27,10 @@ You can protect your data by protecting your account with Rublon on every web se
 
 +++
 
-= Supported languages =
-- English
-- German
-- Polish
-
+Supported languages:
+* English
+* German
+* Polish
 
 == Installation ==
 
@@ -63,7 +62,7 @@ Go to http://rublon.com, click the big green button ("Free download") and follow
 
 = How much does it cost to use Rublon? =
 
-Rublon is available free of charge.
+The Rublon app for your smartphone is available free of charge. If you run a web service and want to provide Rublon to your users, please contact us at sales@rublon.com.
 
 = Do I have to use my smartphone at each sign in? =
 
@@ -84,6 +83,10 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.2.4 =
+* Visual components updated for compatibility with WordPress 3.8
+* Internal Rublon libraries updated
 
 = 1.2.3 =
 * XML-RPC API disabled by default with the option to enable it back on the plugin's settings page
