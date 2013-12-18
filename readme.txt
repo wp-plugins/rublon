@@ -3,7 +3,7 @@ Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification
 Requires at least: 3.3.x
 Tested up to: 3.8
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
