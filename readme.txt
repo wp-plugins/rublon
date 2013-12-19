@@ -11,7 +11,7 @@ Stronger protection for online accounts: Rublon protects your users' accounts fr
 
 == Description ==
 
-Rublon provides stronger protection for all users of your WordPress website through invisible two-factor authentication. It protects their accounts from sign-ins from unknown devices, even if your passwords get stolen. Find out more at http://www.rublon.com.
+Rublon provides stronger protection for all users of your WordPress website through invisible two-factor authentication. It protects their accounts from sign-ins from unknown devices, even if their passwords get stolen. Find out more at http://www.rublon.com.
 
 Rublon for WordPress requires the Rublon mobile app, which lets you define your Trusted Devices. Available for Android, BlackBerry, iPhone and Windows Phone: www.rublon.com/get
 
