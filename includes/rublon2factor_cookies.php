@@ -39,6 +39,21 @@ class RublonCookies {
 
 
 	/**
+	 * Store all given messages in the cookie
+	 * 
+	 * @param array $messages
+	 */
+	static public function storeAllMessagesInCookie($messages) {
+
+		if (!empty($messages)) {
+			foreach ($messages as $msg)
+				self::storeMessageInCookie($msg);
+		}
+
+	}
+
+
+	/**
 	 * Store a message in the message cookie
 	 * 
 	 * @param string $msg
@@ -144,6 +159,8 @@ class RublonCookies {
 		$cookieName = self::COOKIE_PREFIX . self::COOKIE_AUTHENTICATED;
 		$cookieParams = self::_getAuthCookieParams();
 		$cookieParams['expire'] = self::_getAuthCookieExpiration();
+		if (isset($cookieParams['logged_in_secure']) && empty($cookieParams['logged_in_secure']))
+			$cookieParams['secure'] = false;
 		if (!$user)
 			$user = wp_get_current_user();
 		$cookieData = self::_prepareAuthCookieData($user);

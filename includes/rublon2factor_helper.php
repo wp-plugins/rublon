@@ -89,6 +89,20 @@ class RublonHelper {
 
 
 	/**
+	 * Transfer plugin messages back to the cookie
+	 * 
+	 */
+	static public function cookieTransferBack() {
+
+		if (!empty(self::$cookies['messages'])) {
+			RublonCookies::storeAllMessagesInCookie(self::$cookies['messages']);
+			unset(self::$cookies['messages']);
+		}
+
+	}
+
+
+	/**
 	 * Check for any Rublon actions in the URI
 	 * 
 	 */
@@ -158,8 +172,7 @@ class RublonHelper {
 			$rublonProfileId = self::getUserProfileId($user);
 			$authParams = new RublonAuthParams(self::$service);
 			$authParams->setConsumerParam('wp_user', self::getUserId($user));
-			$authParams->setConsumerParam('wp_auth_time', time());
-			$here = '[[CUSTOM]]' . urlencode($_SERVER['REQUEST_URI']);
+			$here = '[[CUSTOM]]' . urlencode($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 			$authParams->setConsumerParam('customURIParam', $here);
 			self::$service->initAuthorization($rublonProfileId, $authParams);
 		}
@@ -928,5 +941,46 @@ class RublonHelper {
 
 	}
 
+
+	/**
+	 * Checks if a given URL points to an Administrator Panel page
+	 * 
+	 * The method assumes that if a given URL points to an Admin
+	 * Panel page, it contains the Admin Panel URL, so it must be
+	 * a full URL path.
+	 * 
+	 * @param string $url
+	 * @return boolean
+	 */
+	static public function isAdminURL($url) {
+
+		$admin_url = admin_url();
+		if (substr($url, -1) == '/')
+			$admin_url = trailingslashit($admin_url);
+		$url_no_scheme = preg_replace('/http(s)?:\/\//', '', $url);
+		$admin_url_no_scheme = preg_replace('/http(s)?:\/\//', '', $admin_url);
+		return (strpos($url_no_scheme, $admin_url_no_scheme) !== false);
+		
+
+	}
+
+
+	/**
+	 * Extends a given URL to its full form 
+	 * 
+	 * @param string $url
+	 * @return string
+	 */
+	static public function normalizeURL($url) {
+
+		if (!preg_match('/http(s)?:\/\//', $url))
+			$url = 'http://' . $url;
+		if (self::isAdminURL($url))
+			if (defined('FORCE_SSL_ADMIN'))
+				if (FORCE_SSL_ADMIN)
+					$url = preg_replace('/http:\/\//', 'https://', $url);
+		return $url;
+
+	}
 
 }

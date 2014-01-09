@@ -17,17 +17,36 @@
  */
 function rublon2factor_login_message($message) {
 
-	if (!is_user_logged_in())
-		RublonHelper::cookieTransfer();
 	$messages = RublonHelper::getMessages();
+	if (!empty($message))
+		$result = $message;
+	else
+		$result = '';
 	if ($messages) {
-		foreach ($messages as $message)
-			echo '<div class="' . $message['type'] . ' fade" style="margin: 0 0 16px 8px; padding: 12px;">' . $message['message'] . '</div>';
+		foreach ($messages as $msg)
+			$result .= '<div class="' . $msg['type'] . ' fade" style="margin: 0 0 16px 8px; padding: 12px;">' . $msg['message'] . '</div>';
 	}
+	return $result;
 
 }
 
 add_filter('login_message', 'rublon2factor_login_message');
+
+/**
+ * Transfers any plugin messages back to the cookie on redirection
+ * 
+ * @param string $location
+ * @param int $status
+ * @return string
+ */
+function rublon2factor_wp_redirect($location, $status = 302) {
+
+	RublonHelper::cookieTransferBack();
+	return $location;
+
+}
+
+add_filter('wp_redirect', 'rublon2factor_wp_redirect');
 
 /**
  * Makes sure the plugin is always run before other plugins
@@ -59,9 +78,9 @@ function rublon2factor_init() {
 				wp_clear_auth_cookie();
 				RublonHelper::authenticateWithRublon($user);
 			}
-			RublonHelper::cookieTransfer();
 		}
 	}
+	RublonHelper::cookieTransfer();
 
 }
 
@@ -85,10 +104,13 @@ function rublon2factor_store_auth_cookie_params($auth_cookie, $expire, $expirati
 
 	if ($user_id) {
 		$user = get_user_by('id', $user_id);
-		if ($user && RublonHelper::isUserSecured($user) && !RublonHelper::isUserAuthenticated($user)) {
+		$secure = ($scheme == 'secure_auth');
+		if ($user) {
+			$secure_logged_in_cookie = apply_filters('secure_logged_in_cookie', false, $user_id, $secure);
 			$cookieParams = array(
-					'secure' => ($scheme == 'secure_auth'),
+					'secure' => $secure,
 					'remember' => ($expire > 0),
+					'logged_in_secure' => $secure_logged_in_cookie,
 			);
 			$settings = RublonHelper::getSettings();
 			$settings['wp_cookie_params'] = $cookieParams;

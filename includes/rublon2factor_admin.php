@@ -106,10 +106,10 @@ function rublon2factor_render_disable_xmlrpc() {
 	if (!empty($settings['disable-xmlrpc']) && $settings['disable-xmlrpc'] == 'on')
 		$checked = ' checked';
 	if (!empty($checked)) {
-		echo '<p>' . __('In order to assure a high level of security, by default Rublon disallows external applications to manage your website by disabling XML-RPC.', 'rublon2factor');
+		echo '<p class="rublon-xmlrpc-desc">' . __('In order to assure a high level of security, by default Rublon disallows external applications to manage your website by disabling XML-RPC.', 'rublon2factor');
 		echo '<br />' . __('Enabling XML-RPC will allow external applications to bypass Rublon security. We strongly recommend that you leave it disabled.', 'rublon2factor') . '</p>';
 	} else {
-		echo '<p>' . __('In order to assure a high level of security, by default Rublon disallows external applications to manage your website by disabling XML-RPC.', 'rublon2factor');
+		echo '<p class="rublon-xmlrpc-desc">' . __('In order to assure a high level of security, by default Rublon disallows external applications to manage your website by disabling XML-RPC.', 'rublon2factor');
 		echo '<br />' . '<span class="rublon-bold rublon-red">' . __('XML-RPC is currently enabled, which allows external applications to bypass Rublon security. We strongly recommend that you disable it.', 'rublon2factor') . '</span>' . '</p>';
 	}
 	echo '<input type="hidden" name="' . RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '[disable-xmlrpc]" value="off" /> ';

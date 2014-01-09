@@ -129,26 +129,12 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 
 		$consumerParams = $this->response->getConsumerParams();
 		if (!empty($consumerParams['wp_user'])) {
-			if (isset($consumerParams[RublonAuthParams::FIELD_ACTION_FLAG])) {
-				if ($consumerParams[RublonAuthParams::FIELD_ACTION_FLAG] == RublonAuthParams::ACTION_FLAG_LOGIN) {
-					if (!empty($consumerParams['wp_auth_time']))
-						$timeOK = (time() - $consumerParams['wp_auth_time'] <= RublonHelper::RUBLON_AUTH_TIME * 60);
-					else
-						$timeOK = false;
-				} else {
-					$timeOK = true;
-				}
-				if ($timeOK) {
 					$systemUser = get_user_by('id', $consumerParams['wp_user']);
 					if (!empty($systemUser)) {
 						$this->_user = $systemUser;
 						return true;
 					}
 				}
-			} else {
-				$this->finalError(self::ERROR_UNKNOWN_ACTION_FLAG);
-			}
-		}
 		return false;
 
 	}
@@ -349,19 +335,16 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 
 
 	/**
-	 * Perform a safe redirection to a given URL or retrieve it from Rublon session data
+	 * Perform a safe redirection to a given URL
 	 *
-	 * @param array $sessionData Rublon session data
 	 * @param string $url URL address to redirect to
+	 * @param array $sessionData Rublon session data
 	 */
 	private function _returnToPage($url, $sessionData = null) {
 
-		if (!empty($sessionData)) {
-			echo $this->_htmlHelper->returnToPage($sessionData, $url);
-		} else {
+		$url = RublonHelper::normalizeURL($url);
 			wp_safe_redirect($url);
 			exit;
-		}
 
 	}
 

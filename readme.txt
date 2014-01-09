@@ -84,6 +84,10 @@ After a successful installation, the plugin can be updated automatically in the 
 
 == Changelog ==
 
+= 1.2.5 =
+* Added compatibility for admin dashboards working over SSL
+* Internal Rublon libraries updated
+
 = 1.2.4 =
 * Visual components updated for compatibility with WordPress 3.8
 * Internal Rublon libraries updated
