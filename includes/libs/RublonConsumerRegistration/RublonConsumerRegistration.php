@@ -63,7 +63,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 		if (!empty($msg)) {
 			if (stripos($msg, 'ERROR_CODE:') !== false) {
 				$errorCode = str_replace('ERROR_CODE: ', '', $msg);
-				$notifierMessage .= __('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>';
+				$notifierMessage .= __('Rublon error code: ', 'rublon') . '<strong>' . $errorCode . '</strong>';
 			} else {
 				$notifierMessage .= 'Rublon error message: [' . $msg . ']';
 			}

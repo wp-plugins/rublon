@@ -61,7 +61,7 @@ class RublonHelper {
 
 		// Initialize localization
 		if (function_exists('load_plugin_textdomain')) {
-			load_plugin_textdomain('rublon2factor', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
+			load_plugin_textdomain('rublon', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
 		}
 
 		// check for a possible update
@@ -189,7 +189,7 @@ class RublonHelper {
 
 		if (!empty(self::$service)) {
 			$currentUser = wp_get_current_user();
-			$button = self::$service->createButtonEnable(__('Protect your account', 'rublon2factor'));
+			$button = self::$service->createButtonEnable(__('Protect your account', 'rublon'));
 			$button->getAuthParams()->setConsumerParam('customURIParam', $page);
 			$button->getAuthParams()->setConsumerParam('wp_user', self::getUserId($currentUser));
 			echo $button;
@@ -208,7 +208,7 @@ class RublonHelper {
 		if (!empty(self::$service)) {
 			$currentUser = wp_get_current_user();
 			$rublonProfileId = self::getUserProfileId($currentUser);
-			$label = __('Disable account protection', 'rublon2factor');
+			$label = __('Disable account protection', 'rublon');
 			$button = self::$service->createButtonDisable($label, $rublonProfileId);
 			$button->getAuthParams()->setConsumerParam('customURIParam', $page);
 			$button->getAuthParams()->setConsumerParam('wp_user', self::getUserId($currentUser));
@@ -335,51 +335,51 @@ class RublonHelper {
 			if ($msgType == 'error') {
 				switch ($msgOrigin) {
 					case 'RC':
-						$errorMessage = __('There was a problem during the authentication process.', 'rublon2factor');
+						$errorMessage = __('There was a problem during the authentication process.', 'rublon');
 						break;
 					case 'CR':
-						$errorMessage = __('Rublon activation failed. Please try again. Should the error occur again, contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon2factor');
+						$errorMessage = __('Rublon activation failed. Please try again. Should the error occur again, contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon');
 						break;
 				}
 				$errorCode = $msgOrigin . '_' . $msgCode;
 				switch ($errorCode) {
 					case 'RC_ALREADY_PROTECTED':
-						$errorMessage = __('You cannot protect an account already protected by Rublon.', 'rublon2factor');
+						$errorMessage = __('You cannot protect an account already protected by Rublon.', 'rublon');
 						break;
 					case 'RC_CANNOT_PROTECT_ACCOUNT':
-						$errorMessage = __('Unable to protect your account with Rublon.', 'rublon2factor');
+						$errorMessage = __('Unable to protect your account with Rublon.', 'rublon');
 						break;
 					case 'RC_CANNOT_DISABLE_ACCOUNT_PROTECTION':
-						$errorMessage = __('Unable to disable Rublon protection.', 'rublon2factor');
+						$errorMessage = __('Unable to disable Rublon protection.', 'rublon');
 						break;
 					case 'CR_PLUGIN_OUTDATED':
-						$errorMessage = sprintf(__('The version of Rublon for Wordpress that you are trying to activate is outdated. Please go to the <a href="%s">Plugins</a> page and update it to the newest version or', 'rublon2factor'), admin_url('plugins.php'))
+						$errorMessage = sprintf(__('The version of Rublon for Wordpress that you are trying to activate is outdated. Please go to the <a href="%s">Plugins</a> page and update it to the newest version or', 'rublon'), admin_url('plugins.php'))
 						. '<a href="' . esc_attr(wp_nonce_url( self_admin_url('update.php?action=upgrade-plugin&plugin=') . plugin_basename(RUBLON2FACTOR_PLUGIN_PATH), 'upgrade-plugin_' . plugin_basename(RUBLON2FACTOR_PLUGIN_PATH))) . '">'
-								. ' <strong>' . __('update now', 'rublon2factor') . '</strong></a>.';
+								. ' <strong>' . __('update now', 'rublon') . '</strong></a>.';
 						break;
 					case 'CR_PLUGIN_REGISTERED_NO_PROTECTION':
-						$errorMessage = sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon2factor'), admin_url(self::RUBLON_PAGE));
+						$errorMessage = sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon'), admin_url(self::RUBLON_PAGE));
 						break;
 					case 'CR_SYSTEM_TOKEN_INVALID_RESPONSE_TIMESTAMP':
 					case 'CR_INVALID_RESPONSE_TIMESTAMP':
 					case 'RC_CODE_TIMESTAMP_ERROR':
-						$errorMessage = __('Your server\'s time seems out of sync. Please check that it is properly synchronized - Rublon won\'t be able to verify your website\'s security otherwise.', 'rublon2factor');
+						$errorMessage = __('Your server\'s time seems out of sync. Please check that it is properly synchronized - Rublon won\'t be able to verify your website\'s security otherwise.', 'rublon');
 						break;
 				}
 				$result[] = array('message' => $errorMessage, 'type' => $msgType);
-				$result[] = array('message' => __('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>', 'type' => $msgType);
+				$result[] = array('message' => __('Rublon error code: ', 'rublon') . '<strong>' . $errorCode . '</strong>', 'type' => $msgType);
 			} elseif ($msgType == 'updated') {
 				$updatedMessage = '';
 				$updatedCode = $msgOrigin . '_' . $msgCode;
 				switch ($updatedCode) {
 					case 'RC_ACCOUNT_PROTECTED':
-						$updatedMessage = __('Your account is now protected by Rublon.', 'rublon2factor');
+						$updatedMessage = __('Your account is now protected by Rublon.', 'rublon');
 						break;
 					case 'RC_PROTECTION_DISABLED':
-						$updatedMessage = __('Rublon protection has been disabled. You are now protected by a password only, which may result in unauthorized access to your account. We strongly encourage you to protect your account with Rublon.', 'rublon2factor');
+						$updatedMessage = __('Rublon protection has been disabled. You are now protected by a password only, which may result in unauthorized access to your account. We strongly encourage you to protect your account with Rublon.', 'rublon');
 						break;
 					case 'CR_PLUGIN_REGISTERED':
-						$updatedMessage = __('Thank you! Now all of your users can protect their accounts with Rublon.', 'rublon2factor');
+						$updatedMessage = __('Thank you! Now all of your users can protect their accounts with Rublon.', 'rublon');
 						break;
 				}
 				$result[] = array('message' => $updatedMessage, 'type' => $msgType);
@@ -666,7 +666,7 @@ class RublonHelper {
 			$db_error = $wpdb->query('ALTER TABLE ' . $wpdb->users . ' DROP COLUMN `rublon_profile_id`') === false;
 			if ($db_error) {
 				deactivate_plugins(plugin_basename(RUBLON2FACTOR_PLUGIN_PATH), true);
-				_e('Plugin requires database modification but you do not have permission to do it.', 'rublon2factor');
+				_e('Plugin requires database modification but you do not have permission to do it.', 'rublon');
 				exit;
 			}
 		}
@@ -827,7 +827,7 @@ class RublonHelper {
 	 */
 	static private function _additionalTranslations() {
 
-		$translation = __('Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen.', 'rublon2factor');
+		$translation = __('Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen.', 'rublon');
 
 	}
 

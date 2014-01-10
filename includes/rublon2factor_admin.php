@@ -46,7 +46,7 @@ function rublon2factor_admin_css() {
  */
 function rublon2factor_add_settings_page() {
 
-	$title = __('Rublon', 'rublon2factor');
+	$title = __('Rublon', 'rublon');
 	$settings_page = add_utility_page($title, $title, 'read', 'rublon' , 'rublon2factor_create_settings_page', 'div');
 	add_action('admin_print_styles', 'rublon2factor_admin_css');
 
@@ -75,8 +75,8 @@ function rublon2factor_register_settings() {
 
 	// register additional settings
 	register_setting('rublon2factor_additional_settings_group', RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
-	add_settings_section('rublon2factor-additional-settings', __('External applications', 'rublon2factor'), null, 'rublon');
-	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon2factor'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-additional-settings');
+	add_settings_section('rublon2factor-additional-settings', __('External applications', 'rublon'), null, 'rublon');
+	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-additional-settings');
 
 	// redirect to plugin page upon first activation
 	if (RublonHelper::isPluginRegistered() && !RublonHelper::wasPluginEverActivated())
@@ -106,15 +106,15 @@ function rublon2factor_render_disable_xmlrpc() {
 	if (!empty($settings['disable-xmlrpc']) && $settings['disable-xmlrpc'] == 'on')
 		$checked = ' checked';
 	if (!empty($checked)) {
-		echo '<p class="rublon-xmlrpc-desc">' . __('In order to assure a high level of security, by default Rublon disallows external applications to manage your website by disabling XML-RPC.', 'rublon2factor');
-		echo '<br />' . __('Enabling XML-RPC will allow external applications to bypass Rublon security. We strongly recommend that you leave it disabled.', 'rublon2factor') . '</p>';
+		echo '<p class="rublon-xmlrpc-desc">' . __('In order to assure a high level of security, by default Rublon disallows external applications to manage your website by disabling XML-RPC.', 'rublon');
+		echo '<br />' . __('Enabling XML-RPC will allow external applications to bypass Rublon security. We strongly recommend that you leave it disabled.', 'rublon') . '</p>';
 	} else {
-		echo '<p class="rublon-xmlrpc-desc">' . __('In order to assure a high level of security, by default Rublon disallows external applications to manage your website by disabling XML-RPC.', 'rublon2factor');
-		echo '<br />' . '<span class="rublon-bold rublon-red">' . __('XML-RPC is currently enabled, which allows external applications to bypass Rublon security. We strongly recommend that you disable it.', 'rublon2factor') . '</span>' . '</p>';
+		echo '<p class="rublon-xmlrpc-desc">' . __('In order to assure a high level of security, by default Rublon disallows external applications to manage your website by disabling XML-RPC.', 'rublon');
+		echo '<br />' . '<span class="rublon-bold rublon-red">' . __('XML-RPC is currently enabled, which allows external applications to bypass Rublon security. We strongly recommend that you disable it.', 'rublon') . '</span>' . '</p>';
 	}
 	echo '<input type="hidden" name="' . RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '[disable-xmlrpc]" value="off" /> ';
 	echo '<input type="checkbox" name="' . RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '[disable-xmlrpc]" value="on"' . $checked . ' /> ';
-	_e('Disable XML-RPC', 'rublon2factor');
+	_e('Disable XML-RPC', 'rublon');
 
 }
 
@@ -127,7 +127,7 @@ function rublon2factor_create_settings_page() {
 <div class="wrap">
 	<div id="rublon2factor_page" class="rublon2factor_settings">
 		<h2 class="rublon-header">
-			<?php _e('Rublon', 'rublon2factor'); ?>
+			<?php _e('Rublon', 'rublon'); ?>
 		</h2>
 
 		<?php
@@ -141,12 +141,12 @@ function rublon2factor_create_settings_page() {
 				$admin_email = get_option('admin_email');
 				$admin_url = admin_url(RublonHelper::RUBLON_PAGE);
 				echo '<div class="updated rublon-activation-mere-user">'
-					. __('Rublon will be available to you once your administrator protects his account.', 'rublon2factor')
-					. ' <strong>' . __('Contact your administrator', 'rublon2factor') . ':' . ' <a href="mailto:' . $admin_email . '?subject=' . __('Protect your account with Rublon', 'rublon2factor') . '&body=' . sprintf(__('Hey, could you please protect your account with Rublon on %s? I want to protect my account, but I won\'t be able to do this until an administrator will.', 'rublon2factor'), $admin_url) . '">' . $admin_email . '</a></strong>'
+					. __('Rublon will be available to you once your administrator protects his account.', 'rublon')
+					. ' <strong>' . __('Contact your administrator', 'rublon') . ':' . ' <a href="mailto:' . $admin_email . '?subject=' . __('Protect your account with Rublon', 'rublon') . '&body=' . sprintf(__('Hey, could you please protect your account with Rublon on %s? I want to protect my account, but I won\'t be able to do this until an administrator will.', 'rublon'), $admin_url) . '">' . $admin_email . '</a></strong>'
 					. '</div>';
 				echo '<div class="rublon-button-header">'
-					. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon2factor')
-					. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon2factor') . '</div>';
+					. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon')
+					. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon') . '</div>';
 				echo '<div class="rublon-clear"></div>';
 			}
 
@@ -181,11 +181,11 @@ function rublon2factor_no_settings_warning() {
 	if ($pagenow == 'plugins.php') {
 	
 		if (!version_compare(phpversion(), RUBLON2FACTOR_REQUIRE_PHPVERSION, 'ge')) {
-			echo "<div class='error'><p><strong>" . __('Warning! The PHP version of your server is too old to run Rublon. Please upgrade your server\'s PHP version.', 'rublon2factor') . '</strong></p><p>' . __('Required PHP version:', 'rublon2factor') . ' <strong>'.RUBLON2FACTOR_REQUIRE_PHPVERSION.' ' . __('(or above)', 'rublon2factor') . '</strong></p><p>' . __('Your PHP version:', 'rublon2factor') . ' <strong>' . phpversion() . '</strong></p></div>';
+			echo "<div class='error'><p><strong>" . __('Warning! The PHP version of your server is too old to run Rublon. Please upgrade your server\'s PHP version.', 'rublon') . '</strong></p><p>' . __('Required PHP version:', 'rublon') . ' <strong>'.RUBLON2FACTOR_REQUIRE_PHPVERSION.' ' . __('(or above)', 'rublon') . '</strong></p><p>' . __('Your PHP version:', 'rublon') . ' <strong>' . phpversion() . '</strong></p></div>';
 		}
 
 		if (!function_exists('curl_init')) {
-			echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon2factor') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon2factor') . '</p></div>';
+			echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon') . '</p></div>';
 		}
 	
 		if (!RublonHelper::isPluginRegistered() && $screen->base == 'plugins') {
@@ -210,14 +210,14 @@ function rublon2factor_add_users_2factor_disabler($user) {
 	if (!empty($user) && RublonHelper::isPluginRegistered()) {
 
 		if (RublonHelper::isUserSecured($user)) {
-			?><h3><?php _e('Security', 'rublon2factor') ?></h3>
+			?><h3><?php _e('Security', 'rublon') ?></h3>
 				<table class="form-table">
 					<tr>
-						<th><?php _e('Rublon', 'rublon2factor'); ?></th>
+						<th><?php _e('Rublon', 'rublon'); ?></th>
 						<td>
 							<label for="rublon2factor_disable_users_security">
 								<input name="rublon2factor_disable_users_security" type="checkbox" id="rublon2factor_disable_users_security" value="false" />
-								<?php _e('Disable Rublon protection for this account', 'rublon2factor') ?>
+								<?php _e('Disable Rublon protection for this account', 'rublon') ?>
 							</label>
 						</td>
 					</tr>
@@ -257,7 +257,7 @@ function rublon2factor_secure_account_buttons() {
 		?>
 <h3>
 <?php
-	_e('Rublon', 'rublon2factor'); 
+	_e('Rublon', 'rublon'); 
 ?>
 </h3>
 <table class="form-table">
@@ -308,7 +308,7 @@ function rublon2factor_add_userlist_columns($columns) {
 	foreach ($columns as $k => $v) {
 		$new_columns[$k] = $v;
 		if ($k == 'username') {
-			$new_columns['rublon2factor_status'] = __('Rublon', 'rublon2factor');
+			$new_columns['rublon2factor_status'] = __('Rublon', 'rublon');
 		}
 	}
 	return $new_columns;
@@ -339,7 +339,7 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 			$lang = RublonHelper::getBlogLanguage();
 			
 			if (!empty($rublonProfileId))
-				$value = '<a href="http://rublon.com' . ($lang != 'en' ? '/' . $lang . '/' : '') . '" target="_blank"><img style="margin-top: 1px" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account protected by Rublon', 'rublon2factor') . '" /></a>';
+				$value = '<a href="http://rublon.com' . ($lang != 'en' ? '/' . $lang . '/' : '') . '" target="_blank"><img style="margin-top: 1px" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account protected by Rublon', 'rublon') . '" /></a>';
 		}
 	}
 	return $value;
@@ -377,7 +377,7 @@ function rublon2factor_modify_admin_toolbar() {
  		// add Rublon node
  		$wp_admin_bar->add_node(array(
  				'id' => 'rublon',
- 				'title' => __('Protected by Rublon', 'rublon2factor'),
+ 				'title' => __('Protected by Rublon', 'rublon'),
  				'href' => admin_url(RublonHelper::RUBLON_PAGE),
  				'parent' => 'user-actions',
  		
@@ -418,8 +418,8 @@ function rublon2factor_modify_login_form() {
 
 	$rublonSealUrl = 'https://rublon.com/img/rublon_seal_79x30.png';
 	$lang = RublonHelper::getBlogLanguage();
-	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="http://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '">'
-		. '<img class="rublon-seal-image" src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon2factor') . '" /></a></div></div>';
+	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="http://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon') . '">'
+		. '<img class="rublon-seal-image" src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon') . '" /></a></div></div>';
 	echo '<script>//<![CDATA[
 		if (RublonWP)
 			RublonWP.showSeal();

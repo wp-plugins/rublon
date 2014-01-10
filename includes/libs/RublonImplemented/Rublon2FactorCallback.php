@@ -2,7 +2,6 @@
 
 class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 
-
 	/**
 	 * User currently being authenticated
 	 *  
@@ -69,7 +68,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 					if ($details->getCode() == RublonException::CODE_TIMESTAMP_ERROR) {
 						$errorCode = 'CODE_TIMESTAMP_ERROR';
 					} else {
-						$additionalErrorMessage = __('Error details: ', 'rublon2factor') . $details->getMessage();
+						$additionalErrorMessage = __('Error details: ', 'rublon') . $details->getMessage();
 					}
 				}
 				break;
@@ -95,7 +94,7 @@ class Rublon2FactorCallback extends Rublon2FactorCallbackTemplate {
 		RublonHelper::setMessage($errorCode, 'error', 'RC');
 
 		// prepare message for issue notifier
-		$notifierMessage = 'RublonCallback error.<br /><br />' . __('Rublon error code: ', 'rublon2factor') . '<strong>' . $errorCode . '</strong>';
+		$notifierMessage = 'RublonCallback error.<br /><br />' . __('Rublon error code: ', 'rublon') . '<strong>' . $errorCode . '</strong>';
 		if (!empty($additionalErrorMessage))
 			$notifierMessage .= '<br />' . $additionalErrorMessage;
 	

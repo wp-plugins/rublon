@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: Rublon
-Text Domain: rublon2factor
+Text Domain: rublon
 Plugin URI: http://wordpress.org/plugins/rublon/
 Description: Rublon provides stronger security for online accounts through invisible two-factor authentication. It protects your accounts from sign-ins from unknown devices, even if your passwords get stolen.
-Version: 1.2.5
+Version: 1.2.6
 Author: Rublon
 Author URI: http://rublon.com
 License: http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 
@@ -35,7 +35,7 @@ function rublon2factor_add_settings_link ($links, $file) {
 
 	if ($file == $rublon2factor_plugin)
 	{
-		$settings_link = '<a href="admin.php?page=rublon">' . __('Settings', 'rublon2factor') . '</a>';
+		$settings_link = '<a href="admin.php?page=rublon">' . __('Settings', 'rublon') . '</a>';
 		array_unshift ($links, $settings_link);
 	}
 	return $links;
