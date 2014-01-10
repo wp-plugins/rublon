@@ -31,7 +31,7 @@ You can protect your data by protecting your account with Rublon on every web se
 - English
 - German
 - Polish
-- Spanish
+- Spanish - thanks to Andrew Kurtis from www.webhostinghub.com
 
 == Installation ==
 
