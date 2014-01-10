@@ -86,10 +86,10 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 1.2.6 =
-* Spanish language support added (thanks to Andrew Kurtis from www.webhostinghub.com <http://www.webhostinghub.com>)
+* Spanish language support added (thanks to Andrew Kurtis from <www.webhostinghub.com>)
 
 = 1.2.5 =
-* Added compatibility for admin dashboards working over SSL (thanks to Robert Abela from www.wpwhitesecurity.com <http://www.wpwhitesecurity.com> for reporting it)
+* Added compatibility for admin dashboards working over SSL (thanks to Robert Abela from <www.wpwhitesecurity.com> for reporting it)
 * Internal Rublon libraries updated
 
 = 1.2.4 =
