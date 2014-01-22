@@ -28,9 +28,11 @@ You can protect your data by protecting your account with Rublon on every web se
 +++
 
 = Supported languages =
+- Croatian - thanks to Borisa Djuraskovic from www.webhostinghub.com
 - English
 - German
 - Polish
+- Serbian - thanks to Borisa Djuraskovic from www.webhostinghub.com
 - Spanish - thanks to Andrew Kurtis from www.webhostinghub.com
 
 == Installation ==
@@ -84,6 +86,9 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.2.7 =
+* Croatian and Serbian language support added, thanks to Borisa Djuraskovic from www.webhostinghub.com
 
 = 1.2.6 =
 * Spanish language support added, thanks to Andrew Kurtis from www.webhostinghub.com
