@@ -7,7 +7,7 @@ Stable tag: 1.2.7
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-Stronger protection for online accounts: Rublon protects your users' accounts from hackers, even if they steal their passwords.
+We protect your accounts from hackers, even if they steal your passwords.
 
 == Description ==
 
