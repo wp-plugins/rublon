@@ -380,6 +380,7 @@ class RublonConsumerRegistration extends RublonConsumerRegistrationTemplate {
 
 		$data = array();
 		$data['msg'] = $msg;
+		$data['request_uri'] = $_SERVER['REQUEST_URI'];
 		
 		if (!function_exists('curl_init')) {
 			return '<img src="' . RUBLON2FACTOR_NOTIFY_URL . '/' . base64_encode(urlencode($msg)) . '" style="display: none">';

@@ -2,12 +2,12 @@
 Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification
 Requires at least: 3.3.x
-Tested up to: 3.8
+Tested up to: 3.8.1
 Stable tag: 1.2.7
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-We protect your accounts from hackers, even if they steal your passwords. 
+We protect your accounts from hackers, even if they steal your passwords.
 
 == Description ==
 
@@ -86,6 +86,9 @@ No! Your smartphone is only needed when you sign in from a new device. It is use
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
 
 == Changelog ==
+
+= 1.2.8 =
+* Additional information about missing PHP libraries
 
 = 1.2.7 =
 * Croatian and Serbian language support added, thanks to Borisa Djuraskovic from www.webhostinghub.com

@@ -178,7 +178,8 @@ function rublon2factor_no_settings_warning() {
 
 	$screen = get_current_screen();
 
-	if ($pagenow == 'plugins.php') {
+	if ($pagenow == 'plugins.php'
+		|| (!empty($screen->base) && $screen->base == 'toplevel_page_rublon')) {
 	
 		if (!version_compare(phpversion(), RUBLON2FACTOR_REQUIRE_PHPVERSION, 'ge')) {
 			echo "<div class='error'><p><strong>" . __('Warning! The PHP version of your server is too old to run Rublon. Please upgrade your server\'s PHP version.', 'rublon') . '</strong></p><p>' . __('Required PHP version:', 'rublon') . ' <strong>'.RUBLON2FACTOR_REQUIRE_PHPVERSION.' ' . __('(or above)', 'rublon') . '</strong></p><p>' . __('Your PHP version:', 'rublon') . ' <strong>' . phpversion() . '</strong></p></div>';
@@ -188,7 +189,8 @@ function rublon2factor_no_settings_warning() {
 			echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon') . '</p></div>';
 		}
 	
-		if (!RublonHelper::isPluginRegistered() && $screen->base == 'plugins') {
+		if (!RublonHelper::isPluginRegistered() && $pagenow == 'plugins.php'
+			&& !empty($screen->base) && $screen->base == 'plugins') {
 			$rublonGUI = new RublonGUI;
 			echo $rublonGUI->registrationRibbon();
 		}
