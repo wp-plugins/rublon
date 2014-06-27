@@ -16,7 +16,7 @@ Rublon provides stronger protection for all users of your WordPress website thro
 Rublon for WordPress requires the Rublon mobile app, which lets you define your Trusted Devices. Available for Android, BlackBerry, iPhone and Windows Phone: www.rublon.com/get
 
 Watch the video:
-[youtube http://youtu.be/DWV_jt5XbAc]
+[youtube http://www.youtube.com/watch?v=DWV_jt5XbAc]
 
 +++
 
