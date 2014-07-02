@@ -1,93 +1,86 @@
 === Rublon ===
 Contributors: Rublon
-Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification
+Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification, Zwei-Faktor-Authentifizierung, dwuskładnikowe uwierzytelnianie, dwuskładnikowe logowanie, logowanie, uwierzytelnianie
 Requires at least: 3.3.x
 Tested up to: 3.9.1
 Stable tag: 1.2.8
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-We protect your accounts from hackers, even if they steal your passwords.
-
+Rublon protects you against intruders who found out your passwords: two-factor authentication without a phone
+ 
 == Description ==
 
-Rublon provides stronger protection for all users of your WordPress website through automatic two-factor authentication. It protects their accounts from sign-ins from unknown devices, even if their passwords get stolen. Find out more at http://www.rublon.com.
-
-Rublon for WordPress requires the Rublon mobile app, which lets you define your Trusted Devices. Available for Android, BlackBerry, iPhone and Windows Phone: www.rublon.com/get
-
-Watch the video:
+[Rublon](https://rublon.com) is the Internet Security Layer that protects you against intruders who found out your passwords. Its two-factor authentication keeps you safe against account takeover, data theft and bruteforce attacks. 
+= Login without a phone =
+Unlike other solutions, Rublon doesn't interrupt your workflow. Just define your trusted devices and use them to access all your protected accounts, without using your phone. 
+= Mobile app for total control =
+No phone is needed to access your accounts on trusted devices, but you need it to protect your accounts and to access them from new devices. The Rublon mobile app makes this possible. It also gives you an overview of your trusted devices and lets you manage them remotely. It's available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019), [BlackBerry](appworld.blackberry.com/webstore/content/20177166/?countrycode=US&lang=en) and [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42). 
+= Quick and easy setup =
+Download the Rublon mobile app to your phone, install the plugin on your website and protect your account by scanning a QR code. Your users will be able to protect their accounts on their own, if they wish to do so. Watch the tutorial:
 [youtube http://www.youtube.com/watch?v=DWV_jt5XbAc]
 
-+++
-
-Your online accounts can be accessed from any device in the world, often without your knowledge. Rublon protects your personal data, as well as business and financial operations, by restricting access from unknown devices.
-
-Use Rublon to manage and define the devices you trust, such as your laptop, tablet and mobile phone. Rublon protected accounts will only be accessible from your Trusted Devices. The Rublon mobile app allows you to add or remove Trusted Devices at any time, anywhere you are.
-
-Rublon is an additional security layer that verifies whether you are signing in from a Trusted Device. It works on top of any existing authentication process. This means that you still have to type your username and password or use a social login button to sign in, but it must be done on a Trusted Device in order to access your account. And if you want to sign in using a new device, simply confirm your identity using Rublon, and then add it to your Trusted Devices.
-
-You can protect your data by protecting your account with Rublon on every web service that uses our security system. If your web service does not, please contact your system administrator and ask him to integrate Rublon.
-
-+++
-
+= Security through cryptography =
+Rublon [Rublon](https://rublon.com/what/security) your phone's processing power and distributed asymmetric cryptography. Introducing crytography into your daily workflow has never been easier.
+ 
+= What if I lose my phone? =
+Simply deactivate your phone on the ["Lost phone" page](https://rublon.com/help/deactivate) on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone. 
 = Supported languages =
-- Croatian - thanks to Borisa Djuraskovic from www.webhostinghub.com
+Rublon is being used all over the world. This plugin has been translated to:
+- Croatian (by [Borisa Djuraskovic](http://www.webhostinghub.com))
 - English
 - German
 - Polish
-- Serbian - thanks to Borisa Djuraskovic from www.webhostinghub.com
-- Spanish - thanks to Andrew Kurtis from www.webhostinghub.com
+- Serbian (by [Borisa Djuraskovic](http://www.webhostinghub.com))
+- Spanish (by [Andrew Kurtis](http://www.webhostinghub.com))
 
 == Installation ==
 
-1. Install the Rublon mobile app onto your smartphone and use it to create a Rublon account: http://rublon.com/get
-2. Sign in to your WordPress site using an administrator account.
-3. Go to the "Plugins" -> "Add New" page, type "Rublon" in the search box and press the "Search Plugins" button.
+1. Install the Rublon mobile app onto your phone and register (available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019), [BlackBerry](appworld.blackberry.com/webstore/content/20177166/?countrycode=US&lang=en) and [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42)).
+2. Log in to your WordPress administration panel using an administrator account.
+3. Go to "Plugins" -> "Add New", type "Rublon" in the search box and press the "Search Plugins" button.
 4. Click the "Install Now" link next to the Rublon plugin in the search results and confirm the installation.
-5. After a successful installation, click "Activate Plugin".
-6. Now click "Settings" under the plugin name on the list or use the configuration link displayed on top of the "Plugins" page.
-7. In order to activate Rublon for your WordPress site click the "Activate Rublon" button and scan the QR code that appears afterwards, using the Rublon mobile app on your smartphone. Your user account will be automatically protected by Rublon.
-
+5. Click on "Activate Plugin".
+7. Click the "Protect your account" button and scan the QR code that will appear, using the Rublon mobile app on your smartphone. Now all your users will also be able to protect their accounts, if they wish to do so.
+ 
 = Server requirements =
 - PHP version 5.2.17 or greater
 - cURL PHP extension enabled
 
 == Frequently Asked Questions ==
 
-= How to use Rublon? =
+= How can I protect my account with Rublon? =
+Log in to your WordPress account, go to your profile and click on the "Protect your account" button. 
+= Will all my users have to use Rublon? =
+No. Your users decide on their own if they want to be protected by Rublon. We highly recommend everybody, especially administrators, to protect their account though.
+ 
+= Will my login credentials be known to Rublon? =
+Rublon never knows your login credentials. They are never transmitted to its servers. Rublon does its work only after WordPress positively verifies your password. It's an independent security layer that sits beneath the login form. 
+= How secure is my data on Rublon's servers? =
+Rublon is based on a fully distributed architecture. Your Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. Whenever you perform any action that requires the mobile app, like adding a new trusted device, it generates a unique encrypted digital signature that confirms your identity. Since your digital identity stays on your phone, you are safe even in the unlikely event that Rublon's servers get hacked. 
+= What if I lose my phone? =
+Simply deactivate your phone on the ["Lost phone" page](https://rublon.com/help/deactivate) on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
+ 
+= How much does Rublon cost? =
+Rublon for WordPress is free and always will be.
 
-In order to use Rublon please go to "Your Profile" section and click "Protect your account".
-
-= Is Rublon available for my smartphone? =
-
-Currently Rublon is available for users of smartphones with the Android system (e.g. HTC, LG, Motorola, Samsung, Sony), the iPhone/iPod, smartphones with Windows Phone system (e.g. HTC, Nokia Lumia) and the BlackBerry. Go get it: http://rublon.com/get.
-
-= How do I install Rublon? =
-
-Go to http://rublon.com, click the big green button ("Free download") and follow the instructions.
-
-= How much does it cost to use Rublon? =
-
-Rublon is available free of charge.
-
-= Do I have to use my smartphone at each sign in? =
-
-No! Your smartphone is only needed when you sign in from a new device. It is used to prove your identity and allows you to add such a device to your trusted devices. Any sign in from a trusted device works the same way as before: simply enter your login credentials. Rublon works as an invisible security layer during the sign in process.
-
+= How does Rublon make money? =
+Web systems with a lot of users [pay us](https://developers.rublon.com/98/Pricing) for advanced features and premium support.
+ 
 == Screenshots ==
 
-1. Plugins page with "Protect your account" button, which is only available to administrators until one of them protects their account with Rublon
+1. Plugins page with "Protect your account" button, which is becomes available to all users after an administrator protects his account
 2. Rublon page viewed by an administrator before protecting his account
-3. Protecting your account requires you to confirm your identity by scanning a Rublon QR code with your smartphone, using the Rublon mobile app available for Android, BlackBerry, iPhone and Windows Phone.
-4. A protected account features a Rublon icon visible at the top right corner of every page inside the administration panel, placed next to the current user's avatar.
+3. Protecting your account requires you to confirm your identity by scanning a Rublon QR code with your smartphone, using the Rublon mobile app
+4. A protected account features a Rublon icon visible at the top right corner of every page inside the administration panel, placed next to the current user's avatar
 5. Rublon page viewed by a user after an administrator has protected his account
-6. Login page with Rublon Seal
-7. On a protected account, Rublon verifies if the user who provided correct login credentials is logging in from a Trusted Device.
-
+6. Login page with Rublon Protection Badge
+7. On a protected account, Rublon verifies if the user who provided correct login credentials is logging in from a Trusted Device
+ 
 == Upgrade notice ==
 
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
-
+ 
 == Changelog ==
 
 = 1.2.8 =
@@ -95,10 +88,10 @@ After a successful installation, the plugin can be updated automatically in the 
 
 = 1.2.7 =
 * Croatian and Serbian language support added, thanks to Borisa Djuraskovic from www.webhostinghub.com
-
+ 
 = 1.2.6 =
 * Spanish language support added, thanks to Andrew Kurtis from www.webhostinghub.com
-
+ 
 = 1.2.5 =
 * Added compatibility for admin dashboards working over SSL (thanks to Robert Abela from www.wpwhitesecurity.com for reporting it)
 * Internal Rublon libraries updated
@@ -122,7 +115,7 @@ After a successful installation, the plugin can be updated automatically in the 
 * Added compatibility with the Better WP Security plugin 
 
 = 1.2.0 =
-* Simplified setup process — protect your account right away after activating the plugin
+* Simplified setup process - protect your account right away after activating the plugin
 * An administrator needs to protect his account with Rublon before any other user will be able to do it
 * Rublon Seal shows up on sign-in page
 * Rublon now has an own section inside the main menu of the administration panel
@@ -132,13 +125,13 @@ After a successful installation, the plugin can be updated automatically in the 
 
 = 1.1.9 =
 * Rublon settings page moved from the "Settings" to "Plugins" section of the administration area
-* Rublon icon added to the Rublon settings page
+ * Rublon icon added to the Rublon settings page
 * Outdated versions of the plugin will not be able to activate the Rublon service anymore
-
+ 
 = 1.1.8 =
 * Warning message about improper PHP version on PHP versions between 5.2.17 and 5.3.2 no longer displayed
 * Code updated to WordPress coding standards, thanks to Alex King from http://alexking.org
-
+ 
 = 1.1.7 =
 * Fixed error when setting CAcert path in cURL in PHP 5.2.17
 * Confirmed compatibility with PHP version 5.2.17
