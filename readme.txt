@@ -21,7 +21,7 @@ Download the Rublon mobile app to your phone, install the plugin on your website
 [youtube http://www.youtube.com/watch?v=DWV_jt5XbAc]
 
 = Security through cryptography =
-Rublon [Rublon](https://rublon.com/what/security) your phone's processing power and distributed asymmetric cryptography. Introducing crytography into your daily workflow has never been easier.
+Rublon [leverages](https://rublon.com/what/security) your phone's processing power and distributed asymmetric cryptography. Introducing crytography into your daily workflow has never been easier.
  
 = What if I lose my phone? =
 Simply deactivate your phone on the ["Lost phone" page](https://rublon.com/help/deactivate) on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone. 
