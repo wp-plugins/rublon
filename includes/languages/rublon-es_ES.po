@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rublon 1.2\n"
+"POT-Creation-Date: 2014-01-10 10:43+0100\n"
+"PO-Revision-Date: 2014-01-10 10:44+0100\n"
+"Last-Translator: Rublon Team <developers@rublon.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+
+msgid "Settings"
+msgstr "Ajustes"
+
+msgid "Rublon"
+msgstr "Rublon"
+
+msgid "External applications"
+msgstr "Aplicaciones externas"
+
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+msgid ""
+"In order to assure a high level of security, by default Rublon disallows "
+"external applications to manage your website by disabling XML-RPC."
+msgstr ""
+"Para asegurar un nivel de seguridad alto, por defecto Rublon elimina "
+"permisos a aplicaciones externas para gestionar su sitio web deshabilitando "
+"XML-RPC."
+
+msgid ""
+"Enabling XML-RPC will allow external applications to bypass Rublon security. "
+"We strongly recommend that you leave it disabled."
+msgstr ""
+"Habilitar XML-RPC permitirá que aplicaciones externas rodear la seguridad de "
+"Rublon. Recomendamos fuertemente que lo deje deshabilitado."
+
+msgid ""
+"XML-RPC is currently enabled, which allows external applications to bypass "
+"Rublon security. We strongly recommend that you disable it."
+msgstr ""
+"XML-RPC se encuentra habilitado actualmente, lo cual permite que "
+"aplicaciones externas rodeen la seguridad de Rublon. Recomendamos "
+"fuertemente que lo deshabilite."
+
+msgid "Disable XML-RPC"
+msgstr "Deshabilitar XML-RPC"
+
+msgid ""
+"Rublon will be available to you once your administrator protects his account."
+msgstr ""
+"Rublon estará disponible para usted una vez que su administrador proteja su "
+"cuenta"
+
+msgid "Contact your administrator"
+msgstr "Contacte a su administrador"
+
+msgid "Protect your account with Rublon"
+msgstr "Proteja su cuenta con Rublon"
+
+msgid ""
+"Hey, could you please protect your account with Rublon on %s? I want to "
+"protect my account, but I won't be able to do this until an administrator "
+"will."
+msgstr ""
+"Hey, ¿podría proteger su cuenta con Rublon en %s? Quiero proteger a mi "
+"cuenta, pero no voy a ser capaz de hacer esto hasta que un administrador me "
+"ayude."
+
+msgid ""
+"Since your account is protected by a password only, it can be accessed from "
+"any device in the world. Rublon protects your account from sign ins from "
+"unknown devices, even if your password gets stolen."
+msgstr ""
+"Debido a que su cuenta está protegida por una contraseña única, puede "
+"acceder desde cualquier dispositivo en el mundo. Rublon protege su cuenta de "
+"autenticaciones de dispositivos desconocidos, incluso si su contraseña es "
+"robada."
+
+msgid ""
+"Learn more at <a href=\"http://rublon.com\" target=\"_blank\">www.rublon."
+"com</a>."
+msgstr ""
+"Leer más <a href=\"http://rublon.com\" target=\"_blank\">www.rublon.com</a>."
+
+msgid ""
+"Warning! The PHP version of your server is too old to run Rublon. Please "
+"upgrade your server's PHP version."
+msgstr ""
+"¡Advertencia! La versión de PHP de su servidor es demasiado viejo para "
+"funcionar con Rublon. Por favor, actualice la versión PHP de su servidor."
+
+msgid "Required PHP version:"
+msgstr "Requiere la versión de PHP:"
+
+msgid "(or above)"
+msgstr "(o por encima)"
+
+msgid "Your PHP version:"
+msgstr "Su versión de PHP:"
+
+msgid "Warning! The cURL library has not been found on this server."
+msgstr "¡Advertencia! La librería cURL no se ha encontrado en este servidor."
+
+msgid ""
+"It is a crucial component of the Rublon plugin and its absence will prevent "
+"it from working properly. Please have the cURL library installed or consult "
+"your server administrator about it."
+msgstr ""
+"Es un componente fundamental del plugin Rublon y su ausencia impedirá que "
+"funcione correctamente. Por favor, tenga la biblioteca cURL instalada o "
+"consulte a su administrador del servidor sobre el tema."
+
+msgid "Security"
+msgstr "Seguridad"
+
+msgid "Disable Rublon protection for this account"
+msgstr "Desactive la protección Rublon para esta cuenta"
+
+msgid "Account protected by Rublon"
+msgstr "Cuenta protegida por Rublon"
+
+msgid "Protected by Rublon"
+msgstr "Protegido por Rublon"
+
+msgid "Rublon Two-Factor Authentication"
+msgstr "autenticación de dos factores de Rublon "
+
+msgid "Protect your account"
+msgstr "Proteja su cuenta"
+
+msgid "Disable account protection"
+msgstr "Deshabilitar la protección de la cuenta"
+
+msgid "There was a problem during the authentication process."
+msgstr "Hubo un problema durante el proceso de autenticación."
+
+msgid ""
+"Rublon activation failed. Please try again. Should the error occur again, "
+"contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+msgstr ""
+"La activación de Rublon falló. Por favor, inténtelo de nuevo. En caso de que "
+"el error vuelva a ocurrir, póngase en contacto con nosotros en <a href="
+"\"mailto:support@rublon.com\">support@rublon.com</a>."
+
+msgid "You cannot protect an account already protected by Rublon."
+msgstr "No se puede proteger a una cuenta ya protegida por Rublon."
+
+msgid "Unable to protect your account with Rublon."
+msgstr "Incapaz de proteger su cuenta con Rublon."
+
+msgid "Unable to disable Rublon protection."
+msgstr "No es posible desactivar la protección Rublon."
+
+msgid ""
+"The version of Rublon for Wordpress that you are trying to activate is "
+"outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
+"the newest version or"
+msgstr ""
+"La versión de Rublon para Wordpress que usted está intentando activar no "
+"está actualizada. Por favor, vaya a la página<a href=\"%s\">Plugins</a> y "
+"actualice a una versión más reciente o"
+
+msgid "update now"
+msgstr "actualizar ahora"
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon. "
+"However, there has been a problem with protecting your account. Go to <a "
+"href=\"%s\">Rublon page</a> in order to protect your account."
+msgstr ""
+"¡Gracias! Ahora todos los usuarios pueden proteger sus cuentas con Rublon. "
+"Sin embargo, ha habido un problema con la protección de su cuenta. Vaya a <a "
+"href=\"%s\">la página de Rublon</a> con el fin de proteger su cuenta."
+
+msgid ""
+"Your server's time seems out of sync. Please check that it is properly "
+"synchronized - Rublon won't be able to verify your website's security "
+"otherwise."
+msgstr ""
+"Su servidor parece estar fuera de sincronización. Por favor revise que esté "
+"sincronizado correctamente - De otra manera Rublon no será capaz de "
+"verificar la seguridad de su sitio web."
+
+msgid "Rublon error code: "
+msgstr "Código de error de Rublon:"
+
+msgid "Your account is now protected by Rublon."
+msgstr "Su cuenta está ahora protegida por Rublon."
+
+msgid ""
+"Rublon protection has been disabled. You are now protected by a password "
+"only, which may result in unauthorized access to your account. We strongly "
+"encourage you to protect your account with Rublon."
+msgstr ""
+"La protección de Rublon se ha desactivado. Ahora está protegida por una "
+"contraseña única, que puede dar lugar a un acceso no autorizado a su cuenta. "
+"Le recomendamos proteger su cuenta con Rublon."
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon."
+msgstr ""
+"¡Gracias! Ahora todos los usuarios pueden proteger sus cuentas con Rublon."
+
+msgid ""
+"Plugin requires database modification but you do not have permission to do "
+"it."
+msgstr ""
+"El Plugin requiere la modificación de bases de datos, pero usted no tiene "
+"permiso para hacerlo."
+
+msgid ""
+"Rublon provides stronger security for online accounts through invisible two-"
+"factor authentication. It protects your accounts from sign-ins from unknown "
+"devices, even if your passwords get stolen."
+msgstr ""
+"Rublon ofrece mayor seguridad para las cuentas en línea a través de la "
+"autenticación invisible de dos factores. Proteja sus cuentas de credenciales "
+"de acceso de los dispositivos desconocidos, incluso si sus contraseñas son "
+"robadas."
+
+msgid "Error details: "
+msgstr "Detalles del error:"
+
+msgid "Rublon mobile app required"
+msgstr "Se requiere la aplicación móvil de Rublon"
+
+msgid "Free Download"
+msgstr "Descarga gratis"
