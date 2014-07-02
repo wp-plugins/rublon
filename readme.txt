@@ -27,6 +27,7 @@ Rublon [leverages](https://rublon.com/what/security) your phone's processing pow
 Simply deactivate your phone on the ["Lost phone" page](https://rublon.com/help/deactivate) on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone. 
 = Supported languages =
 Rublon is being used all over the world. This plugin has been translated to:
+
 - Croatian (by [Borisa Djuraskovic](http://www.webhostinghub.com))
 - English
 - German
