@@ -58,7 +58,7 @@ No. Your users decide on their own if they want to be protected by Rublon. We hi
 = Will my login credentials be known to Rublon? =
 Rublon never knows your login credentials. They are never transmitted to its servers. Rublon does its work only after WordPress positively verifies your password. It's an independent security layer that sits beneath the login form. 
 = How secure is my data on Rublon's servers? =
-Rublon is based on a fully distributed architecture. Your Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. Whenever you perform any action that requires the mobile app, like adding a new trusted device, it generates a unique encrypted digital signature that confirms your identity. Since your digital identity stays on your phone, you are safe even in the unlikely event that Rublon's servers get hacked. 
+Your Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. Whenever you perform any action that requires the mobile app, like adding a new trusted device, it generates a unique encrypted digital signature that confirms your identity. Since your digital identity stays on your phone, you are safe even in the unlikely event that Rublon's servers get hacked. 
 = What if I lose my phone? =
 Simply deactivate your phone on the ["Lost phone"](https://rublon.com/help/deactivate) page on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
  
