@@ -11,7 +11,7 @@ Rublon protects you against intruders who found out your passwords: two-factor a
  
 == Description ==
 
-[Rublon](https://rublon.com) is the Internet Security Layer that protects you against intruders who found out your passwords. Its two-factor authentication keeps you safe against account takeover, data theft and bruteforce attacks. 
+[Rublon](https://rublon.com) is the Internet Security Layer that protects you against intruders who found out your passwords. It's two-factor authentication keeps you safe against account takeover, data theft and bruteforce attacks. 
 = Login without a phone =
 Unlike other solutions, Rublon doesn't interrupt your workflow. Just define your trusted devices and use them to access all your protected accounts, without using your phone. 
 = Mobile app for total control =
@@ -24,7 +24,7 @@ Download the Rublon mobile app to your phone, install the plugin on your website
 Rublon [leverages](https://rublon.com/what/security) your phone's processing power and distributed asymmetric cryptography. Introducing crytography into your daily workflow has never been easier.
  
 = What if I lose my phone? =
-Simply deactivate your phone on the ["Lost phone" page](https://rublon.com/help/deactivate) on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone. 
+Simply deactivate your phone on the ["Lost phone"](https://rublon.com/help/deactivate) page on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone. 
 = Supported languages =
 Rublon is being used all over the world. This plugin has been translated to:
 
@@ -60,7 +60,7 @@ Rublon never knows your login credentials. They are never transmitted to its ser
 = How secure is my data on Rublon's servers? =
 Rublon is based on a fully distributed architecture. Your Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. Whenever you perform any action that requires the mobile app, like adding a new trusted device, it generates a unique encrypted digital signature that confirms your identity. Since your digital identity stays on your phone, you are safe even in the unlikely event that Rublon's servers get hacked. 
 = What if I lose my phone? =
-Simply deactivate your phone on the ["Lost phone" page](https://rublon.com/help/deactivate) on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
+Simply deactivate your phone on the ["Lost phone"](https://rublon.com/help/deactivate) page on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
  
 = How much does Rublon cost? =
 Rublon for WordPress is free and always will be.
