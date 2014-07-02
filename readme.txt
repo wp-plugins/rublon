@@ -11,7 +11,7 @@ Rublon protects you against intruders who found out your passwords: two-factor a
  
 == Description ==
 
-[Rublon](https://rublon.com) is the Internet Security Layer that protects you against intruders who found out your passwords. It's two-factor authentication keeps you safe against account takeover, data theft and bruteforce attacks. 
+[Rublon](https://rublon.com) is the Internet Security Layer that protects you against intruders who found out your passwords. Its two-factor authentication keeps you safe against account takeover, data theft and bruteforce attacks. 
 = Two-factor authentication without a phone =
 Unlike other solutions, Rublon doesn't interrupt your workflow. Just define your trusted devices and use them to access all your protected accounts, without using your phone. 
 = Mobile app for total control =
@@ -83,6 +83,9 @@ Web systems with a lot of users [pay us](https://developers.rublon.com/98/Pricin
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 1.2.9 =
+* Added right-to-left text orientation support
 
 = 1.2.8 =
 * Additional information about missing PHP libraries
