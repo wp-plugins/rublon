@@ -13,7 +13,7 @@ Rublon protects you against intruders who found out your passwords: two-factor a
 
 [Rublon](https://rublon.com) is the Internet Security Layer that protects you against intruders who found out your passwords. Its two-factor authentication keeps you safe against account takeover, data theft and bruteforce attacks. 
 = Two-factor authentication without a phone =
-Unlike other solutions, Rublon doesn't interrupt your workflow. Just define your trusted devices and use them to access all your protected accounts, without using your phone. 
+Unlike other solutions, Rublon doesn't interrupt your workflow. Just define your trusted devices and use them to access all your protected accounts across all supported websites, without using your phone. It's only needed once, during setup. 
 = Mobile app for total control =
 No phone is needed to access your accounts on trusted devices, but you need it to protect your accounts and to access them from new devices. The Rublon mobile app makes this possible. It also gives you an overview of your trusted devices and lets you manage them remotely. It's available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019), [BlackBerry](appworld.blackberry.com/webstore/content/20177166/?countrycode=US&lang=en) and [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42). 
 = Quick and easy setup =
