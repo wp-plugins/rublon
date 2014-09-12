@@ -146,7 +146,7 @@ function rublon2factor_create_settings_page() {
 					. '</div>';
 				echo '<div class="rublon-button-header">'
 					. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon')
-					. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon') . '</div>';
+					. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon') . '</div>';
 				echo '<div class="rublon-clear"></div>';
 			}
 
@@ -341,7 +341,7 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 			$lang = RublonHelper::getBlogLanguage();
 			
 			if (!empty($rublonProfileId))
-				$value = '<a href="http://rublon.com' . ($lang != 'en' ? '/' . $lang . '/' : '') . '" target="_blank"><img style="margin-top: 1px" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account protected by Rublon', 'rublon') . '" /></a>';
+				$value = '<a href="https://rublon.com' . ($lang != 'en' ? '/' . $lang . '/' : '') . '" target="_blank"><img style="margin-top: 1px" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32.png' . '" title="' . __('Account protected by Rublon', 'rublon') . '" /></a>';
 		}
 	}
 	return $value;
@@ -423,7 +423,7 @@ function rublon2factor_modify_login_form() {
 
 	$rublonSealUrl = 'https://rublon.com/img/rublon_seal_79x30.png';
 	$lang = RublonHelper::getBlogLanguage();
-	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="http://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon') . '">'
+	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="https://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon') . '">'
 		. '<img class="rublon-seal-image" src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon') . '" /></a></div></div>';
 	echo '<script>//<![CDATA[
 		if (RublonWP)

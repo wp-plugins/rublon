@@ -163,9 +163,9 @@ class RublonGUI extends Rublon2FactorGUITemplate {
 			. '<div class="rublon-activate-ribbon">'
 			. '<div class="rublon-activate-description-wrapper">' . $this->getRegistrationButton() . '</div>'
 			. '<div class="rublon-activate-description-wrapper"><div class="rublon-activate-description">' . __('Rublon mobile app required', 'rublon')
-			. '.' . sprintf('<strong><a href="http://rublon.com%s/get" target="_blank"><span style=color:#5bba36> ',  (($lang != 'en') ? ('/' . $lang) : ''))
+			. '.' . sprintf('<strong><a href="https://rublon.com%s/get" target="_blank"><span style=color:#5bba36> ',  (($lang != 'en') ? ('/' . $lang) : ''))
 			. __('Free Download', 'rublon') . ' &raquo;</span></a></strong></div></div>'
-			. '<div class="rublon-activate-image"><a href="http://rublon.com'. (($lang != 'en') ? '/' . $lang . '/' : '') . '" target="_blank"><img src="'
+			. '<div class="rublon-activate-image"><a href="https://rublon.com'. (($lang != 'en') ? '/' . $lang . '/' : '') . '" target="_blank"><img src="'
 			. RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon-ribbon-text.png" /></a></div>'
 			. '<div class="rublon-clear"></div>'
 			. '</div></div>';
