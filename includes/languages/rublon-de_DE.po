@@ -1,0 +1,292 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rublon 1.2\n"
+"POT-Creation-Date: 2014-09-11 17:23+0100\n"
+"PO-Revision-Date: 2014-09-11 17:24+0100\n"
+"Last-Translator: Rublon Team <developers@rublon.com>\n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.9\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+
+#: D:\backup\rublon/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php:66
+#: D:\backup\rublon/includes/libs/RublonImplemented/Rublon2FactorCallback.php:97
+#: D:\backup\rublon/includes/rublon2factor_helper.php:370
+msgid "Rublon error code: "
+msgstr "Rublon Fehler-Code: "
+
+#: D:\backup\rublon/includes/libs/RublonImplemented/Rublon2FactorCallback.php:71
+msgid "Error details: "
+msgstr "Fehler-Details:"
+
+#: D:\backup\rublon/includes/libs/RublonImplemented/RublonGUI.php:165
+msgid "Rublon mobile app required"
+msgstr "Rublon App erforderlich"
+
+#: D:\backup\rublon/includes/libs/RublonImplemented/RublonGUI.php:167
+msgid "Free Download"
+msgstr "Kostenloser Download"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:49
+#: D:\backup\rublon/includes/rublon2factor_admin.php:130
+#: D:\backup\rublon/includes/rublon2factor_admin.php:218
+#: D:\backup\rublon/includes/rublon2factor_admin.php:262
+#: D:\backup\rublon/includes/rublon2factor_admin.php:313
+msgid "Rublon"
+msgstr "Rublon"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:78
+msgid "External applications"
+msgstr "Externe Anwendungen"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:79
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:109
+#: D:\backup\rublon/includes/rublon2factor_admin.php:112
+msgid ""
+"In order to assure a high level of security, by default Rublon disallows "
+"external applications to manage your website by disabling XML-RPC."
+msgstr ""
+"Um ein hohes Maß an Sicherheit zu gewährleisten, verbietet Rublon "
+"standardmäßig externen Anwendungen die Verwaltung deiner Webseiten, indem "
+"XML-RPC deaktiviert wird."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:110
+msgid ""
+"Enabling XML-RPC will allow external applications to bypass Rublon security. "
+"We strongly recommend that you leave it disabled."
+msgstr ""
+"Das Aktivieren von XML-RPC wird externen Anwendungen ermöglichen, den Rublon-"
+"Schutz zu umgehen. Wir empfehlen stark diese Option deaktiviert zu lassen."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:113
+msgid ""
+"XML-RPC is currently enabled, which allows external applications to bypass "
+"Rublon security. We strongly recommend that you disable it."
+msgstr ""
+"XML-RPC ist derzeit aktiviert, wodurch externe Anwendungen den Rublon-Schutz "
+"umgehen können. Wir empfehlen diese Option dringend zu deaktivieren."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:117
+msgid "Disable XML-RPC"
+msgstr "XML-RPC deaktivieren"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:144
+msgid ""
+"Rublon will be available to you once your administrator protects his account."
+msgstr ""
+"Rublon wird für dich verfügbar sein, sobald dein Administrator seinen "
+"Account schützt."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:145
+msgid "Contact your administrator"
+msgstr "Kontaktiere deinen Administrator"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:145
+msgid "Protect your account with Rublon"
+msgstr "Account mit Rublon schützen"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:145
+#, php-format
+msgid ""
+"Hey, could you please protect your account with Rublon on %s? I want to "
+"protect my account, but I won't be able to do this until an administrator "
+"will."
+msgstr ""
+"Hi, könntest du bitte deinen Account auf %s mit Rublon schützen? Ich möchte "
+"meinen Account schützen, aber ich kann dies nicht tun, bevor ein "
+"Administrator dies tut."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:148
+msgid ""
+"Since your account is protected by a password only, it can be accessed from "
+"any device in the world. Rublon protects your account from sign ins from "
+"unknown devices, even if your password gets stolen."
+msgstr ""
+"Weil dein Account nur mit einem Passwort geschützt ist, kann er von jedem "
+"Gerät auf der Welt aus betreten werden. Rublon schützt deinen Account vor "
+"Zugriff von unbekannten Geräten, sogar wenn dein Passwort gestohlen wird."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:149
+msgid ""
+"Learn more at <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
+"com</a>."
+msgstr ""
+"Erfahre mehr: <a href=\"https://rublon.com/de/\" target=\"_blank\">www."
+"rublon.com/de/</a>."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:185
+msgid ""
+"Warning! The PHP version of your server is too old to run Rublon. Please "
+"upgrade your server's PHP version."
+msgstr ""
+"Achtung! Die PHP-Version deines Servers ist zu alt, um Rublon auszuführen. "
+"Bitte aktualisiere die PHP-Version deines Servers."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:185
+msgid "Required PHP version:"
+msgstr "Benötigte PHP-Version:"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:185
+msgid "(or above)"
+msgstr "(oder höher)"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:185
+msgid "Your PHP version:"
+msgstr "Deine PHP-Version:"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:189
+msgid "Warning! The cURL library has not been found on this server."
+msgstr "Achtung! Die cURL-Bibliothek wurde auf diesem Server nicht gefunden."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:189
+msgid ""
+"It is a crucial component of the Rublon plugin and its absence will prevent "
+"it from working properly. Please have the cURL library installed or consult "
+"your server administrator about it."
+msgstr ""
+"Sie ist ein entscheidender Bestandteil des Rublon Plugins. Ohne sie wird "
+"Rublon nicht richtig funktionieren. Bitte installiere die cURL Bibliothek "
+"oder konsultiere dies mit dem Administrator deines Servers."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:215
+msgid "Security"
+msgstr "Sicherheit"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:222
+msgid "Disable Rublon protection for this account"
+msgstr "Deaktiviere den Rublon-Schutz für diesen Account"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:344
+msgid "Account protected by Rublon"
+msgstr "Konto mit Rublon geschützt"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:382
+msgid "Protected by Rublon"
+msgstr "Geschützt mit Rublon"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:426
+#: D:\backup\rublon/includes/rublon2factor_admin.php:427
+msgid "Rublon Two-Factor Authentication"
+msgstr "Rublon Zwei-Faktor-Authentifizierung"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:192
+msgid "Protect your account"
+msgstr "Account schützen"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:211
+msgid "Disable account protection"
+msgstr "Schutz deaktivieren"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:338
+msgid "There was a problem during the authentication process."
+msgstr "Während der Authentifizierung ist ein Fehler aufgetreten."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:341
+msgid ""
+"Rublon activation failed. Please try again. Should the error occur again, "
+"contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+msgstr ""
+"Rublon konnte nicht aktiviert werden. Versuche es bitte erneut. Falls der "
+"Fehler weiterhin auftreten sollte, kontaktiere uns: <a href=\"mailto:"
+"support@rublon.com\">support@rublon.com</a>."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:347
+msgid "You cannot protect an account already protected by Rublon."
+msgstr ""
+"Ein Account, der bereits mit Rublon geschützt ist, kann nicht nochmals "
+"geschützt werden."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:350
+msgid "Unable to protect your account with Rublon."
+msgstr "Dein Account konnte nicht mit Rublon geschützt werden."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:353
+msgid "Unable to disable Rublon protection."
+msgstr "Der Rublon-Schutz konnte auf deinem Account nicht deaktiviert werden."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:356
+#, php-format
+msgid ""
+"The version of Rublon for Wordpress that you are trying to activate is "
+"outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
+"the newest version or"
+msgstr ""
+"Die Version von Rublon für WordPress, die du zu aktivieren versuchst, ist "
+"veraltet. Gehe zur <a href=\"%s\">Plugins-Seite</a> und aktualisiere Rublon "
+"oder"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:358
+msgid "update now"
+msgstr "aktualisiere jetzt"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:361
+#, php-format
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon. "
+"However, there has been a problem with protecting your account. Go to <a "
+"href=\"%s\">Rublon page</a> in order to protect your account."
+msgstr ""
+"Danke! Jetzt können alle deine Benutzer Ihre Accounts mit Rublon schützen. "
+"Dein Account konnte jedoch nicht geschützt werden. Gehe zur <a href=\"%s"
+"\">Rublon Unterseite</a>, um deinen Account zu schützen."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:366
+msgid ""
+"Your server's time seems out of sync. Please check that it is properly "
+"synchronized - Rublon won't be able to verify your website's security "
+"otherwise."
+msgstr ""
+"Die Zeiteinstellungen deines Servers scheinen fehlerhaft zu sein. Stelle "
+"bitte sicher, dass die Zeit auf dem Server richtig synchronisiert ist. "
+"Andernfalls wird Rublon nicht in der Lage sein die Sicherheit deiner "
+"Webseite zu gewährleisten."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:376
+msgid "Your account is now protected by Rublon."
+msgstr "Dein Account ist nun mit Rublon geschützt."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:379
+msgid ""
+"Rublon protection has been disabled. You are now protected by a password "
+"only, which may result in unauthorized access to your account. We strongly "
+"encourage you to protect your account with Rublon."
+msgstr ""
+"Der Rublon-Schutz wurde deaktiviert. Du wirst jetzt nur noch durch ein "
+"Passwort geschützt, was zu einem nichtauthorisierten Zugriff auf deinen "
+"Account führen könnte. Wir empfehlen dringend, deinen Account wieder mit "
+"Rublon zu schützen."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:382
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon."
+msgstr ""
+"Danke! Jetzt können alle deine Benutzer Ihre Accounts mit Rublon schützen."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:669
+msgid ""
+"Plugin requires database modification but you do not have permission to do "
+"it."
+msgstr ""
+"Das Plugin muss Modifikationen in der Datenbank durchführen, kann dies aber "
+"nicht tun, weil entsprechende Berechtigungen fehlen."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:830
+msgid ""
+"Rublon provides stronger security for online accounts through invisible two-"
+"factor authentication. It protects your accounts from sign-ins from unknown "
+"devices, even if your passwords get stolen."
+msgstr ""
+"Rublon bietet stärkeren Schutz für Online-Accounts durch unsichtbare Zwei-"
+"Faktor-Authentifizierung. Es schützt deine Accounts vor Zugriff von "
+"unbekannten Geräten, sogar wenn deine Passwörter gestohlen werden."
+
+#: D:\backup\rublon/rublon2factor.php:38
+msgid "Settings"
+msgstr "Einstellungen"

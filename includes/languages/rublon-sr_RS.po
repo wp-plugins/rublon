@@ -1,0 +1,279 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rublon 1.2\n"
+"POT-Creation-Date: 2014-09-11 17:26+0100\n"
+"PO-Revision-Date: 2014-09-11 17:26+0100\n"
+"Last-Translator: Rublon Team <developers@rublon.com>\n"
+"Language-Team: \n"
+"Language: sr_RS\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.9\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+
+#: D:\backup\rublon/includes/libs/RublonConsumerRegistration/RublonConsumerRegistration.php:66
+#: D:\backup\rublon/includes/libs/RublonImplemented/Rublon2FactorCallback.php:97
+#: D:\backup\rublon/includes/rublon2factor_helper.php:370
+msgid "Rublon error code: "
+msgstr "Greška u Rublon kodu:"
+
+#: D:\backup\rublon/includes/libs/RublonImplemented/Rublon2FactorCallback.php:71
+msgid "Error details: "
+msgstr "Detalji greške:"
+
+#: D:\backup\rublon/includes/libs/RublonImplemented/RublonGUI.php:165
+msgid "Rublon mobile app required"
+msgstr "Rublon mobilna aplikacija je potrebna "
+
+#: D:\backup\rublon/includes/libs/RublonImplemented/RublonGUI.php:167
+msgid "Free Download"
+msgstr "Besplatan Download"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:49
+#: D:\backup\rublon/includes/rublon2factor_admin.php:130
+#: D:\backup\rublon/includes/rublon2factor_admin.php:218
+#: D:\backup\rublon/includes/rublon2factor_admin.php:262
+#: D:\backup\rublon/includes/rublon2factor_admin.php:313
+msgid "Rublon"
+msgstr "Rublon"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:78
+msgid "External applications"
+msgstr "Eksterne aplikacije"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:79
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:109
+#: D:\backup\rublon/includes/rublon2factor_admin.php:112
+msgid ""
+"In order to assure a high level of security, by default Rublon disallows "
+"external applications to manage your website by disabling XML-RPC."
+msgstr ""
+"Da bi se postigao visok nivo bezbednosti , po defaultu Rublon odbacuje "
+"spoljne aplikacije za upravljanje vašim sajtom onemogućavanjem XML-RPC."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:110
+msgid ""
+"Enabling XML-RPC will allow external applications to bypass Rublon security. "
+"We strongly recommend that you leave it disabled."
+msgstr ""
+"Omogućavanje XML-RPC će omogućiti eksternim aplikacijama da zaobiđe Rublon "
+"bezbednost . Preporučujemo da ga ostavite onemogućen ."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:113
+msgid ""
+"XML-RPC is currently enabled, which allows external applications to bypass "
+"Rublon security. We strongly recommend that you disable it."
+msgstr ""
+"XML-RPC je trenutno omogućen , što omogućava eksternim aplikacijama da "
+"zaobiđu  Rublon bezbednost . Preporučujemo da ga isključite ."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:117
+msgid "Disable XML-RPC"
+msgstr "Onemogućiti XML-RPC"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:144
+msgid ""
+"Rublon will be available to you once your administrator protects his account."
+msgstr "Rublon će biti na raspolaganju čim administrator zaštiti svoj nalog"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:145
+msgid "Contact your administrator"
+msgstr "Kontaktirajte vašeg administratora"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:145
+msgid "Protect your account with Rublon"
+msgstr "Zaštitite vaš nalog sa Rublon-om"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:145
+#, php-format
+msgid ""
+"Hey, could you please protect your account with Rublon on %s? I want to "
+"protect my account, but I won't be able to do this until an administrator "
+"will."
+msgstr ""
+"Hej , molim vas da li biste mogli da zaštitite svoj nalog sa Rublon na % s? "
+"Ja želim da zaštiti svoj račun , ali ja neću biti u stanju da to uradim dok "
+"to ne uradi administrator."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:148
+msgid ""
+"Since your account is protected by a password only, it can be accessed from "
+"any device in the world. Rublon protects your account from sign ins from "
+"unknown devices, even if your password gets stolen."
+msgstr ""
+"Pošto je vaš nalog zaštićen samo  lozinkom , njemu se može pristupiti sa "
+"bilo kog uređaja u svetu . Rublon štiti vaš nalog od ulogovanja sa "
+"nepoznatih uređaja , čak i ako vaša lozinka bude ukradena."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:149
+msgid ""
+"Learn more at <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
+"com</a>."
+msgstr ""
+"Saznajte više na<a href=\"https://rublon.com/sr/\" target=\"_blank\">www."
+"rublon.com/sr/</a>."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:185
+msgid ""
+"Warning! The PHP version of your server is too old to run Rublon. Please "
+"upgrade your server's PHP version."
+msgstr "UPOZORENJE! PHP verzija vašeg servera Upgrade-ujte vašu verziju PHPa."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:185
+msgid "Required PHP version:"
+msgstr "Potrebna PHP verzija:"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:185
+msgid "(or above)"
+msgstr "(ili iznad)"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:185
+msgid "Your PHP version:"
+msgstr "Vaša PHP verzija"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:189
+msgid "Warning! The cURL library has not been found on this server."
+msgstr "Upozorenje! cURL biblioteka nije pronadjena na ovom serveru."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:189
+msgid ""
+"It is a crucial component of the Rublon plugin and its absence will prevent "
+"it from working properly. Please have the cURL library installed or consult "
+"your server administrator about it."
+msgstr ""
+"Ovo je ključna komponenta Rublon plugina i njegovo odsustvo će ga sprečiti "
+"da radi ispravno . Molimo vas instalirajte cURL biblioteku ili se obratite "
+"administratoru servera o tome ."
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:215
+msgid "Security"
+msgstr "Zaštita"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:222
+msgid "Disable Rublon protection for this account"
+msgstr "Onemogućiti Rublon zaštitiu za ovaj nalog"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:344
+msgid "Account protected by Rublon"
+msgstr "Nalog zaštićen Rublonom"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:382
+msgid "Protected by Rublon"
+msgstr "Zaštićeno Rublonom"
+
+#: D:\backup\rublon/includes/rublon2factor_admin.php:426
+#: D:\backup\rublon/includes/rublon2factor_admin.php:427
+msgid "Rublon Two-Factor Authentication"
+msgstr "Autentifikacija Rublona sa dva faktora "
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:192
+msgid "Protect your account"
+msgstr "Zaštitite vaš nalog"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:211
+msgid "Disable account protection"
+msgstr "Onemogućite zaštitu naloga"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:338
+msgid "There was a problem during the authentication process."
+msgstr "Problem je nastao toko procesa autentifikacije."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:341
+msgid ""
+"Rublon activation failed. Please try again. Should the error occur again, "
+"contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+msgstr ""
+"Rublon aktivacija nije uspela. Pokušajte opet. Ako dodje opet do grške, "
+"obratite se nama<a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:347
+msgid "You cannot protect an account already protected by Rublon."
+msgstr "Ne možete zaštititi nalog već zaštićen Rublon-om."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:350
+msgid "Unable to protect your account with Rublon."
+msgstr "Nije moguće zaštititi vaš nalog sa Rublonom"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:353
+msgid "Unable to disable Rublon protection."
+msgstr "Nije moguće onemogućiti Rublon zaštitu"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:356
+#, php-format
+msgid ""
+"The version of Rublon for Wordpress that you are trying to activate is "
+"outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
+"the newest version or"
+msgstr ""
+"Rublon verzija za Wordpress koju pokušavate da aktivirate je zastarela. "
+"Molimo vas idite na<a href=\"%s\"> Plugins</a> stranicu i ažurirajte ga na "
+"najnoviju verziju ili"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:358
+msgid "update now"
+msgstr "updatuj sada"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:361
+#, php-format
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon. "
+"However, there has been a problem with protecting your account. Go to <a "
+"href=\"%s\">Rublon page</a> in order to protect your account."
+msgstr ""
+"Hvala ! Sada svi vaši korisnici mogu zaštititi svoje račune sa Rublon-om. "
+"Međutim , došlo je do problema sa zaštitom vašeg naloga . Idite na<a href="
+"\"%s\"> Rublon stranicu </a>u cilju zaštite vašeg naloga ."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:366
+msgid ""
+"Your server's time seems out of sync. Please check that it is properly "
+"synchronized - Rublon won't be able to verify your website's security "
+"otherwise."
+msgstr ""
+"Vreme vašeg servera izgleda nije sinhronizovano . Molimo vas da proverite da "
+"li je pravilno sinhronizovan - Rublon neće moći da proveri bezbednost vašeg "
+"sajta na drugi način ."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:376
+msgid "Your account is now protected by Rublon."
+msgstr "Vaš nalog je sada zaštićen Rublon-om"
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:379
+msgid ""
+"Rublon protection has been disabled. You are now protected by a password "
+"only, which may result in unauthorized access to your account. We strongly "
+"encourage you to protect your account with Rublon."
+msgstr ""
+"Rublon zaštita je onemogućena. Sada su zaštićeni samo lozinkom , što može "
+"dovesti do neovlašćenog pristupa vašem nalogu . Preporučujemo Vam da "
+"zaštitite vaš nalog sa Rublon-om ."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:382
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon."
+msgstr "Hvala! Sada nalozi svih korisnika mogu biti zaštićeni sa Rublonom."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:669
+msgid ""
+"Plugin requires database modification but you do not have permission to do "
+"it."
+msgstr "Plugin zahteva modifikaciju baze podataka ali nemate dozvolu za to."
+
+#: D:\backup\rublon/includes/rublon2factor_helper.php:830
+msgid ""
+"Rublon provides stronger security for online accounts through invisible two-"
+"factor authentication. It protects your accounts from sign-ins from unknown "
+"devices, even if your passwords get stolen."
+msgstr ""
+"Rublon pruža jaču sigurnost za online račune preko nevidljive "
+"autentifikacije od dva faktora  . On štiti svoje račune od upisivanja iz "
+"nepoznatih uređaja , čak i ako je vaša lozinka ukradena ."
+
+#: D:\backup\rublon/rublon2factor.php:38
+msgid "Settings"
+msgstr "Postavke"

@@ -1,0 +1,8 @@
+@CHARSET "UTF-8";
+
+.rublon-seal-link {	
+	position: relative !important;
+	text-align: left !important;
+    float: right !important;
+    clear: left !important;
+}
