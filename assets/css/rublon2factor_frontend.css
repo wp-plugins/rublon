@@ -1,0 +1,32 @@
+#rublon-toolbar-logo {
+	border: 0 !important;
+	background: transparent !important;
+}
+
+.rublon-seal-link {
+	float: left;
+	position: relative;
+}
+
+#rublon-seal {
+	padding-top: 10px;
+	padding-bottom: 8px;
+	clear: both;
+}
+
+.rublon-seal-image {
+	position: absolute;
+}
+
+.rublon-clear {
+	clear: both;
+}
+
+.rublon-login-message {
+	margin: 0 0 16px 8px !important;
+	padding: 12px !important;
+}
+
+.rublon-login-message > a.rublon-link {
+	color: #21759b !important;	
+}

@@ -1,0 +1,363 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rublon 1.3\n"
+"POT-Creation-Date: 2014-09-25 15:23+0100\n"
+"PO-Revision-Date: 2014-09-25 15:23+0100\n"
+"Last-Translator: Rublon Team <developers@rublon.com>\n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.4\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: D:\\eclipse-workspace-kepler\\WordPress2FA branch\n"
+
+msgid "Enable protection"
+msgstr "Schutz aktivieren"
+
+msgid "Rublon error code: "
+msgstr "Rublon Fehler-Code: "
+
+msgid "Rublon is being configured."
+msgstr "Rublon wird konfiguriert."
+
+msgid "This will only take a moment."
+msgstr "Dies wird nur einen Moment dauern."
+
+msgid "Rublon Configuration"
+msgstr "Konfiguration von Rublon"
+
+msgid "Rublon"
+msgstr "Rublon"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Protection"
+msgstr "Schutz"
+
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+msgid ""
+"Your user role currently does not possess any type of default protection. If "
+"you wish to manually enable your account to use protection via email, go to "
+"your <a href=\"%s\">profile page</a>."
+msgstr ""
+"Deine Benutzerrolle besitzt keinen Standardschutz. Du kannst den Schutz via "
+"Email selbst aktivieren, indem du zu deiner <a href=\"%s\">Profilseite</a> "
+"gehst."
+
+msgid ""
+"Every user is protected via email by default. You can turn this off for "
+"selected roles. For better security, you can also require selected roles to "
+"use the Rublon mobile app for higher security."
+msgstr ""
+"Jeder Benutzer wird standardmäßig via Email geschützt. Du kannst dies für "
+"ausgewählte Benutzerrollen ausschalten. Für mehr Sicherheit kannst du "
+"bestimmte Benutzerrollen dazu verpflichten, die mobile Rublon App zu "
+"benutzen."
+
+msgid "Notice:"
+msgstr "Hinweis:"
+
+msgid ""
+"Users of the Rublon mobile app are always protected, regardless of this "
+"setting. Users without default protection can turn it on themselves. Users "
+"with default protection cannot turn it off."
+msgstr ""
+"Benutzer der mobilen Rublon App sind immer geschützt, ohne Rücksicht auf "
+"diese Einstellung. Benutzer ohne standardmäßigem Schutz können ihn selbst "
+"aktivieren. Benutzer mit standardmäßigem Schutz können ihn nicht "
+"deaktivieren."
+
+msgid "Default protection"
+msgstr "Standardmäßiger Schutz"
+
+msgid "Mobile app"
+msgstr "Mobile app"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "None"
+msgstr "Keine"
+
+msgid ""
+"XML-RPC allows external applications to administer your website without "
+"having to authenticate through Rublon. We strongly recommend to keep it "
+"disabled."
+msgstr ""
+"XML-RPC ermöglicht externen Anwendungen das Administrieren deiner Webseite, "
+"ohne sich mit Rublon authentifizieren zu müssen. Wir empfehlen strengstens, "
+"es deaktiviert zu lassen."
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Enabled"
+msgstr "Aktiviert"
+
+msgid ""
+"Rublon protects your account against intruders who found out your password "
+"or hijacked your session."
+msgstr ""
+"Rublon schützt deinen Account vor Eindringlingen, die dein Passwort "
+"herausgefunden haben oder deine Session übernommen haben."
+
+msgid ""
+"Learn more at <a href=\"http://rublon.com\" target=\"_blank\">www.rublon."
+"com</a>."
+msgstr ""
+"Erfahre mehr: <a href=\"https://rublon.com/de/\" target=\"_blank\">www."
+"rublon.com/de</a>."
+
+msgid "Security"
+msgstr "Sicherheit"
+
+msgid ""
+"Rublon will be available to you once your administrator protects his account."
+msgstr ""
+"Rublon wird für dich verfügbar sein, sobald dein Administrator seinen "
+"Account schützt."
+
+msgid "Contact your administrator"
+msgstr "Kontaktiere deinen Administrator"
+
+msgid "Protect your account with Rublon"
+msgstr "Account mit Rublon schützen"
+
+msgid ""
+"Hey, could you please protect your account with Rublon on %s? I want to "
+"protect my account, but I won't be able to do this until an administrator "
+"will."
+msgstr ""
+"Hi, könntest du bitte deinen Account auf %s mit Rublon schützen? Ich möchte "
+"meinen Account schützen, aber ich kann dies nicht tun, bevor ein "
+"Administrator dies tut."
+
+msgid ""
+"Since your account is protected by a password only, it can be accessed from "
+"any device in the world. Rublon protects your account from sign ins from "
+"unknown devices, even if your password gets stolen."
+msgstr ""
+"Weil dein Account nur mit einem Passwort geschützt ist, kann er von jedem "
+"Gerät auf der Welt aus betreten werden. Rublon schützt deinen Account vor "
+"Zugriff von unbekannten Geräten, sogar wenn dein Passwort gestohlen wird."
+
+msgid ""
+"Warning! The PHP version of your server is too old to run Rublon. Please "
+"upgrade your server's PHP version."
+msgstr ""
+"Achtung! Die PHP-Version deines Servers ist zu alt, um Rublon auszuführen. "
+"Bitte aktualisiere die PHP-Version deines Servers."
+
+msgid "Required PHP version:"
+msgstr "Benötigte PHP-Version:"
+
+msgid "(or above)"
+msgstr "(oder höher)"
+
+msgid "Your PHP version:"
+msgstr "Deine PHP-Version:"
+
+msgid "Warning! The cURL library has not been found on this server."
+msgstr "Achtung! Die cURL-Bibliothek wurde auf diesem Server nicht gefunden."
+
+msgid ""
+"It is a crucial component of the Rublon plugin and its absence will prevent "
+"it from working properly. Please have the cURL library installed or consult "
+"your server administrator about it."
+msgstr ""
+"Sie ist ein entscheidender Bestandteil des Rublon Plugins. Ohne sie wird "
+"Rublon nicht richtig funktionieren. Bitte installiere die cURL Bibliothek "
+"oder konsultiere dies mit dem Administrator deines Servers."
+
+msgid "Account protected by Rublon"
+msgstr "Konto mit Rublon geschützt"
+
+msgid "Protected by Rublon"
+msgstr "Geschützt mit Rublon"
+
+msgid "Rublon Two-Factor Authentication"
+msgstr "Rublon Zwei-Faktor-Authentifizierung"
+
+msgid "Profile update"
+msgstr "Profil-Update"
+
+msgid "Do you confirm changing your %s?"
+msgstr "Bestätigst du die Änderung deiner %s?"
+
+msgid "protection type"
+msgstr "schutzart"
+
+msgid ", your "
+msgstr ", deine "
+
+msgid " and your "
+msgstr " und deine "
+
+msgid "email address to: %s"
+msgstr "Email-Adresse zu: %s"
+
+msgid ", as well as your "
+msgstr ", sowie deine "
+
+msgid "password"
+msgstr "Passwort"
+
+msgid "Operation aborted."
+msgstr "Operation abgebrochen (Fehler)."
+
+msgid "Operation cancelled."
+msgstr "Operation abgebrochen."
+
+msgid "Error details: "
+msgstr "Fehler-Details:"
+
+msgid "There was a problem during the authentication process."
+msgstr "Während der Authentifizierung ist ein Fehler aufgetreten."
+
+msgid ""
+"Rublon activation failed. Please try again. Should the error occur again, "
+"contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+msgstr ""
+"Rublon konnte nicht aktiviert werden. Versuche es bitte erneut. Falls der "
+"Fehler weiterhin auftreten sollte, kontaktiere uns: <a href=\"mailto:"
+"support@rublon.com\">support@rublon.com</a>."
+
+msgid "You cannot protect an account already protected by Rublon."
+msgstr ""
+"Ein Account, der bereits mit Rublon geschützt ist, kann nicht nochmals "
+"geschützt werden."
+
+msgid "Unable to protect your account with Rublon."
+msgstr "Dein Account konnte nicht mit Rublon geschützt werden."
+
+msgid "Unable to disable Rublon protection."
+msgstr "Der Rublon-Schutz konnte auf deinem Account nicht deaktiviert werden."
+
+msgid ""
+"The version of Rublon for Wordpress that you are trying to activate is "
+"outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
+"the newest version or"
+msgstr ""
+"Die Version von Rublon für WordPress, die du zu aktivieren versuchst, ist "
+"veraltet. Gehe zur <a href=\"%s\">Plugins-Seite</a> und aktualisiere Rublon "
+"oder"
+
+msgid "update now"
+msgstr "aktualisiere jetzt"
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon. "
+"However, there has been a problem with protecting your account. Go to <a "
+"href=\"%s\">Rublon page</a> in order to protect your account."
+msgstr ""
+"Danke! Jetzt können alle deine Benutzer Ihre Accounts mit Rublon schützen. "
+"Dein Account konnte jedoch nicht geschützt werden. Gehe zur <a href=\"%s"
+"\">Rublon Unterseite</a>, um deinen Account zu schützen."
+
+msgid "The authentication process has been halted."
+msgstr "Der Authentifizierungsvorgang wurde angehalten."
+
+msgid ""
+"This site's administrator requires that you protect your account with the "
+"Rublon mobile app."
+msgstr ""
+"Der Administrator dieser Webseite verlangt, dass du deinen Account mit der "
+"mobilen Rublon App schützt."
+
+msgid ""
+"Your server's time seems out of sync. Please check that it is properly "
+"synchronized - Rublon won't be able to verify your website's security "
+"otherwise."
+msgstr ""
+"Die Zeiteinstellungen deines Servers scheinen fehlerhaft zu sein. Stelle "
+"bitte sicher, dass die Zeit auf dem Server richtig synchronisiert ist. "
+"Andernfalls wird Rublon nicht in der Lage sein die Sicherheit deiner "
+"Webseite zu gewährleisten."
+
+msgid ""
+"This site's administrator requires you to confirm this operation using the "
+"Rublon mobile app."
+msgstr ""
+"Der Administrator dieser Webseite verlangt, dass du diese Operation mit der "
+"mobilen Rublon App bestätigst."
+
+msgid "Your account is now protected by Rublon."
+msgstr "Dein Account ist nun mit Rublon geschützt."
+
+msgid ""
+"Rublon protection has been disabled. You are now protected by a password "
+"only, which may result in unauthorized access to your account. We strongly "
+"encourage you to protect your account with Rublon."
+msgstr ""
+"Der Rublon-Schutz wurde deaktiviert. Du wirst jetzt nur noch durch ein "
+"Passwort geschützt, was zu einem nichtauthorisierten Zugriff auf deinen "
+"Account führen könnte. Wir empfehlen dringend, deinen Account wieder mit "
+"Rublon zu schützen."
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon."
+msgstr ""
+"Danke! Jetzt können alle deine Benutzer Ihre Accounts mit Rublon schützen."
+
+msgid ""
+"Since Rublon plugin version 2.0, the authentication process has been changed "
+"significantly. The accounts are now protected using the email address. We "
+"have detected that your WordPress account's email address differs from the "
+"one you used to create your account in the Rublon mobile app. Please change "
+"your WordPress account's email address accordingly or add your WordPress "
+"account's email address in the \"Email addresses\" section of the Rublon "
+"mobile app."
+msgstr ""
+"Seit Version 2.0 des Rublon Plugins hat sich der Authentifizierungsvorgang "
+"grundlegend geändert. Die Accounts sind nun standardmäßig mit Hilfe ihrer "
+"Email-Adressen geschützt. Wir haben festgestellt, dass deine diesem "
+"WordPress Account zugeordnete Email-Adresse sich von der Email-Adresse "
+"unterscheidet, mit der du deine mobile Rublon App registriert hast. Bitte "
+"ändere die Email-Adresse, welche diesem WordPress Account zugeordnet ist, "
+"entsprechend. Alternativ kannst du auch die Email-Adresse deines WordPress "
+"Accounts in deiner mobilen Rublon App hinzufügen."
+
+msgid ""
+"Plugin requires database modification but you do not have permission to do "
+"it."
+msgstr ""
+"Das Plugin muss Modifikationen in der Datenbank durchführen, kann dies aber "
+"nicht tun, weil entsprechende Berechtigungen fehlen."
+
+msgid ""
+"Rublon provides stronger security for online accounts through invisible two-"
+"factor authentication. It protects your accounts from sign-ins from unknown "
+"devices, even if your passwords get stolen."
+msgstr ""
+"Rublon bietet stärkeren Schutz für Online-Accounts durch unsichtbare Zwei-"
+"Faktor-Authentifizierung. Es schützt deine Accounts vor Zugriff von "
+"unbekannten Geräten, sogar wenn deine Passwörter gestohlen werden."
+
+msgid "Your profile is being updated."
+msgstr "Dein Profil wurde aktualisiert."
+
+msgid "Protection via email"
+msgstr "Schutz via Email"
+
+msgid ""
+"You will need to confirm every sign in from a new device via email. You will "
+"also need to confirm changes to important settings like your password or "
+"email address."
+msgstr ""
+"Du wirst jeden Login von einem neuen Gerät per Email bestätigen müssen. "
+"Änderungen wichtiger Einstellungen, wie deines Passwortes oder deiner Email-"
+"Adresse, wirst du ebenfalls bestätigen müssen."
+
+msgid "Administrators can always change your settings without your consent."
+msgstr ""
+"Administratoren können deine Einstellungen immer ohne Zustimmung ändern."
+
+msgid "Close"
+msgstr "Schließen"
+
