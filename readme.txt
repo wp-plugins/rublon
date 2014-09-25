@@ -85,7 +85,7 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
-= 2.0.0 =
+= 2.0 =
 * Email-based two-step login for all users turned on by default (no mobile app required)
 * Changing your email address or password requires your confirmation (via email or mobile app)
 * Trusted devices now manageable via Rublon settings page
