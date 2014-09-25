@@ -21,3 +21,12 @@
 .rublon-clear {
 	clear: both;
 }
+
+.rublon-login-message {
+	margin: 0 0 16px 8px !important;
+	padding: 12px !important;
+}
+
+.rublon-login-message > a.rublon-link {
+	color: #21759b !important;	
+}

@@ -1,45 +1,49 @@
 <?php
 
 /**
- * Exception class
+ * Exception class.
  * 
- * @author Rublon Developers
  */
 class RublonException extends Exception {
 
 	/**
-	 * CURL library is not available
+	 * CURL library is not available.
 	 */
 	const CODE_CURL_NOT_AVAILABLE = 1;
 	
 	/**
-	 * Invalid response
+	 * Invalid response.
 	 */
 	const CODE_INVALID_RESPONSE = 2;
 	
 	/**
-	 * Response error
+	 * Response error.
 	 */
 	const CODE_RESPONSE_ERROR = 3;
 	
 	/**
-	 * CURL error
+	 * CURL error.
 	 */
 	const CODE_CURL_ERROR = 4;
 	
 	/**
-	 * Connection error
+	 * Connection error.
 	 */
 	const CODE_CONNECTION_ERROR = 5;
 
 	/**
-	 * Timestamp error
+	 * Timestamp error.
 	 */
 	const CODE_TIMESTAMP_ERROR = 6;
+	
+	/**
+	 * Invalid access token.
+	 */
+	const CODE_INVALID_ACCESS_TOKEN = 7;
 
 
 	/**
-	 * For backward compatibility: manually store previous exception
+	 * For backward compatibility: manually store previous exception.
 	 *
 	 * @var Exception
 	 */
@@ -47,7 +51,7 @@ class RublonException extends Exception {
 
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
 	 * @param string $msg (optional)
 	 * @param int $code (optional)
@@ -65,7 +69,7 @@ class RublonException extends Exception {
 	}
 
 	/**
-	 * Handler for non-existing methods
+	 * Handler for non-existing methods.
 	 * 
 	 * @param string $method
 	 * @param array $args
@@ -79,4 +83,3 @@ class RublonException extends Exception {
 	}
 
 }
-

@@ -13,8 +13,16 @@
  */
 function rublon2factor_plugins_loaded() {
 
+
 	// Initialize Rublon2Factor plug-in helper
 	RublonHelper::init();
+
+	$attemptRegistration = RublonHelper::shouldPluginAttemptRegistration();
+	if ($attemptRegistration && current_user_can('manage_options')) {
+		RublonHelper::enqueueRegistration(false);
+		RublonHelper::newNonce();
+		RublonHelper::registerPlugin();
+	}
 
 	// check for Rublon-type actions
 	RublonHelper::checkForActions();

@@ -19,6 +19,7 @@ class RublonCookies {
 	const COOKIE_MESSAGES = 'messages';
 	const COOKIE_NONCE = 'nonce';
 	const COOKIE_AUTHENTICATED = 'auth';
+	const COOKIE_RETURNURL = 'return_url';
 
 
 	/**
@@ -73,6 +74,37 @@ class RublonCookies {
 	}
 
 
+	/**
+	 * Retrieve the return URL from the cookie
+	 * 
+	 * @return string
+	 */
+	static public function getReturnURL() {
+
+		$cookieName = self::COOKIE_PREFIX . self::COOKIE_RETURNURL;
+		$returnURL = self::_getCookieData($cookieName);
+		self::_clearCookieData($cookieName);
+		return !empty($returnURL) ? $returnURL : '';
+
+	}
+
+	
+	/**
+	 * Store the return URL in a cookie
+	 * 
+	 * The user's browser will be redirected to this
+	 * URL after the authentication.
+	 * 
+	 * @param string $url
+	 */
+	static public function storeReturnURL($url) {
+
+		$cookieName = self::COOKIE_PREFIX . self::COOKIE_RETURNURL;
+		self::_clearCookieData($cookieName);
+		self::_setCookieData($cookieName, $url);
+	}
+
+	
 	/**
 	 * Store a nonce in cookie
 	 * 

@@ -10,20 +10,23 @@
  * be used to embed the authentication parameters in a Rublon button. 
  * 
  * @see RublonButton
- * @author Rublon Developers
  */
 class RublonAuthParams {
 	
+	/**
+	 * Hash algorithm name to compute the user's email hash.
+	 */
+	const HASH_ALG = 'sha256';
 
 	/**
-	 * Rublon service instance.
+	 * Rublon instance.
 	 * 
-	 * An istance of the RublonService class. Necessary for
+	 * An istance of the Rublon class. Necessary for
 	 * the class to work.
 	 *
-	 * @property RublonService $service
+	 * @var Rublon
 	 */
-	protected $service = null;
+	protected $rublon = null;
 	
 	/**
 	 * Consumer parameters store.
@@ -31,75 +34,29 @@ class RublonAuthParams {
 	 * These optional parameters can be set by the integrated website.
 	 * They will be signed with the Signature Wrapper (RublonSignatureWrapper class)
 	 * using the website's secret key and can be retrieved in the callback via
-	 * the getConsumerParams() method of the RublonResponse class. 
+	 * the getResponse() method of the RublonAPIClient class. 
 	 * 
-	 * @property array $consumerParams
+	 * @var array
 	 */
 	protected $consumerParams = array();
 	
 	/**
-	 * Outer parameters (not documented).
-	 * 
-	 * @property array $outerParams
-	 */
-	protected $outerParams = array();
-	
-	/**
-	 * URL of the origin window.
-	 * 
-	 * The detault value is taken from the REQUEST_URI environment variable.
-	 * 
-	 * Note: the $originUrl parameter is needed by JavaScript postMessage method
-	 * in Rublon Code popup window. It is not signed by the Signature Wrapper
-	 * and should NOT be utilized to perform any HTTP redirects because of phishing possibility.
-	 * 
-	 * @property string $originUrl
-	 */
-	protected $originUrl = 'https://rublon.com/';
-	
-	/**
 	 * Action flag.
 	 * 
-	 * The action flag determines both the text description displayed in the
-	 * QR code window and sometimes may impose a certain behavior on the
-	 * authentication process.
-	 *
-	 * @property string $actionFlag
+	 * @var string
 	 */
-	protected $actionFlag = null;
-	
-	
-	/**
-	 * Link accounts action
-	 */
-	const ACTION_FLAG_LINK_ACCOUNTS = 'link_accounts';
-	
-	/**
-	 * Unlink accounts action
-	 */
-	const ACTION_FLAG_UNLINK_ACCOUNTS = 'unlink_accounts';
-	
-	/**
-	 * Identity confirmation action
-	 */
-	const ACTION_FLAG_CONFIRM_ACTION = 'confirm_action';
-	
-	/**
-	 * Login action
-	 */
-	const ACTION_FLAG_LOGIN = 'login';
+	protected $actionFlag;
 	
 
 	/**
 	 * Field name for access token parameter
 	 */
 	const FIELD_ACCESS_TOKEN = "accessToken";
-	
-	
+
 	/**
-	 * Field name for "requireProfileId" parameter
+	 * Name of the field with profile ID.
 	 */
-	const FIELD_REQUIRE_PROFILE_ID = "requireProfileId";
+	const FIELD_PROFILE_ID = 'profileId';
 	
 	/**
 	 * Field name for "service" parameter
@@ -117,64 +74,76 @@ class RublonAuthParams {
 	const FIELD_LANG = "lang";
 	
 	/**
-	 * Field name for origin URL address parameter
-	 */
-	const FIELD_ORIGIN_URL = "originUrl";
-	
-	/**
 	 * Field name for consumer parameters
 	 */
 	const FIELD_CONSUMER_PARAMS = "consumerParams";
 	
+	/**
+	 * Field name for callback URL.
+	 */
+	const FIELD_CALLBACK_URL = 'callbackUrl';
 	
 	/**
-	 * Field name for action flag parameter
+	 * Field name for local user ID.
+	 */
+	const FIELD_USER_ID = "userId";
+
+	/**
+	 * Field name for local user email address.
+	 */
+	const FIELD_USER_EMAIL_HASH = "userEmailHash";
+
+	/**
+	 * Field name for required Rublon user's profile ID.
+	 */
+	const FIELD_REQUIRE_PROFILE_ID = "requireProfileId";
+
+	/**
+	 * Field name for action flag.
 	 */
 	const FIELD_ACTION_FLAG = "actionFlag";
-	
-	/**
-	 * Field name for action parameter
-	 */
-	const FIELD_ACTION = "action";
-	
-	/**
-	 * Field name for tooltip flag parameter
-	 */
-	const FIELD_TOOLTIP_FLAG = "tooltipFlag";
 	
 	/**
 	 * Field name for version parameter
 	 */
 	const FIELD_VERSION = "version";
 	
+	const FIELD_CAN_USE_EMAIL2FA = 'canUseEmail2FA';
+	const FIELD_CUSTOM_URI_PARAM = 'customURIParam';
+	const FIELD_CONFIRM_MESSAGE = 'confirmMessage';
+	
 	/**
 	 * URL path to authentication code
 	 */
 	const URL_PATH_CODE = "/code/native/";
 	
-
+	/**
+	 * Action flag for login action.
+	 */
+	const ACTION_FLAG_LOGIN = 'login';
+	
+	/**
+	 * Action flag for enable protection action.
+	 */
+	const ACTION_FLAG_LINK_ACCOUNTS = 'link_accounts';
+	
+	/**
+	 * Action flag for disable protection action.
+	 */
+	const ACTION_FLAG_UNLINK_ACCOUNTS = 'unlink_accounts';
 	
 
 	/**
-	 * Initialize object with RublonService instance.
+	 * Initialize object with Rublon instance.
 	 * 
-	 * A RublonService class instance is required for
+	 * A Rublon class instance is required for
 	 * the object to work.
 	 *
-	 * @param RublonService $service An instance of the RublonService class
-	 * @param string $actionFlag Action flag
+	 * @param RublonConsumer $rublon An instance of the Rublon class
 	 */
-	public function __construct(RublonService $service, $actionFlag = null) {
-		
-		$service->getConsumer()->log(__METHOD__);
-		$this->service = $service;
-		
-		$this->setActionFlag($actionFlag);
-		
-		if (isset($_SERVER['HTTP_HOST']) AND isset($_SERVER['REQUEST_URI'])) {
-			$this->originUrl = 'http://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-		}
-		
+	public function __construct(RublonConsumer $rublon) {
+		$rublon->log(__METHOD__);
+		$this->rublon = $rublon;
 	}
 	
 	
@@ -187,8 +156,8 @@ class RublonAuthParams {
 	 * @return string URL address
 	 */
 	public function getUrl() {
-		$this->getConsumer()->log(__METHOD__);
-		return $this->getConsumer()->getDomain() .
+		$this->getRublon()->log(__METHOD__);
+		return $this->getRublon()->getAPIDomain() .
 			self::URL_PATH_CODE .
 			urlencode($this->getUrlParamsString());
 	}
@@ -196,7 +165,7 @@ class RublonAuthParams {
 	
 	
 	/**
-	 * Get parameters string to apply in the authentication URL address
+	 * Get parameters string to apply in the authentication URL address.
 	 * 
 	 * Returns the authentication parameters as a base64-encoded JSON string
 	 * that will be passed with the URL address to the Rublon code window.
@@ -209,7 +178,7 @@ class RublonAuthParams {
 	
 	
 	/**
-	 * Get ready-made authentication parameters object to apply in the authentication URL address
+	 * Get ready-made authentication parameters object to apply in the authentication URL address.
 	 * 
 	 * Returns the authentication process parameters as an object
 	 * (including the Signature Wrapper-signed consumer params)
@@ -220,14 +189,12 @@ class RublonAuthParams {
 	public function getUrlParams() {
 		
 		$consumerParams = $this->getConsumerParams();
-		$outerParams = $this->getOuterParams();
 		$params = array();
 		
-		if (!empty($consumerParams) OR !empty($outerParams)) {
+		if (!empty($consumerParams)) {
 			$wrapper = RublonSignatureWrapper::wrap(
-				$this->getConsumer()->getSecretKey(),
-				$consumerParams,
-				$outerParams
+				$this->getRublon()->getSecretKey(),
+				$consumerParams
 			);
 			$params[self::FIELD_CONSUMER_PARAMS] = $wrapper;
 		}
@@ -246,13 +213,11 @@ class RublonAuthParams {
 	 */
 	public function getConsumerParamsWrapper() {
 		$consumerParams = $this->getConsumerParams();
-		$outerParams = $this->getOuterParams();
 		
-		if (!empty($consumerParams) OR !empty($outerParams)) {
+		if (!empty($consumerParams)) {
 			return RublonSignatureWrapper::wrap(
-				$this->getConsumer()->getSecretKey(),
-				$consumerParams,
-				$outerParams
+				$this->getRublon()->getSecretKey(),
+				$consumerParams
 			);
 		} else {
 			return null;
@@ -270,6 +235,27 @@ class RublonAuthParams {
 	 */
 	public function getConsumerParamsWrapperString() {
 		return json_encode($this->getConsumerParamsWrapper());
+	}
+	
+	
+	/**
+	 * Set action flag.
+	 *
+	 * @param string $actionFlag
+	 * @return RublonAuthParams
+	 */
+	public function setActionFlag($actionFlag) {
+		$this->actionFlag = $actionFlag;
+		return $this;
+	}
+	
+	/**
+	 * Get action flag.
+	 *
+	 * @return string
+	 */
+	public function getActionFlag() {
+		return $this->actionFlag;
 	}
 	
 	
@@ -304,9 +290,6 @@ class RublonAuthParams {
 
 	/**
 	 * Get consumer parameters.
-	 * 
-	 * Returns the consumer params as an array with the
-	 * addition of actionFlag if it's set.
 	 *
 	 * @return array
 	 */
@@ -314,20 +297,28 @@ class RublonAuthParams {
 		
 		$consumerParams = $this->consumerParams;
 		
-		// Set action flag
+		// Now set some default required parameters. 
+		
+		// Service name:
+		if ($serviceName = $this->getRublon()->getServiceName()) {
+			$consumerParams[self::FIELD_SERVICE] = $serviceName;
+		}
+		
+		// Language code:
+		if ($lang = $this->getRublon()->getLang()) {
+			$consumerParams[self::FIELD_LANG] = $lang;
+		}
+
+		// Action flag:
 		if ($actionFlag = $this->getActionFlag()) {
 			$consumerParams[self::FIELD_ACTION_FLAG] = $actionFlag;
 		}
 		
-		// Set service name
-		if ($serviceName = $this->getService()->getServiceName()) {
-			$consumerParams[self::FIELD_SERVICE] = $serviceName;
-		}
+		// Consumer's system token:
+		$consumerParams[self::FIELD_SYSTEM_TOKEN] = $this->getRublon()->getSystemToken();
 		
-		$consumerParams[self::FIELD_LANG] = $this->getConsumer()->getLang();
-		$consumerParams[self::FIELD_SYSTEM_TOKEN] = $this->getConsumer()->getSystemToken();
-		$consumerParams[self::FIELD_ORIGIN_URL] = $this->getOriginUrl();
-		$consumerParams[self::FIELD_VERSION] = $this->getConsumer()->getVersion();
+		// Protocol version:
+		$consumerParams[self::FIELD_VERSION] = $this->getRublon()->getVersionDate();
 		
 		return $consumerParams;
 		
@@ -352,106 +343,58 @@ class RublonAuthParams {
 		}
 	}
 	
-
-	/**
-	 * Set outer parameters (not documented).
-	 *
-	 * @param array $params Param array to be set.
-	 * @return RublonAuthParams
-	 */
-	public function setOuterParams($params) {
-		$this->outerParams = $params;
-		return $this;
-	}
 	
 	/**
-	 * Get outer parameters (not documented).
-	 *
-	 * @return array
+	 * Get Rublon instance.
+	 * 
+	 * @return Rublon
 	 */
-	public function getOuterParams() {
-		return $this->outerParams;
+	public function getRublon() {
+		return $this->rublon;
 	}
-	
-	
-	/**
-	 * Set the URL of the origin window.
-	 * 
-	 * The default value is taken from the REQUEST_URI environment variable. 
-	 * 
-	 * Note: the $originUrl parameter is needed by JavaScript postMessage method
-	 * in Rublon Code popup window. It is not signed by the Signature Wrapper
-	 * and should NOT be utilize to perform any HTTP redirects because of phishing possibility.
-	 * 
-	 * @param string $originUrl The URL to be set as originUrl. 
-	 * @return RublonAuthParams
-	 */
-	public function setOriginUrl($originUrl) {
-		$this->originUrl = $originUrl;
-		return $this;
-	}
-	
-	
-	/**
-	 * Get the URL of the origin window.
-	 * 
-	 * Returns the value of the originUrl property.
-	 * 
-	 * @return string
-	 */
-	public function getOriginUrl() {
-		return $this->originUrl;
-	}
-	
 	
 
 	/**
-	 * Set action flag of the process
+	 * Create instance of the RublonAuthParams by given configuration.
 	 *
-	 * Get available flags from RublonAuthParams::ACTION_FLAG_... constant.
-	 *
-	 * @param string $actionFlag One of the actionFlag constants.
+	 * @param RublonConsumer $rublon
+	 * @param string $callbackUrl Callback URL address.
+	 * @param array $params Existing instance of the RublonAuthParams to configure or consumer parameters array (optional)
 	 * @return RublonAuthParams
 	 */
-	public function setActionFlag($actionFlag) {
-		$this->actionFlag = $actionFlag;
-		return $this;
+	static public function initAuthParams(RublonConsumer $rublon, $callbackUrl, $params = null) {
+		if (is_object($params) AND $params instanceof RublonAuthParams) {
+			$authParams = $params;
+		} else {
+			$authParams = new RublonAuthParams($rublon);
+			if (is_array($params) AND !empty($params)) {
+				$authParams->setConsumerParams($params);
+			}
+		}
+		
+		$authParams->setConsumerParam(self::FIELD_CALLBACK_URL, $callbackUrl);
+	
+		return $authParams;
+	
 	}
 	
 	
 	/**
-	 * Get action flag of the process.
-	 * 
-	 * Returns the value of the actionFlag property.
+	 * Create instance of the RublonAuthParams configured for 2-factor login.
 	 *
-	 * @return string
+	 * @param RublonConsumer $rublon
+	 * @param string $callbackUrl Callback URL address.
+	 * @param string $userId
+	 * @param string $userEmail
+	 * @param RublonAuthParams|array $params Instance of the RublonAuthParams or consumer parameters array (optional)
+	 * @return RublonAuthParams
 	 */
-	public function getActionFlag() {
-		return $this->actionFlag;
+	static public function initAuthParamsLogin(RublonConsumer $rublon, $callbackUrl, $userId, $userEmail, $params = null) {
+		$authParams = self::initAuthParams($rublon, $callbackUrl, $params);
+		$authParams->setConsumerParam(RublonAuthParams::FIELD_USER_ID, $userId);
+		$authParams->setConsumerParam(RublonAuthParams::FIELD_USER_EMAIL_HASH, hash(self::HASH_ALG, strtolower($userEmail)));
+		return $authParams;
 	}
 	
-	
-	/**
-	 * Get service instance.
-	 *
-	 * Returns the object's instance of the RublonService class.
-	 *
-	 * @return RublonService
-	 */
-	public function getService() {
-		return $this->service;
-	}
-
-	/**
-	 * Get Rublon Consumer instance.
-	 * 
-	 * Returns the RublonConsumer class instance used in the creation
-	 * of this class' RublonService class instance.
-	 *
-	 * @return RublonConsumer
-	 */
-	public function getConsumer() {
-		return $this->getService()->getConsumer();
-	}
 	
 }

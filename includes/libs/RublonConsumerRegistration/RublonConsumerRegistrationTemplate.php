@@ -1,55 +1,89 @@
 <?php
 
+require_once 'RublonConsumerRegistrationCommon.php';
+
 /**
- * Template method pattern abstract class to perform quick registration of the Rublon module
+ * Template method pattern abstract class to perform quick registration of the Rublon module.
  * 
  * Class provides main methods for communication with module registration API.
  *
  */
-abstract class RublonConsumerRegistrationTemplate {
+abstract class RublonConsumerRegistrationTemplate extends RublonConsumerRegistrationCommon {
 	
-	/**
-	 * Library version date.
-	 * 
-	 * @var string
-	 */
-	const VERSION = '2013-11-22';
 	
 	/**
 	 * Action to initialize process.
-	 * 
-	 * @var string
 	 */
 	const ACTION_INITIALIZE = 'initialize';
 	
 	/**
+	 * Action to update system token.
+	 */
+	const ACTION_UPDATE_SYSTEM_TOKEN = 'update_system_token';
+	
+	/**
 	 * Action to pull the secret key from API.
-	 * 
-	 * @var string
 	 */
 	const ACTION_PULL_SECRET_KEY = 'pull_secret_key';
 	
 	/**
+	 * Action final success.
+	 */
+	const ACTION_FINAL_SUCCESS = 'final_success';
+
+	/**
+	 * Action final error.
+	 */
+	const ACTION_FINAL_ERROR = 'final_error';
+	
+	/**
 	 * Process lifetime in seconds.
-	 * 
-	 * @var int
 	 */
 	const PROCESS_LIFETIME = 3600; // seconds
 	
 	/**
-	 * Default registration API domain.
-	 * 
-	 * @var string
+	 * GET parameter with error code.
 	 */
-	const DEFAULT_API_DOMAIN = 'https://developers.rublon.com';
+	const PARAM_ERROR = 'error';
 	
-
+	/**
+	 * GET parameter with error message.
+	 */
+	const PARAM_ERROR_MSG = 'error_msg';
+	
+	/**
+	 * Field name for the registration's communication URL.
+	 */
+	const FIELD_COMMUNICATION_URL = 'communicationUrl';
+	
+	/**
+	 * Field name for the temporary secret key.
+	 */
+	const FIELD_TEMP_KEY = 'tempKey';
+	
+	/**
+	 * Rublon Developers error flag.
+	 */
+	const DEVELOPERS_ERROR = 'developers_error';
+	
 	/**
 	 * URL path for API methods.
-	 *
-	 * @var string
 	 */
 	const URL_PATH_ACTION = '/consumers_registration';
+	
+	/**
+	 * Template HTML for the POST form.
+	 */
+	const TEMPLATE_FORM_POST = '<form action="%s" method="post" id="RublonConsumerRegistration">
+			%s
+			<script>document.getElementById("RublonConsumerRegistration").submit();</script>
+			<noscript><input type="submit" value="Register" /></noscript>
+		</form>';
+	
+	/**
+	 * Template HTML for the form's hidden input.
+	 */
+	const TEMPLATE_FORM_INPUT = '<input type="hidden" name="%s" value="%s" />';
 	
 
 	// Common technology flags
@@ -57,23 +91,6 @@ abstract class RublonConsumerRegistrationTemplate {
 	const TECHNOLOGY_OTHER = 'other';
 	
 	
-	/**
-	 * Registration API domain.
-	 * 
-	 * @var string
-	 */
-	protected $apiDomain = null;
-	
-	
-	
-	
-	
-	/**
-	 * Constructor.
-	 */
-	public function __construct() {
-		$this->apiDomain = self::DEFAULT_API_DOMAIN;
-	}
 	
 	
 	
@@ -89,17 +106,17 @@ abstract class RublonConsumerRegistrationTemplate {
 	 */
 	final public function action($action) {
 		switch ($action) {
-			case 'initialize':
+			case self::ACTION_INITIALIZE:
 				$this->initialize();
 				break;
-			case 'update_system_token': // Save the system token given for the module
+			case self::ACTION_UPDATE_SYSTEM_TOKEN: // Save the system token given for the module
 				$this->updateSystemToken();
 				break;
-			case 'final_success': // Final success
+			case self::ACTION_FINAL_SUCCESS: // Final success
 				$this->finalSuccess();
 				break;
-			case 'final_error': // Final error
-				$this->finalError();
+			case self::ACTION_FINAL_ERROR: // Final error
+				$this->finalError(self::DEVELOPERS_ERROR);
 				break;
 		}
 	}
@@ -123,7 +140,7 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @override
 	 */
 	protected function finalSuccess() {
-		if ($this->isUserAuthorized()) {
+		if ($this->canUserActivate()) {
 			$this->saveInitialParameters(NULL, NULL);
 		}
 	}
@@ -140,16 +157,12 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @override
 	 */
 	protected function finalError($msg = NULL) {
-		if ($this->isUserAuthorized()) {
-			$this->saveSystemToken(NULL);
-			$this->saveSecretKey(NULL);
-			$this->saveInitialParameters(NULL, NULL);
+		if ($this->canUserActivate()) {
+// 			$this->saveSystemToken(NULL);
+// 			$this->saveSecretKey(NULL);
+// 			$this->saveInitialParameters(NULL, NULL);
 		}
 	}
-	
-	
-	
-	
 	
 	
 	
@@ -165,14 +178,13 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @final
 	 */
 	final protected function initialize() {
-		if ($this->isUserAuthorized()) {
-			if ($this->saveInitialParameters($this->_generateRandomString(), time())) {
-				$this->_echo($this->getRegistrationForm());
-			} else {
-				$this->finalError('ERROR_CODE: INITIAL_PARAMS_SAVE_FAILURE');
-			}
+		if ($this->canUserActivate()) {
+			$tempKey = RublonSignatureWrapper::generateRandomString(self::SECRET_KEY_LENGTH);
+			$this->saveInitialParameters($tempKey, time());
+			$this->stdOut($this->getRegistrationForm());
+			
 		} else {
-			$this->finalError('ERROR_CODE: USER_NOT_AUTHORIZED');
+			throw new UserUnauthorized_RublonConsumerException;
 		}
 	}
 	
@@ -190,34 +202,23 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @final
 	 */
 	final protected function updateSystemToken() {
-		if ($this->_validateGeneral()) {
-			if ($this->isUserAuthorized()) {
+		if ($this->validateGeneral()) {
+			if ($this->canUserActivate()) {
 				try {
-					$systemToken = $this->_getSystemTokenFromBase64($this->_get('systemToken'));
+					$systemToken = $this->parseSystemToken($this->inputGET(RublonAuthParams::FIELD_SYSTEM_TOKEN));
+					if (empty($systemToken)) {
+						throw new MissingField_RublonClientException($this->getAPIClient(), self::FIELD_SYSTEM_TOKEN);
+					}
 				} catch (RublonException $e) {
-					switch ($e->getCode()) {
-						case RublonException::CODE_TIMESTAMP_ERROR:
-							$this->finalError('ERROR_CODE: SYSTEM_TOKEN_INVALID_RESPONSE_TIMESTAMP');
-							break;
-						default:
-							$this->finalError('ERROR_CODE: SYSTEM_TOKEN_INVALID_RESPONSE');
-					}
-					return;
+					throw $e;
 				}
-				if ($systemToken) {
-					if ($this->saveSystemToken($systemToken)) {
-						$this->pullSecretKey($systemToken);
-					} else {
-						$this->finalError('ERROR_CODE: SYSTEM_TOKEN_SAVE_FAILURE');
-					}
-				} else {
-					$this->finalError('ERROR_CODE: NO_SYSTEM_TOKEN_RECEIVED');
-				}
+				$this->saveSystemToken($systemToken);
+				$this->pullSecretKey($systemToken);
 			} else {
-				$this->finalError('ERROR_CODE: USER_NOT_AUTHORIZED');
+				throw new UserUnauthorized_RublonConsumerException();
 			}
 		} else {
-			$this->finalError('ERROR_CODE: INVALID_PROCESS_SESSION');
+			throw new InvalidProcess_RublonConsumerException();
 		}
 	}
 	
@@ -233,21 +234,16 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @final
 	 */
 	final protected function pullSecretKey($systemToken) {
-		if ($this->_validateGeneral()) {
-			$response = $this->_pullSecretKey($systemToken);
-			if (!empty($response['secretKey'])) {
-				if ($this->saveSecretKey($response['secretKey'])) {
-					if (!empty($response['profileId']))
-						$this->handleProfileId($response['profileId']);
-					$this->finalSuccess();
-				} else {
-					$this->finalError('ERROR_CODE: SECRET_KEY_SAVE_FAILURE');
-				}
+		if ($this->validateGeneral()) {
+			$response = $this->pullSecretKeyRequest($systemToken);
+			if (!empty($response[RublonAPIClient::FIELD_RESULT][self::FIELD_SECRET_KEY])) {
+				$this->saveSecretKey($response[RublonAPIClient::FIELD_RESULT][self::FIELD_SECRET_KEY]);
+				$this->finalSuccess();
 			} else {
-				$this->finalError('ERROR_CODE: NO_SECRET_KEY_RECEIVED');
+				throw new MissingField_RublonClientException($this->getAPIClient(), self::FIELD_SECRET_KEY);
 			}
 		} else {
-			$this->finalError('ERROR_CODE: INVALID_PROCESS_SESSION');
+			throw new InvalidProcess_RublonConsumerException();
 		}
 	}
 
@@ -265,61 +261,10 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @param string $str
 	 * @return void
 	 */
-	protected function _echo($str) {
+	protected function stdOut($str) {
 		echo $str;
 	}
 	
-	
-
-	/**
-	 * Redirect to the given URL.
-	 *
-	 * If your system have an ususual way to perform HTTP redirects, override this method in a subclass.
-	 *
-	 * @param string $url
-	 * @return void
-	 */
-	protected function _redirect($url) {
-		$this->_header('Location: '. $url);
-		$this->_exit();
-	}
-	
-
-	/**
-	 * Send HTTP header.
-	 *
-	 * If your system have an ususual way to send HTTP headers, override this method in a subclass.
-	 *
-	 * @param string $str
-	 * @return void
-	 */
-	protected function _header($str) {
-		header($str);
-	}
-	
-	/**
-	 * Interrupt the script execution.
-	 * 
-	 * If you have to trigger some actions before exit, override this method in a subclass.
-	 * 
-	 * @return void
-	 */
-	protected function _exit() {
-		exit;
-	}
-	
-	
-	/**
-	 * Get POST parameter.
-	 * 
-	 * If your system have an ususual way to get POST parameters, override this method in a subclass.
-	 * 
-	 * @param string $name
-	 * @return mixed
-	 */
-	protected function _post($name) {
-		return (isset($_POST[$name]) ? $_POST[$name] : NULL);
-	}
 	
 	/**
 	 * Get GET parameter.
@@ -329,10 +274,9 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @param string $name
 	 * @return mixed
 	 */
-	protected function _get($name) {
+	protected function inputGET($name) {
 		return (isset($_GET[$name]) ? $_GET[$name] : NULL);
 	}
-	
 	
 
 	/**
@@ -341,19 +285,19 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @return string
 	 */
 	protected function getRegistrationForm() {
-		$action = $this->getAPIDomain() . self::URL_PATH_ACTION .'/'. self::ACTION_INITIALIZE;
-		$result = '<form action="'. htmlspecialchars($action)
-			.'" method="post" id="RublonConsumerRegistration">'
-			. $this->_getHidden('projectUrl', $this->getProjectUrl())
-			. $this->_getHidden('communicationUrl', $this->getCommunicationUrl())
-			. $this->_getHidden('callbackUrl', $this->getCallbackUrl())
-			. $this->_getHidden('tempKey', $this->getTempKey())
-			. $this->_getHidden('projectData', json_encode($this->getProjectData()))
-			. '<script>document.getElementById("RublonConsumerRegistration").submit();</script>
-		<noscript><input type="submit" value="Register" /></noscript>
-		</form>';
-		return $result;
-	}			
+		
+		$action = $this->getAPIDomain() . self::URL_PATH_ACTION . '/' . self::ACTION_INITIALIZE;
+		$action = htmlspecialchars($action);
+		
+		$content = $this->getInputHidden(self::FIELD_PROJECT_URL, $this->getProjectUrl())
+			. $this->getInputHidden(self::FIELD_PROJECT_CALLBACK_URL, $this->getCallbackUrl())
+			. $this->getInputHidden(self::FIELD_PROJECT_DATA, json_encode($this->getProjectData()))
+			. $this->getInputHidden(self::FIELD_COMMUNICATION_URL, $this->getCommunicationUrl())
+			. $this->getInputHidden(self::FIELD_TEMP_KEY, $this->getTempKey());
+		
+		return sprintf(self::TEMPLATE_FORM_POST, $action, $content);
+		
+	}		
 	
 	
 	/**
@@ -363,74 +307,15 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @param string $value
 	 * @return string
 	 */
-	protected function _getHidden($name, $value) {
-		return '<input type="hidden" name="'. htmlspecialchars($name)
-			.'" value="'. htmlspecialchars($value) .'" />';
-	}
-
-
-	/**
-	 * Get project's additional data.
-	 *
-	 * The data returned will be used upon consumer's registration
-	 * and are required. If any additional data is needed,
-	 * this method may be overwritten.
-	 *
-	 * @return string
-	 */
-	protected function getProjectData() {
-		return array(
-			'project-name' => $this->getProjectName(),
-			'project-technology' => $this->getProjectTechnology(),
-			'lib-version' => self::VERSION,
-		);
+	protected function getInputHidden($name, $value) {
+		return sprintf(self::TEMPLATE_FORM_INPUT, htmlspecialchars($name), htmlspecialchars($value));
 	}
 	
 	
-	/**
-	 * Get registration API domain.
-	 * 
-	 * @return string
-	 */
-	protected function getAPIDomain() {
-		return $this->apiDomain;
-	}
-
 
 	// --------------------------------------------------------------------------------------------------
 	// Core private methods
 
-
-	/**
-	 * Send a REST response to the standard output.
-	 *
-	 * If secret key given wrap response into RublonSignatureWrapper.
-	 *
-	 * @param mixed $response
-	 * @param string $secretKey (optional)
-	 * @return void
-	 */
-	private function _RESTResponse($response, $secretKey = NULL) {
-		$this->_header('content-type: application/json; charset=UTF-8');
-		if ($secretKey) {
-			$response = RublonSignatureWrapper::wrap($secretKey, $response);
-		}
-		$response = (is_string($response) ? $response : json_encode($response));
-		$this->_echo($response);
-		$this->_exit();
-	}
-	
-	
-	/**
-	 * Create an error response array.
-	 *
-	 * @param string $msg
-	 * @return array
-	 */
-	private function _RESTError($msg) {
-		return array('status' => 'ERROR', 'msg' => $msg);
-	}
-	
 	
 	/**
 	 * Perform a HTTP request to pull the secret key.
@@ -438,73 +323,25 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @param string $systemToken
 	 * @return array
 	 */
-	private function _pullSecretKey($systemToken) {
+	protected function pullSecretKeyRequest($systemToken) {
 		
 		// Prepare the request parameters
-		$url = $this->getAPIDomain() . self::URL_PATH_ACTION .'/'. self::ACTION_PULL_SECRET_KEY;
+		$url = $this->getAPIDomain() . self::URL_PATH_ACTION . '/' . self::ACTION_PULL_SECRET_KEY;
 		$params = array(
-			'systemToken' => $systemToken,
-			'lib-version' => self::VERSION,
+			self::FIELD_SYSTEM_TOKEN				=> $systemToken,
+			self::FIELD_USER_ID						=> $this->getUserId(),
+			self::FIELD_USER_EMAIL_HASH				=> self::hash($this->getUserEmail()),
+			self::FIELD_LIB_VERSION					=> self::VERSION,
 		);
 		
-		// Perform the request
-		try {
-			$response = $this->_request($url, $params);
+		try /* to connect with Rublon API and pull secret key */ {
+			$response = $this->request($url, $params);
 		} catch (RublonException $e) {
-			$this->finalError($this->_getErrorName($e->getCode()));
-		}
-		
-		// Validate response
-		try {
-			$response = RublonSignatureWrapper::parseMessage($response, $this->getTempKey());
-		} catch (RublonException $e) {
-			switch ($e->getCode()) {
-				case RublonException::CODE_TIMESTAMP_ERROR:
-					$this->finalError('ERROR_CODE: INVALID_RESPONSE_TIMESTAMP');
-					break;
-				default:
-					$this->finalError('ERROR_CODE: INVALID_RESPONSE');
-			}
-			return null;
+			throw $e;
 		}
 		
 		return $response;
 		
-	}
-	
-	
-	/**
-	 * Perform a HTTP request.
-	 * 
-	 * @param string $url
-	 * @param array $params
-	 * @return string
-	 */
-	private function _request($url, array $params = array()) {
-		$consumer = new RublonConsumer(null, $this->getTempKey());
-		$service = new RublonService2Factor($consumer);
-		$request = new RublonRequest($service);
-		return $request
-			->setRequestParams($url, $params)
-			->getRawResponse();
-	}
-	
-	
-	
-	/**
-	 * Generate random string.
-	 *
-	 * @param int $len (optional)
-	 * @return string
-	 */
-	private function _generateRandomString($len = 100) {
-		$chars = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
-		$max = strlen($chars) - 1;
-		$result = '';
-		for ($i=0; $i<$len; $i++) {
-			$result .= $chars[mt_rand(0, $max)];
-		}
-		return $result;
 	}
 	
 	
@@ -515,17 +352,18 @@ abstract class RublonConsumerRegistrationTemplate {
 	 *
 	 * @return boolean
 	 */
-	private function _validateGeneral() {
+	protected function validateGeneral() {
 		$tempKey = $this->getTempKey();
 		$time = $this->getStartTime();
 		return (
 			!empty($tempKey)
 			AND !empty($time)
-			AND preg_match('/[a-z0-9]{100}/i', $tempKey)
+			AND preg_match('/[a-z0-9]{' . self::SECRET_KEY_LENGTH . '}/i', $tempKey)
 			AND is_integer($time)
 			AND abs(time() - $time) <= self::PROCESS_LIFETIME
 		);
 	}
+	
 	
 	/**	 
 	 * Get System Token from base64 parameter.
@@ -534,171 +372,28 @@ abstract class RublonConsumerRegistrationTemplate {
 	 * @return bool If the sign is valid return true the false
 	 * @throws RublonException
 	 */
-	private function _getSystemTokenFromBase64($data) {
+	protected function parseSystemToken($data) {
 		$body = RublonSignatureWrapper::parseMessage(base64_decode(urldecode($data)), $this->getTempKey());								
-		return $body['systemToken'];
+		return $body[self::FIELD_SYSTEM_TOKEN];
 	}
 	
 	
-	/**
-	 * Get error name by the exception code.
-	 * 
-	 * @param int $code
-	 * @return string
-	 */
-	private function _getErrorName($code) {
-		$errorCode = 'ERROR_CODE: RUBLON_EXCEPTION_';
-		switch ($code) {
-			case RublonException::CODE_CURL_NOT_AVAILABLE:
-				$errorCode .= 'CODE_CURL_NOT_AVAILABLE';
-				break;
-			case RublonException::CODE_INVALID_RESPONSE:
-				$errorCode .= 'CODE_INVALID_RESPONSE';
-				break;
-			case RublonException::CODE_RESPONSE_ERROR:
-				$errorCode .= 'CODE_RESPONSE_ERROR';
-				break;
-			case RublonException::CODE_CURL_ERROR:
-				$errorCode .= 'CODE_CURL_ERROR';
-				break;
-			case RublonException::CODE_CONNECTION_ERROR:
-				$errorCode .= 'CODE_CONNECTION_ERROR';
-				break;
-			default:
-				$errorCode .= 'OTHER_REQUEST_ERROR';
-		}
-		return $errorCode;
-	}
-	
-	
-	
-	
-	
-	
-	
-	// --------------------------------------------------------------------------------------------------
-	// Abstract methods necessary to implement
-	
-
-
 	/**
 	 * Check if current user is authorized to perform registration of the Rublon module.
 	 *
 	 * Check whether user authenticated in current session
 	 * can perform administrative operations
 	 * such as registering the Rublon module.
-	 *
-	 * @return bool
-	 * @abstract
 	 */
-	abstract protected function isUserAuthorized();
+	protected function canUserActivate() {
+		return $this->getRublon()->canUserActivate();
+	}
 	
 	
-	/**
-	 * Get current system token from local storage.
-	 * 
-	 * Returns local-stored system token or NULL if empty.
-	 * Note that parameter must be available for different browsers
-	 * and IPs so cannot be stored in browser sesssion,
-	 * but in database or configuration file.
-	 * 
-	 * @return string
-	 * @abstract
-	 */
-	abstract protected function getSystemToken();
 	
-	
+	// --------------------------------------------------------------------------------------------------
+	// Abstract methods necessary to implement
 
-	/**
-	 * Save system token to the local storage.
-	 *
-	 * Save given system token into local storage.
-	 * Note that parameter must be available for different browsers
-	 * and IPs so cannot be stored in browser sesssion,
-	 * but in database or configuration file.
-	 *
-	 * Returns true/false on success/failure.
-	 *
-	 * @param string $systemToken
-	 * @return bool
-	 * @abstract
-	 */
-	abstract protected function saveSystemToken($systemToken);
-	
-
-	/**
-	 * Get current secret key from local storage.
-	 * 
-	 * Return local-stored secret key or NULL if empty.
-	 * Note that parameter must be available for different browsers
-	 * and IPs so cannot be stored in browser sesssion,
-	 * but in database or configuration file.
-	 * 
-	 * @return string
-	 * @abstract
-	 */
-	abstract protected function getSecretKey();
-	
-	/**
-	 * Save secret key to the local storage.
-	 *
-	 * Save given secret key into local storage.
-	 * Note that parameter must be available for different browsers
-	 * and IPs so cannot be stored in browser sesssion,
-	 * but in database or configuration file.
-	 *
-	 * Returns true/false on success/failure.
-	 *
-	 * @param string $systemToken
-	 * @return bool
-	 * @abstract
-	*/
-	abstract protected function saveSecretKey($secretKey);
-	
-	/**
-	 * Handle profileId of the user registering the consumer.
-	 * 
-	 * If the user's profileId was received along with the secretKey,
-	 * handle it accordingly
-	 * (e.g. secure the registering user's account if necessary).
-	 *  
-	 * @param int $profileId
-	 * @abstract
-	 */
-	abstract protected function handleProfileId($profileId);
-
-	/**
-	 * Get temporary key from local storage.
-	 * 
-	 * Returns local-stored temporary key or NULL if empty.
-	 * Temporary key is used to sign communication with API
-	 * instead of secret key which is not given.
-	 * Note that parameter must be available for different browsers
-	 * and IPs so cannot be stored in browser sesssion,
-	 * but in database or configuration file.
-	 * 
-	 * @return string
-	 */
-	abstract protected function getTempKey();
-	
-	/**
-	 * Save temporary key to the local storage.
-	 *
-	 * Save given temporary key into local storage.
-	 * Temporary key is used to sign communication with API
-	 * instead of secret key which is not given.
-	 * Note that parameter must be available for different browsers
-	 * and IPs so cannot be stored in browser sesssion,
-	 * but in database or configuration file.
-	 *
-	 * Returns true/false on success/failure.
-	 *
-	 * @param string $systemToken
-	 * @return bool
-	 * @abstract
-	*/
-	abstract protected function saveTempKey($tempKey);
-	
 	
 	/**
 	 * Save initial parameters to the local storage.
@@ -747,53 +442,10 @@ abstract class RublonConsumerRegistrationTemplate {
 	 */
 	abstract protected function getCommunicationUrl();
 	
-	
-	/**
-	 * Get project's public webroot URL address.
-	 * 
-	 * Returns the main project URL address needful
-	 * for registration consumer in API.
-	 * 
-	 * @return string
-	 * @abstract
-	 */
-	abstract protected function getProjectUrl();
-	
-	/**
-	 * Get the callback URL of this Rublon module.
-	 * 
-	 * Returns public URL address of the Rublon consumer's callback script.
-	 * API server calls the callback URL after valid authentication.
-	 * The callback URL is needful for registration consumer in API.
-	 * 
-	 * @return string
-	 * @abstract
-	 */
-	abstract protected function getCallbackUrl();
-	
-	
-	/**
-	 * Get name of the project.
-	 *
-	 * Returns name of the project that will be set in Rublon Developers Dashboard.
-	 *
-	 * @return string
-	 */
-	abstract protected function getProjectName();
-	
-	
-	
-	/**
-	 * Get project's technology.
-	 *
-	 * Returns technology, module or library name to set in project.
-	 *
-	 * @return string
-	*/
-	abstract protected function getProjectTechnology();
-	
-
 
 }
 
 
+class RublonConsumerException extends RublonException {}
+class InvalidProcess_RublonConsumerException extends RublonConsumerException {}
+class UserUnauthorized_RublonConsumerException extends RublonConsumerException {}
