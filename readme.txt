@@ -43,7 +43,6 @@ Nothing! Install it now to get one year for free. If you want to white-label it 
 3. Go to "Plugins" -> "Add New", type "Rublon" in the search box and press the "Search Plugins" button.
 4. Click the "Install Now" link next to the Rublon plugin in the search results and confirm the installation.
 5. Click on "Activate Plugin".
-7. Click the "Protect your account" button and scan the QR code that will appear, using the Rublon mobile app on your smartphone. Now all your users will also be able to protect their accounts, if they wish to do so.
  
 = Server requirements =
 - PHP version 5.2.17 or greater
