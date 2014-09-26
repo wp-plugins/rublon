@@ -461,12 +461,8 @@ class RublonHelper {
 		try {
 			$callback = new Rublon2FactorCallback(self::getRublon());
 			$callback->call(
-					function($wp_user_id, $callback) {
-						RublonHelper::confirmationSuccess($wp_user_id, $callback);
-					},
-					function($callback) {
-						RublonHelper::confirmationFailure($callback);
-					}
+				'RublonHelper::confirmationSuccess',
+				'RublonHelper::confirmationFailure'
 			);
 		} catch (RublonException $e) {
 			self::_handleConfirmationException($e);
@@ -483,18 +479,12 @@ class RublonHelper {
 			if ($user) {
 				if (RublonAPICredentials::CONFIRM_RESULT_YES == $callback->getCredentials()->getConfirmResult()) {
 					$consumerParams = $callback->getCredentials()->getResponse();
-// 					if (!empty($consumerParams['result']) && !empty($consumerParams['result'][self::TOKEN_PROFILE_UPDATE_NAME])) {
-						
-// 						$rublonPUToken = $consumerParams['result'][self::TOKEN_PROFILE_UPDATE_NAME];
-						$rublonPUToken = self::_generateToken();
-						$post = self::_retrievePUForm($wp_user_id);
-						$post[self::TOKEN_PROFILE_UPDATE_NAME] = $rublonPUToken;
-						self::_storePUForm($wp_user_id, $post);
-						self::_storePUToken($wp_user_id, $rublonPUToken);
-						self::_reloadParentFrameOnSuccess(true);
-// 					} else {
-// 						self::_abortConfirmation('MALFORMED_FORM_DATA', true);
-// 					}
+					$rublonPUToken = self::_generateToken();
+					$post = self::_retrievePUForm($wp_user_id);
+					$post[self::TOKEN_PROFILE_UPDATE_NAME] = $rublonPUToken;
+					self::_storePUForm($wp_user_id, $post);
+					self::_storePUToken($wp_user_id, $rublonPUToken);
+					self::_reloadParentFrameOnSuccess(true);
 				} else {
 					self::_cancelConfirmation();
 				}
@@ -566,12 +556,8 @@ class RublonHelper {
 		try {
 			$callback = new Rublon2FactorCallback(self::getRublon());
 			$callback->call(
-				function($wp_user_id, $callback) {
-					RublonHelper::callbackSuccess($wp_user_id, $callback);
-				},
-				function($callback) {
-					RublonHelper::callbackFailure($callback);
-				}
+				'RublonHelper::callbackSuccess',
+				'RublonHelper::callbackFailure'
 			);
 		} catch (RublonException $e) {
 			self::_handleCallbackException($e);
