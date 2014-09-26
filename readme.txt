@@ -88,7 +88,7 @@ After a successful installation, the plugin can be updated automatically in the 
 * Improved compatibility with PHP version 5.2.17 and higher
 * Minor text changes
 
-= 2.0 =
+= 2.0.0 =
 * Email-based two-step login for all users turned on by default (no mobile app required)
 * Changing your email address or password requires your confirmation (via email or mobile app)
 * Trusted devices now manageable via Rublon settings page
@@ -185,5 +185,5 @@ After a successful installation, the plugin can be updated automatically in the 
 = 1.0.1 =
 * Updated texts and translations
 
-= 1.0 =
+= 1.0.0 =
 * Rublon for WordPress: Automatic Two-Factor Authentication
