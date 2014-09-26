@@ -3,7 +3,7 @@ Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification, Zwei-Faktor-Authentifizierung, dwuskładnikowe uwierzytelnianie, dwuskładnikowe logowanie, logowanie, uwierzytelnianie
 Requires at least: 3.3.x
 Tested up to: 4.0
-Stable tag: 2.0
+Stable tag: 1.3.0
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
@@ -83,14 +83,7 @@ Web systems with a lot of users [pay us](https://developers.rublon.com/98/Pricin
 
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
-== Changelog ==
-
-= 2.0 =
-* Email-based two-step login for all users turned on by default (no mobile app required)
-* Changing your email address or password requires your confirmation (via email or mobile app)
-* Trusted devices now manageable via Rublon settings page
-* Administrators can enforce a default protection type (email or mobile app) for specific user roles
-* Automated plugin configuration — just activate the plugin to turn on the protection  
+== Changelog ==  
 
 = 1.3.0 =
 * Minor text changes
