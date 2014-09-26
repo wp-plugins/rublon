@@ -325,7 +325,16 @@ add_action('show_user_profile', 'rublon2factor_show_user_profile');
 
 function rublon2factor_user_profile_update_errors(&$errors, $update, &$user) {
 
-	if (empty($errors->errors) && $update) {
+	global $pagenow;
+
+	$current_user = wp_get_current_user();
+	$current_user_id = RublonHelper::getUserId($current_user);
+	$updated_user_id = (!empty($user->ID)) ? $user->ID : $user->Id;
+
+	if ($pagenow == 'profile.php'
+			&& $current_user_id == $updated_user_id
+			&& empty($errors->errors)
+			&& $update) {
 		if (!empty($_POST)) {
 			$post = $_POST;
 			RublonHelper::checkPostDataProfileUpdate($post);

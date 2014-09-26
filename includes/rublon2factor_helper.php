@@ -461,12 +461,8 @@ class RublonHelper {
 		try {
 			$callback = new Rublon2FactorCallback(self::getRublon());
 			$callback->call(
-					function($wp_user_id, $callback) {
-						RublonHelper::confirmationSuccess($wp_user_id, $callback);
-					},
-					function($callback) {
-						RublonHelper::confirmationFailure($callback);
-					}
+				'RublonHelper::confirmationSuccess',
+				'RublonHelper::confirmationFailure'
 			);
 		} catch (RublonException $e) {
 			self::_handleConfirmationException($e);
@@ -483,18 +479,12 @@ class RublonHelper {
 			if ($user) {
 				if (RublonAPICredentials::CONFIRM_RESULT_YES == $callback->getCredentials()->getConfirmResult()) {
 					$consumerParams = $callback->getCredentials()->getResponse();
-// 					if (!empty($consumerParams['result']) && !empty($consumerParams['result'][self::TOKEN_PROFILE_UPDATE_NAME])) {
-						
-// 						$rublonPUToken = $consumerParams['result'][self::TOKEN_PROFILE_UPDATE_NAME];
-						$rublonPUToken = self::_generateToken();
-						$post = self::_retrievePUForm($wp_user_id);
-						$post[self::TOKEN_PROFILE_UPDATE_NAME] = $rublonPUToken;
-						self::_storePUForm($wp_user_id, $post);
-						self::_storePUToken($wp_user_id, $rublonPUToken);
-						self::_reloadParentFrameOnSuccess(true);
-// 					} else {
-// 						self::_abortConfirmation('MALFORMED_FORM_DATA', true);
-// 					}
+					$rublonPUToken = self::_generateToken();
+					$post = self::_retrievePUForm($wp_user_id);
+					$post[self::TOKEN_PROFILE_UPDATE_NAME] = $rublonPUToken;
+					self::_storePUForm($wp_user_id, $post);
+					self::_storePUToken($wp_user_id, $rublonPUToken);
+					self::_reloadParentFrameOnSuccess(true);
 				} else {
 					self::_cancelConfirmation();
 				}
@@ -566,12 +556,8 @@ class RublonHelper {
 		try {
 			$callback = new Rublon2FactorCallback(self::getRublon());
 			$callback->call(
-				function($wp_user_id, $callback) {
-					RublonHelper::callbackSuccess($wp_user_id, $callback);
-				},
-				function($callback) {
-					RublonHelper::callbackFailure($callback);
-				}
+				'RublonHelper::callbackSuccess',
+				'RublonHelper::callbackFailure'
 			);
 		} catch (RublonException $e) {
 			self::_handleCallbackException($e);
@@ -848,7 +834,7 @@ class RublonHelper {
 						$no_code = true;
 						$errorMessage = __('The authentication process has been halted.', 'rublon') . ' ' . __('This site\'s administrator requires that you protect your account with the Rublon mobile app.', 'rublon')
 						. '<br /><br />' . __('Rublon protects your account against intruders who found out your password or hijacked your session.', 'rublon')
-						. '<br /><br />' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon');
+						. '<br /><br />' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon');
 						$errorMessage = str_replace('target="_blank"', 'target="_blank" class="rublon-link"', $errorMessage);
 						break;
 					case 'CR_SYSTEM_TOKEN_INVALID_RESPONSE_TIMESTAMP':
@@ -859,7 +845,7 @@ class RublonHelper {
 						break;
 					case 'TC_MOBILE_APP_REQUIRED':
 						$errorMessage = __('The authentication process has been halted.', 'rublon') . ' ' . __('This site\'s administrator requires you to confirm this operation using the Rublon mobile app.', 'rublon')
-						. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon');
+						. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon');
 						break;
 				}
 				$result[] = array('message' => $errorMessage, 'type' => $msgType);

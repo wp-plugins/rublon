@@ -136,9 +136,9 @@ function rublon2factor_render_protection_types() {
 
 	global $wp_roles;
 
-	echo '<p class="rublon-settings-desc">' . __('Every user is protected via email by default. You can turn this off for selected roles. For better security, you can also require selected roles to use the Rublon mobile app for higher security.', 'rublon') . '</p>';
+	echo '<p class="rublon-settings-desc">' . __('Every user is protected via email by default. You can turn this off for selected roles. For more security, you can also require selected roles to use the Rublon mobile app.', 'rublon') . '</p>';
 	echo '<p class="rublon-settings-desc"><strong>' . __('Notice:', 'rublon') . ' </strong>' 
-	. __('Users of the Rublon mobile app are always protected, regardless of this setting. Users without default protection can turn it on themselves. Users with default protection cannot turn it off.', 'rublon') . '</p>';
+		. __('Users of the Rublon mobile app are always protected, regardless of this setting. Users without default protection can turn it on themselves in their profile. Users with default protection cannot turn it off.', 'rublon') . '</p>';
 
 	$settings = RublonHelper::getSettings('additional');
 	// Retrieve the roles used on this site.
@@ -146,7 +146,7 @@ function rublon2factor_render_protection_types() {
 	$role_ids = array();
 	echo '<div class="rublon-settings-setting-name">';
 	echo '  <div class="rublon-settings-setting-label"></div>';
-	echo '  <div class="rublon-setting-header"><strong>' . __('Default protection', 'rublon') . '</strong></div>';
+	echo '  <div class="rublon-setting-header"><strong>' . __('Default Protection Level', 'rublon') . '</strong></div>';
 	echo '</div>';
 	foreach ($roles as $role) {
 		$checked = '';
@@ -263,7 +263,7 @@ function rublon2factor_create_settings_page() {
 			
 			echo '<p>'
  			. __('Rublon protects your account against intruders who found out your password or hijacked your session.', 'rublon')
- 			. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon')
+ 			. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon')
 			. '</p>';
 
 			if ((!RublonHelper::isPluginRegistered() && current_user_can('manage_options')) || RublonHelper::isPluginRegistered()) {
@@ -283,7 +283,14 @@ function rublon2factor_create_settings_page() {
 		<tbody>
 			<tr>
 				<th scope="row"><?php _e('Security', 'rublon'); ?>
-				<td><p class="rublon-settings-desc"><?php printf(__('Your user role currently does not possess any type of default protection. If you wish to manually enable your account to use protection via email, go to your <a href="%s">profile page</a>.', 'rublon'), admin_url('profile.php#rublon-email2fa')); ?></td>
+				<td><p class="rublon-settings-desc">
+				<?php
+				$lang = substr(RublonHelper::getBlogLanguage(), 0, 2);
+				printf(
+					__('<span style="color: red">Warning!</span> Your account is not protected by <a href="%s" target="_blank">Rublon</a>. Please go to <a href="%s">your profile page</a> to turn it on.', 'rublon'),
+					'https://rublon.com' . (($lang != 'en') ? ('/' . $lang) : ''),
+					admin_url('profile.php#rublon-email2fa')
+				); ?></td>
 			</tr>
 		</tbody>
 	</table><?php
@@ -298,7 +305,7 @@ function rublon2factor_create_settings_page() {
 					. '</div>';
 				echo '<div class="rublon-button-header">'
 					. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon')
-					. ' ' . __('Learn more at <a href="http://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon') . '</div>';
+					. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon') . '</div>';
 				echo '<div class="rublon-clear"></div>';
 			}
 
@@ -413,8 +420,8 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 		|| in_array(RublonHelper::PROTECTION_TYPE_EMAIL, $protectionType)
 		|| in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protectionType)) {
 			$lang = RublonHelper::getBlogLanguage();
-			$value = '<a href="http://rublon.com'
-				. ($lang != 'en' ? '/' . $lang . '/' : '')
+			$value = '<a href="https://rublon.com'
+				. ($lang != 'en' ? '/' . $lang : '')
 				. '" target="_blank"><img style="margin-top: 1px" src="'
 				. RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32_new.png'
 				. '" title="' . __('Account protected by Rublon', 'rublon')
@@ -515,7 +522,7 @@ function rublon2factor_modify_login_form() {
 		$lang = 'en';
 	}
 	$rublonSealUrl = 'https://rublon.com/img/rublon_seal_' . $lang . '.png';
-	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="http://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon') . '">'
+	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="https://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon') . '">'
 		. '<img class="rublon-seal-image" src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon') . '" /></a></div></div>';
 	echo '<script>//<![CDATA[
 		if (RublonWP) {

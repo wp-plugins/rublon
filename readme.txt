@@ -83,7 +83,18 @@ Web systems with a lot of users [pay us](https://developers.rublon.com/98/Pricin
 
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
-== Changelog ==  
+== Changelog ==
+
+= 2.0.1 =
+* Improved compatibility with PHP version 5.2.17 and higher
+* Minor text changes
+
+= 2.0 =
+* Email-based two-step login for all users turned on by default (no mobile app required)
+* Changing your email address or password requires your confirmation (via email or mobile app)
+* Trusted devices now manageable via Rublon settings page
+* Administrators can enforce a default protection type (email or mobile app) for specific user roles
+* Automated plugin configuration — just activate the plugin to turn on the protection  
 
 = 1.3.0 =
 * Minor text changes
