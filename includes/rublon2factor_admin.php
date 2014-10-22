@@ -55,18 +55,26 @@ function rublon2factor_admin_css() {
 
 }
 
+add_action('admin_print_styles', 'rublon2factor_admin_css');
+
 /**
  * Create Rublon page in the menu
  */
-function rublon2factor_add_settings_page() {
+function rublon2factor_add_menu_entries() {
 
-	$title = __('Rublon', 'rublon');
-	$settings_page = add_utility_page($title, $title, 'read', 'rublon' , 'rublon2factor_create_settings_page', 'div');
-	add_action('admin_print_styles', 'rublon2factor_admin_css');
+	$main_title = __('Rublon', 'rublon');
+	$general_title = __('General settings', 'rublon');
+	$acm_title = __('Access Control', 'rublon');
+	$settings_page = add_utility_page($main_title, $main_title, 'read', 'rublon' , 'rublon2factor_render_settings_page', 'div');
+	add_submenu_page('rublon', 'Rublon: ' . $general_title, $general_title, 'read', 'rublon', 'rublon2factor_render_settings_page');
+	$current_user = wp_get_current_user();
+	if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
+		add_submenu_page('rublon', 'Rublon: ' . $acm_title, $acm_title, 'read', 'rublon_acm', 'rublon2factor_render_acm_page');
+	}
 
 }
 
-add_action('admin_menu', 'rublon2factor_add_settings_page');
+add_action('admin_menu', 'rublon2factor_add_menu_entries');
 
 /**
  * Add plugin JS to the administrator pages 
@@ -79,9 +87,7 @@ function rublon2factor_admin_scripts() {
 
 	$currentPluginVersion = RublonHelper::getCurrentPluginVersion();
 	
-	if ($pagenow == 'profile.php' || (!empty($screen->base) && $screen->base == 'toplevel_page_rublon')) {
-		wp_enqueue_script('rublon2factor_admin_js', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress-admin.js', false, $currentPluginVersion);
-	}
+	wp_enqueue_script('rublon2factor_admin_js', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress-admin.js', false, $currentPluginVersion);
 	
 
 }
@@ -94,15 +100,19 @@ add_action('admin_enqueue_scripts', 'rublon2factor_admin_scripts');
  */
 function rublon2factor_register_settings() {
 
+	RublonHelper::checkIfUserPermitted();
+
 	// register additional settings
 	register_setting('rublon2factor_additional_settings_group', RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
 	add_settings_section('rublon2factor-additional-settings', __('Settings', 'rublon'), 'rublon2factor_render_additional_settings', 'rublon');
 	add_settings_field('rublon2factor_protection_types', __('Protection', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');
 	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-additional-settings');
 
-	if (!RublonHelper::isPluginRegistered()) {
+	if (!RublonHelper::isSiteRegistered()) {
 		RublonHelper::newNonce();
 	}
+
+	do_action('rublon_admin_init');
 
 }
 
@@ -111,15 +121,6 @@ add_action('admin_init', 'rublon2factor_register_settings');
 function rublon2factor_render_additional_settings() {
 
 	echo '';
-
-}
-
-function rublon2factor_render_security() {
-
-
-	echo '<p class="rublon-settings-desc">'
-	. sprintf(__('Your user role currently does not possess any type of default protection. If you wish to manually enable your account to use protection via email, go to your <a href="%s">profile page</a>.', 'rublon'), admin_url('profile.php#rublon-email2fa'))
-	. '</p>';		
 
 }
 
@@ -198,12 +199,12 @@ function rublon2factor_render_protection_types() {
 		echo '</label>';
 		echo '</div>';
 	}
- 	echo '<script>
+ 	echo '<script>//<![CDATA[
 		if (RublonWP) {
 			RublonWP.roles = [' . implode(', ', $role_ids) . '];
 			RublonWP.setUpRoleProtectionTypeChangeListener();  
 		}
-	</script>';
+	//]]></script>';
 
 }
 
@@ -235,23 +236,22 @@ function rublon2factor_render_disable_xmlrpc() {
 	echo '	<div class="rublon-lock-container rublon-unlocked-container rublon-xmlrpc-unlocked ' . $onVisible . '"><img class="rublon-lock rublon-unlocked" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/unlocked.png" /></div>';
 	echo '	<div class="rublon-lock-container rublon-locked-container rublon-xmlrpc-locked ' . $offVisible . '"><img class="rublon-lock rublon-locked" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/locked.png" /></div>';
 	echo '</label>';
-	echo '<script>
+	echo '<script>//<![CDATA[
 		if (RublonWP) {
 			RublonWP.setUpXMLRPCChangeListener();
 		}
-	</script>';
+	//]]></script>';
 
 }
-
 
 /**
  * Display the Rublon page
  * 
  */
-function rublon2factor_create_settings_page() {
+function rublon2factor_render_settings_page() {
 	?>
 <div class="wrap">
-	<div id="rublon2factor_page" class="rublon2factor_settings">
+	<div id="rublon2factor_page">
 		<h2 class="rublon-header">
 			<?php _e('Rublon', 'rublon'); ?>
 		</h2>
@@ -260,56 +260,35 @@ function rublon2factor_create_settings_page() {
 
 			// necessary, otherwise "updated" messages won't be visible
 			settings_errors();
-			
+
+			// Header text
 			echo '<p>'
- 			. __('Rublon protects your account against intruders who found out your password or hijacked your session.', 'rublon')
- 			. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon')
-			. '</p>';
+				. __('Rublon protects against intruders who found out your password.', 'rublon')
+				. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">www.rublon.com</a>.', 'rublon'), RublonHelper::rubloncomUrl())
+				. '</p>';
 
-			if ((!RublonHelper::isPluginRegistered() && current_user_can('manage_options')) || RublonHelper::isPluginRegistered()) {
-				$current_user = wp_get_current_user();
-				if ($current_user && $current_user instanceof WP_User) {
-					if (RublonHelper::isUserAuthenticated($current_user)) {
-						echo new Rublon2FactorGUIWordPress(
-							RublonHelper::getRublon(),
-							RublonHelper::getUserId($current_user),
-							RublonHelper::getUserEmail($current_user)
-						);
-					}
-					$roleProtectionType = RublonHelper::roleProtectionType($current_user);
-						if ($roleProtectionType == RublonHelper::PROTECTION_TYPE_NONE) {
-							?>
-	<table class="form-table">
-		<tbody>
-			<tr>
-				<th scope="row"><?php _e('Security', 'rublon'); ?>
-				<td><p class="rublon-settings-desc">
-				<?php
-				$lang = substr(RublonHelper::getBlogLanguage(), 0, 2);
-				printf(
-					__('<span style="color: red">Warning!</span> Your account is not protected by <a href="%s" target="_blank">Rublon</a>. Please go to <a href="%s">your profile page</a> to turn it on.', 'rublon'),
-					'https://rublon.com' . (($lang != 'en') ? ('/' . $lang) : ''),
-					admin_url('profile.php#rublon-email2fa')
-				); ?></td>
-			</tr>
-		</tbody>
-	</table><?php
-						}
+			// Consumer script
+			$current_user = wp_get_current_user();
+			$gui = new Rublon2FactorGUIWordPress(
+				RublonHelper::getRublon(),
+				RublonHelper::getUserId($current_user),
+				RublonHelper::getUserEmail($current_user)
+			);
+			$gui->addConsumerScript();
+			
+			if (RublonHelper::isSiteRegistered()) {
+
+				// No protection warning
+				if (!RublonHelper::isUserProtected($current_user) && is_user_member_of_blog()) {
+					printf(
+						'<span style="color: red; font-weight: bold;">' . __('Warning!', 'rublon') . '</span>'
+							. ' ' . __('Your account is not protected. Go to <a href="%s">your profile page</a> to enable account protection.', 'rublon'),
+						admin_url(RublonHelper::WP_PROFILE_PAGE . RublonHelper::WP_PROFILE_EMAIL2FA_SECTION)
+					);
 				}
-			} else {
-				$admin_email = get_option('admin_email');
-				$admin_url = admin_url(RublonHelper::RUBLON_PAGE);
-				echo '<div class="updated rublon-activation-mere-user">'
-					. __('Rublon will be available to you once your administrator protects his account.', 'rublon')
-					. ' <strong>' . __('Contact your administrator', 'rublon') . ':' . ' <a href="mailto:' . $admin_email . '?subject=' . __('Protect your account with Rublon', 'rublon') . '&body=' . sprintf(__('Hey, could you please protect your account with Rublon on %s? I want to protect my account, but I won\'t be able to do this until an administrator will.', 'rublon'), $admin_url) . '">' . $admin_email . '</a></strong>'
-					. '</div>';
-				echo '<div class="rublon-button-header">'
-					. __('Since your account is protected by a password only, it can be accessed from any device in the world. Rublon protects your account from sign ins from unknown devices, even if your password gets stolen.', 'rublon')
-					. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon') . '</div>';
-				echo '<div class="rublon-clear"></div>';
-			}
 
-			if (current_user_can('manage_options')): // START_BLOCK: Is user authorized to manage plugins? ?>
+				// Rublon settings
+				if (current_user_can('manage_options')): // START_BLOCK: Is user authorized to manage plugins? ?>
 
 				<form method="post" action="options.php" id="rublon-plugin-additional-settings">
 				<?php
@@ -317,15 +296,58 @@ function rublon2factor_create_settings_page() {
 					settings_fields('rublon2factor_additional_settings_group');
 					do_settings_sections('rublon');
 					submit_button();
+					echo '<script>//<![CDATA[
+						document.addEventListener(\'DOMContentLoaded\', function() {
+ 							if (RublonWP) {
+								RublonWP.setUpFormSubmitListener("rublon-plugin-additional-settings", "rublon-confirmation-form");
+ 							}
+ 							if (RublonSDK) {
+ 								RublonSDK.initConfirmationForms();
+ 							}
+						}, false);
+					//]]></script>';
+
 
 				?>
 				</form>
 			<?php
 
-			endif; // END_BLOCK: Is user authorized to manage plugins? ?>
+				endif; // END_BLOCK: Is user authorized to manage plugins?
+
+			} ?>
 	</div>
 </div>
 <?php 
+}
+
+function rublon2factor_render_acm_page() {
+
+	?>
+<div class="wrap">
+	<div id="rublon2factor_acm_page">
+		<h2 class="rublon-header">
+			<?php echo __('Rublon', 'rublon') . ' - ' . __('Access Control Manager', 'rublon'); ?>
+		</h2>
+		<p>
+			<?php echo __('Rublon protects against intruders who found out your password.', 'rublon') . ' '
+ 				. sprintf(__('Learn more at <a href="%s" target="_blank">www.rublon.com</a>.', 'rublon'), RublonHelper::rubloncomUrl()) ?>
+		</p>
+		<?php
+			// ACM widget
+			$current_user = wp_get_current_user();
+			if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
+				$current_user = wp_get_current_user();
+				$gui = new Rublon2FactorGUIWordPress(
+					RublonHelper::getRublon(),
+					RublonHelper::getUserId($current_user),
+					RublonHelper::getUserEmail($current_user)
+				);
+				echo $gui->getDashboardACMWidget(true);
+			}
+		?>
+	</div>
+</div>
+<?php
 }
 
 /**
@@ -385,14 +407,18 @@ add_action('admin_notices', 'rublon2factor_add_update_message');
  */
 function rublon2factor_add_userlist_columns($columns) {
 
-	$new_columns = array();
-	foreach ($columns as $k => $v) {
-		$new_columns[$k] = $v;
-		if ($k == 'username') {
-			$new_columns['rublon2factor_status'] = __('Rublon', 'rublon');
+	if (RublonHelper::isSiteRegistered()) {
+		$new_columns = array();
+		foreach ($columns as $k => $v) {
+			$new_columns[$k] = $v;
+			if ($k == 'username') {
+				$new_columns['rublon2factor_status'] = __('Rublon', 'rublon');
+			}
 		}
+		return $new_columns;
+	} else {
+		return $columns;
 	}
-	return $new_columns;
 
 }
 
@@ -408,27 +434,33 @@ add_filter('manage_users_columns', 'rublon2factor_add_userlist_columns');
  */
 function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 
-	// Retrieve Rublon users from prerender data.
-	$rublon_users = RublonHelper::getPrerenderData(RublonHelper::PRERENDER_USERS);
-	if ($column_name == 'rublon2factor_status') {
-		$user = get_user_by('id', $user_id);
-		$protectionType = array(
-			RublonHelper::roleProtectionType($user),
-			RublonHelper::userProtectionType($user)
+	if (RublonHelper::isSiteRegistered()) {
+		// Retrieve Rublon users from prerender data.
+		$rublon_mobile_users = RublonHelper::getPrerenderData(
+			RublonHelper::PRERENDER_KEY_MOBILE_USERS
 		);
-		if ((!empty($rublon_users) && !empty($rublon_users[$user_id]))
-		|| in_array(RublonHelper::PROTECTION_TYPE_EMAIL, $protectionType)
-		|| in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protectionType)) {
-			$lang = RublonHelper::getBlogLanguage();
-			$value = '<a href="https://rublon.com'
-				. ($lang != 'en' ? '/' . $lang : '')
-				. '" target="_blank"><img style="margin-top: 1px" src="'
-				. RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32_new.png'
-				. '" title="' . __('Account protected by Rublon', 'rublon')
-				. '" /></a>';
+		if ($column_name == 'rublon2factor_status') {
+			$user = get_user_by('id', $user_id);
+			$protectionType = array(
+				RublonHelper::roleProtectionType($user),
+				RublonHelper::userProtectionType($user)
+			);
+			if (
+				(!empty($rublon_mobile_users)
+					&& !empty($rublon_mobile_users[$user_id])
+					&& $rublon_mobile_users[$user_id] == RublonHelper::YES)
+				|| in_array(RublonHelper::PROTECTION_TYPE_EMAIL, $protectionType)
+				|| in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protectionType)) {
+				$lang = RublonHelper::getBlogLanguage();
+				$value = sprintf('<a href="%s"', RublonHelper::rubloncomUrl())
+					. ' target="_blank"><img class="rublon-protected rublon-image" src="'
+					. RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon_logo_32x32.png'
+					. '" title="' . __('Account protected by Rublon', 'rublon')
+					. '" /></a>';
+			}
 		}
+		return $value;
 	}
-	return $value;
 
 }
 
@@ -442,12 +474,12 @@ function rublon2factor_modify_admin_toolbar() {
 
 	global $wp_admin_bar;
 	$current_user = wp_get_current_user();
-	
-	if (RublonHelper::isPluginRegistered() && RublonHelper::isUserAuthenticated($current_user)) {
+
+	if (RublonHelper::isSiteRegistered() && RublonHelper::isUserAuthenticated($current_user)) {
 
 		// add a Rublon icon to the my-account node
 		$my_account = $wp_admin_bar->get_node('my-account');
-		$my_account->title = $my_account->title . '<img id="rublon-toolbar-logo" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/R_32x32_new.png' . '" />';
+		$my_account->title = $my_account->title . '<img id="rublon-toolbar-logo" class="rublon-image" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon_logo_32x32.png' . '" />';
  		$wp_admin_bar->remove_node('my-account');
  		$wp_admin_bar->add_node($my_account);
 
@@ -465,7 +497,7 @@ function rublon2factor_modify_admin_toolbar() {
  		$wp_admin_bar->add_node(array(
  				'id' => 'rublon',
  				'title' => __('Protected by Rublon', 'rublon'),
- 				'href' => admin_url(RublonHelper::RUBLON_PAGE),
+ 				'href' => admin_url(RublonHelper::WP_RUBLON_PAGE),
  				'parent' => 'user-actions',
  		
  		));
@@ -517,13 +549,10 @@ add_action('login_enqueue_scripts', 'rublon2factor_add_frontend_files');
  */
 function rublon2factor_modify_login_form() {
 
-	$lang = substr(RublonHelper::getBlogLanguage(), 0, 2);
-	if (!in_array($lang, array('en', 'pl', 'de'))) {
-		$lang = 'en';
-	}
+	$lang = RublonHelper::getBlogLanguage();
 	$rublonSealUrl = 'https://rublon.com/img/rublon_seal_' . $lang . '.png';
-	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="https://rublon.com' . (($lang != 'en') ? ('/' . $lang . '/') : '') . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon') . '">'
-		. '<img class="rublon-seal-image" src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon') . '" /></a></div></div>';
+	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="' . RublonHelper::rubloncomUrl() . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon') . '">'
+		. '<img class="rublon-seal-image rublon-image" src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon') . '" /></a></div></div>';
 	echo '<script>//<![CDATA[
 		if (RublonWP) {
 			RublonWP.showSeal();

@@ -84,6 +84,12 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.0 =
+* Multisite support added
+* Default Protection Level downgrade now needs to be confirmed via Rublon
+* Trusted Devices can be managed through the WordPress Administration Dashboard
+* Updated visuals for display on iOS Retina devices
+
 = 2.0.1 =
 * Improved compatibility with PHP version 5.2.17 and higher
 * Minor text changes

@@ -3,15 +3,17 @@ var RublonWP = {
 	profileForm: null,
 	submitHandle: null,
 	roles: null,
+	roleProtectionLevels: null,
 	lang: null,
+	performedTasks: [],
 
-	findProfileForm: function() {
+	findForm: function(formId) {
 		var forms = document.getElementsByTagName('form');
 		if (forms) {
 			var foundForms = [];
 			for (var i = 0; i < forms.length; i++) {
 				// There should be only one profile form, but let's be safe.
-				if (forms[i].id && forms[i].id == 'your-profile') {
+				if (forms[i].id && forms[i].id == formId) {
 					foundForms.push(forms[i]);
 				}
 			}
@@ -24,160 +26,11 @@ var RublonWP = {
 		}
 	},
 
-	setUpFormSubmitListener: function() {
+	setUpFormSubmitListener: function(formId, className) {
 
-		var profileForm = this.findProfileForm();
-		if (profileForm) {
-			RublonWPTools.addClass(profileForm, 'rublon-confirmation-form');
-			this.profileForm = profileForm;
-/*			var _that = this;
-			this.submitHandle = function(event) {
-				_that.prepareRublonIframe();
-			}
-			profileForm.addEventListener('submit', this.submitHandle, false);*/
-		}
-
-	},
-
-	removeFormSubmitListener: function() {
-
-		if (this.profileForm) {
-			RublonWPTools.removeClass(this.profileForm, 'rublon-confirmation-form');
-//			this.profileForm.setAttribute('target', '');
-/*			if (this.submitHandle) {
-				this.profileForm.removeEventListener('submit', this.submitHandle, false);
-			}*/
-		}
-
-	},
-
-	prepareRublonIframe: function() {
-
-		if (this.profileForm) {
-
-			// Prepare the overlay and iframe
-			var overlay = this.setUpOverlay();
-			overlay.style.display = 'block';
-
-			var iframeObject = this.setUpIframe(overlay);
-			iframeObject.container.style.display = 'block';
-			iframeObject.iframe.contentDocument.body.className = 'rublon-busy-body';
-
-			var rublonBusyStylesTemplate = document.getElementById('rublon-busy-styles');
-			var rublonBusyStyles = rublonBusyStylesTemplate.cloneNode(true);
-			iframeObject.iframe.contentDocument.body.appendChild(rublonBusyStyles);
-
-			var rublonBusyWrapperTemplate = document.getElementById('rublon-busy-profile');
-			var rublonBusyWrapper = rublonBusyWrapperTemplate.cloneNode(true);
-			iframeObject.iframe.contentDocument.body.appendChild(rublonBusyWrapper);
-			rublonBusyWrapper.style.display = 'block';
-
-			var rublonBusyClose = document.getElementById('rublon-busy-iframe-close');
-			if (rublonBusyClose) {
-				rublonBusyClose.style.display = 'block';
-			}
-
-			// Prepare the iframe for changing style
-			// of a possible WordPress error page.
-			iframeObject.iframe.addEventListener('load', function() {
-				try {
-					if (iframeObject.iframe.contentDocument) {
-						var errorPage = iframeObject.iframe.contentDocument.getElementById('error-page');
-						if (errorPage && errorPage.style) {
-							errorPage.style.marginLeft = errorPage.style.marginRight = '20px';
-							errorPage.style.borderRadius = '6px';
-						}
-					}
-				} catch (e) {
-					// Nothing, just in case there's a CDP-violation.
-				}
-			});
-
-			// Change the form's target to the iframe
-			this.profileForm.setAttribute('target', 'rublon-busy-iframe');
-
-		}
-
-	},
-
-	setUpOverlay: function() {
-
-		var overlay = document.createElement('div');
-		overlay.id = 'rublon-busy-overlay';
-		document.body.appendChild(overlay);
-		return overlay;
-
-	},
-
-	setUpIframe: function() {
-
-		// iframe
-		var iframe = document.createElement('iframe');
-		iframe.id = 'rublon-busy-iframe';
-		iframe.name = 'rublon-busy-iframe';
-		iframe.setAttribute('scrolling', 'no');
-
-		// Container
-		var iframeContainer = document.createElement('div');
-		iframeContainer.appendChild(iframe);
-		iframeContainer.id = 'rublon-busy-iframe-container';
-		document.body.appendChild(iframeContainer);
-
-		// Close button
-		var iframeClose = document.createElement('div');
-		var iframeCloseText = this.lang.closeButton;
-		iframeClose.appendChild(document.createTextNode(iframeCloseText));
-		iframeClose.id = 'rublon-busy-iframe-close';
-		iframeClose.className = 'rublon-busy-iframe-close';
-		var _that = this;
-		iframeClose.addEventListener('click', function() {
-			_that.resetProcess();
-		}, false);
-		iframeContainer.appendChild(iframeClose);
-
-		return {
-			iframe: iframe,
-			container: iframeContainer
-		};
-
-	},
-
-	resetProcess: function() {
-
-		var iframe = document.getElementById('rublon-busy-iframe');
-		RublonWPTools.remove(iframe);
-		var iframeContainer = document.getElementById('rublon-busy-iframe-container');
-		RublonWPTools.remove(iframeContainer);
-		var overlay = document.getElementById('rublon-busy-overlay');
-		RublonWPTools.remove(overlay);
-		this.removeFormSubmitListener();
-		this.setUpFormSubmitListener();
-		
-
-	},
-
-	submitForm: function() {
-
-		if (this.profileForm) {
-			var submitButtons = this.profileForm.getElementsByClassName('rublon-profile-submit-button');
-			if (submitButtons && submitButtons.length) {
-				submitButtons[0].click();
-			} else {
-				var button = document.createElement('button');
-				button.setAttribute('name', 'RublonSubmitFormButton');
-				button.setAttribute('type', 'submit');
-				button.className = 'rublon-profile-submit-button';
-				button.style.display = 'none';
-				this.profileForm.appendChild(button);
-				var _that = this;
-				var waitForIt = setInterval(function() {
-					var submitButtons = _that.profileForm.getElementsByClassName('rublon-profile-submit-button');
-					if (submitButtons && submitButtons.length) {
-						clearInterval(waitForIt);
-						submitButtons[0].click();
-					}
-				}, 100);
-			}
+		var form = this.findForm(formId);
+		if (form) {
+			RublonWPTools.addClass(form, className);
 		}
 
 	},
@@ -188,23 +41,9 @@ var RublonWP = {
 
 	},
 
-	addPUToken: function(tokenValue) {
+	goToPage: function(url) {
 
-		if (this.profileForm) {
-			var tokenInputs = this.profileForm.getElementsByClassName('rublon-profile-update-token');
-			if (tokenInputs) {
-				for (var i = 0; i < tokenInputs.length; i++) {
-					tokenInputs[i].parentNode.removeChild(tokenInputs[i]);
-				}
-			}
-			var tokenInput = document.createElement('input');
-			tokenInput.setAttribute('type', 'hidden');
-			tokenInput.setAttribute('name', 'rublon_profile_update_token');
-			tokenInput.setAttribute('id', 'rublon_profile_update_token');
-			tokenInput.className = 'rublon-profile-update-token';
-			tokenInput.setAttribute('value', tokenValue);
-			this.profileForm.appendChild(tokenInput);
-		}
+		window.location.href = url;
 
 	},
 
@@ -303,34 +142,114 @@ var RublonWP = {
 
 	setUpUserProtectionTypeChangeListener: function() {
 
-		var userProtectionTypeSelect = document.getElementById('rublon-userprotectiontype-dropdown');
-		if (userProtectionTypeSelect) {
-			userProtectionTypeSelect.addEventListener('change', function(event) {
-				if (event.target.value) {
+		var userProtectionTypeCheckbox = document.getElementById('rublon-userprotectiontype-checkbox');
+		if (userProtectionTypeCheckbox) {
+			userProtectionTypeCheckbox.addEventListener('change', function(event) {
+				if (typeof event.target.checked != 'undefined') {
 					var locked = document.querySelector('label.rublon-label-userprotectiontype .rublon-locked-container.rublon-userprotectiontype-locked');
 					var unlocked = document.querySelector('label.rublon-label-userprotectiontype .rublon-unlocked-container.rublon-userprotectiontype-unlocked');
-					switch (event.target.value) {
-						case 'none': {
-							if (locked) {
-								RublonWPTools.hide(locked);
-							}
-							if (unlocked) {
-								RublonWPTools.show(unlocked);
-							}
-							break;
+					if (!event.target.checked) {
+						if (locked) {
+							RublonWPTools.hide(locked);
 						}
-						case 'email': {
-							if (locked) {
-								RublonWPTools.show(locked);
-							}
-							if (unlocked) {
-								RublonWPTools.hide(unlocked);
-							}
-							break;
+						if (unlocked) {
+							RublonWPTools.show(unlocked);
+						}
+					} else {
+						if (locked) {
+							RublonWPTools.show(locked);
+						}
+						if (unlocked) {
+							RublonWPTools.hide(unlocked);
 						}
 					}
 				}
 			}, false);
+		}
+
+	},
+
+	setUpNewUserRoleChangeListener: function() {
+
+		if (this.performedTasks.indexOf('setUpNewUserRoleChangeListener') == -1) {
+			var descriptions = document.querySelectorAll('div.rublon-secured-role-description');
+			var labels = document.querySelectorAll('label.rublon-label-newuserrole');
+			if (descriptions.length > 1) {
+				for (var i = 1; i < descriptions.length; i++) {
+					descriptions[i].parentNode.removeChild(descriptions[i]);
+				}
+			}
+			if (labels.length > 1) {
+				for (var i = 1; i < labels.length; i++) {
+					labels[i].parentNode.removeChild(labels[i]);
+				}
+			}
+			var newUserRoleSelect = document.querySelector('form#createuser select#role');
+			var addUserRoleSelect = document.querySelector('form#adduser select#adduser-role');
+			var roleSelects = [newUserRoleSelect, addUserRoleSelect];
+			if (this.roleProtectionLevels) {
+				var roleProtectionLevels = this.roleProtectionLevels;
+				for (var i in roleSelects) {
+					if (roleSelects[i] !== null) {
+						var rublonSecuredRoleDescription = document.querySelector('div.rublon-secured-role-description');
+						var rublonSecuredRoleLabel = document.querySelector('label.rublon-label-newuserrole');
+						var newDescription = rublonSecuredRoleDescription.cloneNode(true);
+						var newLabel = rublonSecuredRoleLabel.cloneNode(true);
+						roleSelects[i].dataset.rublonSelectId = (parseInt(i) + 1);
+						RublonWPTools.addClass(newDescription, 'rublon-secured-role-description-' + (parseInt(i) + 1));
+						RublonWPTools.addClass(newLabel, 'rublon-label-newuserrole-' + (parseInt(i) + 1));
+						roleSelects[i].parentNode.appendChild(newLabel);
+						roleSelects[i].parentNode.appendChild(newDescription);
+						if (roleSelects[i].selectedIndex > -1) {
+							var selectedOption = roleSelects[i].selectedIndex;
+							if (roleSelects[i].options && roleSelects[i].options[selectedOption] && roleSelects[i].options[selectedOption].value) {
+								var selectedOptionValue = roleSelects[i].options[selectedOption].value;
+								if (roleProtectionLevels.protectionLevels[selectedOptionValue]) {
+									RublonWPTools.show(newDescription);
+									RublonWPTools.show(newLabel);
+								}
+							}
+						}
+						roleSelects[i].addEventListener('change', function(event) {
+							if (event.target) {
+								target = event.target;
+								if (target.selectedIndex > -1) {
+									var selectedOption = target.selectedIndex;
+									if (target.options && target.options[selectedOption] && target.options[selectedOption].value) {
+										var selectedOptionValue = target.options[selectedOption].value;
+										if (typeof target.dataset.rublonSelectId !== undefined) {
+											var selectId = target.dataset.rublonSelectId;
+											var changedDescription = document.querySelector('.rublon-secured-role-description-' + selectId);
+											var changedLabel = document.querySelector('.rublon-label-newuserrole-' + selectId);
+											if (roleProtectionLevels.protectionLevels[selectedOptionValue]) {
+												RublonWPTools.show(changedDescription);
+												RublonWPTools.show(changedLabel);
+											} else {
+												RublonWPTools.hide(changedDescription);
+												RublonWPTools.hide(changedLabel);
+											}
+										}
+									}
+								}
+							}
+						}, false);					
+					}
+				}			
+			}
+			this.performedTasks.push('setUpNewUserRoleChangeListener');
+		}
+
+	},
+
+	updateRetinaImages: function() {
+
+		if (window.devicePixelRatio && window.devicePixelRatio >= 2) {
+			var rublonImages = document.getElementsByClassName('rublon-image');
+			for (var i = 0; i < rublonImages.length; i++) {
+				var rublonImageSrc = rublonImages[i].getAttribute('src');
+				rublonImageSrc = rublonImageSrc.replace(/(\.[a-z]{3})$/, '@2x$1');
+				rublonImages[i].setAttribute('src', rublonImageSrc);
+			}
 		}
 
 	}
@@ -410,3 +329,9 @@ var RublonWPTools = {
 
 
 };
+
+document.addEventListener('DOMContentLoaded', function() {
+
+	RublonWP.updateRetinaImages();
+
+}, false);

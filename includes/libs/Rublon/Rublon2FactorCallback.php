@@ -234,11 +234,11 @@ class Rublon2FactorCallback {
 	 * @param string $key
 	 * @return mixed
 	 */
-	protected function getConsumerParam($key) {
+	public function getConsumerParam($key) {
 		if ($credentials = $this->getCredentials()) {
 			$consumerParams = $credentials->getResponse();
-			if (isset($consumerParams[$key])) {
-				return $consumerParams[$key];
+			if (isset($consumerParams[RublonAPIClient::FIELD_RESULT]) AND isset($consumerParams[RublonAPIClient::FIELD_RESULT][$key])) {
+				return $consumerParams[RublonAPIClient::FIELD_RESULT][$key];
 			}
 		}
 	}

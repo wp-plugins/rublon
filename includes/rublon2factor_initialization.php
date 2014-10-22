@@ -1,6 +1,6 @@
 <?php
 /**
- * Code to be run on Rublon2Factor plug-in initialization
+ * Code to be run after the plugin is loaded
  *
  * @package   rublon2factor\includes
  * @author     Rublon Developers http://www.rublon.com
@@ -13,17 +13,13 @@
  */
 function rublon2factor_plugins_loaded() {
 
-
-	// Initialize Rublon2Factor plug-in helper
+	// Initialize Rublon plugin helper
 	RublonHelper::init();
-
-	$attemptRegistration = RublonHelper::shouldPluginAttemptRegistration();
-	if ($attemptRegistration && current_user_can('manage_options')) {
-		RublonHelper::enqueueRegistration(false);
-		RublonHelper::newNonce();
-		RublonHelper::registerPlugin();
-	}
-
+	
+	// Check if plugin registration should be attempted
+	// in this run
+	RublonHelper::checkRegistration();
+	
 	// check for Rublon-type actions
 	RublonHelper::checkForActions();
 

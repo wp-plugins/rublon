@@ -19,7 +19,7 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		$pluginMeta['action'] = 'activation';
 		RublonHelper::pluginHistoryRequest($pluginMeta);
 		
-		$this->_redirect(admin_url(RublonHelper::RUBLON_PAGE));
+		$this->_redirect(admin_url(RublonHelper::WP_RUBLON_PAGE));
 
 	}
 
@@ -35,7 +35,9 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		$settings['rublon_secret_key'] = $this->getSecretKey();
 		$this->_clearConfig();
 	
-		RublonHelper::saveSettings($settings);
+		RublonHelper::saveSettings($settings, 'main');
+
+		do_action('rublon_save_settings', $settings, 'main');
 
 	}
 
@@ -74,7 +76,7 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		// send issue notify
 		echo $this->_notify($notifierMessage);
 		
-		$this->_redirect(admin_url(RublonHelper::RUBLON_PAGE));
+		$this->_redirect(admin_url(RublonHelper::WP_RUBLON_PAGE));
 
 	}
 
@@ -266,7 +268,6 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 	 */
 	protected function _saveConfig($data) {
 
-		$settings = get_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 		$settings = $data;
 		update_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY, $settings);
 		return (isset($settings));
@@ -291,7 +292,7 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		$projectData = parent::getProjectData();
 		$projectData['project-description'] = get_bloginfo('description');
 		$projectData['plugin-version'] = RublonHelper::getCurrentPluginVersion();
-		$projectData['lang-code'] = RublonHelper::getBlogLanguage();
+		$projectData['lang'] = RublonHelper::getBlogLanguage();
 		$current_user = wp_get_current_user();
 		$email = RublonHelper::getUserEmail($current_user);
 		$projectData['project-owner-email'] = $email;

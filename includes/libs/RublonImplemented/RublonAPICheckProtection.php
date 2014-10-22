@@ -13,6 +13,11 @@ class RublonAPICheckProtection extends RublonAPIClient {
 	 * Name of the field with users data.
 	 */
 	const FIELD_USERS = 'users';
+
+	/**
+	 * Email address also taken into account when checking protection status
+	 */
+	const FIELD_INCLUDING_EMAIL = 'includingEmail';
 	
 	/**
 	 * Dummy email for ping request to check
@@ -44,7 +49,7 @@ class RublonAPICheckProtection extends RublonAPIClient {
 		if (empty($userEmail)) {
 			$userEmail = self::EMAIL_PING;
 		}
-		
+
 		// Set request URL and parameters
 		$url = $rublon->getAPIDomain() . $this->urlPath;
 		$params = array(
@@ -53,6 +58,7 @@ class RublonAPICheckProtection extends RublonAPIClient {
 				RublonAuthParams::FIELD_USER_ID => $userId,
 				RublonAuthParams::FIELD_USER_EMAIL_HASH => hash(self::HASH_ALG, strtolower($userEmail)),
 			)),
+			self::FIELD_INCLUDING_EMAIL => true,
 		);
 		
 		$this->setRequestURL($url)->setRequestParams($params);

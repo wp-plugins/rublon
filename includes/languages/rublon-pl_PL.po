@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 2.0\n"
-"POT-Creation-Date: 2014-09-26 12:44+0100\n"
-"PO-Revision-Date: 2014-09-26 12:44+0100\n"
+"POT-Creation-Date: 2014-10-21 13:27+0100\n"
+"PO-Revision-Date: 2014-10-21 13:28+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "Language: pl_PL\n"
@@ -12,43 +12,109 @@ msgstr ""
 "X-Generator: Poedit 1.6.4\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
 "X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: D:\\eclipse-workspace-kepler\\WP RWEB-2040\n"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:29
 msgid "Enable protection"
 msgstr "Włącz zabezpieczenie"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:65
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:68
+#, php-format
+msgid ""
+"Your account is protected by <a href=\"%s\" target=\"_blank\">Rublon</a>."
+msgstr ""
+"Twoje konto jest zabezpieczone <a href=\"%s\" target=\"_blank\">Rublonem</a>."
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:69
+#, php-format
+msgid ""
+"Get the <a href=\"%s/get\" target=\"_blank\">Rublon mobile app</a> for more "
+"security."
+msgstr ""
+"Pobierz <a href=\"%s/get\" target=\"_blank\">aplikację mobilną Rublon</a>, "
+"by zwiększyć poziom bezpieczeństwa."
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:74
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:283
+msgid "Warning!"
+msgstr "Uwaga!"
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:75
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:284
+#, php-format
+msgid ""
+"Your account is not protected. Go to <a href=\"%s\">your profile page</a> to "
+"enable account protection."
+msgstr ""
+"Twoje konto nie jest zabezpieczone. Przejdź do <a href=\"%s\">swojego "
+"profilu</a>, by włączyć zabezpieczenie."
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:69
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1013
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1275
 msgid "Rublon error code: "
 msgstr "Kod błędu: "
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:324
 msgid "Rublon is being configured."
 msgstr "Rublon jest w trakcie konfiguracji."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:324
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2224
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2244
 msgid "This will only take a moment."
 msgstr "To zajmie tylko chwilę."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:329
 msgid "Rublon Configuration"
 msgstr "Konfigurowanie Rublona"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:65
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:255
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:328
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:413
 msgid "Rublon"
 msgstr "Rublon"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:66
+msgid "General settings"
+msgstr "Ustawienia ogólne"
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:67
+msgid "Access Control"
+msgstr "Kontrola dostępu"
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:106
+#: RWEB-2040/sources/rublon/rublon2factor.php:34
 msgid "Settings"
 msgstr "Ustawienia"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:107
 msgid "Protection"
 msgstr "Ochrona"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:108
 msgid "XML-RPC"
 msgstr "XML-RPC"
 
-msgid ""
-"Your user role currently does not possess any type of default protection. If "
-"you wish to manually enable your account to use protection via email, go to "
-"your <a href=\"%s\">profile page</a>."
-msgstr ""
-"Rola twojego użytkownika nie jest obecnie chroniona przez żaden domyślny typ "
-"ochrony. Jeśli chcesz ręcznie włączyć ochronę konta WordPress poprzez email, "
-"przejdź do swojego <a href=\"%s\">profilu</a>."
-
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:139
 msgid ""
 "Every user is protected via email by default. You can turn this off for "
 "selected roles. For more security, you can also require selected roles to "
@@ -58,9 +124,14 @@ msgstr ""
 "dla wybranych ról. Dla lepszego bezpieczeństwa możesz wymóc na wybranych "
 "rolach korzystanie z mobilnej aplikacji Rublon."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:140
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2334
 msgid "Notice:"
 msgstr "Uwaga:"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:141
 msgid ""
 "Users of the Rublon mobile app are always protected, regardless of this "
 "setting. Users without default protection can turn it on themselves in their "
@@ -70,18 +141,28 @@ msgstr ""
 "tego ustawienia. Użytkownicy bez domyślnej ochrony mogą ją samodzielnie "
 "włączyć. Użytkownicy z domyślną ochroną nie mogą jej wyłączyć."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:149
 msgid "Default Protection Level"
 msgstr "Domyślna ochrona"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:190
 msgid "Mobile app"
 msgstr "Aplikacja mobilna"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:191
 msgid "Email"
 msgstr "Email"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:192
 msgid "None"
 msgstr "Brak"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:229
 msgid ""
 "XML-RPC allows external applications to administer your website without "
 "having to authenticate through Rublon. We strongly recommend to keep it "
@@ -91,68 +172,39 @@ msgstr ""
 "bez uwierzytelnienia się Rublonem. Zdecydowanie zalecamy pozostawić tę opcję "
 "wyłączoną."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:231
 msgid "Disabled"
 msgstr "Wyłączone"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:232
 msgid "Enabled"
 msgstr "Włączone"
 
-msgid ""
-"Rublon protects your account against intruders who found out your password "
-"or hijacked your session."
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:265
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:331
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1257
+msgid "Rublon protects against intruders who found out your password."
+msgstr "Rublon chroni przed intruzami, którzy poznali Twoje hasło."
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:266
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:332
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1258
+#, php-format
+msgid "Learn more at <a href=\"%s\" target=\"_blank\">www.rublon.com</a>."
 msgstr ""
-"Rublon chroni Twoje konto przed intruzami, którzy poznali Twoje hasło albo "
-"przejęli Twoją sesję."
+"Dowiedz się więcej: <a href=\"%s\" target=\"_blank\">www.rublon.com/pl</a>."
 
-msgid ""
-"Learn more at <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
-"com</a>."
-msgstr ""
-"Dowiedz się więcej: <a href=\"https://www.rublon.com/pl/\" target=\"_blank"
-"\">www.rublon.com/pl</a>."
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:328
+msgid "Access Control Manager"
+msgstr "Manager kontroli dostępu"
 
-msgid "Security"
-msgstr "Bezpieczeństwo"
-
-msgid ""
-"<span style=\"color: red\">Warning!</span> Your account is not protected by "
-"<a href=\"%s\" target=\"_blank\">Rublon</a>. Please go to <a href=\"%s"
-"\">your profile page</a> to turn it on."
-msgstr ""
-"<span style=\"color: red\">Uwaga!</span> Twoje konto nie jest zabezpieczone "
-"<a href=\"%s\" target=\"_blank\">Rublonem</a>. Przejdź do <a href=\"%s"
-"\">swojego profilu</a>, by włączyć zabezpieczenie."
-
-msgid ""
-"Rublon will be available to you once your administrator protects his account."
-msgstr ""
-"Będziesz mógł skorzystać z Rublona, kiedy administrator zabezpieczy swoje "
-"konto."
-
-msgid "Contact your administrator"
-msgstr "Skontaktuj się z administratorem"
-
-msgid "Protect your account with Rublon"
-msgstr "Zabezpiecz konto Rublonem"
-
-msgid ""
-"Hey, could you please protect your account with Rublon on %s? I want to "
-"protect my account, but I won't be able to do this until an administrator "
-"will."
-msgstr ""
-"Hej, zabezpieczysz proszę Twoje konto Rublonem na %s? Chcę zabezpieczyć moje "
-"konto, ale nie mogę tego zrobić, dopóki administrator tego nie zrobi."
-
-msgid ""
-"Since your account is protected by a password only, it can be accessed from "
-"any device in the world. Rublon protects your account from sign ins from "
-"unknown devices, even if your password gets stolen."
-msgstr ""
-"Ponieważ Twoje konto jest chronione tylko hasłem, dostęp do niego jest "
-"możliwy z dowolnego urządzenia na świecie. Rublonem zabezpieczysz Twoje "
-"konto przed dostępem z nieznanych urządzeń, nawet w przypadku kradzieży "
-"hasła."
-
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:365
 msgid ""
 "Warning! The PHP version of your server is too old to run Rublon. Please "
 "upgrade your server's PHP version."
@@ -160,18 +212,28 @@ msgstr ""
 "Uwaga! Wersja PHP twojego serwera jest niewystarczająca, by uruchomić "
 "Rublona. Zainstaluj nową wersję PHP."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:366
 msgid "Required PHP version:"
 msgstr "Wymagana wersja PHP:"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:367
 msgid "(or above)"
 msgstr "(lub wyższa)"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:367
 msgid "Your PHP version:"
 msgstr "Twoja wersja PHP:"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:372
 msgid "Warning! The cURL library has not been found on this server."
 msgstr "Uwaga! Serwer nie obsługuje biblioteki cURL."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:372
 msgid ""
 "It is a crucial component of the Rublon plugin and its absence will prevent "
 "it from working properly. Please have the cURL library installed or consult "
@@ -181,51 +243,105 @@ msgstr ""
 "prawidłowe działanie. Zainstaluj bibliotekę cURL lub poproś o to "
 "administratora tego serwera."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:456
 msgid "Account protected by Rublon"
 msgstr "Konto zabezpieczone Rublonem"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:497
 msgid "Protected by Rublon"
 msgstr "Konto zabezpieczone Rublonem"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:552
+#: RWEB-2040/sources/rublon/includes/rublon2factor_admin.php:553
 msgid "Rublon Two-Factor Authentication"
 msgstr "Uwierzytelnianie dwuskładnikowe Rublon"
 
-msgid "Profile update"
-msgstr "Aktualizacja profilu"
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:401
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:554
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:862
+msgid "Your profile is being updated."
+msgstr "Twój profil jest aktualizowany."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:468
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:619
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:869
+msgid "Rublon settings are being updated."
+msgstr "Ustawienia Rublona są aktualizowane."
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:495
+#, php-format
 msgid "Do you confirm changing your %s?"
 msgstr "Czy potwierdzasz zmianę %s?"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:499
 msgid "protection type"
 msgstr "rodzaju ochrony"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:505
 msgid ", your "
 msgstr ", "
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:507
 msgid " and your "
 msgstr " oraz "
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:510
+#, php-format
 msgid "email address to: %s"
 msgstr "adresu email na: %s"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:515
 msgid ", as well as your "
 msgstr " oraz zmianę "
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:517
 msgid "password"
 msgstr "hasła"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:583
+msgid "Do you confirm changing default protection levels?"
+msgstr "Czy potwierdzasz zmianę domyślnych poziomów ochrony?"
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:732
+msgid "Profile update"
+msgstr "Aktualizacja profilu"
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:921
 msgid "Operation aborted."
 msgstr "Operacja przerwana."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:933
 msgid "Operation cancelled."
 msgstr "Operacja anulowana."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:993
 msgid "Error details: "
 msgstr "Szczegóły błędu: "
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1229
 msgid "There was a problem during the authentication process."
 msgstr "Wystąpił błąd podczas procesu uwierzytelniania."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1232
 msgid ""
 "Rublon activation failed. Please try again. Should the error occur again, "
 "contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
@@ -234,15 +350,24 @@ msgstr ""
 "powtórzy, skontaktuj się z nami na <a href=\"mailto:support@rublon.com"
 "\">support@rublon.com</a>."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1238
 msgid "You cannot protect an account already protected by Rublon."
 msgstr "Nie można zabezpieczyć konta już zabezpieczonego Rublonem."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1241
 msgid "Unable to protect your account with Rublon."
 msgstr "Nie udało się zabezpieczyć konta Rublonem."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1244
 msgid "Unable to disable Rublon protection."
 msgstr "Nie udało się usunąć Rublona z Twojego konta."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1247
+#, php-format
 msgid ""
 "The version of Rublon for Wordpress that you are trying to activate is "
 "outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
@@ -252,9 +377,14 @@ msgstr ""
 "Przejdź do strony <a href=\"%s\">Zainstalowane wtyczki</a> i zaktualizuj "
 "Rublona do najnowszej wersji lub"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1249
 msgid "update now"
 msgstr "zaktualizuj teraz"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1252
+#, php-format
 msgid ""
 "Thank you! Now all of your users can protect their accounts with Rublon. "
 "However, there has been a problem with protecting your account. Go to <a "
@@ -264,9 +394,14 @@ msgstr ""
 "Rublonem, jednak nie udało się zabezpieczyć Twojego konta. Przejdź do <a "
 "href=\"%s\">sekcji Rublon</a> by zabezpieczyć konto."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1256
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1269
 msgid "The authentication process has been halted."
 msgstr "Proces uwierzytelniania został zatrzymany."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1256
 msgid ""
 "This site's administrator requires that you protect your account with the "
 "Rublon mobile app."
@@ -274,6 +409,8 @@ msgstr ""
 "Administrator wymaga zabezpieczenia konta z użyciem aplikacji mobilnej "
 "Rublon."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1265
 msgid ""
 "Your server's time seems out of sync. Please check that it is properly "
 "synchronized - Rublon won't be able to verify your website's security "
@@ -283,6 +420,8 @@ msgstr ""
 "czas serwera jest właściwie zsynchronizowany - w przeciwnym wypadku Rublon "
 "nie będzie w stanie zweryfikować bezpieczeństwa Twojej strony."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1269
 msgid ""
 "This site's administrator requires you to confirm this operation using the "
 "Rublon mobile app."
@@ -290,9 +429,22 @@ msgstr ""
 "Administrator wymaga użycia aplikacji mobilnej Rublon do potwierdzenia tej "
 "operacji."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1270
+msgid ""
+"Learn more at <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
+"com</a>."
+msgstr ""
+"Dowiedz się więcej: <a href=\"https://www.rublon.com/pl/\" target=\"_blank"
+"\">www.rublon.com/pl</a>."
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1282
 msgid "Your account is now protected by Rublon."
 msgstr "Twoje konto jest teraz zabezpieczone Rublonem. "
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1285
 msgid ""
 "Rublon protection has been disabled. You are now protected by a password "
 "only, which may result in unauthorized access to your account. We strongly "
@@ -302,12 +454,16 @@ msgstr ""
 "może doprowadzić do nieautoryzowanego dostępu do Twojego konta. Zdecydowanie "
 "zalecamy zabezpieczyć konto Rublonem."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1288
 msgid ""
 "Thank you! Now all of your users can protect their accounts with Rublon."
 msgstr ""
 "Dziękujemy! Teraz wszyscy Twoi użytkownicy mogą zabezpieczyć swoje konta "
 "Rublonem."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1291
 msgid ""
 "Since Rublon plugin version 2.0, the authentication process has been changed "
 "significantly. The accounts are now protected using the email address. We "
@@ -325,12 +481,16 @@ msgstr ""
 "aplikacji mobilnej lub dodaj aktualnie używany w WordPressie adres w sekcji "
 "\"Adresy email\" aplikacji mobilnej Rublon."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1653
 msgid ""
 "Plugin requires database modification but you do not have permission to do "
 "it."
 msgstr ""
 "Wtyczka wymaga zmian w bazie danych, ale brak uprawnień do jej modyfikacji."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:1781
 msgid ""
 "Rublon provides stronger security for online accounts through invisible two-"
 "factor authentication. It protects your accounts from sign-ins from unknown "
@@ -340,12 +500,24 @@ msgstr ""
 "niewidoczne uwierzytelnianie dwuskładnikowe. Chroni Twoje konta przed "
 "dostępem z nieznanych urządzeń, nawet jeśli Twoje hasła zostaną skradzione."
 
-msgid "Your profile is being updated."
-msgstr "Twój profil jest aktualizowany."
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2316
+#: RWEB-2040/sources/rublon/includes/rublon2factor_hooks.php:387
+msgid "Account Protection"
+msgstr "Ochrona konta"
 
-msgid "Protection via email"
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2321
+msgid "Protection via Email"
 msgstr "Ochrona poprzez email"
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2329
+msgid "Enable account protection via email"
+msgstr "Włącz ochronę poprzez email"
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2333
 msgid ""
 "You will need to confirm every sign in from a new device via email. You will "
 "also need to confirm changes to important settings like your password or "
@@ -355,9 +527,96 @@ msgstr ""
 "ważnych ustawień takich jak hasło albo adres email będziesz również musiał "
 "potwierdzić."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2334
 msgid "Administrators can always change your settings without your consent."
 msgstr ""
 "Administratorzy zawsze mogą zmieniać Twoje ustawienia bez Twojego zezwolenia."
 
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2344
+msgid "Protection via Phone"
+msgstr "Ochrona poprzez smartfon"
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2349
+#, php-format
+msgid ""
+"This will be automatically enabled once you install the <a href=\"%s/get\" "
+"target=\"_blank\">Rublon mobile app</a>. Your phone will be required for "
+"identity or action confirmation. This will replace protection via email."
+msgstr ""
+"Ten rodzaj zabezpieczenia zostanie automatycznie włączony, gdy zainstalujesz "
+"<a href=\"%s/get\" target=\"_blank\">aplikację mobilną Rublon</a>. Twój "
+"smartfon będzie potrzebny, by potwierdzić Twoją tożsamość lub niektóre "
+"operacje, co zastąpi ochronę przez email."
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_helper.php:2377
 msgid "Close"
 msgstr "Zamknij"
+
+#: D:\eclipse-workspace-kepler\WP
+#: RWEB-2040/sources/rublon/includes/rublon2factor_hooks.php:451
+#, php-format
+msgid ""
+"The new user account will be automatically protected by <a href=\"%s\" "
+"target=\"_blank\">Rublon</a>."
+msgstr ""
+"Nowe konto użytkownika zostanie automatycznie zabezpieczone <a href=\"%s\" "
+"target=\"_blank\">Rublonem</a>."
+
+#~ msgid ""
+#~ "Your user role currently does not possess any type of default protection. "
+#~ "If you wish to manually enable your account to use protection via email, "
+#~ "go to your <a href=\"%s\">profile page</a>."
+#~ msgstr ""
+#~ "Rola twojego użytkownika nie jest obecnie chroniona przez żaden domyślny "
+#~ "typ ochrony. Jeśli chcesz ręcznie włączyć ochronę konta WordPress poprzez "
+#~ "email, przejdź do swojego <a href=\"%s\">profilu</a>."
+
+#~ msgid "Security"
+#~ msgstr "Bezpieczeństwo"
+
+#~ msgid ""
+#~ "<span style=\"color: red\">Warning!</span> Your account is not protected "
+#~ "by <a href=\"%s\" target=\"_blank\">Rublon</a>. Please go to <a href=\"%s"
+#~ "\">your profile page</a> to turn it on."
+#~ msgstr ""
+#~ "<span style=\"color: red\">Uwaga!</span> Twoje konto nie jest "
+#~ "zabezpieczone <a href=\"%s\" target=\"_blank\">Rublonem</a>. Przejdź do "
+#~ "<a href=\"%s\">swojego profilu</a>, by włączyć zabezpieczenie."
+
+#~ msgid ""
+#~ "Rublon will be available to you once your administrator protects his "
+#~ "account."
+#~ msgstr ""
+#~ "Będziesz mógł skorzystać z Rublona, kiedy administrator zabezpieczy swoje "
+#~ "konto."
+
+#~ msgid "Contact your administrator"
+#~ msgstr "Skontaktuj się z administratorem"
+
+#~ msgid "Protect your account with Rublon"
+#~ msgstr "Zabezpiecz konto Rublonem"
+
+#~ msgid ""
+#~ "Hey, could you please protect your account with Rublon on %s? I want to "
+#~ "protect my account, but I won't be able to do this until an administrator "
+#~ "will."
+#~ msgstr ""
+#~ "Hej, zabezpieczysz proszę Twoje konto Rublonem na %s? Chcę zabezpieczyć "
+#~ "moje konto, ale nie mogę tego zrobić, dopóki administrator tego nie zrobi."
+
+#~ msgid ""
+#~ "Since your account is protected by a password only, it can be accessed "
+#~ "from any device in the world. Rublon protects your account from sign ins "
+#~ "from unknown devices, even if your password gets stolen."
+#~ msgstr ""
+#~ "Ponieważ Twoje konto jest chronione tylko hasłem, dostęp do niego jest "
+#~ "możliwy z dowolnego urządzenia na świecie. Rublonem zabezpieczysz Twoje "
+#~ "konto przed dostępem z nieznanych urządzeń, nawet w przypadku kradzieży "
+#~ "hasła."
+
+#~ msgid "Rublon - manage Trusted Devices"
+#~ msgstr "Rublon - zarządzaj Urządzeniami Zaufanymi"

@@ -288,7 +288,7 @@ abstract class RublonConsumerRegistrationTemplate extends RublonConsumerRegistra
 		
 		$action = $this->getAPIDomain() . self::URL_PATH_ACTION . '/' . self::ACTION_INITIALIZE;
 		$action = htmlspecialchars($action);
-		
+
 		$content = $this->getInputHidden(self::FIELD_PROJECT_URL, $this->getProjectUrl())
 			. $this->getInputHidden(self::FIELD_PROJECT_CALLBACK_URL, $this->getCallbackUrl())
 			. $this->getInputHidden(self::FIELD_PROJECT_DATA, json_encode($this->getProjectData()))

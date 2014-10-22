@@ -48,8 +48,76 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 	}
 
 
-	protected function getShareAccessWidget() {
+	/**
+	 * Create Trusted Devices Widget container for WP Dashboard 
+	 * 
+	 * @return string
+	 */
+	public function getDashboardDeviceWidget($withConsumerScript = true) {
+
+		$result = '';
+
+		$current_user = wp_get_current_user();
+		$protection_type = RublonHelper::YES;
+		RublonHelper::isUserProtected($current_user, $protection_type);
+		switch ($protection_type) {
+			case RublonHelper::PROTECTION_TYPE_MOBILE:
+				$result .= sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl());
+				break;
+			case RublonHelper::PROTECTION_TYPE_EMAIL:
+				$result .= sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl())
+					. ' ' . sprintf(__('Get the <a href="%s/get" target="_blank">Rublon mobile app</a> for more security.', 'rublon'), RublonHelper::rubloncomUrl());
+				break;
+			case RublonHelper::PROTECTION_TYPE_NONE:
+				$lang = RublonHelper::getBlogLanguage();
+				$result .= sprintf(
+					'<span style="color: red; font-weight: bold;">' . __('Warning!', 'rublon') . '</span>'
+						. ' ' . __('Your account is not protected. Go to <a href="%s">your profile page</a> to enable account protection.', 'rublon'),
+					admin_url(RublonHelper::WP_PROFILE_PAGE . RublonHelper::WP_PROFILE_EMAIL2FA_SECTION)
+				);
+				break;
+		}
+
+		$result .= $this->getDeviceWidget();
+		if ($withConsumerScript) {
+			$result .= $this->getConsumerScript();
+		}
+
+		return $result;
+
+	}
+
+
+	/**
+	 * Create Trusted Devices Widget container for WP Dashboard
+	 *
+	 * @return string
+	 */
+	public function getDashboardACMWidget($withConsumerScript = false) {
+	
+		$result = '';
+
+		$result .= $this->getShareAccessWidget();
+		if ($withConsumerScript) {
+			$result .= $this->getConsumerScript();
+		}
+	
+		return $result;
+	
+	}
+
+
+	public function addConsumerScript() {
+
+		echo $this->getConsumerScript();
+
+	}
+
+
+	public function userBox() {
+
 		return '';
+
 	}
 
 

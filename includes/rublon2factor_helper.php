@@ -1,6 +1,6 @@
 <?php
 /**
- * Additional helper functions for Rublon2Factor module
+ * Additional helper functions for Rublon for WordPress plugin
  *
  * @package   rublon2factor\includes
  * @author     Rublon Developers http://www.rublon.com
@@ -31,21 +31,44 @@ class RublonHelper {
 	
 	const RUBLON_NOTIFY_URL_PATH = '/issue_notifier/wp_notify';
 	const RUBLON_ACTION_PREFIX = 'rublon_';
-	const PRERENDER_USERS = 'prerender_users';
 
-	const TRANSIENT_PROFILE_PREFIX = 'rublon_put_';
+	const PRERENDER_KEY_MOBILE_USERS = 'prer_mobile_users';
+
+	const TRANSIENT_PROFILE_TOKEN_PREFIX = 'rublon_put_';
 	const TRANSIENT_PROFILE_FORM_PREFIX = 'rublon_puform_';
-	const NONCE_PROFILE_UPDATE_NAME = '_rublon_punonce';
-	const TOKEN_PROFILE_UPDATE_NAME = 'rublon_profile_update_token';
-	const TOKEN_PROFILE_UPDATE_LIFETIME = 5;
-	const PROFILE_UPDATE_FORM_LIFETIME = 15;
+	const TRANSIENT_ADDSETT_TOKEN_PREFIX = 'rublon_asut_';
+	const TRANSIENT_ADDSETT_FORM_PREFIX = 'rublon_asuform_';
+	const TRANSIENT_MOBILE_USER = 'rublon_mobuser_';
+	const TRANSIENT_DEBUG = 'rublon_debug';
+	
+	const PROFILE_UPDATE_TOKEN_NAME = 'rublon_profile_update_token';
+	const ADDSETT_UPDATE_TOKEN_NAME = 'rublon_additional_settings_update_token';
+	
+	const SETTING_CAN_SHOW_ACM = 'can_show_acm';
+	
+	const YES = 'yes';
+	const NO = 'no';
 
+	const UPDATE_TOKEN_LIFETIME = 5;
+	const UPDATE_FORM_LIFETIME = 15;
+	const MOBILE_USER_INFO_LIFETIME = 15;
+
+	const FLAG_PROFILE_UPDATE = 'wp_profile_update';
+	const FLAG_ADDSETT_UPDATE = 'wp_addsett_update';
+	
 	const FIELD_USER_PROTECTION_TYPE = 'rublon_user_protection_type';
+
 	const PROTECTION_TYPE_NONE = 'none';
 	const PROTECTION_TYPE_EMAIL = 'email';
 	const PROTECTION_TYPE_MOBILE = 'mobile';
 
-	const RUBLON_PAGE = 'admin.php?page=rublon';
+	const PROTECTION_TYPE_SETT_PREFIX = 'prottype-for-';
+
+	const WP_PROFILE_PAGE = 'profile.php';
+	const WP_OPTIONS_PAGE = 'options.php';
+	const WP_RUBLON_PAGE = 'admin.php?page=rublon';
+	const WP_PROFILE_EMAIL2FA_SECTION = '#rublon-email2fa';
+
 	const PHP_VERSION_REQUIRED = '5.2.17';
 	
 	/**
@@ -88,6 +111,8 @@ class RublonHelper {
 	 */
 	static public function init() {
 
+		do_action('rublon_plugin_pre_init');
+		
 		// Initialize localization
 		if (function_exists('load_plugin_textdomain')) {
 			load_plugin_textdomain('rublon', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
@@ -96,17 +121,73 @@ class RublonHelper {
 		// check for a possible update
 		self::_updateChecker();
 
+		// Set default additional settings if not present
+		self::_checkAdditionalSettings();
+
 		// prevent XML-RPC access if it was disabled in plugin settings 
 		self::_checkXMLRPCStatus();
 
 	}
 
 
-	static public function getRublon() {
+	/**
+	 * Check for any Rublon actions in the URI
+	 *
+	 */
+	static public function checkForActions() {
+	
+		global $pagenow;
+	
+		$rublonAction = self::uriGet('rublon');
+		if (isset($rublonAction)) {
+			switch (strtolower($rublonAction)) {
+				case 'register':
+					$rublonRegAction = self::uriGet('action');
+					if (isset($rublonRegAction)) {
+						self::consumerRegistrationAction($rublonRegAction);
+					}
+					break;
+				case 'callback':
+					$accessToken = self::uriGet('token');
+					$responseState = self::uriGet('state');
+					if (isset($accessToken) && isset($responseState)) {
+						self::handleCallback();
+					}
+					break;
+				case 'confirm':
+					$accessToken = self::uriGet('token');
+					$responseState = self::uriGet('state');
+					if (isset($accessToken) && isset($responseState)) {
+						self::handleConfirmation();
+					}
+					break;
+				case 'init-registration':
+					$nonce = self::uriGet('rublon_nonce');
+					$nonceCookie = RublonCookies::getNonceFromCookie();
+					if (!empty($nonce) && wp_verify_nonce($nonce, 'rublon=init-registration') && $nonce == $nonceCookie) {
+						self::_initializeConsumerRegistration();
+	
+					} else {
+						self::setMessage('NONCE_VERIFICATION_FAILED', 'error', 'CR');
+						wp_redirect(admin_url(self::WP_RUBLON_PAGE));
+					}
+					break;
+			}
+			exit;
+		} else {
+			// Check for transient-stored profile update form
+			self::_checkForStoredPUForm();
+			self::_checkForStoredASUForm();
+		}
+	
+	}
 
-		if (empty(self::$rublon)) {
-			$settings = self::getSettings();
-			if (self::isPluginRegistered()) {
+
+	static public function getRublon($refresh = true) {
+
+		if (empty(self::$rublon) || $refresh) {
+			if (self::isSiteRegistered()) {
+				$settings = self::getSettings();
 				self::$rublon = new Rublon2FactorWordPress($settings['rublon_system_token'], $settings['rublon_secret_key']);
 			} else {
 				self::$rublon = new Rublon2FactorWordPress('', '');
@@ -115,6 +196,41 @@ class RublonHelper {
 		return self::$rublon;
 
 	}
+
+
+	static public function checkIfUserPermitted() {
+
+		if (self::isSiteRegistered()) {
+			$current_user = wp_get_current_user();
+			if (!empty($current_user)) {
+				$current_user_id = self::getUserId($current_user);
+				if ($current_user_id && is_user_logged_in()) {
+					if (!self::isUserAuthenticated($current_user)) {
+						$protection_type = array(
+							self::roleProtectionType($current_user),
+							self::userProtectionType($current_user)
+						);
+						$authURL = self::authenticateWithRublon($current_user, $protection_type);
+						if (empty($authURL)) {
+							if (in_array(self::PROTECTION_TYPE_MOBILE, $protection_type)) {
+								wp_logout();
+								self::setMessage('ROLE_BLOCKED', 'error', 'LM');
+								$return_page = RublonHelper::getReturnPage();
+								wp_redirect($return_page);
+								exit;
+							}
+						} else {
+							wp_logout();
+							wp_redirect($authURL);
+							exit;
+						}
+					}
+				}
+			}
+		}
+
+	}
+
 
 	/**
 	 * Transfer plugin messages from cookie to a private field
@@ -149,70 +265,60 @@ class RublonHelper {
 
 		global $pagenow;
 
-		$current_user = wp_get_current_user();
-		if ($current_user instanceof WP_User) {
-			$current_user_id = self::getUserId($current_user);
-			$post = self::_retrievePUForm($current_user_id);
-			$PUToken = self::_retrievePUToken($current_user_id);
-			if (!empty($post) && !empty($PUToken) && $pagenow == 'profile.php') {
-				if (!empty($post[self::TOKEN_PROFILE_UPDATE_NAME])) {
-					$_POST = $post;					
+		if ($pagenow == self::WP_PROFILE_PAGE) {
+			$current_user = wp_get_current_user();
+			if ($current_user instanceof WP_User) {
+				$current_user_id = self::getUserId($current_user);
+				$post = self::_retrieveForm(
+					$current_user_id,
+					self::TRANSIENT_PROFILE_FORM_PREFIX
+				);
+				$PUToken = self::_retrieveUpdateToken(
+					$current_user_id,
+					self::TRANSIENT_PROFILE_TOKEN_PREFIX
+				);
+				if (!empty($post) && !empty($PUToken)) {
+					if (!empty($post[self::PROFILE_UPDATE_TOKEN_NAME])) {
+						$_POST = $post;					
+					}
+					self::_clearForm(
+						$current_user_id,
+						self::TRANSIENT_PROFILE_FORM_PREFIX
+					);
 				}
-				self::_clearPUForm($current_user_id);
 			}
 		}
 
 	}
 
 
-	/**
-	 * Check for any Rublon actions in the URI
-	 * 
-	 */
-	static public function checkForActions() {
+	static private function _checkForStoredASUForm() {
 
 		global $pagenow;
 		
-		$rublonAction = self::uriGet('rublon');
-		if (isset($rublonAction)) {
-			switch (strtolower($rublonAction)) {
-				case 'register':
-					$rublonRegAction = self::uriGet('action');
-					if (isset($rublonRegAction)) {
-						self::consumerRegistrationAction($rublonRegAction);
+		if ($pagenow == self::WP_OPTIONS_PAGE) {
+			$current_user = wp_get_current_user();
+			if ($current_user instanceof WP_User) {
+				$current_user_id = self::getUserId($current_user);
+				$post = self::_retrieveForm(
+					$current_user_id,
+					self::TRANSIENT_ADDSETT_FORM_PREFIX
+				);
+				$ASUToken = self::_retrieveUpdateToken(
+					$current_user_id,
+					self::TRANSIENT_ADDSETT_TOKEN_PREFIX
+				);
+				if (!empty($post) && !empty($ASUToken)) {
+					if (!empty($post[self::ADDSETT_UPDATE_TOKEN_NAME])) {
+						$_POST = $post;
 					}
-					break;
-				case 'callback':
-					$accessToken = self::uriGet('token');
-					$responseState = self::uriGet('state');
-					if (isset($accessToken) && isset($responseState)) {
-						self::handleCallback();
-					}
-					break;
-				case 'confirm':
-					$accessToken = self::uriGet('token');
-					$responseState = self::uriGet('state');
-					if (isset($accessToken) && isset($responseState)) {
-						self::handleConfirmation();
-					}
-					break;
-				case 'init-registration':
-					$nonce = self::uriGet('rublon_nonce');
-					$nonceCookie = RublonCookies::getNonceFromCookie();
-					if (!empty($nonce) && wp_verify_nonce($nonce, 'rublon=init-registration') && $nonce == $nonceCookie) {
-						self::_initializeConsumerRegistration();
-						
-					} else {
-						self::setMessage('NONCE_VERIFICATION_FAILED', 'error', 'CR');
-						wp_redirect(admin_url(self::RUBLON_PAGE));
-					}
-					break;
+					self::_clearForm(
+						$current_user_id,
+						self::TRANSIENT_ADDSETT_FORM_PREFIX
+					);
+				}
 			}
-			exit;
-		} else {
-			// Check for transient-stored profile update form
-			self::_checkForStoredPUForm();
-		}
+		}		
 
 	}
 
@@ -233,97 +339,376 @@ class RublonHelper {
 		$current_user = wp_get_current_user();
 		if ($current_user instanceof WP_User) {
 			$current_user_id = self::getUserId($current_user);
-			// Check the security nonce
-			if (check_admin_referer(
-				self::TRANSIENT_PROFILE_PREFIX . $current_user_id,
-				self::NONCE_PROFILE_UPDATE_NAME
-			)) {
-				// Is the profile update token saved in the DB?
-				$rublonPUToken = self::_retrievePUToken($current_user_id);
-				self::_clearPUToken($current_user_id);
-				if ($rublonPUToken !== false) {
-					// Found a profile update token. Check if it's also present
-					// in the POST data, abort otherwise.
-					if (empty($post[self::TOKEN_PROFILE_UPDATE_NAME])
-						|| $rublonPUToken !== $post[self::TOKEN_PROFILE_UPDATE_NAME]) {
-						self::_abortConfirmation('MALFORMED_FORM_DATA', true);
-					} else {
-						unset($_POST[self::TOKEN_PROFILE_UPDATE_NAME]);
-						if (!empty($post[self::FIELD_USER_PROTECTION_TYPE])) {
-							self::_setUserProtectionType(
-								$current_user, 
-								$post[self::FIELD_USER_PROTECTION_TYPE]
-							);
-						}
-					}
+			// Is the profile update token saved in the DB?
+			$rublonPUToken = self::_retrieveUpdateToken(
+				$current_user_id,
+				self::TRANSIENT_PROFILE_TOKEN_PREFIX
+			);
+			self::_clearUpdateToken(
+				$current_user_id,
+				self::TRANSIENT_PROFILE_TOKEN_PREFIX
+			);
+			if ($rublonPUToken !== false) {
+				// Found a profile update token. Check if it's also present
+				// in the POST data, abort otherwise.
+				if (empty($post[self::PROFILE_UPDATE_TOKEN_NAME])
+					|| $rublonPUToken !== $post[self::PROFILE_UPDATE_TOKEN_NAME]) {
+					self::_abortConfirmation(
+						self::profileUrl(),
+						'MALFORMED_FORM_DATA'
+					);
 				} else {
-					// See if a Rublon-confirmed change is in the works.
-					$change = self::_changeRequiresConfirmation($post);
-					if ($change > 0) {
-						self::_storePUForm($current_user_id, $post);
-						// Confirm transaction with Rublon
-						self::_confirmTransactionWithRublon($post, $change);
-					} else {
-						// Let the update go forth.
-						$rublonPUToken = ($token != null) ? $token : self::_generateToken();
-						$post[self::TOKEN_PROFILE_UPDATE_NAME] = $rublonPUToken;
-						self::_storePUForm($current_user_id, $post);
-						self::_storePUToken($current_user_id, $rublonPUToken);
-						self::_reloadParentFrameOnSuccess(true);
+					unset($_POST[self::PROFILE_UPDATE_TOKEN_NAME]);
+					if (!empty($post[self::FIELD_USER_PROTECTION_TYPE])) {
+						self::_setUserProtectionType(
+							$current_user, 
+							$post[self::FIELD_USER_PROTECTION_TYPE]
+						);
 					}
+					if (!empty($post['email']) && $post['email'] !== self::getUserEmail($current_user)) {
+						self::clearMobileUserStatus($current_user);
+					}
+				}
+			} else {
+				// See if a Rublon-confirmed change is in the works.
+				$change = self::_pUChangeRequiresConfirmation($post);
+				if ($change > 0) {
+					self::_storeForm(
+						$current_user_id,
+						$post,
+						self::TRANSIENT_PROFILE_FORM_PREFIX,
+						self::UPDATE_FORM_LIFETIME
+					);
+					// Confirm transaction with Rublon
+					self::_confirmPUWithRublon($post, $change);
+				} else {
+					// Let the update go forth.
+					$rublonPUToken = ($token != null) ? $token : self::_generateToken();
+					$post[self::PROFILE_UPDATE_TOKEN_NAME] = $rublonPUToken;
+					self::_storeForm(
+						$current_user_id,
+						$post,
+						self::TRANSIENT_PROFILE_FORM_PREFIX,
+						self::UPDATE_FORM_LIFETIME
+					);
+					self::_storeUpdateToken(
+						$current_user_id,
+						$rublonPUToken,
+						self::TRANSIENT_PROFILE_TOKEN_PREFIX,
+						self::UPDATE_TOKEN_LIFETIME
+					);
+					self::_reloadParentFrame(
+						__('Your profile is being updated.', 'rublon'),
+						true
+					);
 				}
 			}
 		}
 
 	}
 
+	
+	static public function checkPostDataAddSettUpdate($post, $new_value, $old_value) {
 
-	static private function _storePUForm($user_id, $post) {
+		$current_user = wp_get_current_user();
+		if ($current_user instanceof WP_User) {
+			$current_user_id = self::getUserId($current_user);
+			// Is the addSett update token saved in the DB?
+			$rublonASUToken = self::_retrieveUpdateToken(
+				$current_user_id,
+				self::TRANSIENT_ADDSETT_TOKEN_PREFIX
+			);
+			self::_clearUpdateToken(
+				$current_user_id,
+				self::TRANSIENT_ADDSETT_TOKEN_PREFIX
+			);
+			if ($rublonASUToken !== false) {
+				// Found an addSett update token. Check if it's also present
+				// in the POST data, abort otherwise.
+				if (empty($post[self::ADDSETT_UPDATE_TOKEN_NAME])
+				|| $rublonASUToken !== $post[self::ADDSETT_UPDATE_TOKEN_NAME]) {
+					self::_abortConfirmation(
+						self::rublonUrl(),
+						'MALFORMED_FORM_DATA'
+					);
+				} else {
+					unset($_POST[self::ADDSETT_UPDATE_TOKEN_NAME]);
+					return $new_value;
+				}
+			} else {
+				// See if a Rublon-confirmed change is in the works.
+				$change = self::_aSUChangeRequiresConfirmation($new_value, $old_value);
+				if ($change > 0) {
+					self::_storeForm(
+						$current_user_id,
+						$post,
+						self::TRANSIENT_ADDSETT_FORM_PREFIX,
+						self::UPDATE_FORM_LIFETIME
+					);
+					// Confirm transaction with Rublon
+					self::_confirmASUWithRublon($post, $change);
+				} else {
+					// Let the update go forth.
+					$rublonASUToken = ($token != null) ? $token : self::_generateToken();
+					$post[self::ADDSETT_UPDATE_TOKEN_NAME] = $rublonASUToken;
+					self::_storeForm(
+						$current_user_id,
+						$post,
+						self::TRANSIENT_ADDSETT_FORM_PREFIX,
+						self::UPDATE_FORM_LIFETIME
+					);
+					self::_storeUpdateToken(
+						$current_user_id,
+						$rublonASUToken,
+						self::TRANSIENT_ADDSETT_TOKEN_PREFIX,
+						self::UPDATE_TOKEN_LIFETIME
+					);
+					self::_redirectParentFrame(
+						self::optionsUrl(),
+						__('Rublon settings are being updated.', 'rublon'),
+						true
+					);
+				}
+			}
+		}
+
+	}
+
+	
+	static private function _confirmPUWithRublon($post, $change) {
+	
+		$current_user = wp_get_current_user();
+		$user_id = self::getUserId($current_user);
+		$user_email = self::getUserEmail($current_user);
+	
+		$rublon = self::getRublon();
+	
+		$authParams = array();
+		$roleProtectionType = self::roleProtectionType($current_user);
+		$userProtectionType = self::userProtectionType($current_user);
+		if ($roleProtectionType == self::PROTECTION_TYPE_EMAIL || $userProtectionType == self::PROTECTION_TYPE_EMAIL) {
+			$authParams[RublonAuthParams::FIELD_CAN_USE_EMAIL2FA] = true;
+		}
+		$authParams[self::FLAG_PROFILE_UPDATE] = true;
+		$authParams['customURIParam'] = self::FLAG_PROFILE_UPDATE;
+	
+		$msg = __('Do you confirm changing your %s?', 'rublon');
+		$msg2 = '';
+		if ($change > 3) {
+			$change -= 4;
+			$msg2 = __('protection type', 'rublon');
+		}
+		if ($change > 1) {
+			$change -= 2;
+			if (!empty($msg2)) {
+				if ($change > 0) {
+					$msg2 .= __(', your ', 'rublon');
+				} else {
+					$msg2 .= __(' and your ', 'rublon');
+				}
+			}
+			$msg2 .= sprintf(__('email address to: %s', 'rublon'), $post['email']);
+		}
+		if ($change > 0) {
+			$change -= 1;
+			if (!empty($msg2)) {
+				$msg2 .= __(', as well as your ', 'rublon');
+			}
+			$msg2 .= __('password', 'rublon');
+		}
+		$msg = sprintf($msg, $msg2);
+	
+		try {
+			$authUrl = $rublon->confirm(
+				self::getActionURL('confirm'),
+				$user_id,
+				$user_email,
+				$msg,
+				$authParams
+			);
+			if (!empty($authUrl)) {
+				wp_redirect($authUrl);
+				exit;
+			} else {
+				if ($roleProtectionType == self::PROTECTION_TYPE_MOBILE) {
+					self::_abortConfirmation(
+						self::profileUrl(),
+						'MOBILE_APP_REQUIRED'
+					);
+				} else {
+					$rublonPUToken = self::_generateToken();
+					$post[self::PROFILE_UPDATE_TOKEN_NAME] = $rublonPUToken;
+					self::_storeForm(
+						$user_id,
+						$post,
+						self::TRANSIENT_PROFILE_FORM_PREFIX,
+						self::UPDATE_FORM_LIFETIME
+					);
+					self::_storeUpdateToken(
+						$user_id,
+						$rublonPUToken,
+						self::TRANSIENT_PROFILE_TOKEN_PREFIX,
+						self::UPDATE_TOKEN_LIFETIME
+					);
+					self::_reloadParentFrame(
+						__('Your profile is being updated.', 'rublon'),
+						true
+					);
+				}
+			}
+		} catch (RublonException $e) {
+			self::_handleCallbackException($e);
+			self::_abortConfirmation(self::profileUrl());
+		}
+	}
+
+
+	static private function _confirmASUWithRublon($post, $change) {
+
+		$current_user = wp_get_current_user();
+		$user_id = self::getUserId($current_user);
+		$user_email = self::getUserEmail($current_user);
+
+		$rublon = self::getRublon();
+		
+		$authParams = array();
+		$roleProtectionType = self::roleProtectionType($current_user);
+		$userProtectionType = self::userProtectionType($current_user);
+		if ($roleProtectionType == self::PROTECTION_TYPE_EMAIL || $userProtectionType == self::PROTECTION_TYPE_EMAIL) {
+			$authParams[RublonAuthParams::FIELD_CAN_USE_EMAIL2FA] = true;
+		}
+		$authParams[self::FLAG_ADDSETT_UPDATE] = true;
+		$authParams['customURIParam'] = self::FLAG_ADDSETT_UPDATE;
+
+		$msg = __('Do you confirm changing default protection levels?', 'rublon');
+
+		try {
+			$authUrl = $rublon->confirm(
+				self::getActionURL('confirm'),
+				$user_id,
+				$user_email,
+				$msg,
+				$authParams
+			);
+			if (!empty($authUrl)) {
+				wp_redirect($authUrl);
+				exit;
+			} else {
+				if ($roleProtectionType == self::PROTECTION_TYPE_MOBILE) {
+					self::_abortConfirmation(
+						self::rublonUrl(),
+						'MOBILE_APP_REQUIRED'
+					);
+				} else {
+					$rublonASUToken = self::_generateToken();
+					$post[self::ADDSETT_UPDATE_TOKEN_NAME] = $rublonASUToken;
+					self::_storeForm(
+						$user_id,
+						$post,
+						self::TRANSIENT_ADDSETT_FORM_PREFIX,
+						self::UPDATE_FORM_LIFETIME
+					);
+					self::_storeUpdateToken(
+						$user_id,
+						$rublonASUToken,
+						self::TRANSIENT_ADDSETT_TOKEN_PREFIX,
+						self::UPDATE_TOKEN_LIFETIME
+					);
+					self::_redirectParentFrame(
+						self::optionsUrl(),
+						__('Rublon settings are being updated.', 'rublon'),
+						true
+					);
+				}
+			}
+		} catch (RublonException $e) {
+			self::_handleCallbackException($e);
+			self::_abortConfirmation(self::rublonUrl());
+		}		
+
+	}
+
+
+	static private function _storeForm($user_id, $form, $transient_prefix, $transient_lifetime) {
 
 		set_transient(
-			self::TRANSIENT_PROFILE_FORM_PREFIX . $user_id,
-			$post,
-			self::PROFILE_UPDATE_FORM_LIFETIME * MINUTE_IN_SECONDS
+			$transient_prefix . $user_id,
+			$form,
+			$transient_lifetime * MINUTE_IN_SECONDS
 		);
 
 	}
 
 
-	static private function _retrievePUForm($user_id) {
+	static private function _retrieveForm($user_id, $transient_prefix) {
 
-		return get_transient(self::TRANSIENT_PROFILE_FORM_PREFIX . $user_id);
+		return get_transient($transient_prefix . $user_id);
 
 	}
 
 
-	static private function _clearPUForm($user_id) {
+	static private function _clearForm($user_id, $transient_prefix) {
 	
-		delete_transient(self::TRANSIENT_PROFILE_FORM_PREFIX . $user_id);
+		delete_transient($transient_prefix . $user_id);
 	
 	}
 
 
-	static private function _storePUToken($user_id, $token) {
+	static private function _storeUpdateToken($user_id, $token, $transient_prefix, $transient_lifetime) {
 
 		set_transient(
-			self::TRANSIENT_PROFILE_PREFIX . $user_id,
+			$transient_prefix . $user_id,
 			$token,
-			self::TOKEN_PROFILE_UPDATE_LIFETIME * MINUTE_IN_SECONDS
+			$transient_lifetime * MINUTE_IN_SECONDS
 		);
 
 	}
 
 
-	static private function _retrievePUToken($user_id) {
+	static private function _retrieveUpdateToken($user_id, $transient_prefix) {
 
-		return get_transient(self::TRANSIENT_PROFILE_PREFIX . $user_id);
+		return get_transient($transient_prefix . $user_id);
 
 	}
 
 
-	static private function _clearPUToken($user_id) {
+	static private function _clearUpdateToken($user_id, $transient_prefix) {
 
-		delete_transient(self::TRANSIENT_PROFILE_PREFIX . $user_id);
+		delete_transient($transient_prefix . $user_id);
+
+	}
+
+
+	static public function setMobileUserStatus(WP_User $user, $mobile_status = self::YES) {
+
+		$user_id = self::getUserId($user);
+		set_transient(
+			self::TRANSIENT_MOBILE_USER . $user_id,
+			$mobile_status,
+			self::MOBILE_USER_INFO_LIFETIME * MINUTE_IN_SECONDS
+		);
+
+	}
+
+
+	static public function getMobileUserStatus(WP_User $user, $refresh = false) {
+
+		$user_id = self::getUserId($user);
+		$mobile_user_status = get_transient(self::TRANSIENT_MOBILE_USER . $user_id);
+		if ($refresh && $mobile_user_status === false) {
+			$rublon_req = new RublonRequests();
+			$mobile_user_status = $rublon_req->checkMobileStatus($user);
+			self::setMobileUserStatus($user, $mobile_user_status);
+		}
+		return $mobile_user_status;
+
+	}
+
+
+	static public function clearMobileUserStatus(WP_User $user) {
+
+		$user_id = self::getUserId($user);
+		delete_transient(self::TRANSIENT_MOBILE_USER . $user_id);
 
 	}
 
@@ -363,7 +748,7 @@ class RublonHelper {
 	 * @param array $post
 	 * @return boolean
 	 */
-	static private function _changeRequiresConfirmation($post = array()) {
+	static private function _pUChangeRequiresConfirmation($post = array()) {
 
 		$change = 0;
 		if (!empty($post['pass1'])) {
@@ -383,72 +768,23 @@ class RublonHelper {
 
 	}
 
+	static private function _aSUChangeRequiresConfirmation($new_value, $old_value) {
 
-	static private function _confirmTransactionWithRublon($post, $change) {
-
-		$current_user = wp_get_current_user();
-		$user_id = self::getUserId($current_user);
-		$user_email = self::getUserEmail($current_user);
-		$rublon = self::getRublon();
-		$here = RublonCookies::getReturnURL();
-		$authParams = array();
-		$roleProtectionType = self::roleProtectionType($current_user);
-		$userProtectionType = self::userProtectionType($current_user);
-		if ($roleProtectionType == self::PROTECTION_TYPE_EMAIL || $userProtectionType == self::PROTECTION_TYPE_EMAIL) {
-			$authParams[RublonAuthParams::FIELD_CAN_USE_EMAIL2FA] = true;
-		}
-		$authParams['customURIParam'] = 'profile';
-		$msg = __('Do you confirm changing your %s?', 'rublon');
-		$msg2 = '';
-		if ($change > 3) {
-			$change -= 4;
-			$msg2 = __('protection type', 'rublon'); 
-		}
-		if ($change > 1) {
-			$change -= 2;
-			if (!empty($msg2)) {
-				if ($change > 0) {
-					$msg2 .= __(', your ', 'rublon');
-				} else {
-					$msg2 .= __(' and your ', 'rublon');
+		$levels = array(
+			self::PROTECTION_TYPE_NONE => 0,
+			self::PROTECTION_TYPE_EMAIL => 1,
+			self::PROTECTION_TYPE_MOBILE => 2,
+		);
+		$change = 0;
+		foreach ($new_value as $key => $value) {
+			if (strpos($key, self::PROTECTION_TYPE_SETT_PREFIX) !== false && isset($old_value[$key])) {
+				if ($levels[$value] < $levels[$old_value[$key]]) {
+					$change++;
 				}
 			}
-			$msg2 .= sprintf(__('email address to: %s', 'rublon'), $post['email']);
 		}
-		if ($change > 0) {
-			$change -= 1;
-			if (!empty($msg2)) {
-				$msg2 .= __(', as well as your ', 'rublon');
-			}
-			$msg2 .= __('password', 'rublon');
-		}
-		$msg = sprintf($msg, $msg2);
-		try {
-			$authURL = $rublon->confirm(
-				self::getActionURL('confirm'),
-				$user_id,
-				$user_email,
-				$msg,
-				$authParams
-			);
-			if (!empty($authURL)) {
-				wp_redirect($authURL);
-				exit;
-			} else {
-				if ($roleProtectionType == self::PROTECTION_TYPE_MOBILE) {
-					self::_abortConfirmation('MOBILE_APP_REQUIRED');
-				} else {
-					$rublonPUToken = self::_generateToken();
-					$post[self::TOKEN_PROFILE_UPDATE_NAME] = $rublonPUToken;
-					self::_storePUForm($user_id, $post);
-					self::_storePUToken($user_id, $rublonPUToken);
-					self::_reloadParentFrameOnSuccess(true);
-				}
-			}
-		} catch (RublonException $e) {
-			self::_handleCallbackException($e);
-			self::_abortConfirmation();
-		}
+		return $change;
+
 	}
 
 
@@ -466,76 +802,137 @@ class RublonHelper {
 			);
 		} catch (RublonException $e) {
 			self::_handleConfirmationException($e);
-			self::_abortConfirmation();
+			$failureUrl = self::_determineConfirmationReturnUrl();
+			self::_abortConfirmation($failureUrl);
 		}
 	
 	}
 	
 	
-	static public function confirmationSuccess($wp_user_id, $callback) {
+	static public function confirmationSuccess($user_id, $callback) {
 	
+		$fallbackUrl = self::_determineConfirmationReturnUrl();
 		try {
-			$user = get_user_by('id', $wp_user_id);
+			$user = get_user_by('id', $user_id);
 			if ($user) {
+				$usingEmail2FA = $callback->getConsumerParam(RublonAPIClient::FIELD_USING_EMAIL2FA);
+				if (!$usingEmail2FA) {
+					self::setMobileUserStatus($user);
+				}
 				if (RublonAPICredentials::CONFIRM_RESULT_YES == $callback->getCredentials()->getConfirmResult()) {
 					$consumerParams = $callback->getCredentials()->getResponse();
-					$rublonPUToken = self::_generateToken();
-					$post = self::_retrievePUForm($wp_user_id);
-					$post[self::TOKEN_PROFILE_UPDATE_NAME] = $rublonPUToken;
-					self::_storePUForm($wp_user_id, $post);
-					self::_storePUToken($wp_user_id, $rublonPUToken);
-					self::_reloadParentFrameOnSuccess(true);
+					if (!empty($consumerParams['result'])) {
+						if (!empty($consumerParams['result'][self::FLAG_PROFILE_UPDATE])) {
+							$process_type = self::FLAG_PROFILE_UPDATE;
+							$transient_form_prefix = self::TRANSIENT_PROFILE_FORM_PREFIX;
+							$transient_token_prefix = self::TRANSIENT_PROFILE_TOKEN_PREFIX;
+							$update_token_name = self::PROFILE_UPDATE_TOKEN_NAME;
+						} elseif (!empty($consumerParams['result'][self::FLAG_ADDSETT_UPDATE])) {
+							$process_type = self::FLAG_ADDSETT_UPDATE;
+							$transient_form_prefix = self::TRANSIENT_ADDSETT_FORM_PREFIX;
+							$transient_token_prefix = self::TRANSIENT_ADDSETT_TOKEN_PREFIX;
+							$update_token_name = self::ADDSETT_UPDATE_TOKEN_NAME;
+						} else {
+							self::_abortConfirmation(
+								$fallbackUrl,
+								'MALFORMED_AUTHENTICATION_DATA'
+							);
+						}
+						$rublonUpdateToken = self::_generateToken();
+						$post = self::_retrieveForm(
+							$user_id,
+							$transient_form_prefix
+						);
+						$post[$update_token_name] = $rublonUpdateToken;
+						self::_storeForm(
+							$user_id,
+							$post,
+							$transient_form_prefix,
+							self::UPDATE_FORM_LIFETIME
+						);
+						self::_storeUpdateToken(
+							$user_id,
+							$rublonUpdateToken,
+							$transient_token_prefix,
+							self::UPDATE_TOKEN_LIFETIME
+						);
+						switch ($process_type) {
+							case self::FLAG_PROFILE_UPDATE:
+								self::_reloadParentFrame(
+									__('Your profile is being updated.', 'rublon'),
+									true
+								);
+								break;
+							case self::FLAG_ADDSETT_UPDATE:
+								self::_redirectParentFrame(
+									self::optionsUrl(),
+									__('Rublon settings are being updated.', 'rublon'),
+									true
+								);
+								break;
+						}
+						
+					} else {
+						self::_abortConfirmation(
+							$fallbackUrl,
+							'ERRONEOUS_AUTHENTICATION_DATA'
+						);
+					}
 				} else {
-					self::_cancelConfirmation();
+					self::_cancelConfirmation($fallbackUrl);
 				}
 			} else {
-				self::_abortConfirmation('USER_NOT_FOUND');
+				self::_abortConfirmation(
+					$fallbackUrl,
+					'USER_NOT_FOUND'
+				);
 			}
 		} catch (RublonException $e) {
 			self::_handleConfirmationException($e);
-			self::_abortConfirmation();
+			self::_abortConfirmation($fallbackUrl);
 		}
 	
 	}
 
 
 	static public function confirmationFailure($callback) {
-	
-		self::_abortConfirmation('CONFIRMATION_CANCELLED');
-	
+
+		$failureUrl = self::_determineConfirmationReturnUrl();
+		self::_abortConfirmation(
+			$failureUrl,
+			'RUBLON_OPERATION_CANCELLED'
+		);
+
 	}
 
 
-	static private function _abortConfirmation($errorCode = null, $frame = true) {
+	static private function _abortConfirmation($url, $errorCode = null, $frame = true) {
 
 		if ($errorCode !== null) {
 			self::setMessage($errorCode, 'error', 'TC');
 		}
-		$returnUrl = admin_url('profile.php');
+
 		if (!$frame) {
-			wp_safe_redirect($returnUrl);
+			wp_safe_redirect($url);
 			exit;
 		} else {
-			$script = self::_returnToPage($returnUrl, true);
-			$content = array(
-				'text' => __('Operation aborted.', 'rublon') . '<br />' . __('This will only take a moment.', 'rublon'),
-				'script' => $script
+			self::_redirectParentFrame(
+				$url,
+				__('Operation aborted.', 'rublon'),
+				true
 			);
-			self::_displayBusyPageWithContent($content);
 		}
 
 	}
 
 
-	static private function _cancelConfirmation() {
+	static private function _cancelConfirmation($url) {
 
-		$returnUrl = admin_url('profile.php');
-		$script = self::_returnToPage($returnUrl, true);
-		$content = array(
-			'text' => __('Operation cancelled.', 'rublon') . '<br />' . __('This will only take a moment.', 'rublon'),
-			'script' => $script
+		self::_redirectParentFrame(
+			$url,
+			__('Operation cancelled.', 'rublon'),
+			true
 		);
-		self::_displayBusyPageWithContent($content);
 
 	}
 
@@ -544,6 +941,13 @@ class RublonHelper {
 	
 		self::_handleCallbackException($e, 'TC');
 	
+	}
+
+
+	static private function _handleRegistrationException($e) {
+
+		self::_handleCallbackException($e, 'CR');
+
 	}
 
 
@@ -618,20 +1022,32 @@ class RublonHelper {
 		}		
 
 	}
-	
+
+
 	/**
 	 * Handle a successful authentication with Rublon
 	 * 
-	 * @param string $wp_user_id
+	 * @param string $user_id
 	 * @param Rublon2FactorCallback $callback
 	 */
-	static public function callbackSuccess($wp_user_id, $callback) {
+	static public function callbackSuccess($user_id, $callback) {
 
-		$user = get_user_by('id', $wp_user_id);
+		$user = get_user_by('id', $user_id);
 		if ($user) {
-			wp_clear_auth_cookie();
-			RublonCookies::setLoggedInCookie(self::getUserId($user));
-			RublonCookies::setAuthCookie($user);
+			$usingEmail2FA = $callback->getConsumerParam(RublonAPIClient::FIELD_USING_EMAIL2FA);
+			if (!$usingEmail2FA) {
+				self::setMobileUserStatus($user);
+			}
+			$ACMStatus = $callback->getConsumerParam(RublonAuthParams::FIELD_ACCESS_CONTROL_MANAGER_ALLOWED);
+			if ($ACMStatus === true) {
+				self::setACMPermission(self::YES);
+			} else {
+				self::setACMPermission(self::NO);
+			}
+			$remember = $callback->getConsumerParam('remember');
+			wp_logout();
+			RublonCookies::setLoggedInCookie($user, $remember);
+			RublonCookies::setAuthCookie($user, $remember);
 			do_action('wp_login', $user->user_login, $user);
 		}
 		self::_returnToPage();
@@ -656,25 +1072,27 @@ class RublonHelper {
 	 * Perform Rublon2Factor authentication
 	 * 
 	 */
-	static public function authenticateWithRublon($user, $protectionType) {
+	static public function authenticateWithRublon($user, $protection_type, $remember = false) {
 
 		$rublon = self::getRublon();
 		$here = RublonCookies::getReturnURL();
-		$authParams = array();
-		if (in_array(self::PROTECTION_TYPE_EMAIL, $protectionType)) {
+		$authParams = array(
+			'remember' => $remember,
+		);
+		if (in_array(self::PROTECTION_TYPE_EMAIL, $protection_type)) {
 			$authParams[RublonAuthParams::FIELD_CAN_USE_EMAIL2FA] = true;
 		}
 		if (!empty($here)) {
 			$authParams['customURIParam'] = '[[CUSTOM]]' . $here;
 		}
 		try {
-			$authURL = $rublon->auth(
+			$authUrl = $rublon->auth(
 				self::getActionURL('callback'),
 				self::getUserId($user),
 				self::getUserEmail($user),
 				$authParams
 			);
-			return $authURL;
+			return $authUrl;
 		} catch (RublonException $e) {
 			return '';
 		}
@@ -697,8 +1115,9 @@ class RublonHelper {
 				$key = self::RUBLON_SETTINGS_KEY;
 		}
 		$settings = get_option($key);
-		if (!$settings)
+		if (!$settings) {
 			$settings = array();
+		}
 		return $settings;
 
 	}
@@ -721,6 +1140,8 @@ class RublonHelper {
 		}
 		update_option($key, $settings);
 
+		do_action('rublon_save_settings', $settings, $group);
+
 	}
 
 
@@ -736,11 +1157,11 @@ class RublonHelper {
 
 		$settings = self::getSettings();
 		$settings['attempt-registration'] = $deny;
-		self::saveSettings($settings);		
+		self::saveSettings($settings);
 
 	}
 	
-	static public function registerPlugin() {
+	static public function registerSite() {
 
 		$current_user = wp_get_current_user();
 		$rublonGUI = new Rublon2FactorGUIWordPress(
@@ -828,13 +1249,13 @@ class RublonHelper {
 								. ' <strong>' . __('update now', 'rublon') . '</strong></a>.';
 						break;
 					case 'CR_PLUGIN_REGISTERED_NO_PROTECTION':
-						$errorMessage = sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon'), admin_url(self::RUBLON_PAGE));
+						$errorMessage = sprintf(__('Thank you! Now all of your users can protect their accounts with Rublon. However, there has been a problem with protecting your account. Go to <a href="%s">Rublon page</a> in order to protect your account.', 'rublon'), admin_url(self::WP_RUBLON_PAGE));
 						break;
 					case 'LM_ROLE_BLOCKED':
 						$no_code = true;
 						$errorMessage = __('The authentication process has been halted.', 'rublon') . ' ' . __('This site\'s administrator requires that you protect your account with the Rublon mobile app.', 'rublon')
-						. '<br /><br />' . __('Rublon protects your account against intruders who found out your password or hijacked your session.', 'rublon')
-						. '<br /><br />' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon');
+						. '<br /><br />' . __('Rublon protects against intruders who found out your password.', 'rublon')
+						. '<br /><br />' . sprintf(__('Learn more at <a href="%s" target="_blank">www.rublon.com</a>.', 'rublon'), self::rubloncomUrl());
 						$errorMessage = str_replace('target="_blank"', 'target="_blank" class="rublon-link"', $errorMessage);
 						break;
 					case 'CR_SYSTEM_TOKEN_INVALID_RESPONSE_TIMESTAMP':
@@ -844,6 +1265,7 @@ class RublonHelper {
 						$errorMessage = __('Your server\'s time seems out of sync. Please check that it is properly synchronized - Rublon won\'t be able to verify your website\'s security otherwise.', 'rublon');
 						break;
 					case 'TC_MOBILE_APP_REQUIRED':
+						$no_code = true;
 						$errorMessage = __('The authentication process has been halted.', 'rublon') . ' ' . __('This site\'s administrator requires you to confirm this operation using the Rublon mobile app.', 'rublon')
 						. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon');
 						break;
@@ -882,7 +1304,7 @@ class RublonHelper {
 	 *
 	 * @return boolean
 	 */
-	static public function isPluginRegistered() {
+	static public function isSiteRegistered() {
 
 		$settings = self::getSettings();
 		return (!empty($settings) && !empty($settings['rublon_system_token']) && !empty($settings['rublon_secret_key']));
@@ -897,7 +1319,7 @@ class RublonHelper {
 	 */
 	static private function _getSavedPluginVersion() {
 
-		$settings = self::getSettings();
+		$settings = apply_filters('rublon_get_settings', self::getSettings());
 		return (!empty($settings) && !empty($settings['rublon_plugin_version'])) ? $settings['rublon_plugin_version'] : '';
 
 	}
@@ -910,8 +1332,9 @@ class RublonHelper {
 	 */
 	static public function getCurrentPluginVersion() {
 
-		if (!function_exists('get_plugin_data'))
-			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		if (!function_exists('get_plugin_data')) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
 		$pluginData = get_plugin_data(RUBLON2FACTOR_PLUGIN_PATH);
 		return (!empty($pluginData) && !empty($pluginData['Version'])) ? $pluginData['Version'] : '';
 		
@@ -929,20 +1352,6 @@ class RublonHelper {
 		$settings = self::getSettings();
 		$settings['rublon_plugin_version'] = $version;
 		self::saveSettings($settings);
-
-	}
-
-
-	/**
-	 * Updates rublon_profile_id for a given user, to turn on second authentication factor.
-	 *
-	 * @param WP_User $user WordPress user object
-	 * @param int $rublonProfileId User's Rublon profile ID
-	 * @return int|boolean
-	 */
-	static public function connectRublon2Factor($user, $rublonProfileId) {
-
-		return add_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, $rublonProfileId, true);
 
 	}
 
@@ -966,19 +1375,6 @@ class RublonHelper {
 
 
 	/**
-	 * Check if the current user's account is protected by Rublon
-	 *
-	 * @return boolean
-	 */
-	static public function isCurrentUserSecured() {
-
-		$currentUser = wp_get_current_user();
-		return self::isUserSecured($currentUser);
-
-	}
-
-
-	/**
 	 * Check if the given user is protected by Rublon
 	 *
 	 * @param WP_User $user
@@ -987,7 +1383,7 @@ class RublonHelper {
 	static public function isUserSecured($user) {
 
 		$rublonProfileId = get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
-		return self::isPluginRegistered() && !empty($rublonProfileId);
+		return self::isSiteRegistered() && !empty($rublonProfileId);
 
 	}
 
@@ -997,22 +1393,9 @@ class RublonHelper {
 	 * 
 	 * @param WP_User $user
 	 */
-	static public function isUserAuthenticated($user) {
+	static public function isUserAuthenticated($user, $plugin_version = '2.0.2') {
 
-		return RublonCookies::isAuthCookieSet($user);
-
-	}
-
-
-	/**
-	 * Retrieve a user's Rublon profile ID from user meta
-	 * 
-	 * @param unknown $user
-	 */
-	static public function getUserProfileId($user) {
-
-		if (!empty($user))
-			return get_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, true);
+		return RublonCookies::isAuthCookieSet($user, $plugin_version);
 
 	}
 
@@ -1024,8 +1407,14 @@ class RublonHelper {
 	 */
 	static public function consumerRegistrationAction($action) {
 
-		$consumerRegistration = new RublonConsumerRegistrationWordPress();
-		$consumerRegistration->action($action);
+		try {
+			$consumerRegistration = new RublonConsumerRegistrationWordPress();
+			$consumerRegistration->action($action);
+		} catch (RublonException $e) {
+			self::_handleRegistrationException($e);
+			wp_safe_redirect(admin_url());
+			exit;
+		}
 
 	}
 
@@ -1035,9 +1424,14 @@ class RublonHelper {
 	 */
 	static private function _initializeConsumerRegistration() {
 
-		$consumerRegistration = new RublonConsumerRegistrationWordPress();
-		$consumerRegistration->initForWordPress();		
-
+		try {
+			$consumerRegistration = new RublonConsumerRegistrationWordPress();
+			$consumerRegistration->initForWordPress();		
+		} catch (RublonException $e) {
+			self::_handleRegistrationException($e);
+			wp_safe_redirect(admin_url());
+			exit;
+		}
 	}
 
 
@@ -1050,8 +1444,8 @@ class RublonHelper {
 
 		$consumerRegistration = new RublonConsumerRegistrationWordPress();
 		return array(
-				'url' => $consumerRegistration->getAPIDomain(),
-				'action' => $consumerRegistration->getConsumerActionURL()
+			'url' => $consumerRegistration->getAPIDomain(),
+			'action' => $consumerRegistration->getConsumerActionURL()
 		);
 
 	}
@@ -1145,33 +1539,6 @@ class RublonHelper {
 
 
 	/**
-	 * Remove any scheme modifications from older versions and migrate data to user meta
-	 * 
-	 */
-	static private function _dbMigrate() {
-
-		global $wpdb;
-
-		$user_fields = $wpdb->get_col('SHOW COLUMNS FROM ' . $wpdb->users);
-		if (in_array('rublon_profile_id', $user_fields)) {
-			$all_users = get_users();
-			foreach ($all_users as $user) {
-				if (!empty($user->rublon_profile_id)) {
-					add_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, $user->rublon_profile_id, true);
-				}
-			}
-			$db_error = $wpdb->query('ALTER TABLE ' . $wpdb->users . ' DROP COLUMN `rublon_profile_id`') === false;
-			if ($db_error) {
-				deactivate_plugins(plugin_basename(RUBLON2FACTOR_PLUGIN_PATH), true);
-				_e('Plugin requires database modification but you do not have permission to do it.', 'rublon');
-				exit;
-			}
-		}
-
-	}
-
-
-	/**
 	 * Perform any necessary actions on plugin update
 	 * 
 	 * @param string $from Version the plugin's being updated from
@@ -1181,46 +1548,42 @@ class RublonHelper {
 
 		// migrate old database entries into user meta
 		self::_dbMigrate();
-
+		
 		// make sure that Rublon is run before other plugins
 		self::meFirst();
-
+		
 		// send update info to Rublon
-		if (self::isPluginRegistered()) {
+		if (self::isSiteRegistered()) {
 			$pluginMeta = self::preparePluginMeta();
 			$pluginMeta['action'] = 'update';
 			$pluginMeta['meta']['previous-version'] = $from;
 			self::pluginHistoryRequest($pluginMeta);
 		}
-
+		
 		// remove any deprecated cookies
 		RublonCookies::cookieCleanup(array('return_url'));
-
+		
 		$user = wp_get_current_user();
-		if (self::isPluginRegistered() && is_user_logged_in() && is_admin() && self::isUserSecured($user) && !self::isUserAuthenticated($user)) {
- 			RublonCookies::setAuthCookie($user);
+		if (self::isSiteRegistered()
+			&& is_user_logged_in()
+			&& is_admin()
+			&& self::isUserSecured($user)
+			&& !self::isUserAuthenticated($user, $from)) {
+			RublonCookies::setAuthCookie($user);
+		}
+		
+		// Update auth cookie (new cookie since 2.0.2)
+		if (self::isSiteRegistered()
+			&& is_user_logged_in()
+			&& is_admin()
+			&& self::isUserAuthenticated($user, $from)
+			&& !self::isUserAuthenticated($user)) {
+			RublonCookies::setAuthCookie($user);
 		}
 
-		// disable XML-RPC by default
-		$additionalSettings = self::getSettings('additional');
-		if (!isset($additionalSettings['disable-xmlrpc'])) {
-			$additionalSettings['disable-xmlrpc'] = 'on';
-			self::saveSettings($additionalSettings, 'additional');
-		}
-		$adminRole = self::prepareRoleID('administrator');
-		// Enable Email2FA for all roles by default
-		if (!isset($additionalSettings[$adminRole])) {
-			global $wp_roles;
-			if (!isset($wp_roles)) {
-				$wp_roles = new WP_Roles();
-			}
-			$roles = $wp_roles->get_names();
-			foreach ($roles as $role) {
-				$role_id = self::prepareRoleID($role);
-				$additionalSettings[$role_id] = self::PROTECTION_TYPE_EMAIL;
-			}
-			self::saveSettings($additionalSettings, 'additional');
-		}
+		// Check for the presence of additional settings
+		// and set them if they're missing
+		self::_checkAdditionalSettings();
 
 	}
 
@@ -1238,6 +1601,60 @@ class RublonHelper {
 			self::_setPluginVersion($currentPluginVersion);
 		}
 
+	}
+
+
+	static private function _checkAdditionalSettings() {
+
+		// disable XML-RPC by default
+		$additional_settings = self::getSettings('additional');
+		if (!isset($additional_settings['disable-xmlrpc'])) {
+			$additional_settings['disable-xmlrpc'] = 'on';
+			self::saveSettings($additional_settings, 'additional');
+		}
+		
+		$adminRole = self::prepareRoleID('administrator');
+		// Enable Email2FA for all roles by default
+		if (!isset($additional_settings[$adminRole])) {
+			global $wp_roles;
+			if (!isset($wp_roles)) {
+				$wp_roles = new WP_Roles();
+			}
+			$roles = $wp_roles->get_names();
+			foreach ($roles as $role) {
+				$role_id = self::prepareRoleID($role);
+				$additional_settings[$role_id] = self::PROTECTION_TYPE_EMAIL;
+			}
+			self::saveSettings($additional_settings, 'additional');
+		}
+
+	}
+
+
+	/**
+	 * Remove any scheme modifications from older versions and migrate data to user meta
+	 *
+	 */
+	static private function _dbMigrate() {
+	
+		global $wpdb;
+	
+		$user_fields = $wpdb->get_col('SHOW COLUMNS FROM ' . $wpdb->users);
+		if (in_array('rublon_profile_id', $user_fields)) {
+			$all_users = get_users();
+			foreach ($all_users as $user) {
+				if (!empty($user->rublon_profile_id)) {
+					add_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, $user->rublon_profile_id, true);
+				}
+			}
+			$db_error = $wpdb->query('ALTER TABLE ' . $wpdb->users . ' DROP COLUMN `rublon_profile_id`') === false;
+			if ($db_error) {
+				deactivate_plugins(plugin_basename(RUBLON2FACTOR_PLUGIN_PATH), true);
+				_e('Plugin requires database modification but you do not have permission to do it.', 'rublon');
+				exit;
+			}
+		}
+	
 	}
 
 
@@ -1323,6 +1740,9 @@ class RublonHelper {
 	
 		$language = get_bloginfo('language');
 		$language = strtolower(substr($language, 0, 2));
+		if (!in_array($language, array('en', 'pl', 'de'))) {
+			$language = 'en';
+		}
 		return $language;
 	
 	}
@@ -1400,10 +1820,10 @@ class RublonHelper {
 		if (!empty($custom)) {
 			switch ($custom) {
 				case 'rublon':
-					$page = admin_url(self::RUBLON_PAGE);
+					$page = admin_url(self::WP_RUBLON_PAGE);
 					break;
-				case 'profile':
-					$page = admin_url('profile.php');
+				case self::FLAG_PROFILE_UPDATE:
+					$page = self::profileUrl();
 					break;
 				default:
 					$page = urldecode(str_replace('[[CUSTOM]]', '', $custom));
@@ -1445,6 +1865,28 @@ class RublonHelper {
 		if(!empty($settings['disable-xmlrpc']) && $settings['disable-xmlrpc'] == 'on') {
 			add_filter('xmlrpc_enabled', '__return_false');
 		}
+
+	}
+
+
+	/**
+	 * Check for a registration attempt
+	 * 
+	 * Checks if a plugin registration attempt has been
+	 * queued and perform it if it has.
+	 * 
+	 * @return void
+	 */
+	static public function checkRegistration() {
+
+		$attemptRegistration = self::shouldPluginAttemptRegistration();
+		if ($attemptRegistration && current_user_can('manage_options')) {
+			self::enqueueRegistration(false);
+			self::newNonce();
+			self::registerSite();
+		}
+
+		do_action('rublon_site_registration');
 
 	}
 
@@ -1574,7 +2016,7 @@ class RublonHelper {
 	 */
 	static public function prepareRoleID($role_name) {
 	
-		return 'prottype-for-' . strtolower(preg_replace('/[\W]/', '-', before_last_bar($role_name)));
+		return self::PROTECTION_TYPE_SETT_PREFIX . strtolower(preg_replace('/[\W]/', '-', before_last_bar($role_name)));
 	
 	}
 
@@ -1625,22 +2067,43 @@ class RublonHelper {
 	}
 
 
+	static public function isUserProtected($user, &$protection_type = self::NO) {
+
+		$role_protection_type = self::roleProtectionType($user);
+		$user_protection_type = self::userProtectionType($user);
+		$mobile_user_status = self::getMobileUserStatus($user, true);
+		if ($protection_type == self::YES) {
+			if ($mobile_user_status == self::YES
+				|| $role_protection_type == self::PROTECTION_TYPE_MOBILE) {
+				$protection_type = self::PROTECTION_TYPE_MOBILE;
+			} elseif ($role_protection_type == self::PROTECTION_TYPE_EMAIL
+				|| $user_protection_type == self::PROTECTION_TYPE_EMAIL) {
+				$protection_type = self::PROTECTION_TYPE_EMAIL;
+			} else {
+				$protection_type = self::PROTECTION_TYPE_NONE;
+			}
+		}
+		return (
+			$role_protection_type !== self::PROTECTION_TYPE_NONE
+			|| $user_protection_type !== self::PROTECTION_TYPE_NONE
+			|| $mobile_user_status == self::YES
+		);
+
+	}
+
+
 	/**
 	 * Redirection after authentication
 	 */
-	static private function _returnToPage($returnUrl = null, $withScriptTag = false) {
+	static private function _returnToPage($returnUrl = null) {
 
 		if (!$returnUrl) {
 			$returnUrl = self::getReturnPage();			
 		}
 		$returnUrl = (!empty($returnUrl)) ? $returnUrl : admin_url();
 		$returnUrl = self::normalizeURL($returnUrl);
-		if (!$withScriptTag) {
-			wp_safe_redirect($returnUrl);
-			exit;
-		} else {
-			return self::_redirectParentFrameScript($returnUrl, true);
-		}
+		wp_safe_redirect($returnUrl);
+		exit;
 
 	}
 
@@ -1653,6 +2116,7 @@ class RublonHelper {
 	<meta charset="utf-8" />
 	<title>%s</title>
 	%s
+	<script type="text/javascript" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress-admin.js?ver=' . self::getCurrentPluginVersion() . '"></script>
 </head>
 <body class="rublon-busy-body">
 %s
@@ -1747,42 +2211,42 @@ class RublonHelper {
 	}
 
 
-	static private function _reloadParentFrameOnSuccess($withMarkup = false) {
+	static private function _reloadParentFrame($text, $withMarkup = false) {
 
-		$current_user = wp_get_current_user();
-		if ($current_user instanceof WP_User) {
-			$current_user_id = self::getUserId($current_user);
-			$script = ($withMarkup) ? '<script type="text/javascript">' : '';
-			$script .= '
-				if (window && window.parent && window.parent.RublonWP) {
-					var RublonWP = window.parent.RublonWP;
-					RublonWP.reloadPage();
-				}
-			';
-			$script .= ($withMarkup) ? '</script>' : '';
-			$text = __('Your profile is being updated.', 'rublon') . '<br />' . __('This will only take a moment.', 'rublon');
-			$content = array(
-				'text' => $text,
-				'script' => $script
-			);
-			self::_displayBusyPageWithContent($content);
-		} else {
-			self::_abortConfirmation('USER_NOT_FOUND');
-		}
+		$script = ($withMarkup) ? '<script type="text/javascript">//<![CDATA[' : '';
+		$script .= '
+			if (window && window.parent && window.parent.RublonWP) {
+				var RublonWP = window.parent.RublonWP;
+				RublonWP.reloadPage();
+			}
+		';
+		$script .= ($withMarkup) ? '//]]></script>' : '';
+		$text .= '<br />' . __('This will only take a moment.', 'rublon');
+		$content = array(
+			'text' => $text,
+			'script' => $script
+		);
+		self::_displayBusyPageWithContent($content);
 
 	}
 
 
-	static public function _redirectParentFrameScript($url, $withMarkup = false) {
+	static public function _redirectParentFrame($url, $text, $withMarkup = false) {
 
-		$script = ($withMarkup) ? '<script type="text/javascript">' : '';
+		$script = ($withMarkup) ? '<script type="text/javascript">//<![CDATA[' : '';
 		$script .= '
-			if (window && window.parent) {
-				window.parent.location.href = "' . $url . '";
+			if (window && window.parent && window.parent.RublonWP) {
+				var RublonWP = window.parent.RublonWP;
+				RublonWP.goToPage(' . json_encode($url) . ');
 			}
 		';
-		$script .= ($withMarkup) ? '</script>' : '';
-		return $script;
+		$script .= ($withMarkup) ? '//]]></script>' : '';
+		$text .= '<br />' . __('This will only take a moment.', 'rublon');
+		$content = array(
+			'text' => $text,
+			'script' => $script
+		);
+		self::_displayBusyPageWithContent($content);
 
 	}
 
@@ -1830,53 +2294,71 @@ class RublonHelper {
 	}
 
 
-	static public function printEmail2FAProfileSection($user) {
+	static public function printProfileSectionAdditions($user) {
 
-		$roleProtectionType = self::roleProtectionType($user);
-		if ($roleProtectionType == self::PROTECTION_TYPE_NONE) {
+		$role_protection_type = self::roleProtectionType($user);
+		$user_protection_type = self::userProtectionType($user);
+		if ($role_protection_type == self::PROTECTION_TYPE_NONE) {
 			$emailSelected = '';
 			$noneSelected = '';
-			$userProtectionType = self::userProtectionType($user);
-			if ($userProtectionType == self::PROTECTION_TYPE_EMAIL) {
-				$emailSelected = ' selected';
+			if ($user_protection_type == self::PROTECTION_TYPE_EMAIL) {
+				$emailChecked = ' checked';
 				$lockedVisible = 'visible';
 				$unlockedVisible = 'hidden';
 			} else {
-				$noneSelected = ' selected';
+				$emailChecked = '';
 				$lockedVisible = 'hidden';
 				$unlockedVisible = 'visible';
 			}
 ?>
 <a id="rublon-email2fa"></a>
 <h3>
-<?php _e('Security', 'rublon'); ?>
+<?php _e('Account Protection', 'rublon'); ?>
 </h3>
 <table class="form-table">
 <tr>
 	<th>
-		<?php _e('Protection via email', 'rublon'); ?>
+		<?php _e('Protection via Email', 'rublon'); ?>
 	</th>
 	<td>
-	<select name="<?php echo self::FIELD_USER_PROTECTION_TYPE; ?>" id="rublon-userprotectiontype-dropdown">
-		<option value="none"<?php echo $noneSelected; ?>><?php _e('Disabled', 'rublon'); ?></option>
-		<option value="email"<?php echo $emailSelected; ?>><?php _e('Enabled', 'rublon'); ?></option>
-	</select>
-	<label class="rublon-label rublon-label-userprotectiontype" for="rublon-userprotectiontype-dropdown">
-		<div class="rublon-lock-container rublon-unlocked-container rublon-userprotectiontype-unlocked <?php echo $unlockedVisible; ?>"><img class="rublon-lock rublon-unlocked" src="<?php echo RUBLON2FACTOR_PLUGIN_URL; ?>/assets/images/unlocked.png" /></div>
-		<div class="rublon-lock-container rublon-locked-container rublon-userprotectiontype-locked <?php echo $lockedVisible; ?>"><img class="rublon-lock rublon-locked" src="<?php echo RUBLON2FACTOR_PLUGIN_URL; ?>/assets/images/locked.png" /></div>
-	</label>
-	<br />
-	<div class="rublon-description"><span class="description"><?php
-		echo __('You will need to confirm every sign in from a new device via email. You will also need to confirm changes to important settings like your password or email address.', 'rublon')
-		. '<br /><strong>' . __('Notice:', 'rublon') . '</strong> ' . __('Administrators can always change your settings without your consent.', 'rublon'); ?></span></div>
+		<label class="rublon-label rublon-label-userprotectiontype" for="rublon-userprotectiontype-checkbox">
+			<input type="hidden" name="<?php echo self::FIELD_USER_PROTECTION_TYPE; ?>" value="none" />
+			<input type="checkbox" name="<?php echo self::FIELD_USER_PROTECTION_TYPE; ?>" id="rublon-userprotectiontype-checkbox" value="email"<?php echo $emailChecked; ?> />
+			<div class="rublon-lock-container rublon-unlocked-container rublon-userprotectiontype rublon-userprotectiontype-unlocked <?php echo $unlockedVisible; ?>"><img class="rublon-lock rublon-unlocked" src="<?php echo RUBLON2FACTOR_PLUGIN_URL; ?>/assets/images/unlocked.png" /></div>
+			<div class="rublon-lock-container rublon-locked-container rublon-userprotectiontype rublon-userprotectiontype-locked <?php echo $lockedVisible; ?>"><img class="rublon-lock rublon-locked" src="<?php echo RUBLON2FACTOR_PLUGIN_URL; ?>/assets/images/locked.png" /></div>
+			<?php _e('Enable account protection via email', 'rublon'); ?> 
+		</label>
+		<br />
+		<div class="rublon-description"><span class="description"><?php
+			echo __('You will need to confirm every sign in from a new device via email. You will also need to confirm changes to important settings like your password or email address.', 'rublon')
+				. '<br /><strong>' . __('Notice:', 'rublon') . '</strong> ' . __('Administrators can always change your settings without your consent.', 'rublon'); ?></span>
+		</div>
 	</td>	
 </tr>
+<?php
+	$mobile_user_status = self::getMobileUserStatus($user, true);
+	if ($mobile_user_status !== self::YES):
+?>
+<tr>
+	<th>
+		<?php _e('Protection via Phone', 'rublon'); ?>
+	</th>
+	<td>
+	<div class="rublon-description"><?php
+		printf(
+			__('This will be automatically enabled once you install the <a href="%s/get" target="_blank">Rublon mobile app</a>. Your phone will be required for identity or action confirmation. This will replace protection via email.', 'rublon'),
+			self::rubloncomUrl()
+		);
+	?></div>
+	</td>	
+</tr>
+<?php endif; ?>
 </table>
-<script>
+<script>//<![CDATA[
 	if (RublonWP) {
 		RublonWP.setUpUserProtectionTypeChangeListener();
 	}
-</script>
+//]]></script>
 <?php
 
 		}
@@ -1887,7 +2369,7 @@ class RublonHelper {
 
 		$script = '';
 		if ($withScriptTag) {
-			$script .= '<script>';
+			$script .= '<script>//<![CDATA[';
 		}
 		$script .= '
  			if (RublonWP) {
@@ -1897,11 +2379,120 @@ class RublonHelper {
  			}
  		';
 		if ($withScriptTag) {
-			$script .= '</script>';
+			$script .= '//]]></script>';
 		}
 		echo $script;
 
 	}
 
+
+	static public function profileUrl() {
+
+		return admin_url(self::WP_PROFILE_PAGE);
+
+	}
+
+
+	static public function optionsUrl() {
+
+		return admin_url(self::WP_OPTIONS_PAGE);
+
+	}
+
+
+	static public function rublonUrl() {
+
+		return admin_url(self::WP_RUBLON_PAGE);
+
+	}
+
+
+	static public function rubloncomUrl() {
+	
+		$lang = self::getBlogLanguage();
+		return 'https://rublon.com' . (($lang != 'en') ? ('/' . $lang) : '');
+	
+	}
+
+
+	static private function _determineConfirmationReturnUrl() {
+
+		$custom = self::uriGet('custom');
+		switch ($custom) {
+			case self::FLAG_PROFILE_UPDATE:
+				return self::profileUrl();
+				break;
+			case self::FLAG_ADDSETT_UPDATE:
+				return self::rublonUrl();
+				break;
+			default:
+				return self::rublonUrl();
+		}
+
+	}
+
+
+	static public function createDashboardDeviceWidget() {
+
+		$current_user = wp_get_current_user();
+		$rublonGUI = new Rublon2FactorGUIWordPress(
+			self::getRublon(),
+			self::getUserId($current_user),
+			self::getUserEmail($current_user)
+		);
+		echo $rublonGUI->getDashboardDeviceWidget();
+
+	}
+
+
+	static public function createDashboardACMWidget() {
+
+		$current_user = wp_get_current_user();
+		$rublonGUI = new Rublon2FactorGUIWordPress(
+			self::getRublon(),
+			self::getUserId($current_user),
+			self::getUserEmail($current_user)
+		);
+		echo $rublonGUI->getDashboardACMWidget();
+
+	}
+
+
+	static public function canShowACM() {
+
+		$additional_settings = self::getSettings('additional');
+		return (isset($additional_settings[self::SETTING_CAN_SHOW_ACM]) && $additional_settings[self::SETTING_CAN_SHOW_ACM] == self::YES);
+
+	}
+
+
+	static public function setACMPermission($status) {
+
+		$additional_settings = self::getSettings('additional');
+		$additional_settings[self::SETTING_CAN_SHOW_ACM] = $status;
+		self::saveSettings($additional_settings, 'additional');
+
+	}
+
+
+	/**
+	 * Store debug info in a transient option
+	 *
+	 * @param string $data Text data to store
+	 */
+	static public function debug($data) {
+
+		$debug = get_transient(self::TRANSIENT_DEBUG);
+		if (empty($debug)) {
+			$debug = array();
+		}
+		$debug[] = $data;
+		set_transient(
+			self::TRANSIENT_DEBUG,
+			$debug,
+			30 * MINUTE_IN_SECONDS
+		);
+
+	}
 
 }

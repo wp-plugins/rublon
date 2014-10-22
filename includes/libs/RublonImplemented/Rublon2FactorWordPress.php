@@ -7,7 +7,7 @@ class Rublon2FactorWordPress extends Rublon2Factor {
 
 	public function canUserActivate() {
 
-		return (!RublonHelper::isPluginRegistered() && current_user_can('manage_options'));
+		return (!RublonHelper::isSiteRegistered() && current_user_can('manage_options'));
 
 	}
 

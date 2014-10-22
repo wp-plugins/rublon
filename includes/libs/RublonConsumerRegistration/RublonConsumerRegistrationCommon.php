@@ -10,7 +10,7 @@ abstract class RublonConsumerRegistrationCommon {
 	/**
 	 * Default registration API domain.
 	 */
-	const DEFAULT_API_DOMAIN = 'https://rsu-developers.rublon.com';
+	const DEFAULT_API_DOMAIN = 'https://developers.rublon.com';
 
 	/**
 	 * URL path for API methods.
