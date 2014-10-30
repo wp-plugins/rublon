@@ -15,7 +15,7 @@ function rublon2factor_plugins_loaded() {
 
 	// Initialize Rublon plugin helper
 	RublonHelper::init();
-	
+
 	// Check if plugin registration should be attempted
 	// in this run
 	RublonHelper::checkRegistration();

@@ -278,7 +278,7 @@ class RublonMultisiteHelper extends RublonHelper {
 			$all_user_ids = get_users('fields=id');
 			foreach ($all_user_ids as $user_id) {
 				delete_user_meta($user_id, RublonHelper::RUBLON_META_PROFILE_ID);
-				delete_user_meta($user_id, RublonHelper::RUBLON_META_PROTECTION_TYPE);
+				delete_user_meta($user_id, RublonHelper::RUBLON_META_USER_PROTTYPE);
 				delete_user_meta($user_id, RublonHelper::RUBLON_META_AUTH_CHANGED_MSG);
 			}
 			restore_current_blog();

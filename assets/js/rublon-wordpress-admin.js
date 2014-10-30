@@ -90,7 +90,6 @@ var RublonWP = {
 				if (roleSelect) {
 					roleSelect.addEventListener('change', function(event) {
 						if (event.target.value) {
-							console.log(event.target.id);
 							var role = event.target.id.replace(/rublon-role-([a-z\-]+)-dropdown/, '$1');
 							var locked1 = document.querySelector('label.rublon-label-' + role + ' .rublon-locked-container.rublon-' + role + '-locked');
 							var locked2 = document.querySelector('label.rublon-label-' + role + ' .rublon-locked-container.rublon-' + role + '-locked2');
@@ -297,6 +296,15 @@ var RublonWPTools = {
 				}
 			}
 			element.className = newClasses.join(' ');
+		}
+
+	},
+
+	hasClass: function(element, className) {
+
+		if (element && element.className) {
+			var regex = new RegExp(className);
+			return element.className.match(regex);
 		}
 
 	},

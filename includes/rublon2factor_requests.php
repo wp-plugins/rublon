@@ -35,7 +35,7 @@ class RublonRequests {
 	 * @param WP_User $user
 	 * @return string RublonHelper constant
 	 */
-	public function checkMobileStatus(WP_User $user) {
+	public function checkMobileStatus($user) {
 
 		$user_id = RublonHelper::getUserId($user);
 		$user_email = RublonHelper::getUserEmail($user);

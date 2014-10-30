@@ -140,7 +140,7 @@ class RublonCookies {
 	 * @param WP_User $user
 	 * @param boolean $remember
 	 */
-	static public function setLoggedInCookie(WP_User $user, $remember) {
+	static public function setLoggedInCookie($user, $remember) {
 
 		$user_id = RublonHelper::getUserId($user);
 		$cookie_params = self::_getAuthCookieParams();
@@ -158,7 +158,7 @@ class RublonCookies {
 	 * @param WP_User $user User whose authentication should be checked
 	 * @return string
 	 */
-	static public function setAuthCookie($user = null, $remember = false) {
+	static public function setAuthCookie($user = null, $remember = null) {
 
 		if (!$user) {
 			$user = wp_get_current_user();
@@ -166,6 +166,9 @@ class RublonCookies {
 		$user_id = RublonHelper::getUserId($user);
 		$cookie_name = self::COOKIE_PREFIX . self::COOKIE_AUTHENTICATED;
 		$cookie_params = self::_getAuthCookieParams();
+		if ($remember === null) {
+			$remember = self::_isUserRemembered($user);
+		}
 		$expiration_params = self::_getAuthCookieExpiration($user_id, $remember);
 		if (isset($cookie_params['logged_in_secure']) && empty($cookie_params['logged_in_secure'])) {
 			$cookie_params['secure'] = false;
@@ -177,6 +180,16 @@ class RublonCookies {
 		self::_setCookieData($cookie_name, $cookie_data, $expiration_params['expire'], $cookie_params['secure']);
 		$_COOKIE[$cookie_name] = $cookie_data;
 		return $cookie_data;
+
+	}
+
+
+	static private function _isUserRemembered($user) {
+
+		$logged_in_cookie = wp_parse_auth_cookie('', 'logged_in');
+		$default_cookie_life = apply_filters('auth_cookie_expiration', (2 * DAY_IN_SECONDS), RublonHelper::getUserId($user), false);
+		$remember = (($logged_in_cookie['expiration'] - time()) > $default_cookie_life);
+		return $remember;
 
 	}
 
@@ -218,7 +231,7 @@ class RublonCookies {
 	 * @param string $plugin_version
 	 * @return boolean
 	 */
-	static public function isAuthCookieSet(WP_User $user, $plugin_version) {
+	static public function isAuthCookieSet($user, $plugin_version) {
 
 		$auth_cookie = self::_getCookieData(self::COOKIE_PREFIX . self::COOKIE_AUTHENTICATED);
 		if (!empty($auth_cookie)) {
@@ -311,7 +324,7 @@ class RublonCookies {
 	 * @param string $plugin_version
 	 * @return string
 	 */
-	static private function _prepareAuthCookieData(WP_User $user, $expiration, $plugin_version = '2.0.2') {
+	static private function _prepareAuthCookieData($user, $expiration, $plugin_version = '2.0.2') {
 
 		$user_id = RublonHelper::getUserId($user);
 		if (version_compare($plugin_version, '2.0.2', 'lt')) {
@@ -333,6 +346,7 @@ class RublonCookies {
 	/**
 	 * Retrieve auth cookie params (if they're set)
 	 *
+	 * @return array
 	 */
 	static private function _getAuthCookieParams() {
 	
@@ -349,7 +363,7 @@ class RublonCookies {
 	/**
 	 * Retrieve cookie expiration time
 	 *
-	 * @return int
+	 * @return array
 	 */
 	static private function _getAuthCookieExpiration($user_id, $remember) {
 
@@ -369,6 +383,7 @@ class RublonCookies {
 	/**
 	 * Get cookie params from WordPress settings
 	 *
+	 * @return array
 	 */
 	static private function _getCookieParams() {
 	

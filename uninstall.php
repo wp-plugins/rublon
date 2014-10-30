@@ -32,10 +32,12 @@ function rublon2factor_plugin_uninstall() {
 		delete_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
 		delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 		
-		$all_user_ids = get_users('fields=id');
+		$all_user_ids = get_users(array(
+			'fields' => 'id',
+		));
 		foreach ($all_user_ids as $user_id) {
 			delete_user_meta($user_id, RublonHelper::RUBLON_META_PROFILE_ID);
-			delete_user_meta($user_id, RublonHelper::RUBLON_META_PROTECTION_TYPE);
+			delete_user_meta($user_id, RublonHelper::RUBLON_META_USER_PROTTYPE);
 			delete_user_meta($user_id, RublonHelper::RUBLON_META_AUTH_CHANGED_MSG);
 		}		
 	}

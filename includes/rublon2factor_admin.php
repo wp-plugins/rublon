@@ -63,12 +63,17 @@ add_action('admin_print_styles', 'rublon2factor_admin_css');
 function rublon2factor_add_menu_entries() {
 
 	$main_title = __('Rublon', 'rublon');
-	$general_title = __('General settings', 'rublon');
-	$acm_title = __('Access Control', 'rublon');
 	$settings_page = add_utility_page($main_title, $main_title, 'read', 'rublon' , 'rublon2factor_render_settings_page', 'div');
+
+	$general_title = __('General settings', 'rublon');
 	add_submenu_page('rublon', 'Rublon: ' . $general_title, $general_title, 'read', 'rublon', 'rublon2factor_render_settings_page');
+
+	$trusted_title = __('Trusted Devices', 'rublon');
+	add_submenu_page('rublon', 'Rublon: ' . $trusted_title, $trusted_title, 'read', 'rublon_tdm', 'rublon2factor_render_tdm_page');
+
 	$current_user = wp_get_current_user();
 	if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
+		$acm_title = __('Access Control', 'rublon');
 		add_submenu_page('rublon', 'Rublon: ' . $acm_title, $acm_title, 'read', 'rublon_acm', 'rublon2factor_render_acm_page');
 	}
 
@@ -135,15 +140,13 @@ function rublon2factor_render_additional_settings() {
  */
 function rublon2factor_render_protection_types() {
 
-	global $wp_roles;
-
 	echo '<p class="rublon-settings-desc">' . __('Every user is protected via email by default. You can turn this off for selected roles. For more security, you can also require selected roles to use the Rublon mobile app.', 'rublon') . '</p>';
 	echo '<p class="rublon-settings-desc"><strong>' . __('Notice:', 'rublon') . ' </strong>' 
 		. __('Users of the Rublon mobile app are always protected, regardless of this setting. Users without default protection can turn it on themselves in their profile. Users with default protection cannot turn it off.', 'rublon') . '</p>';
 
 	$settings = RublonHelper::getSettings('additional');
 	// Retrieve the roles used on this site.
-	$roles = $wp_roles->get_names();
+	$roles = RublonHelper::getUserRoles();
 	$role_ids = array();
 	echo '<div class="rublon-settings-setting-name">';
 	echo '  <div class="rublon-settings-setting-label"></div>';
@@ -152,7 +155,7 @@ function rublon2factor_render_protection_types() {
 	foreach ($roles as $role) {
 		$checked = '';
 		// Prepare role IDs used as the option keys.
-		$role_id = RublonHelper::prepareRoleID($role);
+		$role_id = RublonHelper::prepareRoleId($role);
 		$role_ids[] = '\'' . $role_id . '\'';
 		if (!empty($settings[$role_id])) {
 			$mobileSelected = '';
@@ -320,6 +323,32 @@ function rublon2factor_render_settings_page() {
 <?php 
 }
 
+function rublon2factor_render_tdm_page() {
+?>
+<div class="wrap">
+	<div id="rublon2factor_tdm_page">
+		<h2 class="rublon-header">
+			<?php echo __('Rublon', 'rublon') . ' - ' . __('Trusted Devices Manager', 'rublon'); ?>
+		</h2>
+		<p>
+			<?php echo __('Rublon protects against intruders who found out your password.', 'rublon') . ' '
+ 				. sprintf(__('Learn more at <a href="%s" target="_blank">www.rublon.com</a>.', 'rublon'), RublonHelper::rubloncomUrl()) ?>
+		</p>
+		<?php
+			// TDM widget
+			$current_user = wp_get_current_user();
+			$gui = new Rublon2FactorGUIWordPress(
+				RublonHelper::getRublon(),
+				RublonHelper::getUserId($current_user),
+				RublonHelper::getUserEmail($current_user)
+			);
+			echo $gui->getTDMWidget();
+		?>
+	</div>
+</div>
+<?php
+}
+
 function rublon2factor_render_acm_page() {
 
 	?>
@@ -336,13 +365,12 @@ function rublon2factor_render_acm_page() {
 			// ACM widget
 			$current_user = wp_get_current_user();
 			if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
-				$current_user = wp_get_current_user();
 				$gui = new Rublon2FactorGUIWordPress(
 					RublonHelper::getRublon(),
 					RublonHelper::getUserId($current_user),
 					RublonHelper::getUserEmail($current_user)
 				);
-				echo $gui->getDashboardACMWidget(true);
+				echo $gui->getACMWidget();
 			}
 		?>
 	</div>

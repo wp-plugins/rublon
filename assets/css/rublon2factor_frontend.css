@@ -31,3 +31,14 @@
 .rublon-login-message > a.rublon-link {
 	color: #21759b !important;	
 }
+
+.rublon-app-button {
+	width: 50%;
+	text-align: center;
+	display: inline-block;
+	margin-bottom: 0.5em;
+}
+
+.rublon-width-full {
+	width: 100%;
+}

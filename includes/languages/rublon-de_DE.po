@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 2.0\n"
-"POT-Creation-Date: 2014-10-22 16:16+0100\n"
-"PO-Revision-Date: 2014-10-22 16:17+0100\n"
+"POT-Creation-Date: 2014-10-30 13:08+0100\n"
+"PO-Revision-Date: 2014-10-30 14:09+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -55,6 +55,9 @@ msgstr "Rublon"
 
 msgid "General settings"
 msgstr "Allgemeine Einstellungen"
+
+msgid "Trusted Devices"
+msgstr "Vertrauenswürdige Geräte"
 
 msgid "Access Control"
 msgstr "Access Control"
@@ -124,6 +127,9 @@ msgstr ""
 
 msgid "Learn more at <a href=\"%s\" target=\"_blank\">www.rublon.com</a>."
 msgstr "Erfahre mehr: <a href=\"%s\" target=\"_blank\">www.rublon.com/de</a>."
+
+msgid "Trusted Devices Manager"
+msgstr "Vertrauenswürdige Geräte Manager"
 
 msgid "Access Control Manager"
 msgstr "Access Control Manager"
@@ -250,15 +256,17 @@ msgstr ""
 "Dein Account konnte jedoch nicht geschützt werden. Gehe zur <a href=\"%s"
 "\">Rublon Unterseite</a>, um deinen Account zu schützen."
 
-msgid "The authentication process has been halted."
-msgstr "Der Authentifizierungsvorgang wurde angehalten."
+msgid ""
+"Due to security purposes, your administrator requires you to install the <a "
+"href=\"%s\" target=\"_blank\">Rublon mobile app</a>. Enter your WordPress "
+"account's email address during setup: %s."
+msgstr ""
 
 msgid ""
-"This site's administrator requires that you protect your account with the "
-"Rublon mobile app."
+"If you already have the Rublon mobile app, please go to <a href=\"%s\" "
+"target=\"_blank\">www.rublon.com</a> and log in to your User Panel in order "
+"to add the above email address as an additional one."
 msgstr ""
-"Der Administrator dieser Webseite verlangt, dass du deinen Account mit der "
-"mobilen Rublon App schützt."
 
 msgid ""
 "Your server's time seems out of sync. Please check that it is properly "
@@ -269,6 +277,9 @@ msgstr ""
 "bitte sicher, dass die Zeit auf dem Server richtig synchronisiert ist. "
 "Andernfalls wird Rublon nicht in der Lage sein die Sicherheit deiner "
 "Webseite zu gewährleisten."
+
+msgid "The authentication process has been halted."
+msgstr "Der Authentifizierungsvorgang wurde angehalten."
 
 msgid ""
 "This site's administrator requires you to confirm this operation using the "
@@ -342,6 +353,15 @@ msgstr "Account-Schutz"
 msgid "Protection via Email"
 msgstr "Schutz via Email"
 
+msgid "Protection via Email is not necessary for you."
+msgstr ""
+
+msgid "You are already protected via Mobile App."
+msgstr ""
+
+msgid "You are protected via Email."
+msgstr ""
+
 msgid "Enable account protection via email"
 msgstr "Schutz via Email aktivieren"
 
@@ -358,13 +378,14 @@ msgid "Administrators can always change your settings without your consent."
 msgstr ""
 "Administratoren können deine Einstellungen immer ohne Zustimmung ändern."
 
-msgid "Protection via Phone"
-msgstr "Schutz via Phone"
+msgid "Protection via Mobile App"
+msgstr "Schutz via Mobile App"
 
 msgid ""
 "This will be automatically enabled once you install the <a href=\"%s/get\" "
 "target=\"_blank\">Rublon mobile app</a>. Your phone will be required for "
-"identity or action confirmation. This will replace protection via email."
+"identity or action confirmation. This feature will replace protection via "
+"email."
 msgstr ""
 "Dies wird automatisch aktiviert, sobald du die <a href=\"%s/de/get\" target="
 "\"_blank\">Rublon App</a> installierst. Zur Bestätigung deiner Identität "

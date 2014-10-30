@@ -84,6 +84,12 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.1 =
+* Trusted Device Manager accessible from Dashboard and Rublon submenu
+* Improved compatibility with other plugins
+* Prevention of use on unsupported PHP versions
+* Minor text improvements
+
 = 2.1.0 =
 * Multisite support added
 * Default Protection Level downgrade now needs to be confirmed via Rublon

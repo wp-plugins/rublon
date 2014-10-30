@@ -62,8 +62,9 @@ add_filter('wp_redirect', 'rublon2factor_wp_redirect');
  */
 function rublon2factor_login_redirect($redirect_to) {
 
-	if (!empty($redirect_to))
+	if (!empty($redirect_to)) {
 		RublonCookies::storeReturnURL($redirect_to);
+	}
 	return $redirect_to;
 
 }
@@ -92,7 +93,8 @@ function rublon2factor_authenticate($user, $username, $password) {
 		return $user;
 	} else {
 		do_action('rublon_pre_authenticate', $user);
-		if (RublonHelper::isSiteRegistered()) {
+		$user_id = RublonHelper::getUserId($user);
+		if (is_user_member_of_blog($user_id) && RublonHelper::isSiteRegistered()) {
  			wp_logout();
 			$protection_type = array(
 				RublonHelper::roleProtectionType($user),
@@ -102,9 +104,11 @@ function rublon2factor_authenticate($user, $username, $password) {
 			$authURL = RublonHelper::authenticateWithRublon($user, $protection_type, $remember);
 			if (empty($authURL)) {
 				if (in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protection_type)) {
-					RublonHelper::setMessage('ROLE_BLOCKED', 'error', 'LM');
-					$returnPage = RublonHelper::getReturnPage();
-					wp_redirect($returnPage);
+					$user_email = RublonHelper::getUserEmail($user);
+					$obfuscated_email = RublonHelper::obfuscateEmail($user_email);
+					RublonHelper::setMessage('ROLE_BLOCKED|' . base64_encode($obfuscated_email), 'error', 'LM');
+					$return_page = RublonHelper::getReturnPage();
+					wp_safe_redirect(wp_login_url($return_page));
 					exit;
 				} else {
 					RublonCookies::setLoggedInCookie($user, $remember);
@@ -175,6 +179,13 @@ function rublon2factor_store_auth_cookie_params($auth_cookie, $expire, $expirati
 			);
 			RublonHelper::saveSettings($settings);
 		}
+		$flag = RublonHelper::flag(
+			$user,
+			RublonHelper::TRANSIENT_FLAG_UPDATE_AUTH_COOKIE
+		);
+		if ($flag === RublonHelper::YES) {
+			RublonCookies::setAuthCookie($user);
+		}
 	}
 
 }
@@ -213,24 +224,26 @@ function rublon2factor_pre_user_query(&$query) {
 				$rublon_mobile_users = array();
 				$requested_users = array();
 				foreach ($users as $user) {
-					$user_id = RublonHelper::getUserId($user);
-					$mobile_user_status = RublonHelper::getMobileUserStatus($user);
-					if ($mobile_user_status === false) {
-						array_push($requested_users, $user);
-						if (empty($check)) {
-							$check = new RublonAPICheckProtection(
-								RublonHelper::getRublon(),
-								$user_id,
-								RublonHelper::getUserEmail($user)
-							);
+					if ($user instanceof WP_User) {
+						$user_id = RublonHelper::getUserId($user);
+						$mobile_user_status = RublonHelper::getMobileUserStatus($user);
+						if ($mobile_user_status === false) {
+							array_push($requested_users, $user);
+							if (empty($check)) {
+								$check = new RublonAPICheckProtection(
+									RublonHelper::getRublon(),
+									$user_id,
+									RublonHelper::getUserEmail($user)
+								);
+							} else {
+								$check->appendUser(
+									$user_id,
+									RublonHelper::getUserEmail($user)
+								);
+							}
 						} else {
-							$check->appendUser(
-								$user_id,
-								RublonHelper::getUserEmail($user)
-							);
+							$rublon_mobile_users[$user_id] = $mobile_user_status;
 						}
-					} else {
-						$rublon_mobile_users[$user_id] = $mobile_user_status;
 					}
 				}
 				$user_id = null;
@@ -428,7 +441,7 @@ function rublon2factor_user_new_form() {
 	$roles_js = array();
 	$roles_js['protection_levels'] = array();
 	foreach ($roles as $role_name => $role) {
-		$role_id = RublonHelper::prepareRoleID(esc_attr($role_name));
+		$role_id = RublonHelper::prepareRoleId(esc_attr($role_name));
 		$settings = RublonHelper::getSettings('additional');
 		$role_protection_type = !empty($settings[$role_id]) ? $settings[$role_id] : '';
 		switch ($role_protection_type) {

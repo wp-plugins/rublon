@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 2.0\n"
-"POT-Creation-Date: 2014-09-26 12:43+0100\n"
-"PO-Revision-Date: 2014-10-22 16:17+0100\n"
+"POT-Creation-Date: 2014-10-30 13:09+0100\n"
+"PO-Revision-Date: 2014-10-30 14:09+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -15,6 +15,23 @@ msgstr ""
 
 msgid "Enable protection"
 msgstr "Habilitar la protección"
+
+msgid ""
+"Your account is protected by <a href=\"%s\" target=\"_blank\">Rublon</a>."
+msgstr "Su cuenta está ahora protegida por Rublon."
+
+msgid ""
+"Get the <a href=\"%s/get\" target=\"_blank\">Rublon mobile app</a> for more "
+"security."
+msgstr ""
+
+msgid "Warning!"
+msgstr ""
+
+msgid ""
+"Your account is not protected. Go to <a href=\"%s\">your profile page</a> to "
+"enable account protection."
+msgstr ""
 
 msgid "Rublon error code: "
 msgstr "Código de error de Rublon:"
@@ -31,6 +48,15 @@ msgstr ""
 msgid "Rublon"
 msgstr "Rublon"
 
+msgid "General settings"
+msgstr ""
+
+msgid "Trusted Devices"
+msgstr ""
+
+msgid "Access Control"
+msgstr ""
+
 msgid "Settings"
 msgstr "Ajustes"
 
@@ -39,12 +65,6 @@ msgstr "Habilitar la protección"
 
 msgid "XML-RPC"
 msgstr "XML-RPC"
-
-msgid ""
-"Your user role currently does not possess any type of default protection. If "
-"you wish to manually enable your account to use protection via email, go to "
-"your <a href=\"%s\">profile page</a>."
-msgstr ""
 
 msgid ""
 "Every user is protected via email by default. You can turn this off for "
@@ -87,56 +107,18 @@ msgstr "Deshabilitar XML-RPC"
 msgid "Enabled"
 msgstr ""
 
-msgid ""
-"Rublon protects your account against intruders who found out your password "
-"or hijacked your session."
+msgid "Rublon protects against intruders who found out your password."
 msgstr ""
 
-msgid ""
-"Learn more at <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
-"com</a>."
+msgid "Learn more at <a href=\"%s\" target=\"_blank\">www.rublon.com</a>."
 msgstr ""
 "Leer más <a href=\"http://rublon.com\" target=\"_blank\">www.rublon.com</a>."
 
-msgid "Security"
-msgstr "Seguridad"
-
-msgid ""
-"<span style=\"color: red\">Warning!</span> Your account is not protected by "
-"<a href=\"%s\" target=\"_blank\">Rublon</a>. Please go to <a href=\"%s"
-"\">your profile page</a> to turn it on."
+msgid "Trusted Devices Manager"
 msgstr ""
 
-msgid ""
-"Rublon will be available to you once your administrator protects his account."
+msgid "Access Control Manager"
 msgstr ""
-"Rublon estará disponible para usted una vez que su administrador proteja su "
-"cuenta"
-
-msgid "Contact your administrator"
-msgstr "Contacte a su administrador"
-
-msgid "Protect your account with Rublon"
-msgstr "Proteja su cuenta con Rublon"
-
-msgid ""
-"Hey, could you please protect your account with Rublon on %s? I want to "
-"protect my account, but I won't be able to do this until an administrator "
-"will."
-msgstr ""
-"Hey, ¿podría proteger su cuenta con Rublon en %s? Quiero proteger a mi "
-"cuenta, pero no voy a ser capaz de hacer esto hasta que un administrador me "
-"ayude."
-
-msgid ""
-"Since your account is protected by a password only, it can be accessed from "
-"any device in the world. Rublon protects your account from sign ins from "
-"unknown devices, even if your password gets stolen."
-msgstr ""
-"Debido a que su cuenta está protegida por una contraseña única, puede "
-"acceder desde cualquier dispositivo en el mundo. Rublon protege su cuenta de "
-"autenticaciones de dispositivos desconocidos, incluso si su contraseña es "
-"robada."
 
 msgid ""
 "Warning! The PHP version of your server is too old to run Rublon. Please "
@@ -175,7 +157,10 @@ msgstr "Protegido por Rublon"
 msgid "Rublon Two-Factor Authentication"
 msgstr "autenticación de dos factores de Rublon "
 
-msgid "Profile update"
+msgid "Your profile is being updated."
+msgstr ""
+
+msgid "Rublon settings are being updated."
 msgstr ""
 
 msgid "Do you confirm changing your %s?"
@@ -197,6 +182,12 @@ msgid ", as well as your "
 msgstr ""
 
 msgid "password"
+msgstr ""
+
+msgid "Do you confirm changing default protection levels?"
+msgstr ""
+
+msgid "Profile update"
 msgstr ""
 
 msgid "Operation aborted."
@@ -249,12 +240,16 @@ msgstr ""
 "Sin embargo, ha habido un problema con la protección de su cuenta. Vaya a <a "
 "href=\"%s\">la página de Rublon</a> con el fin de proteger su cuenta."
 
-msgid "The authentication process has been halted."
+msgid ""
+"Due to security purposes, your administrator requires you to install the <a "
+"href=\"%s\" target=\"_blank\">Rublon mobile app</a>. Enter your WordPress "
+"account's email address during setup: %s."
 msgstr ""
 
 msgid ""
-"This site's administrator requires that you protect your account with the "
-"Rublon mobile app."
+"If you already have the Rublon mobile app, please go to <a href=\"%s\" "
+"target=\"_blank\">www.rublon.com</a> and log in to your User Panel in order "
+"to add the above email address as an additional one."
 msgstr ""
 
 msgid ""
@@ -266,10 +261,19 @@ msgstr ""
 "sincronizado correctamente - De otra manera Rublon no será capaz de "
 "verificar la seguridad de su sitio web."
 
+msgid "The authentication process has been halted."
+msgstr ""
+
 msgid ""
 "This site's administrator requires you to confirm this operation using the "
 "Rublon mobile app."
 msgstr ""
+
+msgid ""
+"Learn more at <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
+"com</a>."
+msgstr ""
+"Leer más <a href=\"http://rublon.com\" target=\"_blank\">www.rublon.com</a>."
 
 msgid "Your account is now protected by Rublon."
 msgstr "Su cuenta está ahora protegida por Rublon."
@@ -315,11 +319,23 @@ msgstr ""
 "de acceso de los dispositivos desconocidos, incluso si sus contraseñas son "
 "robadas."
 
-msgid "Your profile is being updated."
+msgid "Account Protection"
+msgstr "Habilitar la protección"
+
+msgid "Protection via Email"
+msgstr "Habilitar la protección"
+
+msgid "Protection via Email is not necessary for you."
 msgstr ""
 
-msgid "Protection via email"
+msgid "You are already protected via Mobile App."
+msgstr "No se puede proteger a una cuenta ya protegida por Rublon."
+
+msgid "You are protected via Email."
 msgstr ""
+
+msgid "Enable account protection via email"
+msgstr "Habilitar la protección"
 
 msgid ""
 "You will need to confirm every sign in from a new device via email. You will "
@@ -330,5 +346,20 @@ msgstr ""
 msgid "Administrators can always change your settings without your consent."
 msgstr ""
 
+msgid "Protection via Mobile App"
+msgstr ""
+
+msgid ""
+"This will be automatically enabled once you install the <a href=\"%s/get\" "
+"target=\"_blank\">Rublon mobile app</a>. Your phone will be required for "
+"identity or action confirmation. This feature will replace protection via "
+"email."
+msgstr ""
+
 msgid "Close"
+msgstr ""
+
+msgid ""
+"The new user account will be automatically protected by <a href=\"%s\" "
+"target=\"_blank\">Rublon</a>."
 msgstr ""

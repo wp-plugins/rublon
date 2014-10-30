@@ -5,12 +5,6 @@ require_once dirname (__FILE__) . '/../Rublon/Rublon2FactorGUI.php';
 class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 
 
-	/**
-	 * CSS class for Rublon activation button.
-	 */
-	const BUTTON_ACTIVATION_CLASS = 'rublon-button-activation rublon-button-label-enable-protection';
-
-
 	public function getActivationURL() {
 
 		return site_url('?rublon=init-registration&rublon_nonce='  . RublonHelper::getNonce());
@@ -53,7 +47,7 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 	 * 
 	 * @return string
 	 */
-	public function getDashboardDeviceWidget($withConsumerScript = true) {
+	public function getTDMWidget($withConsumerScript = true) {
 
 		$result = '';
 
@@ -62,19 +56,19 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 		RublonHelper::isUserProtected($current_user, $protection_type);
 		switch ($protection_type) {
 			case RublonHelper::PROTECTION_TYPE_MOBILE:
-				$result .= sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl());
+				$result .= '<p>' . sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl()) . '</p>';
 				break;
 			case RublonHelper::PROTECTION_TYPE_EMAIL:
-				$result .= sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl())
-					. ' ' . sprintf(__('Get the <a href="%s/get" target="_blank">Rublon mobile app</a> for more security.', 'rublon'), RublonHelper::rubloncomUrl());
+				$result .= '<p>' . sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl())
+					. ' ' . sprintf(__('Get the <a href="%s/get" target="_blank">Rublon mobile app</a> for more security.', 'rublon'), RublonHelper::rubloncomUrl()) . '</p>';
 				break;
 			case RublonHelper::PROTECTION_TYPE_NONE:
 				$lang = RublonHelper::getBlogLanguage();
-				$result .= sprintf(
+				$result .= '<p>' . sprintf(
 					'<span style="color: red; font-weight: bold;">' . __('Warning!', 'rublon') . '</span>'
 						. ' ' . __('Your account is not protected. Go to <a href="%s">your profile page</a> to enable account protection.', 'rublon'),
 					admin_url(RublonHelper::WP_PROFILE_PAGE . RublonHelper::WP_PROFILE_EMAIL2FA_SECTION)
-				);
+				) . '</p>';
 				break;
 		}
 
@@ -93,7 +87,7 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 	 *
 	 * @return string
 	 */
-	public function getDashboardACMWidget($withConsumerScript = false) {
+	public function getACMWidget($withConsumerScript = true) {
 	
 		$result = '';
 
