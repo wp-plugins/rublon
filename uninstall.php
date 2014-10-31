@@ -30,6 +30,7 @@ function rublon2factor_plugin_uninstall() {
 	} else {
 		delete_option(RublonHelper::RUBLON_SETTINGS_KEY);
 		delete_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
+		delete_option(RublonHelper::RUBLON_OTHER_SETTINGS_KEY);
 		delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 		
 		$all_user_ids = get_users(array(
