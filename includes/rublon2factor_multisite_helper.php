@@ -80,6 +80,9 @@ class RublonMultisiteHelper extends RublonHelper {
 			case 'additional':
 				$key = self::RUBLON_ADDITIONAL_SETTINGS_KEY;
 				break;
+			case 'other':
+				$key = self::RUBLON_OTHER_SETTINGS_KEY;
+				break;
 			default:
 				$key = self::RUBLON_SETTINGS_KEY;
 		}
@@ -105,6 +108,9 @@ class RublonMultisiteHelper extends RublonHelper {
 		switch ($group) {
 			case 'additional':
 				$key = self::RUBLON_ADDITIONAL_SETTINGS_KEY;
+				break;
+			case 'other':
+				$key = self::RUBLON_OTHER_SETTINGS_KEY;
 				break;
 			default:
 				$key = self::RUBLON_SETTINGS_KEY;
@@ -274,6 +280,7 @@ class RublonMultisiteHelper extends RublonHelper {
 			switch_to_blog(intval($site['blog_id']));
 			delete_option(RublonHelper::RUBLON_SETTINGS_KEY);
 			delete_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
+			delete_option(RublonHelper::RUBLON_OTHER_SETTINGS_KEY);
 			delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 			$all_user_ids = get_users('fields=id');
 			foreach ($all_user_ids as $user_id) {
@@ -287,6 +294,7 @@ class RublonMultisiteHelper extends RublonHelper {
 		// Clear network settings
 		delete_site_option(RublonHelper::RUBLON_SETTINGS_KEY);
 		delete_site_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
+		delete_site_option(RublonHelper::RUBLON_OTHER_SETTINGS_KEY);
 		delete_site_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);		
 
 	}

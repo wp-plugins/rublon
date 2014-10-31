@@ -24,6 +24,7 @@ class RublonHelper {
 	const RUBLON_SETTINGS_KEY = 'rublon2factor_settings';
 	const RUBLON_REGISTRATION_SETTINGS_KEY = 'rublon2factor_registration_settings';
 	const RUBLON_ADDITIONAL_SETTINGS_KEY = 'rublon2factor_additional_settings';
+	const RUBLON_OTHER_SETTINGS_KEY = 'rublon2factor_other_settings';
 
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	const RUBLON_META_AUTH_CHANGED_MSG = 'rublon_auth_changed_msg';
@@ -1149,6 +1150,9 @@ class RublonHelper {
 			case 'additional':
 				$key = self::RUBLON_ADDITIONAL_SETTINGS_KEY;
 				break;
+			case 'other':
+				$key = self::RUBLON_OTHER_SETTINGS_KEY;
+				break;
 			default:
 				$key = self::RUBLON_SETTINGS_KEY;
 		}
@@ -1172,6 +1176,9 @@ class RublonHelper {
 		switch ($group) {
 			case 'additional':
 				$key = self::RUBLON_ADDITIONAL_SETTINGS_KEY;
+				break;
+			case 'other':
+				$key = self::RUBLON_OTHER_SETTINGS_KEY;
 				break;
 			default:
 				$key = self::RUBLON_SETTINGS_KEY;
@@ -2684,8 +2691,8 @@ class RublonHelper {
 	 */
 	static public function canShowACM() {
 
-		$additional_settings = self::getSettings('additional');
-		return (isset($additional_settings[self::SETTING_CAN_SHOW_ACM]) && $additional_settings[self::SETTING_CAN_SHOW_ACM] == self::YES);
+		$other_settings = self::getSettings('other');
+		return (isset($other_settings[self::SETTING_CAN_SHOW_ACM]) && $other_settings[self::SETTING_CAN_SHOW_ACM] == self::YES);
 
 	}
 
@@ -2697,9 +2704,9 @@ class RublonHelper {
 	 */
 	static public function setACMPermission($status) {
 
-		$additional_settings = self::getSettings('additional');
-		$additional_settings[self::SETTING_CAN_SHOW_ACM] = $status;
-		self::saveSettings($additional_settings, 'additional');
+		$other_settings = self::getSettings('other');
+		$other_settings[self::SETTING_CAN_SHOW_ACM] = $status;
+		self::saveSettings($other_settings, 'other');
 
 	}
 
