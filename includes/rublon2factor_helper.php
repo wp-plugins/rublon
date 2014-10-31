@@ -1132,8 +1132,6 @@ class RublonHelper {
 			);
 			return $authUrl;
 		} catch (RublonException $e) {
-			var_dump($e);
-			exit;
 			return '';
 		}
 
