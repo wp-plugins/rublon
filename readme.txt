@@ -84,6 +84,10 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.2 =
+* Added compatibility with some cloud-based solutions
+* Additional handling for connection problems
+
 = 2.1.1 =
 * Trusted Device Manager accessible from Dashboard and Rublon submenu
 * Improved compatibility with other plugins

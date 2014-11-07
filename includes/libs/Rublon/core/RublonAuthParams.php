@@ -111,7 +111,6 @@ class RublonAuthParams {
 	const FIELD_CAN_USE_EMAIL2FA = 'canUseEmail2FA';
 	const FIELD_CUSTOM_URI_PARAM = 'customURIParam';
 	const FIELD_CONFIRM_MESSAGE = 'confirmMessage';
-	const FIELD_ACCESS_CONTROL_MANAGER_ALLOWED = 'accessControlManagerAllowed';
 	
 	/**
 	 * URL path to authentication code

@@ -43,7 +43,7 @@ class RublonAPICheckProtection extends RublonAPIClient {
 		parent::__construct($rublon);
 		
 		if (!$rublon->isConfigured()) {
-			trigger_error(Rublon::TEMPLATE_CONFIG_ERROR, E_USER_ERROR);
+			trigger_error(RublonConsumer::TEMPLATE_CONFIG_ERROR, E_USER_ERROR);
 		}
 		
 		if (empty($userEmail)) {

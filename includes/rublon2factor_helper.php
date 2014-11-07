@@ -25,6 +25,7 @@ class RublonHelper {
 	const RUBLON_REGISTRATION_SETTINGS_KEY = 'rublon2factor_registration_settings';
 	const RUBLON_ADDITIONAL_SETTINGS_KEY = 'rublon2factor_additional_settings';
 	const RUBLON_OTHER_SETTINGS_KEY = 'rublon2factor_other_settings';
+	const RUBLON_FIRSTINSTALL_SETTINGS_KEY = 'rublon2factor_firstinstall_settigs';
 
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	const RUBLON_META_AUTH_CHANGED_MSG = 'rublon_auth_changed_msg';
@@ -41,7 +42,6 @@ class RublonHelper {
 	const TRANSIENT_ADDSETT_FORM_PREFIX = 'rublon_asuform_';
 	const TRANSIENT_MOBILE_USER = 'rublon_mobuser_';
 	const TRANSIENT_DEBUG = 'rublon_debug';
-	const TRANSIENT_FLAG_LIFETIME = 5;
 	const TRANSIENT_FLAG_UPDATE_AUTH_COOKIE = 'rublon_upd_authck_';
 	const TRANSIENT_REMOVE_FLAG = '<<REMOVE_FLAG_PLEASE>>';
 	
@@ -49,6 +49,7 @@ class RublonHelper {
 	const ADDSETT_UPDATE_TOKEN_NAME = 'rublon_additional_settings_update_token';
 	
 	const SETTING_CAN_SHOW_ACM = 'can_show_acm';
+	const SETTING_FORCED_REGISTRATION = 'forced_registration';
 	
 	const YES = 'yes';
 	const NO = 'no';
@@ -56,6 +57,7 @@ class RublonHelper {
 	const UPDATE_TOKEN_LIFETIME = 5;
 	const UPDATE_FORM_LIFETIME = 15;
 	const MOBILE_USER_INFO_LIFETIME = 15;
+	const FLAG_LIFETIME = 5;
 
 	const FLAG_PROFILE_UPDATE = 'wp_profile_update';
 	const FLAG_ADDSETT_UPDATE = 'wp_addsett_update';
@@ -116,7 +118,7 @@ class RublonHelper {
 	static public function init() {
 
 		do_action('rublon_plugin_pre_init');
-		
+
 		// Initialize localization
 		if (function_exists('load_plugin_textdomain')) {
 			load_plugin_textdomain('rublon', false, RUBLON2FACTOR_BASE_PATH . '/includes/languages/');
@@ -671,7 +673,7 @@ class RublonHelper {
 				set_transient(
 					$flag . self::getUserId($user),
 					$new_value,
-					self::TRANSIENT_FLAG_LIFETIME * MINUTE_IN_SECONDS
+					self::FLAG_LIFETIME * MINUTE_IN_SECONDS
 				);				
 			} else {
 				$stored_value = get_transient($flag . self::getUserId($user));
@@ -1076,7 +1078,7 @@ class RublonHelper {
 			if (!$usingEmail2FA) {
 				self::setMobileUserStatus($user);
 			}
-			$acm_status = $callback->getConsumerParam(RublonAuthParams::FIELD_ACCESS_CONTROL_MANAGER_ALLOWED);
+			$acm_status = $callback->getConsumerParam(RublonAPIClient::FIELD_ACCESS_CONTROL_MANAGER_ALLOWED);
 			if ($acm_status === true) {
 				self::setACMPermission(self::YES);
 			} else {
@@ -1133,6 +1135,17 @@ class RublonHelper {
 			);
 			return $authUrl;
 		} catch (RublonException $e) {
+			$error_data = array(
+				'msg' => 'Authentication error',
+				'errorCode' => $e->getCode(),
+				'errorMessage' => $e->getMessage(),
+			);
+			$previous_exception = $e->getPrevious();
+			if ($previous_exception != null) {
+				$error_data['previousCode'] = $previous_exception->getCode();
+				$error_data['previousMessage'] = $previous_exception->getMessage();
+			}
+			self::notify($error_data);
 			return '';
 		}
 
@@ -1152,6 +1165,9 @@ class RublonHelper {
 				break;
 			case 'other':
 				$key = self::RUBLON_OTHER_SETTINGS_KEY;
+				break;
+			case 'firstinstall':
+				$key = self::RUBLON_FIRSTINSTALL_SETTINGS_KEY;
 				break;
 			default:
 				$key = self::RUBLON_SETTINGS_KEY;
@@ -1180,6 +1196,9 @@ class RublonHelper {
 			case 'other':
 				$key = self::RUBLON_OTHER_SETTINGS_KEY;
 				break;
+			case 'firstinstall':
+				$key = self::RUBLON_FIRSTINSTALL_SETTINGS_KEY;
+				break;
 			default:
 				$key = self::RUBLON_SETTINGS_KEY;
 		}
@@ -1193,7 +1212,17 @@ class RublonHelper {
 	static public function shouldPluginAttemptRegistration() {
 
 		$settings = self::getSettings();
-		return !empty($settings['attempt-registration']) && (version_compare(phpversion(), self::PHP_VERSION_REQUIRED, 'ge'));
+		$firstinstall_settings = self::getSettings('firstinstall');
+		$forced_registration = false;
+		if (!empty($firstinstall_settings[self::SETTING_FORCED_REGISTRATION]) && is_admin() && is_user_logged_in()) {
+			$forced_registration = ($firstinstall_settings[self::SETTING_FORCED_REGISTRATION] == self::YES);
+			$firstinstall_settings[self::SETTING_FORCED_REGISTRATION] = self::NO;
+			self::saveSettings($firstinstall_settings, 'firstinstall');
+		}
+		return !self::isSiteRegistered()
+			&& (!empty($settings['attempt-registration']) || $forced_registration)
+			&& (version_compare(phpversion(), self::PHP_VERSION_REQUIRED, 'ge'))
+			&& function_exists('curl_init');
 
 	}
 	
@@ -1544,15 +1573,16 @@ class RublonHelper {
 	/**
 	 * Send an error report via cURL
 	 * 
-	 * @param string $msg Error info
+	 * @param array $error_info Error info
 	 */
-	static function notify($msg) {
+	static function notify($error_info) {
 
-		$msg['bloginfo'] = get_bloginfo();
-		$pluginMeta = self::preparePluginMeta();
-		if (!empty($pluginMeta['meta']))
-			$msg['plugin-info'] = $pluginMeta['meta'];
-		$msg['phpinfo'] = self::_info();				
+		$error_info['blog-info'] = get_bloginfo();
+		$plugin_meta = self::preparePluginMeta();
+		if (!empty($plugin_meta['meta'])) {
+			$error_info['plugin-info'] = $plugin_meta['meta'];
+		}
+		$error_info['php-info'] = self::_info();				
 		
 		$ch = curl_init(self::RUBLON_API_DOMAIN . self::RUBLON_NOTIFY_URL_PATH);
 		$headers = array(
@@ -1564,7 +1594,7 @@ class RublonHelper {
 		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 		
 		curl_setopt($ch, CURLOPT_POST, true);							
-		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($msg));
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($error_info));
 					
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -1573,9 +1603,10 @@ class RublonHelper {
 		// Execute request
 		curl_exec($ch);		
 		if (curl_error($ch)) {
-			throw new RublonException("Notifier: " . curl_error($ch), RublonException::CODE_CURL_ERROR);
+			// Nothing for now
 		}		
 		curl_close($ch);
+
 	}
 
 
