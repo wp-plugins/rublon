@@ -1,0 +1,44 @@
+#rublon-toolbar-logo {
+	border: 0 !important;
+	background: transparent !important;
+}
+
+.rublon-seal-link {
+	float: left;
+	position: relative;
+}
+
+#rublon-seal {
+	padding-top: 10px;
+	padding-bottom: 8px;
+	clear: both;
+}
+
+.rublon-seal-image {
+	position: absolute;
+	height: 32px;
+}
+
+.rublon-clear {
+	clear: both;
+}
+
+.rublon-login-message {
+	margin: 0 0 16px 8px !important;
+	padding: 12px !important;
+}
+
+.rublon-login-message > a.rublon-link {
+	color: #21759b !important;	
+}
+
+.rublon-app-button {
+	width: 50%;
+	text-align: center;
+	display: inline-block;
+	margin-bottom: 0.5em;
+}
+
+.rublon-width-full {
+	width: 100%;
+}
