@@ -42,7 +42,7 @@ Nothing! Install it now to get one year for free. If you want to white-label it 
 2. Go to "Plugins" -> "Add New" and search for "Rublon" using the plugins search box.
 3. Click the "Install Now" button inside the Rublon plugin box in the search results and confirm the installation.
 4. Click on "Activate Plugin".
-5. Optional: For more security and control, install the Rublon mobile app onto your phone (available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019), [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42) and [BlackBerry](appworld.blackberry.com/webstore/content/20177166/?countrycode=US&lang=en)).
+5. Optional: For more security and control, install the Rublon mobile app onto your phone (available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019), [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42) and [BlackBerry](http://appworld.blackberry.com/webstore/content/20177166/?countrycode=US&lang=en)).
 
 = Server requirements =
 - PHP version 5.2.17 or greater
