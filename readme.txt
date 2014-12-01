@@ -7,7 +7,7 @@ Stable tag: 2.1.2
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-The easiest way to protect your website against hackers who found out your passwords
+Instantly protects all accounts with magical, email-based two-factor authentication; optional mobile app for more security; no tokens.
  
 == Description ==
 
@@ -38,12 +38,12 @@ Nothing! Install it now to get one year for free. If you want to white-label it 
 
 == Installation ==
 
-1. Install the Rublon mobile app onto your phone and register (available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019), [BlackBerry](appworld.blackberry.com/webstore/content/20177166/?countrycode=US&lang=en) and [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42)).
-2. Log in to your WordPress administration panel using an administrator account.
-3. Go to "Plugins" -> "Add New", type "Rublon" in the search box and press the "Search Plugins" button.
-4. Click the "Install Now" link next to the Rublon plugin in the search results and confirm the installation.
-5. Click on "Activate Plugin".
- 
+1. Log in to your WordPress administration panel using an administrator account.
+2. Go to "Plugins" -> "Add New" and search for "Rublon" using the plugins search box.
+3. Click the "Install Now" button inside the Rublon plugin box in the search results and confirm the installation.
+4. Click on "Activate Plugin".
+5. Optional: For more security and control, install the Rublon mobile app onto your phone (available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019), [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42) and [BlackBerry](appworld.blackberry.com/webstore/content/20177166/?countrycode=US&lang=en)).
+
 = Server requirements =
 - PHP version 5.2.17 or greater
 - cURL PHP extension enabled
@@ -51,22 +51,28 @@ Nothing! Install it now to get one year for free. If you want to white-label it 
 == Frequently Asked Questions ==
 
 = How can I protect my account with Rublon? =
-Log in to your WordPress account, go to your profile and click on the "Protect your account" button. 
-= Will all my users have to use Rublon? =
-No. Your users decide on their own if they want to be protected by Rublon. We highly recommend everybody, especially administrators, to protect their account though.
- 
-= Will my login credentials be known to Rublon? =
-Rublon never knows your login credentials. They are never transmitted to its servers. Rublon does its work only after WordPress positively verifies your password. It's an independent security layer that sits beneath the login form. 
-= How secure is my data on Rublon's servers? =
-Your Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. Whenever you perform any action that requires the mobile app, like adding a new trusted device, it generates a unique encrypted digital signature that confirms your identity. Since your digital identity stays on your phone, you are safe even in the unlikely event that Rublon's servers get hacked. 
-= What if I lose my phone? =
-Simply deactivate your phone on the ["Lost phone"](https://rublon.com/help/deactivate) page on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
- 
-= How much does Rublon cost? =
-Rublon for WordPress is free and always will be.
+All you need to do is to install the Rublon for WordPress plugin. After you activate it, all accounts will be instantly protected with email-based two-factor authentication.
 
-= How does Rublon make money? =
-Web systems with a lot of users [pay us](https://developers.rublon.com/98/Pricing) for advanced features and premium support.
+= Email-based two-factor authentication is not enough for me. Does Rublon support phone-based, out-of-band two-factor authentication? =
+Yes! Just install the Rublon mobile app onto your phone (available for Android, iOS, Windows Phone and BlackBerry). After entering your correct login credentials, you will be prompted to scan a Rublon Code with your phone.
+
+= Do all my users have to be protected by Rublon? =
+After you activate the plugin, all accounts will instantly be protected. The minimum protection level for all user groups will be set to "Email". You can change this setting to "None" for each user group at any time. Please note that if a user installs the Rublon mobile app, his account will be protected regardless of this setting.
+
+= Will my login credentials be known to Rublon? =
+Rublon never knows your or any of your users' login credentials. They are never transmitted to our servers. Rublon does its work only after WordPress positively verifies your password. It's an independent security layer that sits beneath the login form.
+
+= How secure is my data on Rublon's servers? =
+For accounts that are protected via email, their email address gets transmitted to Rublon servers during each login, but is instantly removed after we send you the message containing your personal confirmation link. No personal data of such accounts is ever stored on Rublon servers. For accounts that are protected via mobile app, only the Rublon User ID gets transmitted to Rublon servers during login. Registered users of the Rublon mobile app are governed by its terms of service.
+
+= Why is using the Rublon mobile app more secure than email-based authentication? =
+The Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. Whenever you perform any action that requires the mobile app, like confirming your identity, it generates a unique encrypted digital signature. Getting access to an email account that is not protected by any second factor is easier than stealing your private key from your phone and reusing it.
+
+= What if I use the Rublon mobile app and I lose my phone? =
+Simply deactivate your phone on the "Lost phone" page on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
+
+= How much does Rublon cost? =
+Rublon for WordPress is free and always will be. We will launch a paid business plan soon that will offer premium features.
  
 == Screenshots ==
 
@@ -83,6 +89,9 @@ Web systems with a lot of users [pay us](https://developers.rublon.com/98/Pricin
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 2.1.3 =
+* Minor text improvements 
 
 = 2.1.2 =
 * Added compatibility with some cloud-based solutions
@@ -159,7 +168,7 @@ After a successful installation, the plugin can be updated automatically in the 
 
 = 1.1.9 =
 * Rublon settings page moved from the "Settings" to "Plugins" section of the administration area
- * Rublon icon added to the Rublon settings page
+* Rublon icon added to the Rublon settings page
 * Outdated versions of the plugin will not be able to activate the Rublon service anymore
  
 = 1.1.8 =
