@@ -95,10 +95,10 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 2.1.4 =
-* The user is now remotely logged out of WordPress on a Trusted Device upon its removal
+* Logout remotely from WordPress by removing a trusted device
 * Improved memory management
 * Improved handling of WordPress AJAX requests
-* Additional changes in Rublon's visual components
+* Improved positioning of Rublon Badge
 * Minor text improvements
 
 = 2.1.3 =
