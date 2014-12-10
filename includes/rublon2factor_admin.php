@@ -272,12 +272,7 @@ function rublon2factor_render_settings_page() {
 
 			// Consumer script
 			$current_user = wp_get_current_user();
-			$gui = new Rublon2FactorGUIWordPress(
-				RublonHelper::getRublon(),
-				RublonHelper::getUserId($current_user),
-				RublonHelper::getUserEmail($current_user)
-			);
-			$gui->addConsumerScript();
+			$gui = Rublon2FactorGUIWordPress::getInstance();
 			
 			if (RublonHelper::isSiteRegistered()) {
 
@@ -336,12 +331,7 @@ function rublon2factor_render_tdm_page() {
 		</p>
 		<?php
 			// TDM widget
-			$current_user = wp_get_current_user();
-			$gui = new Rublon2FactorGUIWordPress(
-				RublonHelper::getRublon(),
-				RublonHelper::getUserId($current_user),
-				RublonHelper::getUserEmail($current_user)
-			);
+			$gui = Rublon2FactorGUIWordPress::getInstance();
 			echo $gui->getTDMWidget();
 		?>
 	</div>
@@ -365,11 +355,7 @@ function rublon2factor_render_acm_page() {
 			// ACM widget
 			$current_user = wp_get_current_user();
 			if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
-				$gui = new Rublon2FactorGUIWordPress(
-					RublonHelper::getRublon(),
-					RublonHelper::getUserId($current_user),
-					RublonHelper::getUserEmail($current_user)
-				);
+				$gui = Rublon2FactorGUIWordPress::getInstance();
 				echo $gui->getACMWidget();
 			}
 		?>
@@ -564,7 +550,7 @@ function rublon2factor_add_frontend_files() {
 	if (is_rtl()) {
 		wp_enqueue_style('rublon2factor_rtl', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rtl.css', false, $currentPluginVersion);
 	}
-	wp_enqueue_script('rublon2factor_admin_js', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress.js', false, $currentPluginVersion);
+	wp_enqueue_script('rublon2factor_js', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress.js', false, $currentPluginVersion);
 
 }
 

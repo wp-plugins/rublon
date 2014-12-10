@@ -30,6 +30,7 @@ class RublonHelper {
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	const RUBLON_META_AUTH_CHANGED_MSG = 'rublon_auth_changed_msg';
 	const RUBLON_META_USER_PROTTYPE = 'rublon_user_protection_type';
+	const RUBLON_META_DEVICE_ID = 'rublon_device_id';
 	
 	const RUBLON_NOTIFY_URL_PATH = '/issue_notifier/wp_notify';
 	const RUBLON_ACTION_PREFIX = 'rublon_';
@@ -109,6 +110,14 @@ class RublonHelper {
 	 * @var array
 	 */
 	static private $pre_render_data;
+	
+	
+	/**
+	 * Device ID given in callback.
+	 * 
+	 * @var int
+	 */
+	static private $deviceId;
 
 
 	/**
@@ -132,7 +141,9 @@ class RublonHelper {
 
 		// prevent XML-RPC access if it was disabled in plugin settings 
 		self::_checkXMLRPCStatus();
-
+		
+		self::initLogoutListener();
+		
 	}
 
 
@@ -206,6 +217,10 @@ class RublonHelper {
 
 	static public function checkIfUserPermitted() {
 
+
+		if (self::isAjaxRequest()) {
+			return;
+		}
 		if (self::isSiteRegistered()) {
 			$current_user = wp_get_current_user();
 			if (!empty($current_user)) {
@@ -828,7 +843,7 @@ class RublonHelper {
 	static public function handleConfirmation()	{
 	
 		try {
-			$callback = new Rublon2FactorCallback(self::getRublon());
+			$callback = new Rublon2FactorCallbackWordPress(self::getRublon());
 			$callback->call(
 				'RublonHelper::confirmationSuccess',
 				'RublonHelper::confirmationFailure'
@@ -998,7 +1013,7 @@ class RublonHelper {
 	static public function handleCallback()	{
 
 		try {
-			$callback = new Rublon2FactorCallback(self::getRublon());
+			$callback = new Rublon2FactorCallbackWordPress(self::getRublon());
 			$callback->call(
 				'RublonHelper::callbackSuccess',
 				'RublonHelper::callbackFailure'
@@ -1020,10 +1035,10 @@ class RublonHelper {
 
 		$errorCode = $e->getCode();
 		switch($errorCode) {
-			case Rublon2FactorCallback::ERROR_MISSING_ACCESS_TOKEN:
+			case Rublon2FactorCallbackWordPress::ERROR_MISSING_ACCESS_TOKEN:
 				$errorCode = 'MISSING_ACCESS_TOKEN';
 				break;
-			case Rublon2FactorCallback::ERROR_REST_CREDENTIALS:
+			case Rublon2FactorCallbackWordPress::ERROR_REST_CREDENTIALS:
 				$errorCode = 'REST_CREDENTIALS_FAILURE';
 				$previous = $e->getPrevious();
 				if (!empty($previous)) {
@@ -1034,13 +1049,13 @@ class RublonHelper {
 					}
 				}
 				break;
-			case Rublon2FactorCallback::ERROR_USER_NOT_AUTHORIZED:
+			case Rublon2FactorCallbackWordPress::ERROR_USER_NOT_AUTHORIZED:
 				$errorCode = 'USER_NOT_AUTHENTICATED';
 				break;
-			case Rublon2FactorCallback::ERROR_DIFFERENT_USER:
+			case Rublon2FactorCallbackWordPress::ERROR_DIFFERENT_USER:
 				$errorCode = 'DIFFERENT_USER';
 				break;
-			case Rublon2FactorCallback::ERROR_API_ERROR:
+			case Rublon2FactorCallbackWordPress::ERROR_API_ERROR:
 				$errorCode = 'API_ERROR';
 				break;
 			default:
@@ -1068,9 +1083,9 @@ class RublonHelper {
 	 * Handle a successful authentication with Rublon
 	 * 
 	 * @param string $user_id
-	 * @param Rublon2FactorCallback $callback
+	 * @param Rublon2FactorCallbackWordPress $callback
 	 */
-	static public function callbackSuccess($user_id, $callback) {
+	static public function callbackSuccess($user_id, Rublon2FactorCallbackWordPress $callback) {
 
 		$user = get_user_by('id', $user_id);
 		if ($user) {
@@ -1084,14 +1099,36 @@ class RublonHelper {
 			} else {
 				self::setACMPermission(self::NO);
 			}
+			$deviceId = $callback->getConsumerParam(RublonAPICredentials::FIELD_DEVICE_ID);
 			$remember = $callback->getConsumerParam('remember');
 			wp_logout();
+			self::$deviceId = $deviceId;
+			add_filter('auth_cookie', array(__CLASS__, 'associateSessionWithDevice'), 10, 5);
 			RublonCookies::setLoggedInCookie($user, $remember);
 			RublonCookies::setAuthCookie($user, $remember);
 			do_action('wp_login', $user->user_login, $user);
 		}
 		self::_returnToPage();
 
+	}
+	
+	/**
+	 * On creating auth cookie add a user meta to associate device ID with user's session.
+	 * The 'auth_cookie' filter.
+	 *
+	 * @see wp_generate_auth_cookie()
+	 * @param string $cookie
+	 * @param int $user_id
+	 * @param int $expiration
+	 * @param string $scheme
+	 * @param string $token
+	 * @return string
+	 */
+	static public function associateSessionWithDevice($cookie, $user_id, $expiration, $scheme, $token) {
+		if (!empty(self::$deviceId) AND !empty($token)) {
+			add_user_meta($user_id, RublonHelper::RUBLON_META_DEVICE_ID .'_'. self::$deviceId, hash( 'sha256', $token ), $unque = false);
+		}
+		return $cookie;
 	}
 
 
@@ -1237,12 +1274,7 @@ class RublonHelper {
 	
 	static public function registerSite() {
 
-		$current_user = wp_get_current_user();
-		$rublonGUI = new Rublon2FactorGUIWordPress(
-			self::getRublon(),
-			self::getUserId($current_user),
-			self::getUserEmail($current_user)
-		);
+		$rublonGUI = Rublon2FactorGUIWordPress::getInstance();
 		wp_redirect($rublonGUI->getActivationURL());
 		exit;		
 
@@ -1345,8 +1377,7 @@ class RublonHelper {
 						. '<div class="rublon-app-button"><a href="' . self::appStoreUrl('ios')  . '" target="_blank"><img src="https://rublon.com/img/app_store_small.png" /></a></div>'
 						. '<div class="rublon-clear"></div>'
 						. '<div class="rublon-app-button rublon-width-full"><a href="' . self::appStoreUrl('windows phone')  . '" target="_blank"><img src="https://rublon.com/img/wphone_store_small.png" /></a></div>'
-						. '<div class="rublon-clear"></div>'
-						. '<div class="rublon-app-button rublon-width-full"><a href="' . self::appStoreUrl('blackberry')  . '" target="_blank"><img src="https://rublon.com/img/bb_appworld_small.png" /></a></div>';
+						. '<div class="rublon-clear"></div>';
 						$errorMessage = str_replace('target="_blank"', 'target="_blank" class="rublon-link"', $errorMessage);
 						break;
 					case 'CR_SYSTEM_TOKEN_INVALID_RESPONSE_TIMESTAMP':
@@ -1733,10 +1764,10 @@ class RublonHelper {
 	
 		$user_fields = $wpdb->get_col('SHOW COLUMNS FROM ' . $wpdb->users);
 		if (in_array('rublon_profile_id', $user_fields)) {
-			$all_users = get_users();
+			$all_users = $wpdb->get_results("SELECT ID, rublon_profile_id FROM $wpdb->users", ARRAY_N);
 			foreach ($all_users as $user) {
-				if (!empty($user->rublon_profile_id)) {
-					add_user_meta(self::getUserId($user), self::RUBLON_META_PROFILE_ID, $user->rublon_profile_id, true);
+				if (!empty($user[1])) {
+					add_user_meta($user[0], self::RUBLON_META_PROFILE_ID, $user[1], true);
 				}
 			}
 			$db_error = $wpdb->query('ALTER TABLE ' . $wpdb->users . ' DROP COLUMN `rublon_profile_id`') === false;
@@ -1757,17 +1788,13 @@ class RublonHelper {
 	 */
 	static public function preparePluginMeta() {
 
-		// prepare meta for plugin history request
-		$all_users = get_users();
-		$roles = array();
-		foreach ($all_users as $user) {
-			if (!empty($user->roles))
-				foreach ($user->roles as $role) {
-				if (!isset($roles[$role]))
-					$roles[$role] = 0;
-				$roles[$role]++;
-			}
+		global $wpdb;
+		
+		$roles = array('administrator' => 0, 'author' => 0, 'contributor' => 0, 'editor' => 0, 'subscriber' => 0);
+		foreach ($roles as $roleName => &$count) {
+			$count = $wpdb->get_col("SELECT COUNT(*) FROM $wpdb->usermeta WHERE meta_key = 'wcapabilities' AND meta_value LIKE ':\"$roleName\";'");
 		}
+
 		$pluginMeta = array(
 				'wordpress-version' => get_bloginfo('version'),
 				'plugin-version' => self::getCurrentPluginVersion(),
@@ -2669,9 +2696,6 @@ class RublonHelper {
 				$url = 'http://www.windowsphone.com/%s-%s/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42';
 				$url = sprintf($url, $lang, $region);
 				break;
-			case 'blackberry':
-				$url = 'http://appworld.blackberry.com/webstore/content/20177166';
-				break;
 		}
 		return $url;
 
@@ -2704,12 +2728,7 @@ class RublonHelper {
 	 */
 	static public function createDashboardDeviceWidget() {
 
-		$current_user = wp_get_current_user();
-		$rublonGUI = new Rublon2FactorGUIWordPress(
-			self::getRublon(),
-			self::getUserId($current_user),
-			self::getUserEmail($current_user)
-		);
+		$rublonGUI = Rublon2FactorGUIWordPress::getInstance();
 		echo $rublonGUI->getTDMWidget();
 
 	}
@@ -2738,6 +2757,13 @@ class RublonHelper {
 		$other_settings = self::getSettings('other');
 		$other_settings[self::SETTING_CAN_SHOW_ACM] = $status;
 		self::saveSettings($other_settings, 'other');
+
+	}
+
+
+	static public function isAjaxRequest() {
+
+		return defined('DOING_AJAX') && DOING_AJAX;
 
 	}
 
@@ -2789,6 +2815,32 @@ class RublonHelper {
 			$debug,
 			30 * MINUTE_IN_SECONDS
 		);
+
+	}
+
+
+	static public function initLogoutListener() {
+		// Create GUI instance to automatically add the logout listener
+		$gui = Rublon2FactorGUIWordPress::getInstance();
+
+		// Create AJAX endpoint to check if user is logged-in
+		$callback = array(__CLASS__, 'ajaxCheckLoggedIn');
+		add_action('wp_ajax_rublon_is_user_logged_in', $callback);
+		add_action('wp_ajax_nopriv_rublon_is_user_logged_in', $callback);
+
+	}
+	
+	
+	static public function ajaxCheckLoggedIn() {
+		echo intval(is_user_logged_in());
+		exit;
+	}
+
+
+	static public function memUsage($var) {
+		$start_memory = memory_get_usage();
+		$tmp = unserialize(serialize($var));
+		return memory_get_usage() - $start_memory;
 
 	}
 

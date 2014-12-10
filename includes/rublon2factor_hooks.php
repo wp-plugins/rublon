@@ -111,7 +111,6 @@ function rublon2factor_authenticate($user, $username, $password) {
 					wp_safe_redirect(wp_login_url($return_page));
 					exit;
 				} else {
-					RublonCookies::setLoggedInCookie($user, $remember);
 					RublonHelper::setMobileUserStatus($user, RublonHelper::NO);
 					return $user;
 				}

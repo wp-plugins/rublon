@@ -19,6 +19,11 @@ class RublonAPICredentials extends RublonAPIClient {
 	const FIELD_CONFIRM_RESULT = 'answer';
 	
 	/**
+	 * Field name for device ID.
+	 */
+	const FIELD_DEVICE_ID = 'deviceId';
+	
+	/**
 	 * User pressed the "Yes" button on the additional confirmation of the transaction.
 	 */
 	const CONFIRM_RESULT_YES = 'true';

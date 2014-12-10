@@ -43,6 +43,13 @@ class RublonConsumerScript {
 	 */
 	protected $userEmail;
 	
+	/**
+	 * Wheter to listen on user's logout.
+	 * 
+	 * @var boolean
+	 */
+	protected $logoutListener = false;
+	
 	
 	/**
 	 * Initialize object with Rublon instance.
@@ -51,14 +58,28 @@ class RublonConsumerScript {
 	 * the object to work.
 	 * 
 	 * @param Rublon2Factor $rublon An instance of the Rublon class
-	 * @param string $userId
-	 * @param string $userEmail
+	 * @param string $userId User's ID in the local system.
+	 * @param string $userEmail User's email address.
+	 * @param boolean $logoutListener Wheter to listen on user's logout.
 	 */
-	public function __construct(Rublon2Factor $rublon, $userId, $userEmail) {
+	public function __construct(Rublon2Factor $rublon, $userId, $userEmail, $logoutListener = false) {
 		$rublon->log(__METHOD__);
 		$this->rublon = $rublon;
 		$this->userId = $userId;
 		$this->userEmail = $userEmail;
+		$this->logoutListener = $logoutListener;
+	}
+	
+	
+	/**
+	 * Set whether to listen on user's logout.
+	 * 
+	 * @param boolean $listen
+	 * @return RublonConsumerScript
+	 */
+	public function setLogoutListener($listen) {
+		$this->logoutListener = $listen;
+		return $this;
 	}
 	
 	/**
@@ -103,13 +124,21 @@ class RublonConsumerScript {
 	 */
 	protected function getParams() {
 		$params = array(
+			RublonAuthParams::FIELD_ORIGIN_URL		=> $this->getRublon()->getCurrentUrl(),
 			RublonAuthParams::FIELD_SYSTEM_TOKEN	=> $this->getRublon()->getSystemToken(),
 			RublonAuthParams::FIELD_VERSION 		=> str_replace('-', '', $this->getRublon()->getVersionDate()),
 			RublonAuthParams::FIELD_SERVICE 		=> $this->getRublon()->getServiceName(),
-			RublonAuthParams::FIELD_USER_ID 		=> $this->userId,
-			RublonAuthParams::FIELD_USER_EMAIL_HASH	=> hash(RublonAuthParams::HASH_ALG, strtolower($this->userEmail)),
 		);
 		
+		if (!empty($this->userEmail)) {
+			$params[RublonAuthParams::FIELD_USER_EMAIL_HASH] = hash(RublonAuthParams::HASH_ALG, strtolower($this->userEmail));
+		}
+		if (!empty($this->userId)) {
+			$params[RublonAuthParams::FIELD_USER_ID] = $this->userId;
+		}
+		if ($this->logoutListener) {
+			$params[RublonAuthParams::FIELD_LOGOUT_LISTENER] = $this->logoutListener;
+		}
 		if ($lang = $this->getRublon()->getLang()) {
 			$params[RublonAuthParams::FIELD_LANG] = $lang;
 		}

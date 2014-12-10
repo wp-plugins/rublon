@@ -69,9 +69,24 @@ class RublonAuthParams {
 	const FIELD_SYSTEM_TOKEN = "systemToken";
 	
 	/**
+	 * Field name for origin URL.
+	 */
+	const FIELD_ORIGIN_URL = "originUrl";
+	
+	/**
 	 * Field name for language parameter
 	 */
 	const FIELD_LANG = "lang";
+	
+	/**
+	 * Field name for window type.
+	 */
+	const FIELD_WINDOW_TYPE = 'windowType';
+	
+	/**
+	 * Field name for return URL.
+	 */
+	const FIELD_RETURN_URL = 'returnUrl';
 	
 	/**
 	 * Field name for consumer parameters
@@ -92,6 +107,11 @@ class RublonAuthParams {
 	 * Field name for local user email address.
 	 */
 	const FIELD_USER_EMAIL_HASH = "userEmailHash";
+	
+	/**
+	 * Field name for logout listener boolean flag.
+	 */
+	const FIELD_LOGOUT_LISTENER = "logoutListener";
 
 	/**
 	 * Field name for required Rublon user's profile ID.
@@ -104,13 +124,32 @@ class RublonAuthParams {
 	const FIELD_ACTION_FLAG = "actionFlag";
 	
 	/**
-	 * Field name for version parameter
+	 * Field name for version parameter.
 	 */
 	const FIELD_VERSION = "version";
 	
+	/**
+	 * Field name to allow Rublon to use Email2Factor method
+	 * which is disabled by default.
+	 */
 	const FIELD_CAN_USE_EMAIL2FA = 'canUseEmail2FA';
+	
+	/**
+	 * Field name to add a custom URI query parameter to the callback URL.
+	 */
 	const FIELD_CUSTOM_URI_PARAM = 'customURIParam';
+	
+	/**
+	 * Field name to define a message for a transaction.
+	 */
 	const FIELD_CONFIRM_MESSAGE = 'confirmMessage';
+	
+	/**
+	 * Field name to set the time buffer from previous confirmation
+	 * which allow Rublon to confirm the custom transaction
+	 * without user's action.
+	 */
+	const FIELD_CONFIRM_TIME_BUFFER = 'confirmTimeBuffer';
 	
 	/**
 	 * URL path to authentication code

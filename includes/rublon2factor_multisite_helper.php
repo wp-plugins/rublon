@@ -274,6 +274,15 @@ class RublonMultisiteHelper extends RublonHelper {
 
 	static public function uninstallMultisite() {
 
+		global $wpdb;
+		
+		// Bulk delete user meta
+		$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->usermeta WHERE meta_key IN (%s, %s, %s)",
+			RublonHelper::RUBLON_META_PROFILE_ID,
+			RublonHelper::RUBLON_META_USER_PROTTYPE,
+			RublonHelper::RUBLON_META_AUTH_CHANGED_MSG
+		));
+
 		$current_blog_id = get_current_blog_id();
 		$sites = RublonMultisiteHelper::getSiteList($current_blog_id);
 		foreach ($sites as $site) {
@@ -282,12 +291,15 @@ class RublonMultisiteHelper extends RublonHelper {
 			delete_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
 			delete_option(RublonHelper::RUBLON_OTHER_SETTINGS_KEY);
 			delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
-			$all_user_ids = get_users('fields=id');
-			foreach ($all_user_ids as $user_id) {
-				delete_user_meta($user_id, RublonHelper::RUBLON_META_PROFILE_ID);
-				delete_user_meta($user_id, RublonHelper::RUBLON_META_USER_PROTTYPE);
-				delete_user_meta($user_id, RublonHelper::RUBLON_META_AUTH_CHANGED_MSG);
-			}
+			
+			// Changed to bulk delete:
+// 			$all_user_ids = get_users('fields=id');
+// 			foreach ($all_user_ids as $user_id) {
+// 				delete_user_meta($user_id, RublonHelper::RUBLON_META_PROFILE_ID);
+// 				delete_user_meta($user_id, RublonHelper::RUBLON_META_USER_PROTTYPE);
+// 				delete_user_meta($user_id, RublonHelper::RUBLON_META_AUTH_CHANGED_MSG);
+// 			}
+
 			restore_current_blog();
 		}
 		

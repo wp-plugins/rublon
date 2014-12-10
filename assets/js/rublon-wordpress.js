@@ -7,6 +7,17 @@ var RublonWP = {
 		var loginForm = document.querySelector('form#loginform');
 		if (loginForm) {
 			loginForm.appendChild(rublonSeal);
+			var loginButton = loginForm.querySelector('p.submit');
+			if (loginButton) {
+				loginButton.parentNode.removeChild(loginButton);
+				rublonSeal.appendChild(loginButton);
+				var loginButtonStyles = window.getComputedStyle(loginButton);
+				if (loginButtonStyles && loginButtonStyles.paddingTop) {
+					var loginButtonPaddingTop = parseInt(loginButtonStyles.paddingTop);
+					loginButtonPaddingTop = !isNaN(loginButtonPaddingTop) ? loginButtonPaddingTop : 0;
+					loginButton.style.paddingTop = (loginButtonPaddingTop + 1) + 'px';
+				}
+			}
 			rublonSeal.style.display = 'block';
 		}
 		this.updateRetinaImages();

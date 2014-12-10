@@ -24,6 +24,8 @@ require_once dirname(__FILE__) . '/includes/rublon2factor_multisite_helper.php';
  */
 function rublon2factor_plugin_uninstall() {
 
+	global $wpdb;
+
 	// Clear settings for all sites
 	if (RublonMultisiteHelper::isMultisite()) {
 		RublonMultisiteHelper::uninstallMultisite();
@@ -33,14 +35,26 @@ function rublon2factor_plugin_uninstall() {
 		delete_option(RublonHelper::RUBLON_OTHER_SETTINGS_KEY);
 		delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
 		
-		$all_user_ids = get_users(array(
-			'fields' => 'id',
+		// Bulk delete user meta
+		$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->usermeta WHERE meta_key IN (%s, %s, %s)",
+			RublonHelper::RUBLON_META_PROFILE_ID,
+			RublonHelper::RUBLON_META_USER_PROTTYPE,
+			RublonHelper::RUBLON_META_AUTH_CHANGED_MSG
 		));
-		foreach ($all_user_ids as $user_id) {
-			delete_user_meta($user_id, RublonHelper::RUBLON_META_PROFILE_ID);
-			delete_user_meta($user_id, RublonHelper::RUBLON_META_USER_PROTTYPE);
-			delete_user_meta($user_id, RublonHelper::RUBLON_META_AUTH_CHANGED_MSG);
-		}		
+
+		$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->usermeta WHERE meta_key LIKE %s",
+			RublonHelper::RUBLON_META_DEVICE_ID . '%'
+		));
+
+// 		$all_user_ids = get_users(array(
+// 			'fields' => 'id',
+// 		));
+// 		foreach ($all_user_ids as $user_id) {
+// 			delete_user_meta($user_id, RublonHelper::RUBLON_META_PROFILE_ID);
+// 			delete_user_meta($user_id, RublonHelper::RUBLON_META_USER_PROTTYPE);
+// 			delete_user_meta($user_id, RublonHelper::RUBLON_META_AUTH_CHANGED_MSG);
+// 		}		
+
 	}
 
 }

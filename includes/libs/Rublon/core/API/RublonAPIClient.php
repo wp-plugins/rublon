@@ -242,6 +242,14 @@ class RublonAPIClient {
 	}
 	
 	
+	public function addRequestParams(array $params) {
+		foreach ($params as $name => $field) {
+			$this->params[$name] = $field;
+		}
+		return $this;
+	}
+	
+	
 	/**
 	 * Set the URL of the request.
 	 * 

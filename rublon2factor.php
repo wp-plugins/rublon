@@ -4,7 +4,7 @@ Plugin Name: Rublon
 Text Domain: rublon
 Plugin URI: http://wordpress.org/plugins/rublon/
 Description: Rublon instantly protects all accounts with magical, email-based two-factor authentication. Works out-of-the-box, no configuration or training needed. Install the Rublon mobile app on your phone for more security and control. No more tokens or one-time passwords. Just click a link (email) or scan a Rublon Code (phone) to confirm your identity. Set up trusted devices that let you log in without having to confirm your identity.
-Version: 2.1.3
+Version: 2.1.4
 Author: Rublon
 Author URI: https://rublon.com
 License: http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 
@@ -41,6 +41,7 @@ function rublon2factor_add_settings_link($links, $file) {
 add_filter('plugin_action_links', 'rublon2factor_add_settings_link', 10, 2);
 
 require_once dirname(__FILE__) . '/includes/libs/RublonImplemented/Rublon2FactorWordPress.php';
+require_once dirname(__FILE__) . '/includes/libs/RublonImplemented/Rublon2FactorCallbackWordPress.php';
 require_once dirname(__FILE__) . '/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php';
 
 /*

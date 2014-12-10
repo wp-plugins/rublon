@@ -61,16 +61,26 @@ class Rublon2FactorGUI {
 	protected $userEmail;
 	
 	/**
+	 * Wheter to listen on user's logout.
+	 *
+	 * @var boolean
+	 */
+	protected $logoutListener = false;
+	
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param Rublon2Factor $rublon Rublon instance.
 	 * @param string $userId Current user's ID.
 	 * @param string $userEmail Current user's email.
+	 * @param boolean $logoutListener Set whether to listen on user's logout.
 	 */
-	public function __construct(Rublon2Factor $rublon, $userId, $userEmail) {
+	public function __construct(Rublon2Factor $rublon, $userId, $userEmail, $logoutListener = false) {
 		$this->rublon = $rublon;
 		$this->userId = $userId;
 		$this->userEmail = $userEmail;
+		$this->logoutListener = $logoutListener;
 	}
 	
 	
@@ -92,8 +102,8 @@ class Rublon2FactorGUI {
 	 * 
 	 * @return string
 	 */
-	protected function getConsumerScript() {
-		return (string)new RublonConsumerScript($this->getRublon(), $this->userId, $this->userEmail);
+	public function getConsumerScript() {
+		return (string)new RublonConsumerScript($this->getRublon(), $this->userId, $this->userEmail, $this->logoutListener);
 	}
 	
 	
@@ -272,6 +282,29 @@ class Rublon2FactorGUI {
 	protected function getShareAccessWidgetAttributes() {
 		return array(
 			'id' => 'RublonShareAccessWidget',
+		);
+	}
+	
+	
+	/**
+	 * Get iframe to load the Subscribe Widget.
+	 * 
+	 * @return string
+	 */
+	public function getSubscribeWidget() {
+		$attr = $this->getSubscribeWidgetAttributes();
+		return '<iframe '. self::createAttributesString($attr) .'></iframe>';
+	}
+	
+
+	/**
+	 * Device Widget HTML iframe attributes.
+	 *
+	 * @return array
+	 */
+	protected function getSubscribeWidgetAttributes() {
+		return array(
+			'class' => 'rublon-subscribe-widget',
 		);
 	}
 

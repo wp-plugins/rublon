@@ -21,12 +21,12 @@ abstract class RublonConsumer {
 	/**
 	 * Latest version release of this library.
 	 */
-	const VERSION = '3.2.0';
+	const VERSION = '3.5.0';
 	
 	/**
 	 * Latest version release date of this library.
 	 */
-	const VERSION_DATE = '2014-09-23';
+	const VERSION_DATE = '2014-12-02';
 	
 	/**
 	 * Default API domain.
@@ -204,6 +204,19 @@ abstract class RublonConsumer {
 	 */
 	public function canUserActivate() {
 		return false;
+	}
+	
+	
+	/**
+	 * Returns current URL.
+	 * 
+	 * @return string
+	 */
+	public function getCurrentUrl() {
+		if (!empty($_SERVER['HTTP_HOST'])) {
+			$ssl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off');
+			return ($ssl ? 'https' : 'http') .'://'. $_SERVER['HTTP_HOST'] . (empty($_SERVER['REQUEST_URI']) ? '/' : $_SERVER['REQUEST_URI']);
+		}
 	}
 
 	

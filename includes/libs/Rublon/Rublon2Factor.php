@@ -7,6 +7,7 @@ require_once 'core/HTML/RublonButton.php';
 require_once 'core/API/RublonAPICredentials.php';
 require_once 'core/API/RublonAPIBeginTransaction.php';
 require_once 'core/API/RublonAPICheckRCS.php';
+require_once 'core/API/RublonAPINotification.php';
 
 /**
  * Class provides methods used by `Rublon Two Factor` service process.
@@ -124,6 +125,30 @@ class Rublon2Factor extends RublonConsumer {
 		return $this->auth($callbackUrl, $userId, $userEmail, $consumerParams);
 	}
 	
+	
+	/**
+	 * Perform a confirmation of the transaction without user's action needed
+	 * if the time buffer after previous confirmation has not been reached.
+	 *
+	 * If the amount of seconds after the previous transaction is less than
+	 * given time buffer, Rublon will confirm the transaction without user's action.
+	 * In other cases, this method will behave the same as the Rublon2Factor::confirm() method.
+	 *
+	 * @param string $callbackUrl
+	 * @param string $userId
+	 * @param string $userEmail
+	 * @param string $confirmMessage
+	 * @param int $timeBuffer
+	 * @param array $consumerParams
+	 * @return Ambigous <string, NULL> URL to redirect or NULL if user is not protected.
+	 * @throws RublonException
+	 * @see Rublon2Factor::confirm()
+	 * @see RublonAPICredentials::getConfirmResult()
+	 */
+	public function confirmWithBuffer($callbackUrl, $userId, $userEmail, $confirmMessage, $timeBuffer, array $consumerParams = array()) {
+		$consumerParams[RublonAuthParams::FIELD_CONFIRM_TIME_BUFFER] = $timeBuffer;
+		return $this->confirm($callbackUrl, $userId, $userEmail, $confirmMessage, $consumerParams);
+	}
 	
 	
 	/**

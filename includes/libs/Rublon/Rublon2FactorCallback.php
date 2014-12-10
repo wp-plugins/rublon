@@ -39,6 +39,15 @@ class Rublon2FactorCallback {
 	 */
 	const STATE_ERROR = 'error';
 	
+	/**
+	 * Logout state value.
+	 */
+	const STATE_LOGOUT = 'logout';
+	
+	const FIELD_LOGOUT_ACCESS_TOKEN = 'accessToken';
+	const FIELD_LOGOUT_USER_ID = 'userId';
+	const FIELD_LOGOUT_DEVICE_ID = 'deviceId';
+	
 	
 	/**
 	 * Instance of the Rublon2Factor class.
@@ -116,6 +125,10 @@ class Rublon2FactorCallback {
 				throw new RublonException('Rublon error status.', self::ERROR_API_ERROR);
 				break;
 				
+			case self::STATE_LOGOUT:
+				$this->handleStateLogout();
+				break;
+				
 			default:
 				if (is_callable($cancelHandler)) {
 					call_user_func($cancelHandler, $this);
@@ -168,6 +181,53 @@ class Rublon2FactorCallback {
 		}
 	}
 	
+	
+	/**
+	 * Handle state logout: parse input and call logout for given user.
+	 * 
+	 * @throws MissingField_RublonClientException
+	 * @throws RublonException
+	 */
+	protected function handleStateLogout() {
+		
+		if ($input = file_get_contents("php://input")) {
+			
+			$message = RublonSignatureWrapper::parseMessage($input, $this->getRublon()->getSecretKey());
+			$requiredFields = array(self::FIELD_LOGOUT_ACCESS_TOKEN, self::FIELD_LOGOUT_USER_ID, self::FIELD_LOGOUT_DEVICE_ID);
+			foreach ($requiredFields as $field) {
+				if (empty($message[$field])) {
+					$response = array('status' => 'ERROR', 'msg' => 'Missing field.', 'field' => $field);
+					break;
+				}
+			}
+			
+			if (empty($response)) {
+				$this->handleLogout($message['userId'], $message['deviceId']);
+				$response = array('status' => 'OK', 'msg' => 'Success');
+			}
+			
+		} else {
+			$response = array('status' => 'ERROR', 'msg' => 'Empty JSON input.');
+		}
+		
+		header('content-type: application/json');
+		echo json_encode($response);
+		exit;
+		
+	}
+	
+	
+	/**
+	 * Handle logout in the local system: logout given user for given deviceId.
+	 * 
+	 * If you want to implement this feature, please override method in a subclass.
+	 * 
+	 * @param string $userId
+	 * @param int $deviceId
+	 */
+	protected function handleLogout($userId, $deviceId) {
+		// to override in a subclass
+	}
 	
 	
 	/* ---------------------------------------------------------------------------------------------------
