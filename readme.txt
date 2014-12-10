@@ -7,31 +7,34 @@ Stable tag: 2.1.3
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-Instantly protects all accounts with magical, email-based two-factor authentication; optional mobile app for more security; no tokens.
+Instantly protects all accounts with effortless, email-based two-factor authentication; optional mobile app for more security; no tokens.
  
 == Description ==
 
 = Account Protection for WordPress =
-- Works Out-of-the-Box: Just Activate the Plugin
-- No Configuration Needed
-- So Simple that You Don't Need Training
+- Instantly increase security for all users
+- 1-click download; 1-click activation
+- No configuration or training needed
 
 = Why Do I Need Account Protection? =
-WordPress websites get attacked by botnets that carry out bruteforce attacks. Once inside the admin panel, they start infecting your visitors with malware. This will get your website delisted from search engines or removed by your web hosting provider. All websites are a target, regardless of size. Account protection prevents those attacks.
+Botnets carry out brute force attacks against thousands of WordPress sites and blogs every day, regardless of size. Once inside, botnets infect your visitors with malware. A compromised website leads to delisting by search engines or blocking by your hosting provider. Account protection prevents such attacks.
 
-= Why Are Passwords Not Enough? =
-Many people have a simple, easy to guess password. It can be stolen when they use multiple devices, the same password across different services or when they're not on a secure connection.
+= Why are Passwords Not Enough? =
+Many people use a simple, easy-to-guess password. It can be easily stolen when they use multiple devices; the same password across multiple services; or on unsecured connections, such as public Wi-Fi networks. Botnets hammer at your WordPress site trying to compromise it using millions of common passwords and character combinations.
 
 = How Does Rublon Account Protection Work? =
-During the first login, confirm your identity by clicking on a link that you get via email. Your next login from the same device will only require a password. For more security, install the Rublon mobile app. Scanning a QR code will then confirm your identity.
+During the first login, confirm your identity by clicking on the link you’ll receive via email. Your next login from the same device will only require your WordPress password. For additional security, the Rublon mobile app scans a Rublon Code to confirm your identity.
 
 = Why Should I Use Rublon? =
-Rublon works out-of-the-box. Just activate the plugin and you're done — no configuration needed. Your users don't need training and they don't have to install anything. They don't have to enter any codes. Once they confirm their identity on a device, they can log in to all web services by only entering a password.
+Rublon is simple and easy. Activate the plugin and you're done. Your users don't need to install or configure anything and don’t need training or one-time codes. Once they confirm their identity on a device, they can log in to all web services by only entering their WordPress password.
+
+= How is Rublon Different? =
+Traditional two-factor authentication solutions demand users enter a one-time password each time they want to login. That’s why people don’t like them. Rublon is different. With Rublon, you confirm your identity by simply clicking on a link or scanning a Rublon Code.
 
 = What Does Rublon Cost? =
-Nothing! Install it now to get one year for free. If you want to white-label it using your own branding, please contact sales@rublon.com.
+Nothing! The basic Rublon plugin is free and always will be. Premium features like custom branding are available through our paid Business Plan. Please contact sales@rublon.com.
 
-= What Languages Is Rublon Available In? =
+= In What Languages Is Rublon Available? =
 - English
 - German
 - Polish
@@ -42,7 +45,8 @@ Nothing! Install it now to get one year for free. If you want to white-label it 
 2. Go to "Plugins" -> "Add New" and search for "Rublon" using the plugins search box.
 3. Click the "Install Now" button inside the Rublon plugin box in the search results and confirm the installation.
 4. Click on "Activate Plugin".
-5. Optional: For more security and control, install the Rublon mobile app onto your phone (available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019) and [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42)).
+5. During your next login, confirm your identity via an email link Rublon sends you.
+6. Optional: For more security and control, install the Rublon mobile app onto your phone (available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019) and [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42)).
 
 = Server requirements =
 - PHP version 5.2.17 or greater
@@ -51,28 +55,28 @@ Nothing! Install it now to get one year for free. If you want to white-label it 
 == Frequently Asked Questions ==
 
 = How can I protect my account with Rublon? =
-All you need to do is to install the Rublon for WordPress plugin. After you activate it, all accounts will be instantly protected with email-based two-factor authentication.
+Simply install the Rublon for WordPress plugin and activate it. After activation, all accounts have instant protection with email-based, two-factor authentication.
 
-= Email-based two-factor authentication is not enough for me. Does Rublon support phone-based, out-of-band two-factor authentication? =
-Yes! Just install the Rublon mobile app onto your phone (available for Android, iOS and Windows Phone). After entering your correct login credentials, you will be prompted to scan a Rublon Code with your phone.
+= I want more than email-based, two-factor authentication. Does Rublon support phone-based, out-of-band two-factor authentication? =
+Yes! Just install the Rublon mobile app onto your phone (available for Android, iOS and Windows Phone). After entering your WordPress login credentials, you will be prompted to scan a Rublon Code with your phone.
 
 = Do all my users have to be protected by Rublon? =
-After you activate the plugin, all accounts will instantly be protected. The minimum protection level for all user groups will be set to "Email". You can change this setting to "None" for each user group at any time. Please note that if a user installs the Rublon mobile app, his account will be protected regardless of this setting.
+Plugin activation instantly protects all accounts. The minimum (default) protection level for all user groups is set to "Email." You may change this setting to "None" for any user group at any time. However, users who install the Rublon mobile app will have additional protection regardless of the setting you’ve selected.
 
 = Will my login credentials be known to Rublon? =
-Rublon never knows your or any of your users' login credentials. They are never transmitted to our servers. Rublon does its work only after WordPress positively verifies your password. It's an independent security layer that sits beneath the login form.
+No. Rublon never knows your credentials or those of your users.  They are never transmitted to our servers. Rublon does its work in the background only after WordPress verifies your password. It's an independent security layer that sits beneath the login form.
 
 = How secure is my data on Rublon's servers? =
-For accounts that are protected via email, their email address gets transmitted to Rublon servers during each login, but is instantly removed after we send you the message containing your personal confirmation link. No personal data of such accounts is ever stored on Rublon servers. For accounts that are protected via mobile app, only the Rublon User ID gets transmitted to Rublon servers during login. Registered users of the Rublon mobile app are governed by its terms of service.
+For accounts protected via email, the email address is transmitted to Rublon servers during each login but instantly removed after Rublon sends the email with your personal confirmation link. No personal data of such accounts is ever stored on Rublon servers. For accounts protected via mobile app, only the Rublon User ID is transmitted to Rublon servers during login. Registered users of the Rublon mobile app are governed by its terms of service.
 
 = Why is using the Rublon mobile app more secure than email-based authentication? =
-The Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. Whenever you perform any action that requires the mobile app, like confirming your identity, it generates a unique encrypted digital signature. Getting access to an email account that is not protected by any second factor is easier than stealing your private key from your phone and reusing it.
+The Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. With any action requiring the mobile app, such as confirming your identity, the Rublon app generates an unique encrypted digital signature. Gaining access to an email account without two-factor authentication is easier than stealing your private key from your phone and reusing it.
 
 = What if I use the Rublon mobile app and I lose my phone? =
-Simply deactivate your phone on the "Lost phone" page on our website. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
+Simply deactivate your phone using the "Lost phone" feature on the Help Page at Rublon.com. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
 
 = How much does Rublon cost? =
-Rublon for WordPress is free and always will be. We will launch a paid business plan soon that will offer premium features.
+Rublon for WordPress is free and always will be. Our paid Business Plan offers premium features.
  
 == Screenshots ==
 
