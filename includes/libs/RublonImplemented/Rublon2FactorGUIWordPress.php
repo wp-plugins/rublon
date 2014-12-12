@@ -140,9 +140,8 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 		echo '<script type="text/javascript">
 		function RublonLogoutCallback() {
 			if (jQuery) {
-				jQuery.post('. json_encode(admin_url('admin-ajax.php')) .', {action: "rublon_is_user_logged_in"}, function(response) {
-					if (response == 1) location.href = '. json_encode($logout_url) .';
-					else location.reload();
+				jQuery.post('. json_encode(admin_url('admin-ajax.php')) .', {action: "rublon_logout"}, function(response) {
+					location.reload();
 				});
 			} else {
 				location.reload();

@@ -1649,8 +1649,9 @@ class RublonHelper {
 	static private function _info() {
 		ob_start();
 		phpinfo();
+		$info = ob_get_clean();
 		$phpinfo = array('phpinfo' => array());
-		if (preg_match_all('#(?:<h2>(?:<a name=".*?">)?(.*?)(?:</a>)?</h2>)|(?:<tr(?: class=".*?")?><t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>(?:<t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>(?:<t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>)?)?</tr>)#s', ob_get_clean(), $matches, PREG_SET_ORDER)) {
+		if (preg_match_all('#(?:<h2>(?:<a name=".*?">)?(.*?)(?:</a>)?</h2>)|(?:<tr(?: class=".*?")?><t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>(?:<t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>(?:<t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>)?)?</tr>)#s', $info, $matches, PREG_SET_ORDER)) {
 		    foreach ($matches as $match) {
 		        if (strlen($match[1])) {
 		            $phpinfo[$match[1]] = array();
@@ -2824,15 +2825,15 @@ class RublonHelper {
 		$gui = Rublon2FactorGUIWordPress::getInstance();
 
 		// Create AJAX endpoint to check if user is logged-in
-		$callback = array(__CLASS__, 'ajaxCheckLoggedIn');
-		add_action('wp_ajax_rublon_is_user_logged_in', $callback);
-		add_action('wp_ajax_nopriv_rublon_is_user_logged_in', $callback);
+		$callback = array(__CLASS__, 'ajaxLogout');
+		add_action('wp_ajax_rublon_logout', $callback);
+		add_action('wp_ajax_nopriv_rublon_logout', $callback);
 
 	}
 	
 	
-	static public function ajaxCheckLoggedIn() {
-		echo intval(is_user_logged_in());
+	static public function ajaxLogout() {
+		wp_logout();
 		exit;
 	}
 

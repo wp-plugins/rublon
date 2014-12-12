@@ -94,6 +94,9 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.5 =
+* Improved compatibility with some non-standard PHP server configurations
+
 = 2.1.4 =
 * Logout remotely from WordPress by removing a trusted device
 * Improved memory management
