@@ -39,6 +39,13 @@ Nothing! The basic Rublon plugin is free and always will be. Premium features li
 - German
 - Polish
 
+---
+
+> #### Follow Us
+> [Facebook](https://www.facebook.com/RublonApp) | [Google+](https://plus.google.com/+Rublon) | [LinkedIn](https://www.linkedin.com/company/2772205) | [Twitter](https://twitter.com/rublon) | [YouTube](https://www.youtube.com/channel/UCI6QmxMvUThCg8vhli5DWxg)
+
+---
+
 == Installation ==
 
 1. Log in to your WordPress administration panel using an administrator account.
@@ -93,6 +100,9 @@ Rublon for WordPress is free and always will be. Our paid Business Plan offers p
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 2.1.6 =
+* Minor text improvements
 
 = 2.1.5 =
 * Improved compatibility with some non-standard PHP server configurations
