@@ -102,6 +102,8 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 2.1.6 =
+* Improved compatibility with some third-party plugins
+* Improved positioning of Rublon Badge
 * Minor text improvements
 
 = 2.1.5 =

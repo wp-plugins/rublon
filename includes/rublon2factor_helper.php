@@ -76,6 +76,9 @@ class RublonHelper {
 	const WP_RUBLON_PAGE = 'admin.php?page=rublon';
 	const WP_PROFILE_EMAIL2FA_SECTION = '#rublon-email2fa';
 
+	const PAGE_ANY = 'any';
+	const PAGE_LOGIN = 'login';
+
 	const PHP_VERSION_REQUIRED = '5.2.17';
 	
 	/**
@@ -151,12 +154,10 @@ class RublonHelper {
 	 * Check for any Rublon actions in the URI
 	 *
 	 */
-	static public function checkForActions() {
-	
-		global $pagenow;
+	static public function checkForActions($page = self::PAGE_ANY) {
 	
 		$rublonAction = self::uriGet('rublon');
-		if (isset($rublonAction)) {
+		if (isset($rublonAction) && self::_isActionPermitted($rublonAction, $page)) {
 			switch (strtolower($rublonAction)) {
 				case 'register':
 					$rublonRegAction = self::uriGet('action');
@@ -190,13 +191,35 @@ class RublonHelper {
 					}
 					break;
 			}
-			exit;
+			exit();
 		} else {
 			// Check for transient-stored profile update form
 			self::_checkForStoredPUForm();
 			self::_checkForStoredASUForm();
 		}
 	
+	}
+
+
+	/**
+	 * Check if Rublon action permitted on current page
+	 * 
+	 * @param string $action
+	 * @param string $page
+	 * @return boolean
+	 */
+	static private function _isActionPermitted($action, $page) {
+
+		$page_actions = array(
+			self::PAGE_ANY => array(
+				'register',
+				'confirm',
+				'init-registration',
+			),
+			self::PAGE_LOGIN => array('callback'),
+		);
+		return (isset($page_actions[$page]) && in_array($action, $page_actions[$page]));
+
 	}
 
 
@@ -240,12 +263,12 @@ class RublonHelper {
 								self::setMessage('ROLE_BLOCKED|' . base64_encode($obfuscated_email), 'error', 'LM');
 								$return_page = RublonHelper::getReturnPage();
 								wp_safe_redirect(wp_login_url($return_page));
-								exit;
+								exit();
 							}
 						} else {
 							wp_logout();
 							wp_redirect($authURL);
-							exit;
+							exit();
 						}
 					}
 				}
@@ -1165,7 +1188,7 @@ class RublonHelper {
 		}
 		try {
 			$authUrl = $rublon->auth(
-				self::getActionURL('callback'),
+				self::getLoginURL('callback'),
 				self::getUserId($user),
 				self::getUserEmail($user),
 				$authParams
@@ -2129,6 +2152,21 @@ class RublonHelper {
 	}
 
 
+	static public function getLoginURL($action) {
+
+		$login_url = wp_login_url();
+		$query_component = parse_url($login_url, PHP_URL_QUERY);
+		if (!empty($query_component)) {
+			$login_url .= '&';
+		} else {
+			$login_url .= '?';
+		}
+		$login_url .= 'rublon=' . $action;
+		return $login_url;
+
+	}
+
+
 	/**
 	 * Prepare a role ID.
 	 *
@@ -2252,8 +2290,9 @@ class RublonHelper {
 		}
 		$return_url = (!empty($return_url) && strpos($return_url, site_url()) !== false) ? $return_url : admin_url();
 		$return_url = self::normalizeURL($return_url);
+
 		wp_safe_redirect($return_url);
-		exit;
+		exit();
 
 	}
 

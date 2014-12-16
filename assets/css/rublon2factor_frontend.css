@@ -4,7 +4,7 @@
 }
 
 .rublon-seal-link {
-	float: left;
+	float: right;
 	position: relative;
 }
 
@@ -14,9 +14,14 @@
 	clear: both;
 }
 
+#rublon-seal p.submit input {
+	float: left;
+}
+
 .rublon-seal-image {
 	position: absolute;
 	height: 32px;
+	right: 0;
 }
 
 .rublon-clear {
