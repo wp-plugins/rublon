@@ -144,6 +144,14 @@ function rublon2factor_init() {
 
 add_action('init', 'rublon2factor_init');
 
+function rublon2factor_login_init() {
+
+	RublonHelper::checkForActions(RublonHelper::PAGE_LOGIN);
+
+}
+
+add_action('login_init', 'rublon2factor_login_init');
+
 /**
  * Store WP authentication cookie params in the settings for future use
  * 
