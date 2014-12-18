@@ -1,0 +1,8 @@
+.rublon-login-message {
+	margin: 0 0 20px 0 !important;
+	padding: 12px !important;
+}
+
+.rublon-login-message > a.rublon-link {
+	color: #0074a2 !important;	
+}

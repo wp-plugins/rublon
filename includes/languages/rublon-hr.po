@@ -1,0 +1,360 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rublon 2.0\n"
+"POT-Creation-Date: 2014-12-18 09:30+0100\n"
+"PO-Revision-Date: 2014-12-18 15:12+0100\n"
+"Last-Translator: Rublon Team <developers@rublon.com>\n"
+"Language-Team: \n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.4\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+
+msgid "Enable protection"
+msgstr "Omogućite zaštitu"
+
+msgid ""
+"Your account is protected by <a href=\"%s\" target=\"_blank\">Rublon</a>."
+msgstr "Vaš nalog je sada zaštićen Rublon-om"
+
+msgid ""
+"Get the <a href=\"%s/get\" target=\"_blank\">Rublon mobile app</a> for more "
+"security."
+msgstr ""
+
+msgid "Warning!"
+msgstr ""
+
+msgid ""
+"Your account is not protected. Go to <a href=\"%s\">your profile page</a> to "
+"enable account protection."
+msgstr ""
+
+msgid "Rublon error code: "
+msgstr "Greška u Rublon kodu:"
+
+msgid "Rublon is being configured."
+msgstr ""
+
+msgid "This will only take a moment."
+msgstr ""
+
+msgid "Rublon Configuration"
+msgstr ""
+
+msgid "Rublon"
+msgstr "Rublon"
+
+msgid "Settings"
+msgstr "Postavke"
+
+msgid "Trusted Devices"
+msgstr ""
+
+msgid "Access Control"
+msgstr ""
+
+msgid "Protection"
+msgstr "Omogućite zaštitu"
+
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+msgid ""
+"Every user is protected via email by default. You can turn this off for "
+"selected roles. For more security, you can also require selected roles to "
+"use the Rublon mobile app."
+msgstr ""
+
+msgid "Notice:"
+msgstr ""
+
+msgid ""
+"Users of the Rublon mobile app are always protected, regardless of this "
+"setting. Users without default protection can turn it on themselves in their "
+"profile. Users with default protection cannot turn it off."
+msgstr ""
+
+msgid "Default Protection Level"
+msgstr "Omogućite zaštitu"
+
+msgid "Mobile app"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid ""
+"XML-RPC allows external applications to administer your website without "
+"having to authenticate through Rublon. We strongly recommend to keep it "
+"disabled."
+msgstr ""
+"Omogućavanje XML-RPC će omogućiti eksternim aplikacijama da zaobiđe Rublon "
+"bezbednost . Preporučujemo da ga ostavite onemogućen ."
+
+msgid "Disabled"
+msgstr "Onemogućiti XML-RPC"
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Rublon protects against intruders who found out your password."
+msgstr ""
+
+msgid "Learn more at <a href=\"%s\" target=\"_blank\">www.rublon.com</a>."
+msgstr ""
+"Saznajte više na<a href=\"http://rublon.com/hr/\" target=\"_blank\">www."
+"rublon.com/hr/</a>."
+
+msgid "Trusted Devices Manager"
+msgstr ""
+
+msgid "Access Control Manager"
+msgstr ""
+
+msgid ""
+"Warning! The PHP version of your server is too old to run Rublon. Please "
+"upgrade your server's PHP version."
+msgstr "UPOZORENJE! PHP verzija vašeg servera Upgrade-ujte vašu verziju PHPa."
+
+msgid "Required PHP version:"
+msgstr "Potrebna PHP verzija:"
+
+msgid "(or above)"
+msgstr "(ili iznad)"
+
+msgid "Your PHP version:"
+msgstr "Vaša PHP verzija"
+
+msgid "Warning! The cURL library has not been found on this server."
+msgstr "Upozorenje! cURL biblioteka nije pronadjena na ovom serveru."
+
+msgid ""
+"It is a crucial component of the Rublon plugin and its absence will prevent "
+"it from working properly. Please have the cURL library installed or consult "
+"your server administrator about it."
+msgstr ""
+"Ovo je ključna komponenta Rublon plugina i njegovo odsustvo će ga sprečiti "
+"da radi ispravno . Molimo vas instalirajte cURL biblioteku ili se obratite "
+"administratoru servera o tome ."
+
+msgid "Account protected by Rublon"
+msgstr "Nalog zaštićen Rublonom"
+
+msgid "Protected by Rublon"
+msgstr "Zaštićeno Rublonom"
+
+msgid "Rublon Two-Factor Authentication"
+msgstr "Autentifikacija Rublona sa dva faktora "
+
+msgid "Your profile is being updated."
+msgstr ""
+
+msgid "Rublon settings are being updated."
+msgstr ""
+
+msgid "Do you confirm changing your %s?"
+msgstr ""
+
+msgid "protection type"
+msgstr "Omogućite zaštitu"
+
+msgid ", your "
+msgstr ""
+
+msgid " and your "
+msgstr ""
+
+msgid "email address to: %s"
+msgstr ""
+
+msgid ", as well as your "
+msgstr ""
+
+msgid "password"
+msgstr ""
+
+msgid "Do you confirm changing default protection levels?"
+msgstr ""
+
+msgid "Profile update"
+msgstr ""
+
+msgid "Operation aborted."
+msgstr ""
+
+msgid "Operation cancelled."
+msgstr ""
+
+msgid "Error details: "
+msgstr "Detalji greške:"
+
+msgid "There was a problem during the authentication process."
+msgstr "Problem je nastao toko procesa autentifikacije."
+
+msgid ""
+"Rublon activation failed. Please try again. Should the error occur again, "
+"contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+msgstr ""
+"Rublon aktivacija nije uspela. Pokušajte opet. Ako dodje opet do grške, "
+"obratite se nama<a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+
+msgid "You cannot protect an account already protected by Rublon."
+msgstr "Ne možete zaštititi nalog već zaštićen Rublon-om."
+
+msgid "Unable to protect your account with Rublon."
+msgstr "Nije moguće zaštititi vaš nalog sa Rublonom"
+
+msgid "Unable to disable Rublon protection."
+msgstr "Nije moguće onemogućiti Rublon zaštitu"
+
+msgid ""
+"The version of Rublon for Wordpress that you are trying to activate is "
+"outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
+"the newest version or"
+msgstr ""
+"Rublon verzija za Wordpress koju pokušavate da aktivirate je zastarela. "
+"Molimo vas idite na<a href=\"%s\"> Plugins</a> stranicu i ažurirajte ga na "
+"najnoviju verziju ili"
+
+msgid "update now"
+msgstr "updatuj sada"
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon. "
+"However, there has been a problem with protecting your account. Go to <a "
+"href=\"%s\">Rublon page</a> in order to protect your account."
+msgstr ""
+"Hvala ! Sada svi vaši korisnici mogu zaštititi svoje račune sa Rublon-om. "
+"Međutim , došlo je do problema sa zaštitom vašeg naloga . Idite na<a href="
+"\"%s\"> Rublon stranicu </a>u cilju zaštite vašeg naloga ."
+
+msgid ""
+"Due to security purposes, your administrator requires you to install the <a "
+"href=\"%s\" target=\"_blank\">Rublon mobile app</a>. Enter your WordPress "
+"account's email address during setup: %s."
+msgstr ""
+
+msgid ""
+"If you already have the Rublon mobile app, please go to <a href=\"%s\" "
+"target=\"_blank\">www.rublon.com</a> and log in to your User Panel in order "
+"to add the above email address as an additional one."
+msgstr ""
+
+msgid ""
+"Your server's time seems out of sync. Please check that it is properly "
+"synchronized - Rublon won't be able to verify your website's security "
+"otherwise."
+msgstr ""
+"Vreme vašeg servera izgleda nije sinhronizovano . Molimo vas da proverite da "
+"li je pravilno sinhronizovan - Rublon neće moći da proveri bezbednost vašeg "
+"sajta na drugi način ."
+
+msgid "The authentication process has been halted."
+msgstr ""
+
+msgid ""
+"This site's administrator requires you to confirm this operation using the "
+"Rublon mobile app."
+msgstr ""
+
+msgid ""
+"Learn more at <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
+"com</a>."
+msgstr ""
+"Saznajte više na<a href=\"http://rublon.com/hr/\" target=\"_blank\">www."
+"rublon.com/hr/</a>."
+
+msgid "<strong>ERROR:</strong> Unauthorized access."
+msgstr ""
+
+msgid "Your account is now protected by Rublon."
+msgstr "Vaš nalog je sada zaštićen Rublon-om"
+
+msgid ""
+"Rublon protection has been disabled. You are now protected by a password "
+"only, which may result in unauthorized access to your account. We strongly "
+"encourage you to protect your account with Rublon."
+msgstr ""
+"Rublon zaštita je onemogućena. Sada su zaštićeni samo lozinkom , što može "
+"dovesti do neovlašćenog pristupa vašem nalogu . Preporučujemo Vam da "
+"zaštitite vaš nalog sa Rublon-om ."
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon."
+msgstr "Hvala! Sada nalozi svih korisnika mogu biti zaštićeni sa Rublonom."
+
+msgid ""
+"Since Rublon plugin version 2.0, the authentication process has been changed "
+"significantly. The accounts are now protected using the email address. We "
+"have detected that your WordPress account's email address differs from the "
+"one you used to create your account in the Rublon mobile app. Please change "
+"your WordPress account's email address accordingly or add your WordPress "
+"account's email address in the \"Email addresses\" section of the Rublon "
+"mobile app."
+msgstr ""
+
+msgid ""
+"Plugin requires database modification but you do not have permission to do "
+"it."
+msgstr "Plugin zahteva modifikaciju baze podataka ali nemate dozvolu za to."
+
+msgid ""
+"Rublon provides stronger security for online accounts through invisible two-"
+"factor authentication. It protects your accounts from sign-ins from unknown "
+"devices, even if your passwords get stolen."
+msgstr ""
+"Rublon pruža jaču sigurnost za online račune preko nevidljive "
+"autentifikacije od dva faktora  . On štiti svoje račune od upisivanja iz "
+"nepoznatih uređaja , čak i ako je vaša lozinka ukradena ."
+
+msgid "Account Protection"
+msgstr "Omogućite zaštitu"
+
+msgid "Protection via Email"
+msgstr "Omogućite zaštitu"
+
+msgid "Protection via Email is not necessary for you."
+msgstr ""
+
+msgid "You are already protected via Mobile App."
+msgstr "Ne možete zaštititi nalog već zaštićen Rublon-om."
+
+msgid "You are protected via Email."
+msgstr ""
+
+msgid "Enable account protection via email"
+msgstr "Omogućite zaštitu"
+
+msgid ""
+"You will need to confirm every sign in from a new device via email. You will "
+"also need to confirm changes to important settings like your password or "
+"email address."
+msgstr ""
+
+msgid "Administrators can always change your settings without your consent."
+msgstr ""
+
+msgid "Protection via Mobile App"
+msgstr ""
+
+msgid ""
+"This will be automatically enabled once you install the <a href=\"%s/get\" "
+"target=\"_blank\">Rublon mobile app</a>. Your phone will be required for "
+"identity or action confirmation. This feature will replace protection via "
+"email."
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid ""
+"The new user account will be automatically protected by <a href=\"%s\" "
+"target=\"_blank\">Rublon</a>."
+msgstr ""
