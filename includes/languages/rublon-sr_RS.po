@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 2.0\n"
-"POT-Creation-Date: 2014-10-30 13:09+0100\n"
-"PO-Revision-Date: 2014-10-30 14:10+0100\n"
+"POT-Creation-Date: 2014-12-18 09:30+0100\n"
+"PO-Revision-Date: 2014-12-18 15:12+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "Language: sr_RS\n"
@@ -48,17 +48,14 @@ msgstr ""
 msgid "Rublon"
 msgstr "Rublon"
 
-msgid "General settings"
-msgstr ""
+msgid "Settings"
+msgstr "Postavke"
 
 msgid "Trusted Devices"
 msgstr ""
 
 msgid "Access Control"
 msgstr ""
-
-msgid "Settings"
-msgstr "Postavke"
 
 msgid "Protection"
 msgstr "Omogućite zaštitu"
@@ -273,6 +270,9 @@ msgid ""
 msgstr ""
 "Saznajte više na<a href=\"http://rublon.com/sr/\" target=\"_blank\">www."
 "rublon.com/sr/</a>."
+
+msgid "<strong>ERROR:</strong> Unauthorized access."
+msgstr ""
 
 msgid "Your account is now protected by Rublon."
 msgstr "Vaš nalog je sada zaštićen Rublon-om"

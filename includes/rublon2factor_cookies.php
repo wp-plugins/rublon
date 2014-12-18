@@ -19,6 +19,7 @@ class RublonCookies {
 	const COOKIE_MESSAGES = 'messages';
 	const COOKIE_NONCE = 'nonce';
 	const COOKIE_AUTHENTICATED = 'auth';
+	const COOKIE_LOGIN_TOKEN_ID = 'login';
 	const COOKIE_RETURNURL = 'return_url';
 
 
@@ -131,6 +132,25 @@ class RublonCookies {
 		self::_clearCookieData($cookieName);
 		return $nonce;
 
+	}
+
+
+	static public function storeLoginTokenIdInCookie($login_token_id) {
+
+		$cookie_name = self::COOKIE_PREFIX . self::COOKIE_LOGIN_TOKEN_ID;
+		self::_clearCookieData($cookie_name);
+		self::_setCookieData($cookie_name, $login_token_id);		
+
+	}
+
+
+	static public function getLoginTokenIdFromCookie() {
+	
+		$cookie_name = self::COOKIE_PREFIX . self::COOKIE_LOGIN_TOKEN_ID;
+		$login_token_id = self::_getCookieData($cookie_name);
+		self::_clearCookieData($cookie_name);
+		return $login_token_id;
+	
 	}
 
 

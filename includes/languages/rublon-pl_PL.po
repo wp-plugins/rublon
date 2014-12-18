@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 2.0\n"
-"POT-Creation-Date: 2014-10-30 13:08+0100\n"
-"PO-Revision-Date: 2014-10-30 14:10+0100\n"
+"POT-Creation-Date: 2014-12-18 08:35+0100\n"
+"PO-Revision-Date: 2014-12-18 15:12+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "Language: pl_PL\n"
@@ -53,17 +53,14 @@ msgstr "Konfigurowanie Rublona"
 msgid "Rublon"
 msgstr "Rublon"
 
-msgid "General settings"
-msgstr "Ustawienia ogólne"
+msgid "Settings"
+msgstr "Ustawienia"
 
 msgid "Trusted Devices"
 msgstr "Urządzenia Zaufane"
 
 msgid "Access Control"
 msgstr "Kontrola dostępu"
-
-msgid "Settings"
-msgstr "Ustawienia"
 
 msgid "Protection"
 msgstr "Ochrona"
@@ -296,6 +293,9 @@ msgid ""
 msgstr ""
 "Dowiedz się więcej: <a href=\"https://www.rublon.com/pl/\" target=\"_blank"
 "\">www.rublon.com/pl</a>."
+
+msgid "<strong>ERROR:</strong> Unauthorized access."
+msgstr "<strong>BŁĄD:</strong> Nie przyznano dostępu."
 
 msgid "Your account is now protected by Rublon."
 msgstr "Twoje konto jest teraz zabezpieczone Rublonem. "

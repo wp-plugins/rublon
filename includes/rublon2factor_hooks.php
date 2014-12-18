@@ -109,14 +109,15 @@ function rublon2factor_authenticate($user, $username, $password) {
 					RublonHelper::setMessage('ROLE_BLOCKED|' . base64_encode($obfuscated_email), 'error', 'LM');
 					$return_page = RublonHelper::getReturnPage();
 					wp_safe_redirect(wp_login_url($return_page));
-					exit;
+					exit();
 				} else {
 					RublonHelper::setMobileUserStatus($user, RublonHelper::NO);
 					return $user;
 				}
 			} else {
+				RublonHelper::setLoginToken($user);
 				wp_redirect($authURL);
-				exit;
+				exit();
 			}
 		} else {
 			return $user;

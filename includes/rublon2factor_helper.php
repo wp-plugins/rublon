@@ -41,6 +41,7 @@ class RublonHelper {
 	const TRANSIENT_PROFILE_FORM_PREFIX = 'rublon_puform_';
 	const TRANSIENT_ADDSETT_TOKEN_PREFIX = 'rublon_asut_';
 	const TRANSIENT_ADDSETT_FORM_PREFIX = 'rublon_asuform_';
+	const TRANSIENT_LOGIN_TOKEN_PREFIX = 'rublon_lt_';
 	const TRANSIENT_MOBILE_USER = 'rublon_mobuser_';
 	const TRANSIENT_DEBUG = 'rublon_debug';
 	const TRANSIENT_FLAG_UPDATE_AUTH_COOKIE = 'rublon_upd_authck_';
@@ -58,6 +59,7 @@ class RublonHelper {
 	const UPDATE_TOKEN_LIFETIME = 5;
 	const UPDATE_FORM_LIFETIME = 15;
 	const MOBILE_USER_INFO_LIFETIME = 15;
+	const LOGIN_TOKEN_LIFETIME = 16;
 	const FLAG_LIFETIME = 5;
 
 	const FLAG_PROFILE_UPDATE = 'wp_profile_update';
@@ -129,6 +131,8 @@ class RublonHelper {
 	 */
 	static public function init() {
 
+		require_once dirname(__FILE__) . '/classes/class-rublon-garbage-man.php';
+
 		do_action('rublon_plugin_pre_init');
 
 		// Initialize localization
@@ -144,6 +148,9 @@ class RublonHelper {
 
 		// prevent XML-RPC access if it was disabled in plugin settings 
 		self::_checkXMLRPCStatus();
+
+		$garbage_man = new Rublon_Garbage_Man();
+		$garbage_man->collectTrash();
 		
 		self::initLogoutListener();
 		
@@ -267,6 +274,7 @@ class RublonHelper {
 							}
 						} else {
 							wp_logout();
+							self::setLoginToken($current_user);
 							wp_redirect($authURL);
 							exit();
 						}
@@ -1111,25 +1119,35 @@ class RublonHelper {
 	static public function callbackSuccess($user_id, Rublon2FactorCallbackWordPress $callback) {
 
 		$user = get_user_by('id', $user_id);
-		if ($user) {
-			$usingEmail2FA = $callback->getConsumerParam(RublonAPIClient::FIELD_USING_EMAIL2FA);
-			if (!$usingEmail2FA) {
-				self::setMobileUserStatus($user);
-			}
-			$acm_status = $callback->getConsumerParam(RublonAPIClient::FIELD_ACCESS_CONTROL_MANAGER_ALLOWED);
-			if ($acm_status === true) {
-				self::setACMPermission(self::YES);
+		if ($user && $user instanceof WP_User) {
+			$login_token = null;
+			$first_factor_cleared = self::_isFirstFactorCleared($user, $login_token);
+			if ($first_factor_cleared) {
+				self::_clearLoginToken($login_token['token_id']);
+				$usingEmail2FA = $callback->getConsumerParam(RublonAPIClient::FIELD_USING_EMAIL2FA);
+				if (!$usingEmail2FA) {
+					self::setMobileUserStatus($user);
+				}
+				$acm_status = $callback->getConsumerParam(RublonAPIClient::FIELD_ACCESS_CONTROL_MANAGER_ALLOWED);
+				if ($acm_status === true) {
+					self::setACMPermission(self::YES);
+				} else {
+					self::setACMPermission(self::NO);
+				}
+				$deviceId = $callback->getConsumerParam(RublonAPICredentials::FIELD_DEVICE_ID);
+				$remember = $callback->getConsumerParam('remember');
+				wp_logout();
+				self::$deviceId = $deviceId;
+				add_filter('auth_cookie', array(__CLASS__, 'associateSessionWithDevice'), 10, 5);
+				RublonCookies::setLoggedInCookie($user, $remember);
+				RublonCookies::setAuthCookie($user, $remember);
+				do_action('wp_login', $user->user_login, $user);
 			} else {
-				self::setACMPermission(self::NO);
+				self::setMessage('FIRST_FACTOR_NOT_CLEARED', 'error', 'RC');
+				wp_logout();
 			}
-			$deviceId = $callback->getConsumerParam(RublonAPICredentials::FIELD_DEVICE_ID);
-			$remember = $callback->getConsumerParam('remember');
+		} else {
 			wp_logout();
-			self::$deviceId = $deviceId;
-			add_filter('auth_cookie', array(__CLASS__, 'associateSessionWithDevice'), 10, 5);
-			RublonCookies::setLoggedInCookie($user, $remember);
-			RublonCookies::setAuthCookie($user, $remember);
-			do_action('wp_login', $user->user_login, $user);
 		}
 		self::_returnToPage();
 
@@ -1208,6 +1226,72 @@ class RublonHelper {
 			self::notify($error_data);
 			return '';
 		}
+
+	}
+
+
+	static private function _isFirstFactorCleared($user, &$login_token_data) {
+
+		$first_factor_cleared = false;
+		if ($user instanceof WP_User) {
+			$login_token = self::_getLoginToken();
+			if (!empty($login_token)) {
+				$first_factor_cleared = (is_numeric($login_token['user_id']) && $login_token['user_id'] == self::getUserId($user));
+				if ($first_factor_cleared) {
+					$login_token_data = $login_token;
+				}
+			}
+		}
+		return $first_factor_cleared;
+
+	}
+
+
+	static private function _getLoginToken() {
+
+		$login_token_id = RublonCookies::getLoginTokenIdFromCookie();
+		if (!empty($login_token_id)) {
+			return get_transient(self::TRANSIENT_LOGIN_TOKEN_PREFIX . $login_token_id);
+		}
+
+	}
+
+
+	static public function setLoginToken($user) {
+
+		$login_token_id = self::_generateLoginTokenId();
+		$login_token = array(
+			'user_id' => self::getUserId($user),
+			'token_id' => $login_token_id,
+		);
+		set_transient(
+			self::TRANSIENT_LOGIN_TOKEN_PREFIX . $login_token_id,
+			$login_token,
+			self::LOGIN_TOKEN_LIFETIME * MINUTE_IN_SECONDS
+		);
+		RublonCookies::storeLoginTokenIdInCookie($login_token_id);
+
+	}
+
+
+	static private function _clearLoginToken($login_token_id) {
+
+		delete_transient(self::TRANSIENT_LOGIN_TOKEN_PREFIX . $login_token_id);
+
+	}
+
+
+	static private function _generateLoginTokenId() {
+
+		$login_token_id = false;
+		while (!$login_token_id) {
+			$new_token_id = self::_generateToken();
+			$check_token = get_transient(self::TRANSIENT_LOGIN_TOKEN_PREFIX . $new_token_id);
+			if (!$check_token) {
+				$login_token_id = $new_token_id;
+			}
+		}
+		return $login_token_id;
 
 	}
 
@@ -1413,6 +1497,10 @@ class RublonHelper {
 						$no_code = true;
 						$errorMessage = __('The authentication process has been halted.', 'rublon') . ' ' . __('This site\'s administrator requires you to confirm this operation using the Rublon mobile app.', 'rublon')
 						. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon');
+						break;
+					case 'RC_FIRST_FACTOR_NOT_CLEARED':
+						$no_code = true;
+						$errorMessage = __('<strong>ERROR:</strong> Unauthorized access.', 'rublon');
 						break;
 				}
 				$result[] = array('message' => $errorMessage, 'type' => $msgType);
@@ -1679,9 +1767,11 @@ class RublonHelper {
 		        if (strlen($match[1])) {
 		            $phpinfo[$match[1]] = array();
 		        } elseif (isset($match[3])) {
-		            $phpinfo[end(array_keys($phpinfo))][$match[2]] = isset($match[4]) ? array($match[3], $match[4]) : $match[3];
+		        	$keys = array_keys($phpinfo); // fixed strict-standards issue
+		            $phpinfo[end($keys)][$match[2]] = isset($match[4]) ? array($match[3], $match[4]) : $match[3];
 		        } else {
-		            $phpinfo[end(array_keys($phpinfo))][] = $match[2];
+		        	$keys = array_keys($phpinfo); // fixed strict-standards issue
+		            $phpinfo[end($keys)][] = $match[2];
 		        }
 		    }
 		}

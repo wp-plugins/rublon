@@ -65,7 +65,7 @@ function rublon2factor_add_menu_entries() {
 	$main_title = __('Rublon', 'rublon');
 	$settings_page = add_utility_page($main_title, $main_title, 'read', 'rublon' , 'rublon2factor_render_settings_page', 'div');
 
-	$general_title = __('General settings', 'rublon');
+	$general_title = __('Settings', 'rublon');
 	add_submenu_page('rublon', 'Rublon: ' . $general_title, $general_title, 'read', 'rublon', 'rublon2factor_render_settings_page');
 
 	$trusted_title = __('Trusted Devices', 'rublon');
