@@ -101,6 +101,9 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.8 =
+* Possibility to disable Real-Time Remote Logout, which caused some Firefox users to experience slower page load times
+
 = 2.1.7 =
 * Additional security for the first authentication factor
 * Improved database garbage collecting

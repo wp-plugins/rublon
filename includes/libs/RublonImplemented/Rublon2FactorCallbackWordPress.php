@@ -4,6 +4,7 @@ class Rublon2FactorCallbackWordPress extends Rublon2FactorCallback {
 	
 	
 	protected function handleLogout($userId, $deviceId) {
+
 		global $wpdb;
 		$sql = $wpdb->prepare(
 			"SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key = %s", RublonHelper::RUBLON_META_DEVICE_ID .'_'. $deviceId);
@@ -21,6 +22,7 @@ class Rublon2FactorCallbackWordPress extends Rublon2FactorCallback {
 		}
 		$wpdb->query($wpdb->prepare(
 			"DELETE FROM $wpdb->usermeta WHERE meta_key = %s", RublonHelper::RUBLON_META_DEVICE_ID .'_'. $deviceId));
+
 	}
 	
 }

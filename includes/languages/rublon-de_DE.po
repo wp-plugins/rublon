@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 2.0\n"
-"POT-Creation-Date: 2014-12-18 09:26+0100\n"
-"PO-Revision-Date: 2014-12-18 15:11+0100\n"
+"POT-Creation-Date: 2014-12-19 14:11+0100\n"
+"PO-Revision-Date: 2014-12-19 14:57+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -68,6 +68,9 @@ msgstr "Schutz"
 msgid "XML-RPC"
 msgstr "XML-RPC"
 
+msgid "Real-Time Remote Logout"
+msgstr ""
+
 msgid ""
 "Every user is protected via email by default. You can turn this off for "
 "selected roles. For more security, you can also require selected roles to "
@@ -117,6 +120,12 @@ msgstr "Deaktiviert"
 
 msgid "Enabled"
 msgstr "Aktiviert"
+
+msgid ""
+"Users get logged out from a trusted device in real-time directly upon "
+"removing it. Disable this if you experience slower page load times. Remote "
+"Logout will still work, but only after refreshing the page."
+msgstr ""
 
 msgid "Rublon protects against intruders who found out your password."
 msgstr ""

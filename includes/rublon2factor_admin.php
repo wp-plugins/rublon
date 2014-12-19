@@ -112,6 +112,7 @@ function rublon2factor_register_settings() {
 	add_settings_section('rublon2factor-additional-settings', __('Settings', 'rublon'), 'rublon2factor_render_additional_settings', 'rublon');
 	add_settings_field('rublon2factor_protection_types', __('Protection', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');
 	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-additional-settings');
+	add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-additional-settings');
 
 	if (!RublonHelper::isSiteRegistered()) {
 		RublonHelper::newNonce();
@@ -244,6 +245,25 @@ function rublon2factor_render_disable_xmlrpc() {
 			RublonWP.setUpXMLRPCChangeListener();
 		}
 	//]]></script>';
+
+}
+
+function rublon2factor_render_rl_activelistener() {
+
+	$settings = RublonHelper::getSettings('additional');
+	$offSelected = '';
+	$onSelected = '';
+	if (empty($settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) || $settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on') {
+		$onSelected = ' selected';
+	} else {
+		$offSelected = ' selected';
+	}
+
+	echo '<p class="rublon-settings-desc">' . __('Users get logged out from a trusted device in real-time directly upon removing it. Disable this if you experience slower page load times. Remote Logout will still work, but only after refreshing the page.', 'rublon') . '</p>';
+	echo '<select id="rublon-rl-activelistener-dropdown" name="' . RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '[rl-active-listener]">';
+	echo '	<option value="on"' . $onSelected . '>' . __('Enabled', 'rublon') . '</option>';
+	echo '	<option value="off"' . $offSelected . '>' . __('Disabled', 'rublon') . '</option>';
+	echo '</select>';
 
 }
 

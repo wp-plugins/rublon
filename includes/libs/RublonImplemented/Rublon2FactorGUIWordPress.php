@@ -8,12 +8,14 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 	
 	public static function getInstance() {
 		if (empty(self::$instance)) {
+			$additional_settings = RublonHelper::getSettings('additional');
+			$logout_listener = (empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) || $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on');
 			$current_user = wp_get_current_user();
 			self::$instance = new self(
 				RublonHelper::getRublon(),
 				RublonHelper::getUserId($current_user),
 				RublonHelper::getUserEmail($current_user),
-				$logoutListener = true
+				$logout_listener
 			);
 			// Embed consumer script
 			add_action('admin_footer', array(self::$instance, 'renderConsumerScript'));
@@ -128,26 +130,30 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 		
 		// Consumer script
 		echo $this->getConsumerScript();
-		
-		// Logout listener callback function.
-		// URL is created manually because the wp_logout_url() function escapes the ampersand.
-		$args = array(
-			'action' => 'logout',
-			'redirect_to' => urlencode( RublonHelper::getRublon()->getCurrentUrl() ),
-			'_wpnonce' => wp_create_nonce( 'log-out' )
-		);
-		$logout_url = add_query_arg($args, site_url('wp-login.php', 'login'));
-		echo '<script type="text/javascript">
-		function RublonLogoutCallback() {
-			if (jQuery) {
-				jQuery.post('. json_encode(admin_url('admin-ajax.php')) .', {action: "rublon_logout"}, function(response) {
-					location.reload();
-				});
-			} else {
-				location.reload();
-			}
+
+		$additional_settings = RublonHelper::getSettings('additional');
+		if (empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) || $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on') {
+			// Logout listener callback function.
+			// URL is created manually because the wp_logout_url() function escapes the ampersand.
+			$args = array(
+					'action' => 'logout',
+					'redirect_to' => urlencode( RublonHelper::getRublon()->getCurrentUrl() ),
+					'_wpnonce' => wp_create_nonce( 'log-out' )
+			);
+			$logout_url = add_query_arg($args, site_url('wp-login.php', 'login'));
+			echo '<script type="text/javascript">
+				function RublonLogoutCallback() {
+					if (jQuery) {
+						jQuery.post('. json_encode(admin_url('admin-ajax.php')) .', {action: "rublon_logout"}, function(response) {
+							location.reload();
+						});
+					} else {
+						location.reload();
+					}
+				}
+			</script>';			
 		}
-		</script>';
+
 	}
 
 

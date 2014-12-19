@@ -27,6 +27,8 @@ class RublonHelper {
 	const RUBLON_OTHER_SETTINGS_KEY = 'rublon2factor_other_settings';
 	const RUBLON_FIRSTINSTALL_SETTINGS_KEY = 'rublon2factor_firstinstall_settigs';
 
+	const RUBLON_SETTINGS_RL_ACTIVE_LISTENER = 'rl-active-listener';
+
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	const RUBLON_META_AUTH_CHANGED_MSG = 'rublon_auth_changed_msg';
 	const RUBLON_META_USER_PROTTYPE = 'rublon_user_protection_type';
@@ -191,7 +193,6 @@ class RublonHelper {
 					$nonceCookie = RublonCookies::getNonceFromCookie();
 					if (!empty($nonce) && wp_verify_nonce($nonce, 'rublon=init-registration') && $nonce == $nonceCookie) {
 						self::_initializeConsumerRegistration();
-	
 					} else {
 						self::setMessage('NONCE_VERIFICATION_FAILED', 'error', 'CR');
 						wp_redirect(admin_url(self::WP_RUBLON_PAGE));
@@ -2237,22 +2238,14 @@ class RublonHelper {
 	 */
 	static public function getActionURL($action) {
 
-		return site_url('?rublon=' . $action);
+		return add_query_arg('rublon', $action, site_url());
 
 	}
 
 
 	static public function getLoginURL($action) {
 
-		$login_url = wp_login_url();
-		$query_component = parse_url($login_url, PHP_URL_QUERY);
-		if (!empty($query_component)) {
-			$login_url .= '&';
-		} else {
-			$login_url .= '?';
-		}
-		$login_url .= 'rublon=' . $action;
-		return $login_url;
+		return add_query_arg('rublon', $action, wp_login_url());
 
 	}
 
