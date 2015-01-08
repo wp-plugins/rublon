@@ -2,7 +2,7 @@
 Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification, Zwei-Faktor-Authentifizierung, dwuskładnikowe uwierzytelnianie, dwuskładnikowe logowanie, logowanie, uwierzytelnianie
 Requires at least: 3.3.x
-Tested up to: 4.0.1
+Tested up to: 4.1
 Stable tag: 2.1.8
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
@@ -15,6 +15,18 @@ Instantly protects all accounts with effortless, email-based two-factor authenti
 - Instantly increase security for all users
 - 1-click download; 1-click activation
 - No configuration or training needed
+
+> #### The Most Advanced and Intuitive Account Protection Solution
+> 10 Reasons Rublon Rocks: [http://wordpress.rublon.com/](http://wordpress.rublon.com/)
+>
+> #### Recommended by Security Experts and Industry Professionals
+> *"Impressed" &mdash; Tony Perez* <br>
+> *"A must for any WordPress install" &mdash; Christian Elsen* <br>
+> *"The easiest and most secure 2-factor auth" &mdash; Max Monty* <br>
+> *"Absolutely essential for all WordPress installs" &mdash; Chuck Lasker* <br>
+> *"A little marvel of a plugin and authentication system" &mdash; Álvaro Degives Más* <br>
+> *"The best 2-factor authentication solution for WordPress" &mdash; rain3r.walt3r* <br>
+> [Read more](http://wordpress.rublon.com/)
 
 = Why Do I Need Account Protection? =
 Botnets carry out brute force attacks against thousands of WordPress sites and blogs every day, regardless of size. Once inside, botnets infect your visitors with malware. A compromised website leads to delisting by search engines or blocking by your hosting provider. Account protection prevents such attacks.
@@ -100,6 +112,10 @@ Rublon for WordPress is free and always will be. Our paid Business Plan offers p
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 2.1.9 =
+* Improved error handling 
+* Minor text improvements
 
 = 2.1.8 =
 * Possibility to disable Real-Time Remote Logout, which caused some Firefox users to experience slower page load times

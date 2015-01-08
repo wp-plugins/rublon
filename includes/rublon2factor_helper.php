@@ -1066,6 +1066,7 @@ class RublonHelper {
 	static private function _handleCallbackException($e, $prefix = 'RC') {
 
 		$errorCode = $e->getCode();
+		$errorMessage = $e->getMessage();
 		switch($errorCode) {
 			case Rublon2FactorCallbackWordPress::ERROR_MISSING_ACCESS_TOKEN:
 				$errorCode = 'MISSING_ACCESS_TOKEN';
@@ -1097,10 +1098,14 @@ class RublonHelper {
 		self::setMessage($errorCode, 'error', $prefix);
 		
 		// prepare message for issue notifier
-		$notifierMessage = 'RublonCallback error.<br /><br />' . __('Rublon error code: ', 'rublon') . '<strong>' . $prefix . '_' . $errorCode . '</strong>';
-		if (!empty($additionalErrorMessage))
-			$notifierMessage .= '<br />' . $additionalErrorMessage;
-		
+		$notifierMessage = 'RublonCallback error. ' . 'Error code: ' . '<strong>' . $prefix . '_' . $errorCode . '</strong>.';
+		if (!empty($errorMessage)) {
+			$notifierMessage .= ' Error message: [urldecode]' . urlencode($errorMessage) . '[/urldecode].';
+		}
+		if (!empty($additionalErrorMessage)) {
+			$notifierMessage .= ' Additional error message: [urldecode]' . urlencode($additionalErrorMessage) . '[/urldecode].';
+		}
+
 		// send issue notify
 		try {
 			self::notify(array('msg' => $notifierMessage));
@@ -2238,7 +2243,7 @@ class RublonHelper {
 	 */
 	static public function getActionURL($action) {
 
-		return add_query_arg('rublon', $action, site_url());
+		return add_query_arg('rublon', $action, trailingslashit(site_url()));
 
 	}
 
