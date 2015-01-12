@@ -113,6 +113,10 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.10 =
+* Improved loading times
+* Core optimization
+
 = 2.1.9 =
 * Improved error handling 
 * Minor text improvements

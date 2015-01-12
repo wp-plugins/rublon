@@ -68,13 +68,17 @@ function rublon2factor_add_menu_entries() {
 	$general_title = __('Settings', 'rublon');
 	add_submenu_page('rublon', 'Rublon: ' . $general_title, $general_title, 'read', 'rublon', 'rublon2factor_render_settings_page');
 
-	$trusted_title = __('Trusted Devices', 'rublon');
-	add_submenu_page('rublon', 'Rublon: ' . $trusted_title, $trusted_title, 'read', 'rublon_tdm', 'rublon2factor_render_tdm_page');
+	if (RublonHelper::isSiteRegistered()) {
+	
+		$trusted_title = __('Trusted Devices', 'rublon');
+		add_submenu_page('rublon', 'Rublon: ' . $trusted_title, $trusted_title, 'read', 'rublon_tdm', 'rublon2factor_render_tdm_page');
+	
+		$current_user = wp_get_current_user();
+		if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
+			$acm_title = __('Access Control', 'rublon');
+			add_submenu_page('rublon', 'Rublon: ' . $acm_title, $acm_title, 'read', 'rublon_acm', 'rublon2factor_render_acm_page');
+		}
 
-	$current_user = wp_get_current_user();
-	if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
-		$acm_title = __('Access Control', 'rublon');
-		add_submenu_page('rublon', 'Rublon: ' . $acm_title, $acm_title, 'read', 'rublon_acm', 'rublon2factor_render_acm_page');
 	}
 
 }
@@ -292,7 +296,6 @@ function rublon2factor_render_settings_page() {
 
 			// Consumer script
 			$current_user = wp_get_current_user();
-			$gui = Rublon2FactorGUIWordPress::getInstance();
 			
 			if (RublonHelper::isSiteRegistered()) {
 
@@ -565,7 +568,7 @@ function rublon2factor_add_frontend_files() {
 	$currentPluginVersion = RublonHelper::getCurrentPluginVersion();
 	wp_enqueue_style('rublon2factor_frontend', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_frontend.css', false, $currentPluginVersion);
 	if ($addCompatStyles) {
-		wp_enqueue_style('rublon2factor_frontend', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_frontend_wp_3.8_plus.css', false, $currentPluginVersion);
+		wp_enqueue_style('rublon2factor_frontend_38plus', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_frontend_wp_3.8_plus.css', false, $currentPluginVersion);
 	}
 	if (is_rtl()) {
 		wp_enqueue_style('rublon2factor_rtl', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rtl.css', false, $currentPluginVersion);
@@ -574,7 +577,6 @@ function rublon2factor_add_frontend_files() {
 
 }
 
-add_action('wp_enqueue_scripts', 'rublon2factor_add_frontend_files');
 add_action('login_enqueue_scripts', 'rublon2factor_add_frontend_files');
 
 /**

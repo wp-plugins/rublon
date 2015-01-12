@@ -7,6 +7,7 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 	public static $instance;
 	
 	public static function getInstance() {
+
 		if (empty(self::$instance)) {
 			$additional_settings = RublonHelper::getSettings('additional');
 			$logout_listener = (empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) || $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on');
@@ -17,10 +18,14 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 				RublonHelper::getUserEmail($current_user),
 				$logout_listener
 			);
+
 			// Embed consumer script
 			add_action('admin_footer', array(self::$instance, 'renderConsumerScript'));
-			add_action('wp_footer', array(self::$instance, 'renderConsumerScript'));
+			if ($logout_listener) {
+				add_action('wp_footer', array(self::$instance, 'renderConsumerScript'));
+			}
 		}
+
 		return self::$instance;
 	}
 	

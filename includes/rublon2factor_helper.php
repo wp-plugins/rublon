@@ -1764,24 +1764,16 @@ class RublonHelper {
 	 * @return array
 	 */
 	static private function _info() {
-		ob_start();
-		phpinfo();
-		$info = ob_get_clean();
-		$phpinfo = array('phpinfo' => array());
-		if (preg_match_all('#(?:<h2>(?:<a name=".*?">)?(.*?)(?:</a>)?</h2>)|(?:<tr(?: class=".*?")?><t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>(?:<t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>(?:<t[hd](?: class=".*?")?>(.*?)\s*</t[hd]>)?)?</tr>)#s', $info, $matches, PREG_SET_ORDER)) {
-		    foreach ($matches as $match) {
-		        if (strlen($match[1])) {
-		            $phpinfo[$match[1]] = array();
-		        } elseif (isset($match[3])) {
-		        	$keys = array_keys($phpinfo); // fixed strict-standards issue
-		            $phpinfo[end($keys)][$match[2]] = isset($match[4]) ? array($match[3], $match[4]) : $match[3];
-		        } else {
-		        	$keys = array_keys($phpinfo); // fixed strict-standards issue
-		            $phpinfo[end($keys)][] = $match[2];
-		        }
-		    }
-		}
-	    return $phpinfo;		            
+
+		$php_info = array(
+			'php-extensions' => get_loaded_extensions(),
+			'operating-system' => php_uname(),
+			'php-version' => phpversion(),
+			'stream-wrappers' => stream_get_wrappers(),
+			'php-config-options' => ini_get_all(),
+		);
+	    return $php_info;
+
 	}
 
 
@@ -1910,23 +1902,31 @@ class RublonHelper {
 
 		global $wpdb;
 		
-		$roles = array('administrator' => 0, 'author' => 0, 'contributor' => 0, 'editor' => 0, 'subscriber' => 0);
-		foreach ($roles as $roleName => &$count) {
-			$count = $wpdb->get_col("SELECT COUNT(*) FROM $wpdb->usermeta WHERE meta_key = 'wcapabilities' AND meta_value LIKE ':\"$roleName\";'");
+		$roles = self::getUserRoles();
+		$role_count = array();
+
+		foreach ($roles as $role_name => $role_translation) {
+			$role_count[$role_name] = 0;
 		}
 
-		$pluginMeta = array(
-				'wordpress-version' => get_bloginfo('version'),
-				'plugin-version' => self::getCurrentPluginVersion(),
-		);
-		foreach ($roles as $role => $count) {
-			$pluginMeta['registered-' . $role . 's'] = $count;
+		foreach ($role_count as $role_name => $value) {
+			$count = intval($wpdb->get_var("SELECT COUNT(*) FROM $wpdb->usermeta WHERE meta_key = 'wp_capabilities' AND meta_value LIKE '%:\"$role_name\"%';"));
+			$role_count[$role_name] = $count;
+			
 		}
-		$metaHeader = array(
-				'meta' => $pluginMeta,
+
+		$plugin_meta = array(
+			'wordpress-version' => get_bloginfo('version'),
+			'plugin-version' => self::getCurrentPluginVersion(),
 		);
-		return $metaHeader;
-		
+		foreach ($role_count as $role_name => $count) {
+			$plugin_meta['registered-' . $role_name . 's'] = $count;
+		}
+
+		$meta_header = array(
+				'meta' => $plugin_meta,
+		);
+		return $meta_header;
 
 	}
 
@@ -2948,17 +2948,20 @@ class RublonHelper {
 
 
 	static public function initLogoutListener() {
-		// Create GUI instance to automatically add the logout listener
-		$gui = Rublon2FactorGUIWordPress::getInstance();
 
-		// Create AJAX endpoint to check if user is logged-in
-		$callback = array(__CLASS__, 'ajaxLogout');
-		add_action('wp_ajax_rublon_logout', $callback);
-		add_action('wp_ajax_nopriv_rublon_logout', $callback);
+		if (is_user_logged_in()) {
+			// Create GUI instance to automatically add the logout listener
+			$gui = Rublon2FactorGUIWordPress::getInstance();
+	
+			// Create AJAX endpoint to check if user is logged-in
+			$callback = array(__CLASS__, 'ajaxLogout');
+			add_action('wp_ajax_rublon_logout', $callback);
+			add_action('wp_ajax_nopriv_rublon_logout', $callback);
+		}
 
 	}
-	
-	
+
+
 	static public function ajaxLogout() {
 		wp_logout();
 		exit;
