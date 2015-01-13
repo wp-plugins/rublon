@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+
+.rublon-seal-link {	
+	position: relative !important;
+	text-align: left !important;
+    float: left !important;
+    clear: right !important;
+}
+
+#rublon-seal p.submit input {
+	float: right !important;
+}
+
+.rublon-seal-image {
+	left: 0 !important;
+	right: auto !important;
+}
