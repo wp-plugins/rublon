@@ -163,11 +163,7 @@ class RublonCookies {
 	static public function setLoggedInCookie($user, $remember) {
 
 		$user_id = RublonHelper::getUserId($user);
-		$cookie_params = self::_getAuthCookieParams();
-		if (!isset($cookie_params['secure'])) {
-			$cookie_params['secure'] = '';
-		}
-		wp_set_auth_cookie($user_id, $remember, $cookie_params['secure']);
+		wp_set_auth_cookie($user_id, $remember, is_ssl());
 
 	}
 

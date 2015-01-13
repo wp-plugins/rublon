@@ -156,7 +156,7 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 	
 	protected function getCallbackUrl() {
 
-		return RublonHelper::getActionURL('callback');
+		return RublonHelper::getLoginURL('callback');
 
 	}
 

@@ -113,6 +113,9 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.11 =
+* Improved handling of sign-ins over SSL
+
 = 2.1.10 =
 * Improved loading times
 * Core optimization

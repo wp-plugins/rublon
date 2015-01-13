@@ -2203,8 +2203,9 @@ class RublonHelper {
 	static public function isAdminURL($url) {
 
 		$admin_url = admin_url();
-		if (substr($url, -1) == '/')
+		if (substr($url, -1) == '/') {
 			$admin_url = trailingslashit($admin_url);
+		}
 		$url_no_scheme = preg_replace('/http(s)?:\/\//', '', $url);
 		$admin_url_no_scheme = preg_replace('/http(s)?:\/\//', '', $admin_url);
 		return (strpos($url_no_scheme, $admin_url_no_scheme) !== false);
@@ -2227,9 +2228,12 @@ class RublonHelper {
 		if (self::isAdminURL($url)) {
 			if (defined('FORCE_SSL_ADMIN')) {
 				if (FORCE_SSL_ADMIN) {
-					$url = preg_replace('/http:\/\//', 'https://', $url);
+					$url = str_replace('http://', 'https://', $url);
 				}
 			}
+		}
+		if (is_ssl()) {
+			$url = str_replace('http://', 'https://', $url);
 		}
 		return $url;
 
@@ -2375,6 +2379,11 @@ class RublonHelper {
 
 		if (!$return_url) {
 			$return_url = self::getReturnPage();			
+		}
+		if (!empty($return_url)) {
+			if (is_ssl()) {
+				$return_url = str_replace('http://', 'https://', $return_url);
+			}
 		}
 		$return_url = (!empty($return_url) && strpos($return_url, site_url()) !== false) ? $return_url : admin_url();
 		$return_url = self::normalizeURL($return_url);

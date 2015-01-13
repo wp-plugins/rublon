@@ -105,7 +105,7 @@ class RublonSubprojectRegistrationWordPress extends RublonSubprojectRegistration
 	 */
 	protected function getCallbackUrl() {
 
-		return RublonHelper::getActionURL('callback');		
+		return RublonHelper::getLoginURL('callback');		
 
 	}
 

@@ -169,6 +169,7 @@ add_action('login_init', 'rublon2factor_login_init');
  */
 function rublon2factor_store_auth_cookie_params($auth_cookie, $expire, $expiration, $user_id = null, $scheme) {
 
+	// Deprecated?
 	if ($user_id) {
 		$user = get_user_by('id', $user_id);
 		$secure = ($scheme == 'secure_auth');
