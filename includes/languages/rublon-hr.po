@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 2.0\n"
-"POT-Creation-Date: 2014-12-19 14:12+0100\n"
-"PO-Revision-Date: 2014-12-19 14:57+0100\n"
+"POT-Creation-Date: 2015-01-15 10:30+0100\n"
+"PO-Revision-Date: 2015-01-15 12:12+0100\n"
 "Last-Translator: Rublon Team <developers@rublon.com>\n"
 "Language-Team: \n"
 "Language: hr\n"
@@ -12,9 +12,6 @@ msgstr ""
 "X-Generator: Poedit 1.6.4\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
 "X-Poedit-Basepath: .\n"
-
-msgid "Enable protection"
-msgstr "Omogućite zaštitu"
 
 msgid ""
 "Your account is protected by <a href=\"%s\" target=\"_blank\">Rublon</a>."
@@ -77,11 +74,12 @@ msgstr ""
 
 msgid ""
 "Users of the Rublon mobile app are always protected, regardless of this "
-"setting. Users without default protection can turn it on themselves in their "
-"profile. Users with default protection cannot turn it off."
+"setting. Users with no minimum protection can turn on protection via email "
+"themselves in their profile. Users with any level of minimum protection "
+"cannot turn it off."
 msgstr ""
 
-msgid "Default Protection Level"
+msgid "Minimum Protection"
 msgstr "Omogućite zaštitu"
 
 msgid "Mobile app"
@@ -113,10 +111,16 @@ msgid ""
 "Logout will still work, but only after refreshing the page."
 msgstr ""
 
-msgid "Rublon protects against intruders who found out your password."
+msgid ""
+"Rublon instantly protects all accounts with effortless, email-based two-"
+"factor authentication."
 msgstr ""
 
-msgid "Learn more at <a href=\"%s\" target=\"_blank\">www.rublon.com</a>."
+msgid "Get the optional mobile app for more security!"
+msgstr ""
+
+msgid ""
+"Learn more at <a href=\"%s\" target=\"_blank\">wordpress.rublon.com</a>."
 msgstr ""
 "Saznajte više na<a href=\"http://rublon.com/hr/\" target=\"_blank\">www."
 "rublon.com/hr/</a>."
@@ -189,7 +193,7 @@ msgstr ""
 msgid "password"
 msgstr ""
 
-msgid "Do you confirm changing default protection levels?"
+msgid "Do you confirm changing minimum protection levels?"
 msgstr ""
 
 msgid "Profile update"
@@ -273,13 +277,6 @@ msgid ""
 "Rublon mobile app."
 msgstr ""
 
-msgid ""
-"Learn more at <a href=\"https://rublon.com\" target=\"_blank\">www.rublon."
-"com</a>."
-msgstr ""
-"Saznajte više na<a href=\"http://rublon.com/hr/\" target=\"_blank\">www."
-"rublon.com/hr/</a>."
-
 msgid "<strong>ERROR:</strong> Unauthorized access."
 msgstr ""
 
@@ -323,7 +320,7 @@ msgstr ""
 "autentifikacije od dva faktora  . On štiti svoje račune od upisivanja iz "
 "nepoznatih uređaja , čak i ako je vaša lozinka ukradena ."
 
-msgid "Account Protection"
+msgid "Rublon Account Protection"
 msgstr "Omogućite zaštitu"
 
 msgid "Protection via Email"
@@ -362,6 +359,9 @@ msgstr ""
 
 msgid "Close"
 msgstr ""
+
+msgid "Account Protection"
+msgstr "Omogućite zaštitu"
 
 msgid ""
 "The new user account will be automatically protected by <a href=\"%s\" "

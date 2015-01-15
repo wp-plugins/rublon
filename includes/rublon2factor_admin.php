@@ -147,7 +147,7 @@ function rublon2factor_render_protection_types() {
 
 	echo '<p class="rublon-settings-desc">' . __('Every user is protected via email by default. You can turn this off for selected roles. For more security, you can also require selected roles to use the Rublon mobile app.', 'rublon') . '</p>';
 	echo '<p class="rublon-settings-desc"><strong>' . __('Notice:', 'rublon') . ' </strong>' 
-		. __('Users of the Rublon mobile app are always protected, regardless of this setting. Users without default protection can turn it on themselves in their profile. Users with default protection cannot turn it off.', 'rublon') . '</p>';
+		. __('Users of the Rublon mobile app are always protected, regardless of this setting. Users with no minimum protection can turn on protection via email themselves in their profile. Users with any level of minimum protection cannot turn it off.', 'rublon') . '</p>';
 
 	$settings = RublonHelper::getSettings('additional');
 	// Retrieve the roles used on this site.
@@ -155,7 +155,7 @@ function rublon2factor_render_protection_types() {
 	$role_ids = array();
 	echo '<div class="rublon-settings-setting-name">';
 	echo '  <div class="rublon-settings-setting-label"></div>';
-	echo '  <div class="rublon-setting-header"><strong>' . __('Default Protection Level', 'rublon') . '</strong></div>';
+	echo '  <div class="rublon-setting-header"><strong>' . __('Minimum Protection', 'rublon') . '</strong></div>';
 	echo '</div>';
 	foreach ($roles as $role) {
 		$checked = '';
@@ -290,8 +290,9 @@ function rublon2factor_render_settings_page() {
 
 			// Header text
 			echo '<p>'
-				. __('Rublon protects against intruders who found out your password.', 'rublon')
-				. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">www.rublon.com</a>.', 'rublon'), RublonHelper::rubloncomUrl())
+				. __('Rublon instantly protects all accounts with effortless, email-based two-factor authentication.', 'rublon')
+				. ' ' . __('Get the optional mobile app for more security!', 'rublon')
+				. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">wordpress.rublon.com</a>.', 'rublon'), RublonHelper::wordpressRublonComURL())
 				. '</p>';
 
 			// Consumer script
@@ -349,8 +350,9 @@ function rublon2factor_render_tdm_page() {
 			<?php echo __('Rublon', 'rublon') . ' - ' . __('Trusted Devices Manager', 'rublon'); ?>
 		</h2>
 		<p>
-			<?php echo __('Rublon protects against intruders who found out your password.', 'rublon') . ' '
- 				. sprintf(__('Learn more at <a href="%s" target="_blank">www.rublon.com</a>.', 'rublon'), RublonHelper::rubloncomUrl()) ?>
+			<?php echo __('Rublon instantly protects all accounts with effortless, email-based two-factor authentication.', 'rublon')
+				. ' ' . __('Get the optional mobile app for more security!', 'rublon')
+				. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">wordpress.rublon.com</a>.', 'rublon'), RublonHelper::wordpressRublonComURL()) ?>
 		</p>
 		<?php
 			// TDM widget
@@ -371,8 +373,9 @@ function rublon2factor_render_acm_page() {
 			<?php echo __('Rublon', 'rublon') . ' - ' . __('Access Control Manager', 'rublon'); ?>
 		</h2>
 		<p>
-			<?php echo __('Rublon protects against intruders who found out your password.', 'rublon') . ' '
- 				. sprintf(__('Learn more at <a href="%s" target="_blank">www.rublon.com</a>.', 'rublon'), RublonHelper::rubloncomUrl()) ?>
+			<?php echo __('Rublon instantly protects all accounts with effortless, email-based two-factor authentication.', 'rublon')
+				. ' ' . __('Get the optional mobile app for more security!', 'rublon')
+				. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">wordpress.rublon.com</a>.', 'rublon'), RublonHelper::wordpressRublonComURL()) ?>
 		</p>
 		<?php
 			// ACM widget
@@ -512,40 +515,47 @@ function rublon2factor_modify_admin_toolbar() {
 	global $wp_admin_bar;
 	$current_user = wp_get_current_user();
 
-	if (RublonHelper::isSiteRegistered() && RublonHelper::isUserAuthenticated($current_user)) {
+	if (RublonHelper::isSiteRegistered() && RublonHelper::isUserAuthenticated($current_user) && is_object($wp_admin_bar)) {
 
 		// add a Rublon icon to the my-account node
 		$my_account = $wp_admin_bar->get_node('my-account');
-		$my_account->title = $my_account->title . '<img id="rublon-toolbar-logo" class="rublon-image" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon_logo_32x32.png' . '" />';
- 		$wp_admin_bar->remove_node('my-account');
- 		$wp_admin_bar->add_node($my_account);
-
+		if (is_object($my_account) && property_exists($my_account, 'title')) {
+			$my_account->title = $my_account->title . '<img id="rublon-toolbar-logo" class="rublon-image" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon_logo_32x32.png' . '" />';
+	 		$wp_admin_bar->remove_node('my-account');
+	 		$wp_admin_bar->add_node($my_account);
+	 	}
+	 	
  		// remove all my-account subnodes except user-info
  		$nodes = $wp_admin_bar->get_nodes();
- 		$removed_nodes = array();
- 		foreach ($nodes as $node) {
- 			if (!empty($node->title) && $node->parent == 'user-actions' && $node->id != 'user-info') {
- 				array_push($removed_nodes, $node);
- 				$wp_admin_bar->remove_node($node->id);
- 			}
- 		}
- 		
- 		// add Rublon node
- 		$wp_admin_bar->add_node(array(
+ 		if (is_array($nodes)) { 
+	 		$removed_nodes = array();
+	 		foreach ($nodes as $node) {
+	 			if (!empty($node->title)
+					&& !empty($node->parent)
+					&& !empty($node->id)
+					&& $node->parent == 'user-actions'
+					&& $node->id != 'user-info') {
+	 				array_push($removed_nodes, $node);
+	 				$wp_admin_bar->remove_node($node->id);
+	 			}
+	 		}
+	 		
+	 		// add Rublon node
+	 		$wp_admin_bar->add_node(array(
  				'id' => 'rublon',
  				'title' => __('Protected by Rublon', 'rublon'),
  				'href' => admin_url(RublonHelper::WP_RUBLON_PAGE),
  				'parent' => 'user-actions',
- 		
- 		));
- 		
-		// restore all removed nodes
- 		foreach ($removed_nodes as $node) {
- 			$wp_admin_bar->add_node($node);
- 		}
+	 		));
+	 		
+			// restore all removed nodes
+	 		foreach ($removed_nodes as $node) {
+	 			$wp_admin_bar->add_node($node);
+	 		}
+
+	 	}
 
  	}
-	
 
 }
 

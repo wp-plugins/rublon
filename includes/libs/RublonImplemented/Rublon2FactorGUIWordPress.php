@@ -37,23 +37,13 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 		return site_url('?rublon=init-registration&rublon_nonce='  . RublonHelper::getNonce());
 
 	}
-
-
-	/**
-	 * Return the activation button without the user box
-	 *
-	 * @return string
-	 */
-	public function getRegistrationButton() {
 	
-		$result = (string)$this->getConsumerScript();
-		$button = (string)$this->createActivationButton(null)->setLabel(__('Enable protection', 'rublon'));
-		$result .= '<div class=data-can-activate="' . $this->canUserActivate() . '">';
-		$result .= $button;
-		$result .= '</div>';
-		return $result;
 	
+	public function getConsumerScript() {
+		// Don't show consumer script, it will be embeded in the footer action using self::renderConsumerScript() method.
+		return '';
 	}
+
 
 
 	/**
@@ -74,7 +64,7 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 	 * 
 	 * @return string
 	 */
-	public function getTDMWidget($withConsumerScript = true) {
+	public function getTDMWidget() {
 
 		$result = '';
 
@@ -102,9 +92,6 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 			}
 	
 			$result .= $this->getDeviceWidget();
-			if ($withConsumerScript) {
-				$result .= $this->getConsumerScript();
-			}
 	
 		}
 
@@ -118,17 +105,8 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 	 *
 	 * @return string
 	 */
-	public function getACMWidget($withConsumerScript = true) {
-	
-		$result = '';
-
-		$result .= $this->getShareAccessWidget();
-		if ($withConsumerScript) {
-			$result .= $this->getConsumerScript();
-		}
-	
-		return $result;
-	
+	public function getACMWidget() {
+		return $this->getShareAccessWidget();
 	}
 
 	
@@ -138,7 +116,7 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 		wp_enqueue_script('jquery');
 		
 		// Consumer script
-		echo $this->getConsumerScript();
+		echo parent::getConsumerScript();
 
 		$additional_settings = RublonHelper::getSettings('additional');
 		if (empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) || $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on') {

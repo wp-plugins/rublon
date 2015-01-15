@@ -13,6 +13,15 @@ h2.rublon-header {
 	line-height: 32px;
 }
 
+h3.rublon-header {
+	padding-left: 38px;
+	background-image: url('../images/rublon_logo_32x32.png');
+	background-size: 32px 32px;
+	background-repeat: no-repeat;
+	margin-bottom: 14px;
+	line-height: 32px;
+}
+
 li#toplevel_page_rublon div.wp-menu-image {
 	background-image: url('../images/rublon_logo_16x16.png');
 	background-size: 16px 16px;

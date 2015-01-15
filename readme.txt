@@ -20,12 +20,13 @@ Instantly protects all accounts with effortless, email-based two-factor authenti
 > 10 Reasons Rublon Rocks: [http://wordpress.rublon.com/](http://wordpress.rublon.com/)
 >
 > #### Recommended by Security Experts and Industry Professionals
-> *"Impressed" &mdash; Tony Perez* <br>
-> *"A must for any WordPress install" &mdash; Christian Elsen* <br>
+> *"Impressed" &mdash; Tony Perez, [Sucuri](http://sucuri.net)* <br>
+> *"A must for any WordPress install" &mdash; Christian Elsen, [VMware](http://www.vmware.com)* <br>
 > *"The easiest and most secure 2-factor auth" &mdash; Max Monty* <br>
 > *"Absolutely essential for all WordPress installs" &mdash; Chuck Lasker* <br>
 > *"A little marvel of a plugin and authentication system" &mdash; Álvaro Degives Más* <br>
 > *"The best 2-factor authentication solution for WordPress" &mdash; rain3r.walt3r* <br>
+> *"Two-factor authentication for our thousands of customers" &mdash; Steve Truman, [a3rev](http://a3rev.com)* <br>
 > [Read more](http://wordpress.rublon.com/)
 
 = Why Do I Need Account Protection? =
@@ -112,6 +113,11 @@ Rublon for WordPress is free and always will be. Our paid Business Plan offers p
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 2.1.12 =
+* Improved Trusted Device handling
+* Plugin developers: added custom filter for page redirection upon successful Rublon authentication (`rublon_return_url`)
+* Minor text improvements
 
 = 2.1.11 =
 * Improved handling of sign-ins over SSL

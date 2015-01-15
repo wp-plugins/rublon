@@ -639,7 +639,7 @@ class RublonHelper {
 		$authParams[self::FLAG_ADDSETT_UPDATE] = true;
 		$authParams['customURIParam'] = self::FLAG_ADDSETT_UPDATE;
 
-		$msg = __('Do you confirm changing default protection levels?', 'rublon');
+		$msg = __('Do you confirm changing minimum protection levels?', 'rublon');
 
 		try {
 			$authUrl = $rublon->confirm(
@@ -1502,7 +1502,7 @@ class RublonHelper {
 					case 'TC_MOBILE_APP_REQUIRED':
 						$no_code = true;
 						$errorMessage = __('The authentication process has been halted.', 'rublon') . ' ' . __('This site\'s administrator requires you to confirm this operation using the Rublon mobile app.', 'rublon')
-						. ' ' . __('Learn more at <a href="https://rublon.com" target="_blank">www.rublon.com</a>.', 'rublon');
+						. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">wordpress.rublon.com</a>.', 'rublon'), RublonHelper::wordpressRublonComURL());
 						break;
 					case 'RC_FIRST_FACTOR_NOT_CLEARED':
 						$no_code = true;
@@ -2380,6 +2380,10 @@ class RublonHelper {
 		if (!$return_url) {
 			$return_url = self::getReturnPage();			
 		}
+		
+		// Apply return URL filter
+		$return_url = apply_filters('rublon_return_url', $return_url);
+		
 		if (!empty($return_url)) {
 			if (is_ssl()) {
 				$return_url = str_replace('http://', 'https://', $return_url);
@@ -2634,8 +2638,8 @@ class RublonHelper {
 
 ?>
 <a id="rublon-email2fa"></a>
-<h3>
-<?php _e('Account Protection', 'rublon'); ?>
+<h3 class="rublon-header">
+<?php _e('Rublon Account Protection', 'rublon'); ?>
 </h3>
 <table class="form-table">
 <tr>
@@ -2801,6 +2805,23 @@ class RublonHelper {
 		}
 		return $url;
 
+	}
+
+
+	/**
+	 * Create a URL for wordpress.rublon.com
+	 *
+	 * @param string $path (optional) Additional path on wordpress.rublon.com
+	 * @return string
+	 */
+	static public function wordpressRublonComURL($path = null) {
+	
+		$url = 'http://wordpress.rublon.com';
+		if ($path) {
+			$url .= $path;
+		}
+		return $url;
+	
 	}
 
 
