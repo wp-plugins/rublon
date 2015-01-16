@@ -1,4 +1,4 @@
-=== Rublon ===
+=== Rublon Account Protection: Two-Factor Auth+ ===
 Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification, Zwei-Faktor-Authentifizierung, dwuskładnikowe uwierzytelnianie, dwuskładnikowe logowanie, logowanie, uwierzytelnianie
 Requires at least: 3.3.x
@@ -113,6 +113,9 @@ Rublon for WordPress is free and always will be. Our paid Business Plan offers p
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 2.1.13 =
+* Plugin name changed for accuracy
 
 = 2.1.12 =
 * Improved Trusted Device handling
