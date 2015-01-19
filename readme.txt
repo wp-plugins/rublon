@@ -114,6 +114,9 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.14 =
+* Increased timeout for requests to authentication servers
+
 = 2.1.13 =
 * Plugin name changed for accuracy
 

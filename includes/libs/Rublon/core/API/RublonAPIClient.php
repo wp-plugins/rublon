@@ -9,7 +9,7 @@ class RublonAPIClient {
 	/**
 	 * Connection timeout in seconds.
 	 */
-	const TIMEOUT = 5; // sec
+	const TIMEOUT = 30; // sec
 	
 	/**
 	 * Hash algorithm name to compute the user's email hash.
