@@ -168,6 +168,18 @@ class RublonHelper {
 		$rublonAction = self::uriGet('rublon');
 		if (isset($rublonAction) && self::_isActionPermitted($rublonAction, $page)) {
 			switch (strtolower($rublonAction)) {
+				case 'deactivate':
+					$go_to = self::uriGet('rublon_goto');
+					if ($go_to == 'profile') {
+						$page = 'profile.php';
+					} elseif ($go_to == 'plugins') {
+						$page = 'plugins.php';
+					} else {
+						$page = '';
+					}
+					deactivate_plugins(plugin_basename(RUBLON2FACTOR_PLUGIN_PATH));
+					wp_safe_redirect(admin_url($page));
+					break;
 				case 'register':
 					$rublonRegAction = self::uriGet('action');
 					if (isset($rublonRegAction)) {
@@ -223,6 +235,7 @@ class RublonHelper {
 				'register',
 				'confirm',
 				'init-registration',
+				'deactivate',
 			),
 			self::PAGE_LOGIN => array('callback'),
 		);
@@ -551,32 +564,37 @@ class RublonHelper {
 		$authParams[self::FLAG_PROFILE_UPDATE] = true;
 		$authParams['customURIParam'] = self::FLAG_PROFILE_UPDATE;
 	
-		$msg = __('Do you confirm changing your %s?', 'rublon');
-		$msg2 = '';
 		if ($change > 3) {
 			$change -= 4;
-			$msg2 = __('protection type', 'rublon');
+			$msg = __('Do you confirm changing your protection type?', 'rublon');
 		}
 		if ($change > 1) {
 			$change -= 2;
-			if (!empty($msg2)) {
+			if (!empty($msg)) {
 				if ($change > 0) {
-					$msg2 .= __(', your ', 'rublon');
+					$change -= 1;
+					$msg = sprintf(__('Do you confirm changing your protection type, your email address to: %s, as well as your password?', 'rublon'), $post['email']);
 				} else {
-					$msg2 .= __(' and your ', 'rublon');
+					$msg = sprintf(__('Do you confirm changing your protection type and your email address to: %s?', 'rublon'), $post['email']);
+				}
+			} else {
+				if ($change > 0) {
+					$change -= 1;
+					$msg = sprintf(__('Do you confirm changing your email address to: %s, as well as your password?', 'rublon'), $post['email']);
+				} else {
+					$msg = sprintf(__('Do you confirm changing your email address to: %s?', 'rublon'), $post['email']);					
 				}
 			}
-			$msg2 .= sprintf(__('email address to: %s', 'rublon'), $post['email']);
 		}
 		if ($change > 0) {
 			$change -= 1;
-			if (!empty($msg2)) {
-				$msg2 .= __(', as well as your ', 'rublon');
+			if (!empty($msg)) {
+				$msg = sprintf(__('Do you confirm changing your protection type, as well as your password?', 'rublon'), $post['email']);
+			} else {
+				$msg = __('Do you confirm changing your password?', 'rublon');
 			}
-			$msg2 .= __('password', 'rublon');
 		}
-		$msg = sprintf($msg, $msg2);
-	
+
 		try {
 			$authUrl = $rublon->confirm(
 				self::getActionURL('confirm'),
@@ -806,6 +824,7 @@ class RublonHelper {
 		$pageBody = sprintf($busyPageContentTemplate,
 			'',
 			$content['text'],
+			self::spinnerTemplate(),
 			$content['script']
 		);
 		$resultingPage = sprintf($pageTemplate,
@@ -1524,7 +1543,7 @@ class RublonHelper {
 						$updatedMessage = __('Rublon protection has been disabled. You are now protected by a password only, which may result in unauthorized access to your account. We strongly encourage you to protect your account with Rublon.', 'rublon');
 						break;
 					case 'CR_PLUGIN_REGISTERED':
-						$updatedMessage = __('Thank you! Now all of your users can protect their accounts with Rublon.', 'rublon');
+						$updatedMessage = __('Thank you! All accounts are now protected by Rublon.', 'rublon');
 						break;
 					case 'POSTL_AUTHENTICATION_TYPE_CHANGED':
  						$updatedMessage = __('Since Rublon plugin version 2.0, the authentication process has been changed significantly. The accounts are now protected using the email address. We have detected that your WordPress account\'s email address differs from the one you used to create your account in the Rublon mobile app. Please change your WordPress account\'s email address accordingly or add your WordPress account\'s email address in the "Email addresses" section of the Rublon mobile app.', 'rublon');
@@ -2433,11 +2452,17 @@ class RublonHelper {
 	<div class="rublon-busy-wrapper"%s>
 		<div class="rublon-busy-container">
 			<div class="rublon-busy-text">%s</div>
-			<div class="rublon-busy-spinner"></div>
+			%s
 		</div>
 	</div>
 	%s';
 		return $template;
+
+	}
+
+	static public function spinnerTemplate($additionalClass = '') {
+
+		return '<div class="rublon-busy-spinner' . $additionalClass . '"></div>';		
 
 	}
 
@@ -2463,7 +2488,7 @@ class RublonHelper {
 		}
 		.rublon-busy-container {
 			width: auto;
-			padding-bottom: 10px;
+			padding: 10px;
 			text-align: center;
 			background-color: #FFFFFF;
 			margin: 50px 20px 0 20px;
@@ -2494,6 +2519,69 @@ class RublonHelper {
 			border-bottom: 3px solid rgba(52, 52, 52, .15);
 			border-top: 3px solid rgba(52, 52, 52, .6);
 			border-radius: 100px;
+		}
+		.rublon-reg-spinner {
+			margin-bottom: 16px;
+		}
+		.rublon-reg-button {
+			padding: 7px;
+			border-radius: 2px;
+			background-color: #EEEEEE;
+			border: none;
+			color: #777;
+			-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+			-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+			-o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+			font-family: \'Open Sans\', sans-serif;
+			font-size: 1em;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		.rublon-reg-button-container {
+			padding-bottom: 10px;
+		}		
+		.rublon-reg-smallprint {
+			font-family: \'Open Sans\', sans-serif;
+			font-size: 0.8em;
+			color: #777;
+			margin-top: 10px;
+		}
+		.rublon-reg-button.inactive {
+			color: #CCCCCC;
+			cursor: default;
+		}
+		.rublon-first-button {
+			margin-right: 10px;
+		}
+		.rublon-main-button {
+			font-weight: bold;
+		}
+		.rublon-reg-fieldset {
+			border: none;
+			padding: 5px;
+			padding-top: 0;
+			margin: 0 0 15px 0;
+		}
+		.rublon-reg-fieldset label {
+			font-family: \'Open Sans\', sans-serif;
+			color: #777;
+			font-size: 14px;
+			cursor: pointer;
+		}
+		.rublon-reg-checkbox {
+			vertical-align: middle;
+			margin: -2px 5px 0 0;
+			cursor: pointer;
+		}
+		form#RublonConsumerRegistration {
+			margin: 0 0 0.5em 0;
+		}
+		.hidden {
+			display: none;
+		}
+		.visible {
+			display: block;
 		}
 		@-webkit-keyframes rotation {
 			from {-webkit-transform: rotate(0deg);}
@@ -2639,7 +2727,7 @@ class RublonHelper {
 ?>
 <a id="rublon-email2fa"></a>
 <h3 class="rublon-header">
-<?php _e('Rublon Account Protection', 'rublon'); ?>
+<?php _e('Rublon Account Protection ', 'rublon'); ?>
 </h3>
 <table class="form-table">
 <tr>

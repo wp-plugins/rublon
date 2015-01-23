@@ -257,7 +257,7 @@ function rublon2factor_render_rl_activelistener() {
 	$settings = RublonHelper::getSettings('additional');
 	$offSelected = '';
 	$onSelected = '';
-	if (empty($settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) || $settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on') {
+	if (isset($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) && $settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on') {
 		$onSelected = ' selected';
 	} else {
 		$offSelected = ' selected';
@@ -347,7 +347,7 @@ function rublon2factor_render_tdm_page() {
 <div class="wrap">
 	<div id="rublon2factor_tdm_page">
 		<h2 class="rublon-header">
-			<?php echo __('Rublon', 'rublon') . ' - ' . __('Trusted Devices Manager', 'rublon'); ?>
+			<?php echo __('Rublon', 'rublon') . ' - ' . __('Trusted Device Manager', 'rublon'); ?>
 		</h2>
 		<p>
 			<?php echo __('Rublon instantly protects all accounts with effortless, email-based two-factor authentication.', 'rublon')

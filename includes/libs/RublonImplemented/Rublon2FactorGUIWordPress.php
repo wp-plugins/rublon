@@ -10,7 +10,7 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 
 		if (empty(self::$instance)) {
 			$additional_settings = RublonHelper::getSettings('additional');
-			$logout_listener = (empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) || $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on');
+			$logout_listener = (isset($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) && $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on');
 			$current_user = wp_get_current_user();
 			self::$instance = new self(
 				RublonHelper::getRublon(),
@@ -119,7 +119,7 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 		echo parent::getConsumerScript();
 
 		$additional_settings = RublonHelper::getSettings('additional');
-		if (empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) || $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on') {
+		if (isset($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) && $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on') {
 			// Logout listener callback function.
 			// URL is created manually because the wp_logout_url() function escapes the ampersand.
 			$args = array(

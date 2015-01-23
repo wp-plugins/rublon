@@ -50,6 +50,7 @@ Nothing! The basic Rublon plugin is free and always will be. Premium features li
 = In What Languages Is Rublon Available? =
 - English
 - German
+- Turkish (translated by Mehmet Emre Baş, proofread by Tarık Çayır)
 - Polish
 
 ---
@@ -100,19 +101,26 @@ Rublon for WordPress is free and always will be. Our paid Business Plan offers p
  
 == Screenshots ==
 
-1. Plugins page with "Protect your account" button, which is becomes available to all users after an administrator protects his account
-2. Rublon page viewed by an administrator before protecting his account
-3. Protecting your account requires you to confirm your identity by scanning a Rublon QR code with your smartphone, using the Rublon mobile app
-4. A protected account features a Rublon icon visible at the top right corner of every page inside the administration panel, placed next to the current user's avatar
-5. Rublon page viewed by a user after an administrator has protected his account
-6. Login page with Rublon Protection Badge
-7. On a protected account, Rublon verifies if the user who provided correct login credentials is logging in from a Trusted Device
+1. Rublon Account Protection Badge displayed on wp-login.php
+2. Identity confirmation via email
+3. Identity confirmation via Mobile App
+4. Decide whether this is your trusted device or not
+5. Logging in after successful identity confirmation
+6. Authenticating user on a trusted device
+7. Manage your trusted devices directly from your Dashboard
+8. Manage your trusted devices from a dedicated section under the Rublon menu
  
 == Upgrade notice ==
 
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 2.1.15 =
+* Rublon API Terms of Service agreement necessary during installation
+* Turkish language support added (translated by Mehmet Emre Baş, proofread by Tarık Çayır)
+* Real-Time Remote Logout disabled by default
+* Minor text improvements 
 
 = 2.1.14 =
 * Increased timeout for requests to authentication servers

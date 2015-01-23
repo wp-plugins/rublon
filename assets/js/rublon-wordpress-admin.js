@@ -240,6 +240,37 @@ var RublonWP = {
 
 	},
 
+	setUpRegistrationAgreementListener: function() {
+
+		this.registrationAgreement = false;
+		var checkBox = document.querySelector('input[type="checkbox"]#regTermsAgreed');
+		var nextButton = document.querySelector('a#regNext');
+		var regForm = document.querySelector('form#RublonConsumerRegistration');
+		var regButtonContainer = document.querySelector('div.rublon-reg-button-container');
+		var spinner = document.querySelector('div.rublon-busy-spinner');
+		if (checkBox && nextButton && regForm && regButtonContainer && spinner) {
+			checkBox.addEventListener('click', function(event) {
+				var el = event.target;
+				if (typeof el.checked != 'undefined' && el.checked) {
+					RublonWPTools.removeClass(nextButton, 'inactive');
+				} else {
+					RublonWPTools.addClass(nextButton, 'inactive');
+				}
+			}, false);
+			nextButton.addEventListener('click', function(event) {
+				event.preventDefault();
+				var el = event.target;
+				if (el && !RublonWPTools.hasClass(el, 'inactive')) {
+					RublonWPTools.hide(regButtonContainer);
+					RublonWPTools.show(spinner);
+					checkBox.setAttribute('disabled', 'disabled');
+					regForm.submit();
+				}
+			}, false);
+		}
+
+	},
+
 	updateRetinaImages: function() {
 
 		if (window.devicePixelRatio && window.devicePixelRatio >= 2) {
