@@ -1,0 +1,453 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Rublon 2.0\n"
+"POT-Creation-Date: 2015-01-30 09:38+0100\n"
+"PO-Revision-Date: 2015-01-30 09:40+0100\n"
+"Last-Translator: emre <emre@amacdizayn.com>\n"
+"Language-Team: Mehmet Emre Baş, Tarık ÇAYIR <amacdizayn@gmail.com, "
+"tarikcayir@gmail.com>\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.4\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+msgid ""
+"Your account is protected by <a href=\"%s\" target=\"_blank\">Rublon</a>."
+msgstr ""
+"Hesabınız <a href=\"%s\" target=\"_blank\"Rublon</a> tarafından "
+"korunmaktadır."
+
+msgid ""
+"Get the <a href=\"%s/get\" target=\"_blank\">Rublon mobile app</a> for more "
+"security."
+msgstr ""
+"Daha fazla güvenlik için <a href=\"%s/get\" target=\"_blank\">Rublon mobil "
+"uygulamasını</a> yükleyiniz."
+
+msgid "Warning!"
+msgstr "Uyarı"
+
+msgid ""
+"Your account is not protected. Go to <a href=\"%s\">your profile page</a> to "
+"enable account protection."
+msgstr ""
+"Hesabınız korunmuyor. <a href=\"%s\">Profil</a> sayfanıza gidin ve korumayı "
+"etkinleştirin."
+
+msgid "Rublon error code: "
+msgstr "Rublon hata kodu:"
+
+msgid ""
+"Rublon Account Protection works by talking to the Rublon API. This requires "
+"an API key, which needs to be generated specifically for your website. Due "
+"to security reasons, this requires a registration with your email address."
+msgstr ""
+"Rublon Hesap Koruma eklentisi Rublon API ile çalışır. Siteniz için "
+"oluşturulmuş özel bir API anahtarına ihtiyaç duyar. Güvenlik sebeiyle email "
+"ile kayıt olmanızı gerektirir."
+
+msgid "Rublon Configuration"
+msgstr "Rublon Ayarları"
+
+msgid ""
+"Yes, please use <strong>%s*</strong> to register with the Rublon API. I "
+"agree to the <a href=\"%s\" target=\"_blank\">Rublon API Terms of Service</"
+"a>."
+msgstr ""
+"Evet, Rublon API’ye kayıt için <strong>%s*</b> email adresimi "
+"kullanabilirsiniz. <a href=\"%s\" target=\"_blank\">Rublon API Hizmet "
+"Şartlarını</a> okudum ve kabul ediyorum."
+
+msgid "Activate"
+msgstr "Etkinleştir"
+
+msgid "Cancel"
+msgstr "Vazgeç"
+
+msgid ""
+"* Your email address has been retrieved from your user account. In order to "
+"register with a different email address, change it in your <a href=\"%s"
+"\">profile settings</a>."
+msgstr ""
+"* Kullanıcı hesabınızda kayıtlı olan e mail adresiniz. Farklı bir email "
+"adresi ile kayıt olmak için , <a href=\"%s\">profil ayarları</a> sayfanıza "
+"giderek e mail adresinizi değiştirin."
+
+msgid "Rublon"
+msgstr "Rublon"
+
+msgid "Settings"
+msgstr "Ayarlar"
+
+msgid "Trusted Devices"
+msgstr "Güvenilir Cihazlar"
+
+msgid "Access Control"
+msgstr "Giriş Kontrolü"
+
+msgid "Protection"
+msgstr "Koruma"
+
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+msgid "Real-Time Remote Logout"
+msgstr "Gerçek Zamanlı Uzaktan Çıkış İşlemi"
+
+msgid ""
+"Every user is protected via email by default. You can turn this off for "
+"selected roles. For more security, you can also require selected roles to "
+"use the Rublon mobile app."
+msgstr ""
+"Bütün kullanıcılar varsayılan olarak e-posta doğrulama ile koruma "
+"altındadır. Bu özelliği istediğiniz hesap türü için kapatabilirsiniz. Ayrıca "
+"istediğiniz hesap türü için mobil onay ile doğrulamayı aktif hale "
+"getirebilirsiniz."
+
+msgid "Notice:"
+msgstr "Not:"
+
+msgid ""
+"Users of the Rublon mobile app are always protected, regardless of this "
+"setting. Users with no minimum protection can turn on protection via email "
+"themselves in their profile. Users with any level of minimum protection "
+"cannot turn it off."
+msgstr ""
+"Rublon mobil uygulama kullanan kullanıcılar bu ayar ile her zaman koruma "
+"altındadırlar. Mobil uygulama ile doğrulamaya sahip kullanıcılar koruma "
+"seviyesini e-posta doğrulama olarak değiştirebilirler. Minimum koruma "
+"seviyesine sahip kullanıcılar korumayı kapalı konuma getiremezler. Bu yetki "
+"sadece yönetici seviyesindeki kullanıcılara aittir."
+
+msgid "Minimum Protection"
+msgstr "Minimum Koruma"
+
+msgid "Mobile app"
+msgstr "Mobil uygulama"
+
+msgid "Email"
+msgstr "E-posta"
+
+msgid "None"
+msgstr "Hiçbiri"
+
+msgid ""
+"XML-RPC allows external applications to administer your website without "
+"having to authenticate through Rublon. We strongly recommend to keep it "
+"disabled."
+msgstr ""
+"XML-RPC özelliği harici uygulamalar aracılığıyla Rublon kimlik doğrulma "
+"işlemi olmadan sitenize erişim vermenizi sağlar. Pasif konumda olmasını "
+"şiddetle öneriyoruz"
+
+msgid "Disabled"
+msgstr "Pasif"
+
+msgid "Enabled"
+msgstr "Aktif"
+
+msgid ""
+"Users get logged out from a trusted device in real-time directly upon "
+"removing it. Disable this if you experience slower page load times. Remote "
+"Logout will still work, but only after refreshing the page."
+msgstr ""
+"Güvenilir cihazlardan birini kaldırdığınızda giriş yapmış kullanıcı anında "
+"sistemden çıkış yapmış olur. Bu özellik sisteminizde yavaşlamaya neden "
+"olursa pasif hale getirebilirsiniz. Bu özelliği pasif hale getirirseniz "
+"kullanıcı sayfasını yenilediğinde sistemden çıkış yapmış olur."
+
+msgid ""
+"Rublon instantly protects all accounts with effortless, email-based two-"
+"factor authentication."
+msgstr ""
+"Rublon, email tabanlı 2 adımlı doğrulama özelliğini kullanan bütün kullanıcı "
+"hesaplarını korur."
+
+msgid "Get the optional mobile app for more security!"
+msgstr "Daha fazla güvenlik için mobil uygulamayı indirin."
+
+msgid ""
+"Learn more at <a href=\"%s\" target=\"_blank\">wordpress.rublon.com</a>."
+msgstr ""
+"Detaylı bilgi:  <a href=\"%s\" target=\"_blank\">wordpress.rublon.com</a>."
+
+msgid "Trusted Device Manager"
+msgstr "Güvenilir Cihaz Yöneticisi"
+
+msgid "Access Control Manager"
+msgstr "Giriş Kontrol Yöneticisi"
+
+msgid ""
+"Warning! The PHP version of your server is too old to run Rublon. Please "
+"upgrade your server's PHP version."
+msgstr ""
+"PHP sürümünüz eski olduğu için Rublon çalışamıyor.  Lütfen sunucu PHP "
+"sürümünü yükseltin."
+
+msgid "Required PHP version:"
+msgstr "Gerekli PHP sürümü"
+
+msgid "(or above)"
+msgstr "(ya da yukarıda)"
+
+msgid "Your PHP version:"
+msgstr "PHP sürümünüz:"
+
+msgid "Warning! The cURL library has not been found on this server."
+msgstr "Uyarı! İlgili cURL kütüphanesi sunucunuzda bulunamamıştır."
+
+msgid ""
+"It is a crucial component of the Rublon plugin and its absence will prevent "
+"it from working properly. Please have the cURL library installed or consult "
+"your server administrator about it."
+msgstr ""
+"Bu bileşen Rublon eklentisinin sorunsuz çalışması için gereklidir. Lütfen "
+"cURL kütüphanesini yüklemek için sunucu yöneticinize başvurun."
+
+msgid "Account protected by Rublon"
+msgstr "Hesabınız Rublon tarafından koruma altındadır."
+
+msgid "Protected by Rublon"
+msgstr "Rublon tarafından korunmaktadır."
+
+msgid "Rublon Two-Factor Authentication"
+msgstr "Rublon 2 Adımlı Doğrulama"
+
+msgid "Your profile is being updated."
+msgstr "Profiliniz güncellendi."
+
+msgid "Rublon settings are being updated."
+msgstr "Rublon ayarları güncellendi."
+
+msgid "Do you confirm changing your protection type?"
+msgstr "Korumu türünüzü değiştirmeyi onaylıyor musunuz?"
+
+msgid ""
+"Do you confirm changing your protection type, your email address to: %s, as "
+"well as your password?"
+msgstr "E-posta adresinizin %s olarak değiştirilmesini onaylıyor musunuz?"
+
+msgid ""
+"Do you confirm changing your protection type and your email address to: %s?"
+msgstr ""
+"Koruma türünü ve e-posta adresinizi %s olarak değiştirmeyi onaylıyor "
+"musunuz: ?"
+
+msgid ""
+"Do you confirm changing your email address to: %s, as well as your password?"
+msgstr ""
+"E-posta adresinizin: %s ve şifrenizin değiştirilmesini onaylıyor musunuz?"
+
+msgid "Do you confirm changing your email address to: %s?"
+msgstr "E-posta adresinizin, %s olarak değiştirilmesini onaylıyor musunuz?"
+
+msgid "Do you confirm changing your protection type, as well as your password?"
+msgstr "Koruma türünü ve  şifrenizin değiştirmesini onaylıyor musun?"
+
+msgid "Do you confirm changing your password?"
+msgstr "Şifre değişikliğini onaylıyor musunuz?"
+
+msgid "Do you confirm changing minimum protection levels?"
+msgstr "Minimum koruma seviyesine geçmeyi onaylıyor musunuz?"
+
+msgid "Profile update"
+msgstr "Profil güncel."
+
+msgid "Operation aborted."
+msgstr "İşlem durduruldu."
+
+msgid "Operation cancelled."
+msgstr "İşlem iptal edildi."
+
+msgid "Error details: "
+msgstr "Hata detayları:"
+
+msgid "There was a problem during the authentication process."
+msgstr "Doğrulama esnasında bir sorun oluştu."
+
+msgid ""
+"Rublon activation failed. Please try again. Should the error occur again, "
+"contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
+msgstr ""
+"Rublon aktivasyonu başarısız. Lütfen tekrar deneyin.. Tekrar aynı hata ile "
+"karşılaşırsanız lütfen bizimle iletişime geçin. Email: <a href=\"mailto:"
+"support@rublon.com\">support@rublon.com</a>."
+
+msgid "You cannot protect an account already protected by Rublon."
+msgstr "Bu hesap zaten Rublon ile koruma altındadır."
+
+msgid "Unable to protect your account with Rublon."
+msgstr "Rublon ile koruma başarısız."
+
+msgid "Unable to disable Rublon protection."
+msgstr "Rublon pasif konuma getirilemedi"
+
+msgid ""
+"The version of Rublon for Wordpress that you are trying to activate is "
+"outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
+"the newest version or"
+msgstr ""
+"Rublon versiyonu eski. Lütfen <a href=\"%s\"> Eklentiler </a>sayfasına gidin "
+"ve eklentiyi son sürümüne güncelleyin."
+
+msgid "update now"
+msgstr "şimdi güncelle"
+
+msgid ""
+"Thank you! Now all of your users can protect their accounts with Rublon. "
+"However, there has been a problem with protecting your account. Go to <a "
+"href=\"%s\">Rublon page</a> in order to protect your account."
+msgstr ""
+"Teşekkürler. Artık bütün kullanıcılar hesaplarını Rublon ile "
+"koruyabilirler.  Ancak koruma esnasında bir sorun oluştu. Hesap güvenliğiniz "
+"için <a href=\"%s\">Rublon </a>sayfasını ziyaret edin."
+
+msgid ""
+"Due to security purposes, your administrator requires you to install the <a "
+"href=\"%s\" target=\"_blank\">Rublon mobile app</a>. Enter your WordPress "
+"account's email address during setup: %s."
+msgstr ""
+"<a href=\"%s\" target=\"_blank\">Rublon mobil uygulamasını</a> yüklemeniz "
+"gerekmektedir. Kayıt işleminde WordPress kullanıcı e-posta adresinizi "
+"kullanmalısınız: %s."
+
+msgid ""
+"If you already have the Rublon mobile app, please go to <a href=\"%s\" "
+"target=\"_blank\">www.rublon.com</a> and log in to your User Panel in order "
+"to add the above email address as an additional one."
+msgstr ""
+"Rublon mobil uygulamasına sahipseniz <a href=\"%s\" target=\"_blank\">www."
+"rublon.com</a> adresini ziyaret edin ve kullanıcı adınıza ait e-posta "
+"adresiniz ile giriş yapın."
+
+msgid ""
+"Your server's time seems out of sync. Please check that it is properly "
+"synchronized - Rublon won't be able to verify your website's security "
+"otherwise."
+msgstr ""
+"Sunucu saati senkronize değil. Sunucu saati senkronize olmadan Rublon "
+"çalışmayacaktır."
+
+msgid "The authentication process has been halted."
+msgstr "Kimlik doğrulama işlemi durdurulmuştur."
+
+msgid ""
+"This site's administrator requires you to confirm this operation using the "
+"Rublon mobile app."
+msgstr "Site yöneticiniz Rublon mobil kullanmanıza izin vermesi gerekmektedir."
+
+msgid "<strong>ERROR:</strong> Unauthorized access."
+msgstr "<strong>HATA:</strong> Erişim için yetkiniz yok."
+
+msgid "Your account is now protected by Rublon."
+msgstr "Hesabınız Rublon tarafından korunmatadır."
+
+msgid ""
+"Rublon protection has been disabled. You are now protected by a password "
+"only, which may result in unauthorized access to your account. We strongly "
+"encourage you to protect your account with Rublon."
+msgstr ""
+"Rublon koruması deaktif durumda. Hesabınız sadece şifre ile korunmaktadır. "
+"Hesabınızı Rublon ile koruma altına almanızı öneriyoruz."
+
+msgid "Thank you! All accounts are now protected by Rublon."
+msgstr ""
+"Teşekkürler. Artık bütün kullanıcı hesapları Rublon tarafından korunmaktadır."
+
+msgid ""
+"Since Rublon plugin version 2.0, the authentication process has been changed "
+"significantly. The accounts are now protected using the email address. We "
+"have detected that your WordPress account's email address differs from the "
+"one you used to create your account in the Rublon mobile app. Please change "
+"your WordPress account's email address accordingly or add your WordPress "
+"account's email address in the \"Email addresses\" section of the Rublon "
+"mobile app."
+msgstr ""
+"Rublon 2.0 sürümü ile kimlik doğrulama işlemi önemli ölçüde "
+"değiştirilmiştir. Hesaplar e-posta adresi doğrulama ile korunmaktadır. "
+"Rublon mobil uygulamaya kayıt olurken kullandığınız e-posta adresi ile "
+"WordPress profilinizde ki e mail adresiniz aynı değil. Lütfen WordPress "
+"kullanıcı hesabınızdaki e mail adresini değiştirin ya da Rublon mobil "
+"uygulamasında e-posta adresiniz bölümüne kullandığınız e mail adresinizi "
+"ekleyiniz."
+
+msgid ""
+"Plugin requires database modification but you do not have permission to do "
+"it."
+msgstr ""
+"Eklenti veritabanında değişiklik yapmak istiyor. Fakat sizin bu işlem için "
+"yetkiniz yok."
+
+msgid ""
+"Rublon provides stronger security for online accounts through invisible two-"
+"factor authentication. It protects your accounts from sign-ins from unknown "
+"devices, even if your passwords get stolen."
+msgstr ""
+"Rublon çevrimiçi hesaplar için 2 adımlı doğrulama ile güçlü bir koruma "
+"sağlar. Şifreniz çalınmış olsa dahi bilinmeyen cihazlardan hesabınıza giriş "
+"yapılmasını engeller."
+
+msgid "This will only take a moment."
+msgstr "Bu sadece bir dakika sürecek."
+
+msgid "Rublon Account Protection "
+msgstr "Rublon Hesap Güvenliği "
+
+msgid "Protection via Email"
+msgstr "Email ile Koruma"
+
+msgid "Protection via Email is not necessary for you."
+msgstr "E-posta ile koruma sizin için gerekli değildir."
+
+msgid "You are already protected via Mobile App."
+msgstr "Mobil uygulama ile hesap güvenliğiniz sağlanmaktadır."
+
+msgid "You are protected via Email."
+msgstr "Email doğrulaması ile güvenliğiniz sağlanmaktadır. "
+
+msgid "Enable account protection via email"
+msgstr "Hesap güvenliğini e-posta ile aktif et."
+
+msgid ""
+"You will need to confirm every sign in from a new device via email. You will "
+"also need to confirm changes to important settings like your password or "
+"email address."
+msgstr ""
+"Yeni bir cihazdan yapacağınız her giriş işlemini mail ile onaylamanız "
+"gerekmektedir. Ayrıca e-posta adresi ya da şifre değişiklik işlemlerinde de "
+"mail ile onay işlemini yapmanız gerekmektedir."
+
+msgid "Administrators can always change your settings without your consent."
+msgstr "Yöneticiler sizin izniniz olmadan ayarlarınızı değiştirebilir."
+
+msgid "Protection via Mobile App"
+msgstr "Mobil Uygulama ile  Koruma"
+
+msgid ""
+"This will be automatically enabled once you install the <a href=\"%s/get\" "
+"target=\"_blank\">Rublon mobile app</a>. Your phone will be required for "
+"identity or action confirmation. This feature will replace protection via "
+"email."
+msgstr ""
+"<a href=\"%s/get\" target=\"_blank\">Rublon mobil uygulamasını</a> "
+"yüklediğinizde bu özellik otomatik olarak aktif olacaktır. Kimlik doğrulama "
+"işlemi için telefonunuz gerekli olacaktır. Bu özellik aktif edildiğinde e-"
+"posta ile doğrulama işleminin yerini alacaktır."
+
+msgid "Close"
+msgstr "Kapat"
+
+msgid "Account Protection"
+msgstr "Hesap Koruması"
+
+msgid ""
+"The new user account will be automatically protected by <a href=\"%s\" "
+"target=\"_blank\">Rublon</a>."
+msgstr ""
+"Yeni kullanıcı hesapları <a href=\"%s\" target=\"_blank\">Rublon</a>."
+"tarafından otomatik olarak korumaya alınacak."
