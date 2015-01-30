@@ -20,7 +20,8 @@
 
 .rublon-seal-image {
 	position: absolute;
-	height: 32px;
+	height: 32px !important;
+	max-width: none !important;
 	right: 0;
 }
 

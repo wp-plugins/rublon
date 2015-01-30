@@ -9,11 +9,11 @@
  */
 
 if (!current_user_can('activate_plugins')) {
-	exit;
+	exit();
 }
 
 if (!defined('WP_UNINSTALL_PLUGIN')) {
-	exit;
+	exit();
 }
 
 require_once dirname(__FILE__) . '/includes/rublon2factor_helper.php';

@@ -123,9 +123,9 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 			// Logout listener callback function.
 			// URL is created manually because the wp_logout_url() function escapes the ampersand.
 			$args = array(
-					'action' => 'logout',
-					'redirect_to' => urlencode( RublonHelper::getRublon()->getCurrentUrl() ),
-					'_wpnonce' => wp_create_nonce( 'log-out' )
+				'action' => 'logout',
+				'redirect_to' => urlencode( RublonHelper::getRublon()->getCurrentUrl() ),
+				'_wpnonce' => wp_create_nonce( 'log-out' )
 			);
 			$logout_url = add_query_arg($args, site_url('wp-login.php', 'login'));
 			echo '<script type="text/javascript">

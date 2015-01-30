@@ -18,6 +18,7 @@ var RublonWP = {
 					loginButton.style.paddingTop = (loginButtonPaddingTop + 1) + 'px';
 				}
 			}
+			this.themeMyLoginCompat(loginForm);
 			rublonSeal.style.display = 'block';
 		}
 		this.updateRetinaImages();
@@ -32,6 +33,24 @@ var RublonWP = {
 				var rublonImageSrc = rublonImages[i].getAttribute('src');
 				rublonImageSrc = rublonImageSrc.replace(/(\.[a-z]{3})$/, '@2x$1');
 				rublonImages[i].setAttribute('src', rublonImageSrc);
+			}
+		}
+
+	},
+
+	themeMyLoginCompat: function(loginForm) {
+
+		var formParent = loginForm.parentNode;
+		if (formParent && formParent.getAttribute('id') == 'theme-my-login') {
+			var rublonSeal = document.getElementById('rublon-seal');
+			rublonSeal.style.marginBottom = '34px';
+			var loginButton = rublonSeal.querySelector('input[type="submit"]');
+			var loginButtonP = rublonSeal.querySelector('p.submit');
+			if (loginButton) {
+				loginButton.style.marginTop = '0';
+			}
+			if (loginButtonP) {
+				loginButtonP.style.paddingTop = '0';
 			}
 		}
 

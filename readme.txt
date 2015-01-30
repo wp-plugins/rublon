@@ -116,6 +116,11 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.16 =
+* Improved compatibility with some front-end plugins
+* Improved compatibility with some PHP server configurations
+* Updated Turkish translation 
+
 = 2.1.15 =
 * Rublon API Terms of Service agreement necessary during installation
 * Turkish language support added (translated by Mehmet Emre Baş, proofread by Tarık Çayır)

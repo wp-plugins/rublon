@@ -82,6 +82,7 @@ class RublonHelper {
 
 	const PAGE_ANY = 'any';
 	const PAGE_LOGIN = 'login';
+	const PAGE_WP_LOADED = 'wp_loaded';
 
 	const PHP_VERSION_REQUIRED = '5.2.17';
 	
@@ -234,10 +235,10 @@ class RublonHelper {
 			self::PAGE_ANY => array(
 				'register',
 				'confirm',
-				'init-registration',
 				'deactivate',
 			),
 			self::PAGE_LOGIN => array('callback'),
+			self::PAGE_WP_LOADED => array('init-registration'),
 		);
 		return (isset($page_actions[$page]) && in_array($action, $page_actions[$page]));
 
@@ -605,7 +606,7 @@ class RublonHelper {
 			);
 			if (!empty($authUrl)) {
 				wp_redirect($authUrl);
-				exit;
+				exit();
 			} else {
 				if ($roleProtectionType == self::PROTECTION_TYPE_MOBILE) {
 					self::_abortConfirmation(
@@ -669,7 +670,7 @@ class RublonHelper {
 			);
 			if (!empty($authUrl)) {
 				wp_redirect($authUrl);
-				exit;
+				exit();
 			} else {
 				if ($roleProtectionType == self::PROTECTION_TYPE_MOBILE) {
 					self::_abortConfirmation(
@@ -833,7 +834,7 @@ class RublonHelper {
 			$pageBody
 		);
 		echo $resultingPage;
-		exit;
+		exit();
 
 	}
 
@@ -1020,7 +1021,7 @@ class RublonHelper {
 
 		if (!$frame) {
 			wp_safe_redirect($url);
-			exit;
+			exit();
 		} else {
 			self::_redirectParentFrame(
 				$url,
@@ -1408,7 +1409,7 @@ class RublonHelper {
 
 		$rublonGUI = Rublon2FactorGUIWordPress::getInstance();
 		wp_redirect($rublonGUI->getActivationURL());
-		exit;		
+		exit();
 
 	}
 
@@ -1671,7 +1672,7 @@ class RublonHelper {
 		} catch (RublonException $e) {
 			self::_handleRegistrationException($e);
 			wp_safe_redirect(admin_url());
-			exit;
+			exit();
 		}
 
 	}
@@ -1688,7 +1689,7 @@ class RublonHelper {
 		} catch (RublonException $e) {
 			self::_handleRegistrationException($e);
 			wp_safe_redirect(admin_url());
-			exit;
+			exit();
 		}
 	}
 
@@ -1905,7 +1906,7 @@ class RublonHelper {
 			if ($db_error) {
 				deactivate_plugins(plugin_basename(RUBLON2FACTOR_PLUGIN_PATH), true);
 				_e('Plugin requires database modification but you do not have permission to do it.', 'rublon');
-				exit;
+				exit();
 			}
 		}
 	
@@ -3082,7 +3083,7 @@ class RublonHelper {
 
 	static public function ajaxLogout() {
 		wp_logout();
-		exit;
+		exit();
 	}
 
 

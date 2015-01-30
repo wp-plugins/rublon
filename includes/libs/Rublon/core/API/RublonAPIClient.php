@@ -337,8 +337,19 @@ class RublonAPIClient {
 			sprintf('%s: %s', self::HEADER_API_VERSION_DATE, $this->getRublon()->getVersionDate()),
 		);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::TIMEOUT);
-		curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
+
+		$curl_timeout = self::TIMEOUT;
+		$php_execution_time = ini_get('max_execution_time');
+		if (!empty($php_execution_time) && is_numeric($php_execution_time)) {
+			if ($php_execution_time < 36 && $php_execution_time > 9) {
+				$curl_timeout = $php_execution_time - 5;
+			} elseif ($php_execution_time < 10) {
+				$curl_timeout = 5;
+			}
+		}
+
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_timeout);
+		curl_setopt($ch, CURLOPT_TIMEOUT, $curl_timeout);
 		curl_setopt($ch, CURLOPT_HEADER, true);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

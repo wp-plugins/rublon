@@ -486,3 +486,19 @@ function rublon2factor_user_new_form() {
 }
 
 add_action('user_new_form', 'rublon2factor_user_new_form');
+
+
+/**
+ * Perform tasks after WP is fully loaded
+ * 
+ * Plugin registration in the Rublon API moved here, as
+ * too early initialization conflicted with some plugins.
+ */
+function rublon2factor_wp_loaded() {
+
+	// Check if plugin registration is in effect
+	RublonHelper::checkForActions(RublonHelper::PAGE_WP_LOADED);
+
+}
+
+add_action('wp_loaded', 'rublon2factor_wp_loaded');

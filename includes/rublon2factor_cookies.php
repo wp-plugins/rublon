@@ -103,9 +103,11 @@ class RublonCookies {
 	 */
 	static public function storeReturnURL($url) {
 
-		$cookieName = self::COOKIE_PREFIX . self::COOKIE_RETURNURL;
-		self::_clearCookieData($cookieName);
-		self::_setCookieData($cookieName, $url);
+		if (!headers_sent()) {
+			$cookieName = self::COOKIE_PREFIX . self::COOKIE_RETURNURL;
+			self::_clearCookieData($cookieName);
+			self::_setCookieData($cookieName, $url);
+		}
 	}
 
 	
