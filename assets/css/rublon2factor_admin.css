@@ -1,0 +1,260 @@
+#rublon2factor_page {
+	display: inline-block;
+	width: 100%;
+}
+
+h2.rublon-header {
+	padding-left: 38px;
+	background-image: url('../images/rublon_logo_32x32.png');
+	background-size: 32px 32px;
+	background-repeat: no-repeat;
+	background-position: 0 9px;
+	margin-bottom: 14px;
+	line-height: 32px;
+}
+
+h3.rublon-header {
+	padding-left: 38px;
+	background-image: url('../images/rublon_logo_32x32.png');
+	background-size: 32px 32px;
+	background-repeat: no-repeat;
+	margin-bottom: 14px;
+	line-height: 32px;
+}
+
+li#toplevel_page_rublon div.wp-menu-image {
+	background-image: url('../images/rublon_logo_16x16.png');
+	background-size: 16px 16px;
+	background-position: 7px 7px;
+	background-repeat: no-repeat;
+	opacity: .6;
+}
+
+li#toplevel_page_rublon:hover div.wp-menu-image {
+	opacity: 1;
+}
+
+li#toplevel_page_rublon.current div.wp-menu-image {
+	opacity: 1;
+}
+
+.rublon-activation-mere-user {
+	padding: 10px !important;
+	margin-top: 10px !important;
+}
+
+.rublon-button-header {
+	width: 100%;
+}
+
+.rublon-clear {
+	clear: both;
+}
+
+#rublon-toolbar-logo {
+	border: 0 !important;
+	background: transparent !important;
+}
+
+.rublon-bold {
+	font-weight: bold;
+}
+
+.rublon-red {
+	color: #FF0000;
+}
+
+.rublon-settings-desc {
+	margin-top: 4px !important;
+	margin-bottom: 1em !important;
+	max-width: 1100px;
+}
+
+.rublon-settings-setting-name {
+	margin-bottom: 4px !important;
+}
+
+#RublonDeviceWidget, #RublonShareAccessWidget {
+	width: 460px;
+	height: 347px;
+	border: none;
+}
+
+#rublon_dashboard_device_widget #RublonDeviceWidget {
+	width: 100%;
+}
+
+#rublon_dashboard_access_control_manager #RublonShareAccessWidget {
+	width: 100%;
+}
+
+#rublon-busy-overlay {
+	width: 100%;
+	height: auto;
+	min-height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 99999;
+	display: none; 
+}
+
+#rublon-busy-iframe-container {
+	width: 500px;
+	height: 400px;
+	display: none;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -250px;
+	margin-top: -200px;
+	z-index: 99999;
+	background: none;
+	border: none;
+}
+
+#rublon-busy-iframe {
+	width: 100%;
+	height: 100%;
+}
+
+div.rublon-lock-container {
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	width: 18px;
+}
+
+div.rublon-lock-container.rublon-userprotectiontype {
+	width: 21px;
+}
+
+div.rublon-lock-container.hidden {
+	display: none;
+}
+
+div.rublon-lock-container.visible {
+	display: inline-block;
+}
+
+.rublon-locked-container {
+	height: 21px;
+}
+
+.rublon-unlocked-container {
+	height: 24px;
+}
+
+.rublon-userprotectiontype-locked {
+	height: 24px;
+}
+
+.rublon-label {
+	margin-left: 2px;
+}
+
+.rublon-lock {
+	position: absolute;
+	left: 0;
+}
+
+.rublon-locked {
+	top: -1px;
+}
+
+.rublon-unlocked {
+	top: -2px;	
+}
+
+div.rublon-settings-setting-label {
+	min-width: 200px;
+	display: inline-block;
+	font-weight: bold;
+}
+
+div.rublon-setting-header {
+	display: inline-block;
+	padding-left: 5px;
+	margin-top: 10px;
+}
+
+.rublon-busy-iframe-close {
+	position: absolute;
+	bottom: -30px;
+	right: -10px;
+	width: 500px;
+	display: none;
+	color: white;
+	text-align: right;
+	cursor: pointer;
+}
+
+div.rublon-settings-label-column {
+	min-width: 200px;
+	display: inline-block;
+}
+
+div.rublon-settings-checkbox-column {
+	min-width: 200px;
+	display: inline-block;
+	text-align: center;
+}
+
+div.rublon-settings-line {
+	margin-bottom: 5px !important;
+}
+
+div.rublon-settings-first-line {
+	margin-top: 10px;
+}
+
+div.rublon-description {
+	margin-top: 5px;
+}
+
+.rublon2factor_status img.rublon-protected {
+	width: 32px;
+	height: 32px;
+	margin-top: 1px;
+}
+
+fieldset.rublon-apireg-fieldset {
+	padding: 0 15px;
+}
+
+.rublon-apireg-pointer {
+	width: 665px !important;
+}
+
+.rublon-apireg-pointer .rublon-apireg-half-column {
+	display: inline-block;
+	vertical-align: middle;
+	width: 324px;
+}
+
+.rublon-apireg-pointer .rublon-apireg-image {
+	width: 339px;
+}
+
+.rublon-apireg-visual {
+	width: 324px;
+	padding: 15px 15px 15px 0;
+}
+
+.rublon-apireg-buttons {
+	margin-top: 10px;	
+}
+
+#rublon-apireg-button-cancel, #rublon-apireg-button-activate {
+	float: left;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
+	h2.rublon-header {
+		background-image: url('../images/rublon_logo_32x32@2x.png');
+	}
+	li#toplevel_page_rublon div.wp-menu-image {
+		background-image: url('../images/rublon_logo_16x16@2x.png');	
+	}
+}
