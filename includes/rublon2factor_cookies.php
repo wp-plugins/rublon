@@ -17,7 +17,6 @@ class RublonCookies {
 
 	const COOKIE_PREFIX = 'Rublon-WP_';
 	const COOKIE_MESSAGES = 'messages';
-	const COOKIE_NONCE = 'nonce';
 	const COOKIE_AUTHENTICATED = 'auth';
 	const COOKIE_LOGIN_TOKEN_ID = 'login';
 	const COOKIE_RETURNURL = 'return_url';
@@ -108,32 +107,6 @@ class RublonCookies {
 			self::_clearCookieData($cookieName);
 			self::_setCookieData($cookieName, $url);
 		}
-	}
-
-	
-	/**
-	 * Store a nonce in cookie
-	 * 
-	 * The nonce is used in the plugin registration process.
-	 * 
-	 * @param string $nonce
-	 */
-	static public function storeNonceInCookie($nonce) {
-
-		$cookieName = self::COOKIE_PREFIX . self::COOKIE_NONCE;
-		self::_clearCookieData($cookieName);
-		self::_setCookieData($cookieName, $nonce);
-
-	}
-
-
-	static public function getNonceFromCookie() {
-
-		$cookieName = self::COOKIE_PREFIX . self::COOKIE_NONCE;
-		$nonce = self::_getCookieData($cookieName);
-		self::_clearCookieData($cookieName);
-		return $nonce;
-
 	}
 
 

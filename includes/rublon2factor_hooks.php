@@ -368,17 +368,19 @@ function rublon2factor_user_profile_update_errors(&$errors, $update, &$user) {
 
 	global $pagenow;
 
-	$current_user = wp_get_current_user();
-	$current_user_id = RublonHelper::getUserId($current_user);
-	$updated_user_id = (!empty($user->ID)) ? $user->ID : $user->Id;
-
-	if ($pagenow == RublonHelper::WP_PROFILE_PAGE
-			&& $current_user_id == $updated_user_id
-			&& empty($errors->errors)
-			&& $update) {
-		if (!empty($_POST)) {
-			$post = $_POST;
-			RublonHelper::checkPostDataProfileUpdate($post);
+	if (RublonHelper::isSiteRegistered()) {
+		$current_user = wp_get_current_user();
+		$current_user_id = RublonHelper::getUserId($current_user);
+		$updated_user_id = (!empty($user->ID)) ? $user->ID : $user->Id;
+	
+		if ($pagenow == RublonHelper::WP_PROFILE_PAGE
+				&& $current_user_id == $updated_user_id
+				&& empty($errors->errors)
+				&& $update) {
+			if (!empty($_POST)) {
+				$post = $_POST;
+				RublonHelper::checkPostDataProfileUpdate($post);
+			}
 		}
 	}
 	
@@ -433,16 +435,6 @@ function rublon2factor_add_dashboard_device_widget() {
 }
 
 add_action('wp_dashboard_setup', 'rublon2factor_add_dashboard_device_widget');
-
-function rublon2factor_plugin_activated() {
-
-	if (!RublonHelper::isSiteRegistered()) {
-		RublonHelper::enqueueRegistration(true);
-	}
-
-}
-
-register_activation_hook(RUBLON2FACTOR_PLUGIN_PATH, 'rublon2factor_plugin_activated');
 
 function rublon2factor_user_new_form() {
 
@@ -502,3 +494,18 @@ function rublon2factor_wp_loaded() {
 }
 
 add_action('wp_loaded', 'rublon2factor_wp_loaded');
+
+function rublon2factor_dismiss_api_registration() {
+
+	require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
+
+	$post = $_POST;
+	$other_settings = RublonHelper::getSettings('other');
+	if (!empty($post['nonce']) && wp_verify_nonce($post['nonce'], Rublon_Pointers::API_REGISTRATION_DISMISSED)) {
+		$other_settings[Rublon_Pointers::API_REGISTRATION_DISMISSED] = RublonHelper::YES;
+		RublonHelper::saveSettings($other_settings, 'other');
+	}
+
+}
+
+add_action('wp_ajax_rublon_apireg_dismissed', 'rublon2factor_dismiss_api_registration');

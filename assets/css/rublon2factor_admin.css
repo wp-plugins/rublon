@@ -219,6 +219,37 @@ div.rublon-description {
 	margin-top: 1px;
 }
 
+fieldset.rublon-apireg-fieldset {
+	padding: 0 15px;
+}
+
+.rublon-apireg-pointer {
+	width: 665px !important;
+}
+
+.rublon-apireg-pointer .rublon-apireg-half-column {
+	display: inline-block;
+	vertical-align: middle;
+	width: 324px;
+}
+
+.rublon-apireg-pointer .rublon-apireg-image {
+	width: 339px;
+}
+
+.rublon-apireg-visual {
+	width: 324px;
+	padding: 15px 15px 15px 0;
+}
+
+.rublon-apireg-buttons {
+	margin-top: 10px;	
+}
+
+#rublon-apireg-button-cancel, #rublon-apireg-button-activate {
+	float: left;
+}
+
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
 	h2.rublon-header {
 		background-image: url('../images/rublon_logo_32x32@2x.png');

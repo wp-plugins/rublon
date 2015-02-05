@@ -92,12 +92,14 @@ add_action('admin_menu', 'rublon2factor_add_menu_entries');
 function rublon2factor_admin_scripts() {
 
 	global $pagenow;
+	
+	$gui = Rublon2FactorGUIWordPress::getInstance();
+	
 	$screen = get_current_screen();
 
 	$currentPluginVersion = RublonHelper::getCurrentPluginVersion();
-	
+
 	wp_enqueue_script('rublon2factor_admin_js', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress-admin.js', false, $currentPluginVersion);
-	
 
 }
 
@@ -118,8 +120,9 @@ function rublon2factor_register_settings() {
 	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-additional-settings');
 	add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-additional-settings');
 
-	if (!RublonHelper::isSiteRegistered()) {
-		RublonHelper::newNonce();
+	if (!RublonHelper::isSiteRegistered() && RublonHelper::canPluginAttemptRegistration()) {
+		require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
+		add_action('admin_enqueue_scripts', array('Rublon_Pointers', 'getInstance'));
 	}
 
 	do_action('rublon_admin_init');
@@ -254,10 +257,10 @@ function rublon2factor_render_disable_xmlrpc() {
 
 function rublon2factor_render_rl_activelistener() {
 
-	$settings = RublonHelper::getSettings('additional');
+	$additional_settings = RublonHelper::getSettings('additional');
 	$offSelected = '';
 	$onSelected = '';
-	if (isset($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER]) && $settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on') {
+	if (RublonHelper::isLogoutListenerEnabled()) {
 		$onSelected = ' selected';
 	} else {
 		$offSelected = ' selected';

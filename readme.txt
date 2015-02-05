@@ -70,7 +70,7 @@ Nothing! The basic Rublon plugin is free and always will be. Premium features li
 6. Optional: For more security and control, install the Rublon mobile app onto your phone (available for [Android](https://play.google.com/store/apps/details?id=com.rublon.android), [iOS](https://itunes.apple.com/us/app/rublon/id501336019) and [Windows Phone](http://www.windowsphone.com/en-us/store/app/rublon/809d960f-a3e8-412d-bc63-6cf7f2167d42)).
 
 = Server requirements =
-- PHP version 5.2.17 or greater
+- PHP version 5.2.4 or greater
 - cURL PHP extension enabled
 
 == Frequently Asked Questions ==
@@ -115,6 +115,11 @@ Rublon for WordPress is free and always will be. Our paid Business Plan offers p
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 2.1.17 =
+* Improved registration with the Rublon API
+* Real-Time Remote Logout now does not impair page load times (activated by default again)
+* Minimum PHP version lowered to 5.2.4
 
 = 2.1.16 =
 * Improved compatibility with some front-end plugins

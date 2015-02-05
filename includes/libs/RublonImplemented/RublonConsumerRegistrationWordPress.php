@@ -4,11 +4,6 @@ require_once dirname(__FILE__) . '/../RublonConsumerRegistration/RublonConsumerR
 
 class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemplate {
 
-	const TEMPLATE_FORM_POST = '<form action="%s" method="post" id="RublonConsumerRegistration">
-			%s
-		</form>';
-
-	const FIELD_REGISTRATION_TERMS_AGREED = 'regTermsAgreed';
 
 	protected function finalSuccess() {
 
@@ -326,9 +321,9 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 			$busyPageContent = RublonHelper::busyPageContentTemplate();
 			$pageContent = sprintf($busyPageContent,
 				'',
-				__('Rublon Account Protection works by talking to the Rublon API. This requires an API key, which needs to be generated specifically for your website. Due to security reasons, this requires a registration with your email address.', 'rublon'),
-				$regForm,
-				''
+				__('Rublon is being configured.', 'rublon') . '<br />' . __('This will only take a moment.', 'rublon'),
+				RublonHelper::spinnerTemplate(' rublon-reg-spinner'),
+				$regForm
 			);
 			$styles = RublonHelper::busyPageStyles(true);
 			$page = sprintf($pageTemplate,
@@ -342,70 +337,6 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 			throw new UserUnauthorized_RublonConsumerException;
 		}
 
-	}
-
-
-	protected function getButton($text, $link = '', $class = 'rublon-reg-button', $id = '', $onclick = '') {
-
-		return '<a id="' . $id . '" href="' . $link . '" class="' . $class . '" onclick="' . $onclick . '">' . $text . '</a>'; 
-
-	}
-
-
-	protected function getCheckbox($name, $value, $text, $id = '') {
-
-		return '<fieldset class="rublon-reg-fieldset">'
-			. '<label for="' . $name . '">'
-			. '<input id="'. $id . '" type="checkbox" name="' . $name . '" class="rublon-reg-checkbox" value="' . $value . '" />'
-			. $text . '</label></fieldset>';
-
-	}
-
-
-	protected function getAgreementScript() {
-
-		return '<script type="text/javascript">//<![CDATA[
-		if (RublonWP) {
-			RublonWP.setUpRegistrationAgreementListener();  
-		}
-	//]]></script>';		
-
-	}
-
-
-	protected function getRegistrationForm() {
-	
-		$action = $this->getAPIDomain() . self::URL_PATH_ACTION . '/' . self::ACTION_INITIALIZE;
-		$action = htmlspecialchars($action);
-		$current_user = wp_get_current_user();
-		$email = RublonHelper::getUserEmail($current_user);
-
-		$content = $this->getInputHidden(self::FIELD_PROJECT_URL, $this->getProjectUrl())
-		. $this->getInputHidden(self::FIELD_PROJECT_CALLBACK_URL, $this->getCallbackUrl())
-		. $this->getInputHidden(self::FIELD_PROJECT_DATA, json_encode($this->getProjectData()))
-		. $this->getInputHidden(self::FIELD_COMMUNICATION_URL, $this->getCommunicationUrl())
-		. $this->getInputHidden(self::FIELD_TEMP_KEY, $this->getTempKey())
-		. $this->getCheckbox(
-				self::FIELD_REGISTRATION_TERMS_AGREED,
-				1,
-				sprintf(
-					__('Yes, please use <strong>%s*</strong> to register with the Rublon API. I agree to the <a href="%s" target="_blank">Rublon API Terms of Service</a>.', 'rublon'),
-					$email,
-					'https://developers.rublon.com/54/Terms-of-Service'),
-				self::FIELD_REGISTRATION_TERMS_AGREED
-		)
-		. '<div class="rublon-reg-button-container">'
-		. $this->getButton(__('Activate', 'rublon') . ' &gt;&gt;', '', 'rublon-reg-button rublon-main-button rublon-first-button inactive', 'regNext')
-		. $this->getButton(__('Cancel', 'rublon'), admin_url('plugins.php?rublon=deactivate&rublon_goto=plugins'))
-		. '</div>'
-		. RublonHelper::spinnerTemplate(' hidden rublon-reg-spinner')
-		. '<div class="rublon-reg-smallprint">'
-			. sprintf(__('* Your email address has been retrieved from your user account. In order to register with a different email address, change it in your <a href="%s">profile settings</a>.', 'rublon'), admin_url('plugins.php?rublon=deactivate&rublon_goto=profile'))
-			. '</div>'
-		. $this->getAgreementScript();
-
-		return sprintf(self::TEMPLATE_FORM_POST, $action, $content);
-	
 	}
 
 

@@ -79,12 +79,14 @@ class RublonHelper {
 	const WP_OPTIONS_PAGE = 'options.php';
 	const WP_RUBLON_PAGE = 'admin.php?page=rublon';
 	const WP_PROFILE_EMAIL2FA_SECTION = '#rublon-email2fa';
+	
+	const LOGOUT_LISTENER_HEARTBEAT_INTERVAL = 5;
 
 	const PAGE_ANY = 'any';
 	const PAGE_LOGIN = 'login';
 	const PAGE_WP_LOADED = 'wp_loaded';
 
-	const PHP_VERSION_REQUIRED = '5.2.17';
+	const PHP_VERSION_REQUIRED = '5.2.4';
 	
 	/**
 	 * An instance of the Rublon2FactorWordPress class
@@ -100,14 +102,6 @@ class RublonHelper {
 	 * @var array
 	 */
 	static public $cookies;
-
-
-	/**
-	 * Nonce used in the validation of the plugin registration process
-	 * 
-	 * @var string
-	 */
-	static private $nonce;
 
 
 	/**
@@ -203,8 +197,7 @@ class RublonHelper {
 					break;
 				case 'init-registration':
 					$nonce = self::uriGet('rublon_nonce');
-					$nonceCookie = RublonCookies::getNonceFromCookie();
-					if (!empty($nonce) && wp_verify_nonce($nonce, 'rublon=init-registration') && $nonce == $nonceCookie) {
+					if (!empty($nonce) && wp_verify_nonce($nonce, 'rublon=init-registration')) {
 						self::_initializeConsumerRegistration();
 					} else {
 						self::setMessage('NONCE_VERIFICATION_FAILED', 'error', 'CR');
@@ -1379,37 +1372,11 @@ class RublonHelper {
 	}
 
 
-	static public function shouldPluginAttemptRegistration() {
+	static public function canPluginAttemptRegistration() {
 
-		$settings = self::getSettings();
-		$firstinstall_settings = self::getSettings('firstinstall');
-		$forced_registration = false;
-		if (!empty($firstinstall_settings[self::SETTING_FORCED_REGISTRATION]) && is_admin() && is_user_logged_in()) {
-			$forced_registration = ($firstinstall_settings[self::SETTING_FORCED_REGISTRATION] == self::YES);
-			$firstinstall_settings[self::SETTING_FORCED_REGISTRATION] = self::NO;
-			self::saveSettings($firstinstall_settings, 'firstinstall');
-		}
 		return !self::isSiteRegistered()
-			&& (!empty($settings['attempt-registration']) || $forced_registration)
 			&& (version_compare(phpversion(), self::PHP_VERSION_REQUIRED, 'ge'))
 			&& function_exists('curl_init');
-
-	}
-	
-	
-	static public function enqueueRegistration($deny = false) {
-
-		$settings = self::getSettings();
-		$settings['attempt-registration'] = $deny;
-		self::saveSettings($settings);
-
-	}
-	
-	static public function registerSite() {
-
-		$rublonGUI = Rublon2FactorGUIWordPress::getInstance();
-		wp_redirect($rublonGUI->getActivationURL());
-		exit();
 
 	}
 
@@ -2138,39 +2105,7 @@ class RublonHelper {
 	 */
 	static public function checkRegistration() {
 
-		$attemptRegistration = self::shouldPluginAttemptRegistration();
-		if ($attemptRegistration && current_user_can('manage_options')) {
-			self::enqueueRegistration(false);
-			self::newNonce();
-			self::registerSite();
-		}
-
 		do_action('rublon_site_registration');
-
-	}
-
-
-	/**
-	 * Create and store a new nonce for further use once headers are sent
-	 * 
-	 */
-	static public function newNonce() {
-
-		$nonce = wp_create_nonce('rublon=init-registration');
-		self::$nonce = $nonce;
-		RublonCookies::storeNonceInCookie($nonce);
-
-	}
-
-
-	/**
-	 * Retrieve nonce and clear it
-	 * 
-	 * @return string
-	 */
-	static public function getNonce() {
-
-		return self::$nonce;
 
 	}
 
@@ -2522,61 +2457,7 @@ class RublonHelper {
 			border-radius: 100px;
 		}
 		.rublon-reg-spinner {
-			margin-bottom: 16px;
-		}
-		.rublon-reg-button {
-			padding: 7px;
-			border-radius: 2px;
-			background-color: #EEEEEE;
-			border: none;
-			color: #777;
-			-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
-			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
-			-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
-			-o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
-			font-family: \'Open Sans\', sans-serif;
-			font-size: 1em;
-			text-decoration: none;
-			cursor: pointer;
-		}
-		.rublon-reg-button-container {
-			padding-bottom: 10px;
-		}		
-		.rublon-reg-smallprint {
-			font-family: \'Open Sans\', sans-serif;
-			font-size: 0.8em;
-			color: #777;
-			margin-top: 10px;
-		}
-		.rublon-reg-button.inactive {
-			color: #CCCCCC;
-			cursor: default;
-		}
-		.rublon-first-button {
-			margin-right: 10px;
-		}
-		.rublon-main-button {
-			font-weight: bold;
-		}
-		.rublon-reg-fieldset {
-			border: none;
-			padding: 5px;
-			padding-top: 0;
-			margin: 0 0 15px 0;
-		}
-		.rublon-reg-fieldset label {
-			font-family: \'Open Sans\', sans-serif;
-			color: #777;
-			font-size: 14px;
-			cursor: pointer;
-		}
-		.rublon-reg-checkbox {
-			vertical-align: middle;
-			margin: -2px 5px 0 0;
-			cursor: pointer;
-		}
-		form#RublonConsumerRegistration {
-			margin: 0 0 0.5em 0;
+			margin-bottom: 8px;
 		}
 		.hidden {
 			display: none;
@@ -3068,22 +2949,72 @@ class RublonHelper {
 
 	static public function initLogoutListener() {
 
-		if (is_user_logged_in()) {
-			// Create GUI instance to automatically add the logout listener
-			$gui = Rublon2FactorGUIWordPress::getInstance();
-	
-			// Create AJAX endpoint to check if user is logged-in
-			$callback = array(__CLASS__, 'ajaxLogout');
-			add_action('wp_ajax_rublon_logout', $callback);
-			add_action('wp_ajax_nopriv_rublon_logout', $callback);
+		if (is_user_logged_in() AND RublonHelper::isLogoutListenerEnabled()) {
+			
+			// Embed JavaScript
+			if (is_admin()) {
+				remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
+				add_action('admin_enqueue_scripts', array(__CLASS__, 'initLogoutListenerScripts'));
+			} else {
+				add_action('wp_enqueue_scripts', array(__CLASS__, 'initLogoutListenerScripts'));
+			}
+			
+			// Change the Heartbeat pulse delay:
+			add_filter( 'heartbeat_settings', array(__CLASS__, 'heartbeatSettings') );
+			
 		}
 
 	}
+	
+	/**
+	 * Change the Heartbeat pulse delay.
+	 * 
+	 * @param array $settings
+	 * @return array
+	 */
+	static public function heartbeatSettings($settings) {
+		$settings['interval'] = self::LOGOUT_LISTENER_HEARTBEAT_INTERVAL;
+		return $settings;
+	}
+	
+	
+	/**
+	 * Embed JavaScript needed to make logout listener work.
+	 */
+	static public function initLogoutListenerScripts() {
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'heartbeat' );
+		wp_enqueue_script('rublon2factor_logout_listener', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-logout-listener.js',
+			array('jquery', 'heartbeat'), RublonHelper::getCurrentPluginVersion());
+	}
 
-
-	static public function ajaxLogout() {
-		wp_logout();
-		exit();
+	
+	/**
+	 * Check if logout listener has been enabled in the Rublon plugin settings.
+	 * 
+	 * @return boolean
+	 */
+	static public function isLogoutListenerEnabled() {
+		$additional_settings = RublonHelper::getSettings('additional');
+		return (empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER])
+					|| $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on');
+	}
+	
+	
+	/**
+	 * Filter the heartbeat response and send the logout trigger if needed.
+	 * 
+	 * @param array $response
+	 * @param array $data
+	 * @return array
+	 */
+	static public function heartbeatLogoutListener($response, $data) {
+		if (!is_user_logged_in() AND RublonHelper::isLogoutListenerEnabled()) {
+			if (isset($data['rublon_heartbeat']) AND $data['rublon_heartbeat'] == 'logout_listener') {
+				$response['rublon-logout-trigger'] = true;
+			}
+		}
+		return $response;
 	}
 
 
