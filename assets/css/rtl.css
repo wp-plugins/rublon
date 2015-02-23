@@ -1,17 +1,17 @@
 @CHARSET "UTF-8";
 
-.rublon-seal-link {	
+.rublon-badge-link {	
 	position: relative !important;
 	text-align: left !important;
     float: left !important;
     clear: right !important;
 }
 
-#rublon-seal p.submit input {
+#rublon-badge p.submit input {
 	float: right !important;
 }
 
-.rublon-seal-image {
+.rublon-badge-image {
 	left: 0 !important;
 	right: auto !important;
 }

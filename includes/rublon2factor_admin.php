@@ -99,7 +99,10 @@ function rublon2factor_admin_scripts() {
 
 	$currentPluginVersion = RublonHelper::getCurrentPluginVersion();
 
-	wp_enqueue_script('rublon2factor_admin_js', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress-admin.js', false, $currentPluginVersion);
+	wp_enqueue_script('rublon_admin_js', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress-admin.js', false, $currentPluginVersion);
+	if (!RublonHelper::isSiteRegistered() || RublonHelper::isTrackingAllowed() === null) {
+		wp_enqueue_script('rublon_admin_pointers_js', RUBLON2FACTOR_PLUGIN_URL . '/assets/js/rublon-wordpress-admin-pointers.js', 'rublon_admin_js', $currentPluginVersion);
+	}
 
 }
 
@@ -120,9 +123,14 @@ function rublon2factor_register_settings() {
 	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-additional-settings');
 	add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-additional-settings');
 
-	if (!RublonHelper::isSiteRegistered() && RublonHelper::canPluginAttemptRegistration()) {
-		require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
-		add_action('admin_enqueue_scripts', array('Rublon_Pointers', 'getInstance'));
+	if (RublonHelper::canPluginAttemptRegistration() || RublonHelper::isSiteRegistered()) {
+		if (RublonHelper::isTrackingAllowed() === null) {
+			require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
+			add_action('admin_enqueue_scripts', array('Rublon_Pointers', 'getInstance'));
+		} elseif (!RublonHelper::isSiteRegistered()) {
+			require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
+			add_action('admin_enqueue_scripts', array('Rublon_Pointers', 'getInstance'));
+		}
 	}
 
 	do_action('rublon_admin_init');
@@ -298,11 +306,12 @@ function rublon2factor_render_settings_page() {
 				. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">wordpress.rublon.com</a>.', 'rublon'), RublonHelper::wordpressRublonComURL())
 				. '</p>';
 
-			// Consumer script
-			$current_user = wp_get_current_user();
-			
+
 			if (RublonHelper::isSiteRegistered()) {
 
+				RublonHelper::printSocialSection();
+
+				$current_user = wp_get_current_user();
 				// No protection warning
 				if (!RublonHelper::isUserProtected($current_user) && is_user_member_of_blog()) {
 					printf(
@@ -405,16 +414,27 @@ function rublon2factor_no_settings_warning() {
 	if ($pagenow == 'plugins.php'
 		|| (!empty($screen->base) && $screen->base == 'toplevel_page_rublon')) {
 	
-		if (!version_compare(phpversion(), RublonHelper::PHP_VERSION_REQUIRED, 'ge')) {
-			echo "<div class='error'><p><strong>"
-				. __('Warning! The PHP version of your server is too old to run Rublon. Please upgrade your server\'s PHP version.', 'rublon')
-				. '</strong></p><p>' . __('Required PHP version:', 'rublon') . ' <strong>' . RublonHelper::PHP_VERSION_REQUIRED
-				. ' ' . __('(or above)', 'rublon') . '</strong></p><p>' . __('Your PHP version:', 'rublon')
-				. ' <strong>' . phpversion() . '</strong></p></div>';
-		}
+		$installation_obstacles = array();
+		
+		if (!RublonHelper::canPluginAttemptRegistration($installation_obstacles)) {
 
-		if (!function_exists('curl_init')) {
-			echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon') . '</p></div>';
+			if ( $installation_obstacles[RublonHelper::INSTALL_OBSTACLE_PHP_VERSION_TOO_LOW] ) {
+				echo "<div class='error'><p><strong>"
+					. __('Warning! The PHP version of your server is too old to run Rublon. Please upgrade your server\'s PHP version.', 'rublon')
+					. '</strong></p><p>' . __('Required PHP version:', 'rublon') . ' <strong>' . RublonHelper::PHP_VERSION_REQUIRED
+					. ' ' . __('(or above)', 'rublon') . '</strong></p><p>' . __('Your PHP version:', 'rublon')
+					. ' <strong>' . phpversion() . '</strong></p></div>';
+			}
+	
+			
+			if ( $installation_obstacles[RublonHelper::INSTALL_OBSTACLE_CURL_NOT_AVAILABLE] ) {
+				echo "<div class='error'><p><strong>" . __('Warning! The cURL library has not been found on this server.', 'rublon') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the cURL library installed or consult your server administrator about it.', 'rublon') . '</p></div>';
+			}
+
+			if ( $installation_obstacles[RublonHelper::INSTALL_OBSTACLE_HASH_NOT_AVAILABLE] ) {
+				echo "<div class='error'><p><strong>" . __('Warning! The Hash PHP extension has not been found on this server.', 'rublon') . '</strong> ' . __('It is a crucial component of the Rublon plugin and its absence will prevent it from working properly. Please have the Hash extension installed or consult your server administrator about it.', 'rublon') . '</p></div>';
+			}
+
 		}
 	
 	}
@@ -432,7 +452,7 @@ add_action('admin_notices', 'rublon2factor_no_settings_warning');
 function rublon2factor_add_update_message() {
 
 	$messages = RublonHelper::getMessages();
-	if ($messages) {
+	if (!empty($messages)) {
 		foreach ($messages as $message) {
 			echo "<div class='". $message['type'] ." fade'><p>" . $message['message'] . "</p></div>";
 		}
@@ -591,23 +611,3 @@ function rublon2factor_add_frontend_files() {
 }
 
 add_action('login_enqueue_scripts', 'rublon2factor_add_frontend_files');
-
-/**
- * Add the Rublon Seal to the login page
- * 
- */
-function rublon2factor_modify_login_form() {
-
-	$lang = RublonHelper::getBlogLanguage();
-	$rublonSealUrl = 'https://rublon.com/img/rublon_seal_' . $lang . '.png';
-	echo '<div style="display: none;" id="rublon-seal"><div class="rublon-seal-link"><a href="' . RublonHelper::rubloncomUrl() . '" target="_blank" title="' . __('Rublon Two-Factor Authentication', 'rublon') . '">'
-		. '<img class="rublon-seal-image rublon-image" src="' . $rublonSealUrl .  '" alt="' . __('Rublon Two-Factor Authentication', 'rublon') . '" /></a></div></div>';
-	echo '<script>//<![CDATA[
-		if (RublonWP) {
-			RublonWP.showSeal();
-		}
-	//]]></script>';
-
-}
-
-add_action('login_footer', 'rublon2factor_modify_login_form');

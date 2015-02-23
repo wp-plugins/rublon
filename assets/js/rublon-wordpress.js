@@ -1,16 +1,16 @@
 var RublonWP = {
 
-	showSeal: function() {
+	showBadge: function() {
 	
-		var rublonSeal = document.getElementById('rublon-seal');
-		rublonSeal.parentNode.removeChild(rublonSeal);
+		var rublonBadge = document.getElementById('rublon-badge');
+		rublonBadge.parentNode.removeChild(rublonBadge);
 		var loginForm = document.querySelector('form#loginform');
 		if (loginForm) {
-			loginForm.appendChild(rublonSeal);
+			loginForm.appendChild(rublonBadge);
 			var loginButton = loginForm.querySelector('p.submit');
 			if (loginButton) {
 				loginButton.parentNode.removeChild(loginButton);
-				rublonSeal.appendChild(loginButton);
+				rublonBadge.appendChild(loginButton);
 				var loginButtonStyles = window.getComputedStyle(loginButton);
 				if (loginButtonStyles && loginButtonStyles.paddingTop) {
 					var loginButtonPaddingTop = parseInt(loginButtonStyles.paddingTop);
@@ -19,7 +19,7 @@ var RublonWP = {
 				}
 			}
 			this.themeMyLoginCompat(loginForm);
-			rublonSeal.style.display = 'block';
+			rublonBadge.style.display = 'block';
 		}
 		this.updateRetinaImages();
 	
@@ -42,7 +42,7 @@ var RublonWP = {
 
 		var formParent = loginForm.parentNode;
 		if (formParent && formParent.getAttribute('id') == 'theme-my-login') {
-			var rublonSeal = document.getElementById('rublon-seal');
+			var rublonSeal = document.getElementById('rublon-badge');
 			rublonSeal.style.marginBottom = '34px';
 			var loginButton = rublonSeal.querySelector('input[type="submit"]');
 			var loginButtonP = rublonSeal.querySelector('p.submit');

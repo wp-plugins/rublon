@@ -6,11 +6,6 @@ var RublonWP = {
 	roleProtectionLevels: null,
 	lang: null,
 	performedTasks: [],
-	pointers: {
-		apireg: null,
-	},
-	apiRegURL: '',
-	apiRegClick: null,
 
 	findForm: function(formId) {
 		var forms = document.getElementsByTagName('form');
@@ -245,86 +240,6 @@ var RublonWP = {
 
 	},
 
-	prepareApiRegPointer: function() {
-
-		var rublonMenuButton = document.querySelector('a.toplevel_page_rublon');
-		if (rublonMenuButton && this.pointers.apireg !== null) {
-			this.apiRegClick = function(event) {
-				event.preventDefault();
-				var apiRegPointer = document.querySelector('div.wp-pointer.rublon-apireg-pointer');
-				if (!apiRegPointer || !RublonWPTools.visible(apiRegPointer)) {
-					RublonWP.pointers.apireg();
-					RublonWP.setUpRegistrationAgreementListener();
-				}
-			};
-			rublonMenuButton.addEventListener('click', this.apiRegClick, false);
-		
-		} 
-	},
-
-	setRublonMenuEmptyClick: function() {
-
-		var rublonMenuButton = document.querySelector('a.toplevel_page_rublon');
-		if (rublonMenuButton) {
-			this.apiRegClick = function(event) {
-				event.preventDefault();
-			};
-			rublonMenuButton.addEventListener('click', this.apiRegClick, false);
-		}
-
-	},
-
-	setUpRegistrationAgreementListener: function() {
-
-		var checkBox = document.querySelector('input[type="checkbox"]#rublon-apireg-terms-agreed');
-		var nextButton = document.querySelector('#rublon-apireg-button-activate');
-		if (checkBox && nextButton) {
-			checkBox.addEventListener('click', function(event) {
-				var el = event.target;
-				if (typeof el.checked != 'undefined' && el.checked) {
-					RublonWPTools.removeClass(nextButton, 'disabled');
-				} else {
-					RublonWPTools.addClass(nextButton, 'disabled');
-				}
-			}, false);
-			this.updateRetinaImages();
-		}
-
-	},
-
-	apiRegistrationAnswer: function(answer, dismissNonce, regNonce) {
-
-		var apiRegConfirmButton = document.querySelector('#rublon-apireg-button-activate');
-		if (answer == 'yes' && apiRegConfirmButton && !RublonWPTools.hasClass(apiRegConfirmButton, 'disabled')) {
-			var rublon_apireg_dismiss = {
-				action        : 'rublon_apireg_dismissed',
-				nonce         : dismissNonce
-			};
-			var apiRegURL = this.apiRegURL + regNonce; 
-			jQuery.post(ajaxurl, rublon_apireg_dismiss, function() {
-				window.location.href = apiRegURL;
-			});
-		} else if (answer == 'no') {
-			var rublon_apireg_dismiss = {
-				action        : 'rublon_apireg_dismissed',
-				nonce         : dismissNonce
-			};
-			jQuery.post(ajaxurl, rublon_apireg_dismiss, function() {
-				if (RublonWP && RublonWP.prepareApiRegPointer) {
-					if (RublonWP.apiRegClick != null) {
-						var rublonMenuButton = document.querySelector('a.toplevel_page_rublon');
-						if (rublonMenuButton) {
-							rublonMenuButton.removeEventListener('click', RublonWP.apiRegClick, false);
-							RublonWP.apiRegClick = null;
-						}
-					}
-					RublonWP.prepareApiRegPointer();
-				}
-			});
-		}
-
-	},
-
 	updateRetinaImages: function() {
 
 		if (window.devicePixelRatio && window.devicePixelRatio >= 2) {
@@ -334,6 +249,25 @@ var RublonWP = {
 				rublonImageSrc = rublonImageSrc.replace(/(\.[a-z]{3})$/, '@2x$1');
 				rublonImages[i].setAttribute('src', rublonImageSrc);
 			}
+		}
+
+	},
+
+	setUpSubscribeListener: function() {
+
+		var newsletterForm = document.querySelector('form#rublon-newsletter-form');
+		if (newsletterForm) {
+			newsletterForm.addEventListener('submit', function(event) {
+				var subscribeButton = document.querySelector('form#rublon-newsletter-form input#rublon-newsletter-subscribe');
+				subscribeButton.parentNode.removeChild(subscribeButton);
+				var spinner = document.createElement('div');
+				spinner.className = 'rublon-busy-spinner rublon-busy-spinner-appended';
+				var spinnerAnchor = newsletterForm.querySelector('.rublon-busy-spinner-anchor');
+				if (spinnerAnchor) {
+					spinnerAnchor.appendChild(spinner);
+					RublonWPTools.show(spinnerAnchor);
+				}
+			}, false);
 		}
 
 	}

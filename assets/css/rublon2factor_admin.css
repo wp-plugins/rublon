@@ -246,8 +246,69 @@ fieldset.rublon-apireg-fieldset {
 	margin-top: 10px;	
 }
 
-#rublon-apireg-button-cancel, #rublon-apireg-button-activate {
+#rublon-apireg-button-cancel,
+#rublon-apireg-button-activate,
+#rublon-annmstats-button-cancel,
+#rublon-annmstats-button-activate {
 	float: left;
+}
+
+#rublon-apireg-button-cancel, #rublon-annmstats-button-cancel {
+	margin: 0 0 0 5px;	
+}
+
+.rublon-busy-spinner {
+	height: 18px;
+	width: 18px;
+	margin: 2px auto;
+	-webkit-animation: rublon-spinner-rotation .9s infinite linear;
+	-moz-animation: rublon-spinner-rotation .9s infinite linear;
+	-o-animation: rublon-spinner-rotation .9s infinite linear;
+	animation: rublon-spinner-rotation .9s infinite linear;
+	border-left: 3px solid rgba(52, 52, 52, .6);
+	border-right: 3px solid rgba(52, 52, 52, .15);
+	border-bottom: 3px solid rgba(52, 52, 52, .15);
+	border-top: 3px solid rgba(52, 52, 52, .6);
+	border-radius: 100px;
+}
+
+.rublon-busy-spinner-anchor {
+	width: 0;
+	position: relative;
+	margin: 0;
+	display: inline-block;
+}
+
+.rublon-busy-spinner-anchor.hidden {
+	display: none;
+}
+
+.rublon-busy-spinner-appended {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin-top: -18px;
+	margin-left: 5px;
+}
+
+@-webkit-keyframes rublon-spinner-rotation {
+	from {-webkit-transform: rotate(0deg);}
+	to {-webkit-transform: rotate(359deg);}
+}
+
+@-moz-keyframes rublon-spinner-rotation {
+	from {-moz-transform: rotate(0deg);}
+	to {-moz-transform: rotate(359deg);}
+}
+
+@-o-keyframes rublon-spinner-rotation {
+	from {-o-transform: rotate(0deg);}
+	to {-o-transform: rotate(359deg);}
+}
+
+@keyframes rublon-spinner-rotation {
+	from {transform: rotate(0deg);}
+	to {transform: rotate(359deg);}
 }
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 

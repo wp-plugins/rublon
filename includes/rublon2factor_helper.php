@@ -25,7 +25,8 @@ class RublonHelper {
 	const RUBLON_REGISTRATION_SETTINGS_KEY = 'rublon2factor_registration_settings';
 	const RUBLON_ADDITIONAL_SETTINGS_KEY = 'rublon2factor_additional_settings';
 	const RUBLON_OTHER_SETTINGS_KEY = 'rublon2factor_other_settings';
-	const RUBLON_FIRSTINSTALL_SETTINGS_KEY = 'rublon2factor_firstinstall_settigs';
+	const RUBLON_FIRSTINSTALL_SETTINGS_KEY = 'rublon2factor_firstinstall_settings';
+	const RUBLON_TRANSIENTS_SETTINGS_KEY = 'rublon2factor_transient_settings';
 
 	const RUBLON_SETTINGS_RL_ACTIVE_LISTENER = 'rl-active-listener';
 
@@ -35,7 +36,8 @@ class RublonHelper {
 	const RUBLON_META_DEVICE_ID = 'rublon_device_id';
 	
 	const RUBLON_NOTIFY_URL_PATH = '/issue_notifier/wp_notify';
-	const RUBLON_ACTION_PREFIX = 'rublon_';
+	const RUBLON_NOTIFY_TYPE_ERROR = 'error';
+	const RUBLON_NOTIFY_TYPE_STATS = 'statistics';
 
 	const PRERENDER_KEY_MOBILE_USERS = 'prer_mobile_users';
 
@@ -87,6 +89,9 @@ class RublonHelper {
 	const PAGE_WP_LOADED = 'wp_loaded';
 
 	const PHP_VERSION_REQUIRED = '5.2.4';
+	const INSTALL_OBSTACLE_PHP_VERSION_TOO_LOW = 'php_version_too_low';
+	const INSTALL_OBSTACLE_CURL_NOT_AVAILABLE = 'curl_not_available';
+	const INSTALL_OBSTACLE_HASH_NOT_AVAILABLE = 'hash_not_available';
 	
 	/**
 	 * An instance of the Rublon2FactorWordPress class
@@ -102,6 +107,14 @@ class RublonHelper {
 	 * @var array
 	 */
 	static public $cookies;
+
+
+	/**
+	 * Messages stored without cookie involvement
+	 * 
+	 * @var array
+	 */
+	static public $messages = array();
 
 
 	/**
@@ -150,7 +163,7 @@ class RublonHelper {
 		$garbage_man->collectTrash();
 		
 		self::initLogoutListener();
-		
+
 	}
 
 
@@ -195,14 +208,21 @@ class RublonHelper {
 						self::handleConfirmation();
 					}
 					break;
-				case 'init-registration':
-					$nonce = self::uriGet('rublon_nonce');
-					if (!empty($nonce) && wp_verify_nonce($nonce, 'rublon=init-registration')) {
-						self::_initializeConsumerRegistration();
+				case 'newsletter_subscribe':
+					$post = $_POST;
+					$wp_nonce = self::uriGet( '_wpnonce' );
+					if ( !empty( $wp_nonce ) && wp_verify_nonce( $wp_nonce, 'newsletter_subscribe' ) && !empty( $post['email'] ) ) {
+						$rublon_req = new RublonRequests();
+						$result = $rublon_req->subscribeToNewsletter( $post['email'] );
+						if ( $result === true ) {
+							self::setMessage( RublonRequests::SUCCESS_NL_SUBSCRIBED_SUCCESSFULLY, 'updated', 'NL' );
+						} else {
+							self::setMessage( $result, 'error', 'NL' );
+						}
 					} else {
-						self::setMessage('NONCE_VERIFICATION_FAILED', 'error', 'CR');
-						wp_redirect(admin_url(self::WP_RUBLON_PAGE));
+						self::setMessage( RublonRequests::ERROR_INVALID_NONCE, 'error', 'NL' );
 					}
+					wp_safe_redirect( admin_url( self::WP_RUBLON_PAGE ) );
 					break;
 			}
 			exit();
@@ -226,12 +246,12 @@ class RublonHelper {
 
 		$page_actions = array(
 			self::PAGE_ANY => array(
-				'register',
 				'confirm',
 				'deactivate',
+				'newsletter_subscribe',
 			),
 			self::PAGE_LOGIN => array('callback'),
-			self::PAGE_WP_LOADED => array('init-registration'),
+			self::PAGE_WP_LOADED => array('register'),
 		);
 		return (isset($page_actions[$page]) && in_array($action, $page_actions[$page]));
 
@@ -1044,9 +1064,32 @@ class RublonHelper {
 	}
 
 
-	static private function _handleRegistrationException($e) {
+	static public function handleRegistrationException($e, $no_redirect = false) {
 
-		self::_handleCallbackException($e, 'CR');
+		$exception_code = $e->getCode();
+		$exception_message = $e->getMessage();
+		$exception_class = get_class($e);
+		$exception_string = (string)$e;
+
+		$error_code = strtoupper($exception_class);
+
+		self::setMessage($error_code, 'error', 'CR', $no_redirect);
+
+		// prepare message for issue notifier
+		$error_report = array(
+			'message' => 'RublonConsumerRegistration exception.',
+			'exception-code' => $exception_code,
+			'exception-class' => $exception_class,
+			'exception-message' => '[urldecode]' . urlencode($exception_message) . '[/urldecode]',
+			'exception-string' => '[urldecode]' . urlencode($exception_string) . '[/urldecode]',
+		);
+
+		// send issue notify
+		try {
+			self::notify($error_report, array('message-type' => 'error'));
+		} catch (Exception $e) {
+			// Do nothing.
+		}
 
 	}
 
@@ -1121,7 +1164,7 @@ class RublonHelper {
 
 		// send issue notify
 		try {
-			self::notify(array('msg' => $notifierMessage));
+			self::notify(array('msg' => $notifierMessage), array('message-type' => self::RUBLON_NOTIFY_TYPE_ERROR));
 		} catch (Exception $e) {
 			// Do nothing.
 		}		
@@ -1242,7 +1285,11 @@ class RublonHelper {
 				$error_data['previousCode'] = $previous_exception->getCode();
 				$error_data['previousMessage'] = $previous_exception->getMessage();
 			}
-			self::notify($error_data);
+			try {
+				self::notify($error_data, array('message-type' => self::RUBLON_NOTIFY_TYPE_ERROR));
+			} catch (Exception $e) {
+				// Do nothing.
+			}
 			return '';
 		}
 
@@ -1269,8 +1316,8 @@ class RublonHelper {
 	static private function _getLoginToken() {
 
 		$login_token_id = RublonCookies::getLoginTokenIdFromCookie();
-		if (!empty($login_token_id)) {
-			return get_transient(self::TRANSIENT_LOGIN_TOKEN_PREFIX . $login_token_id);
+		if ( !empty( $login_token_id ) ) {
+			return Rublon_Transients::getTransient( 'lt_' . $login_token_id );
 		}
 
 	}
@@ -1280,22 +1327,22 @@ class RublonHelper {
 
 		$login_token_id = self::_generateLoginTokenId();
 		$login_token = array(
-			'user_id' => self::getUserId($user),
+			'user_id' => self::getUserId( $user ),
 			'token_id' => $login_token_id,
 		);
-		set_transient(
-			self::TRANSIENT_LOGIN_TOKEN_PREFIX . $login_token_id,
+		Rublon_Transients::setTransient(
+			'lt_' . $login_token_id,
 			$login_token,
 			self::LOGIN_TOKEN_LIFETIME * MINUTE_IN_SECONDS
 		);
-		RublonCookies::storeLoginTokenIdInCookie($login_token_id);
+		RublonCookies::storeLoginTokenIdInCookie( $login_token_id );
 
 	}
 
 
-	static private function _clearLoginToken($login_token_id) {
+	static private function _clearLoginToken( $login_token_id ) {
 
-		delete_transient(self::TRANSIENT_LOGIN_TOKEN_PREFIX . $login_token_id);
+		Rublon_Transients::deleteTransient( 'lt_' . $login_token_id );
 
 	}
 
@@ -1332,6 +1379,9 @@ class RublonHelper {
 			case 'firstinstall':
 				$key = self::RUBLON_FIRSTINSTALL_SETTINGS_KEY;
 				break;
+			case 'transient':
+				$key = self::RUBLON_TRANSIENTS_SETTINGS_KEY;
+				break;
 			default:
 				$key = self::RUBLON_SETTINGS_KEY;
 		}
@@ -1362,6 +1412,9 @@ class RublonHelper {
 			case 'firstinstall':
 				$key = self::RUBLON_FIRSTINSTALL_SETTINGS_KEY;
 				break;
+			case 'transient':
+				$key = self::RUBLON_TRANSIENTS_SETTINGS_KEY;
+				break;
 			default:
 				$key = self::RUBLON_SETTINGS_KEY;
 		}
@@ -1372,11 +1425,30 @@ class RublonHelper {
 	}
 
 
-	static public function canPluginAttemptRegistration() {
+	static public function canPluginAttemptRegistration(&$obstacles = null) {
 
+		if (is_array($obstacles)) {
+			$obstacles[self::INSTALL_OBSTACLE_PHP_VERSION_TOO_LOW] = version_compare( phpversion(), self::PHP_VERSION_REQUIRED, 'l' );
+			$obstacles[self::INSTALL_OBSTACLE_CURL_NOT_AVAILABLE] = ! function_exists( 'curl_init' );
+			$obstacles[self::INSTALL_OBSTACLE_HASH_NOT_AVAILABLE] = ! function_exists( 'hash' );
+		}
 		return !self::isSiteRegistered()
-			&& (version_compare(phpversion(), self::PHP_VERSION_REQUIRED, 'ge'))
-			&& function_exists('curl_init');
+			&& ( version_compare( phpversion(), self::PHP_VERSION_REQUIRED, 'ge' ) )
+			&& function_exists( 'curl_init' )
+			&& function_exists( 'hash' );
+
+	}
+
+
+	static public function isTrackingAllowed() {
+
+		require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
+		$other_settings = self::getSettings('other');
+		if (!empty($other_settings[Rublon_Pointers::ANONYMOUS_STATS_ALLOWED])) {
+			return $other_settings[Rublon_Pointers::ANONYMOUS_STATS_ALLOWED] == self::YES;
+		} else {
+			return null;
+		}
 
 	}
 
@@ -1388,12 +1460,16 @@ class RublonHelper {
 	 */
 	static public function getMessages() {
 
+		$messages = array();
 		if (!empty(self::$cookies['messages'])) {
 			$messages = self::$cookies['messages'];
 			unset(self::$cookies['messages']);
-			return self::_explainMessages($messages);
 		}
-		return null;
+		if (!empty(self::$messages)) {
+			$messages = array_merge($messages, self::$messages);
+			self::$messages = array();
+		}
+		return self::_explainMessages($messages);
 
 	}
 
@@ -1405,10 +1481,21 @@ class RublonHelper {
 	 * @param string $type Message type
 	 * @param string $origin Message origin
 	 */
-	static public function setMessage($code, $type, $origin) {
+	static public function setMessage($code, $type, $origin, $now = false) {
 	
 		$msg = $type . '__' . $origin . '__' . $code;
-		RublonCookies::storeMessageInCookie($msg);
+		if ($now) {
+			self::storeMessageInInstance($msg);			
+		} else {
+			RublonCookies::storeMessageInCookie($msg);
+		}
+
+	}
+
+
+	static public function storeMessageInInstance($msg) {
+
+		array_push(self::$messages, $msg);
 
 	}
 
@@ -1436,6 +1523,9 @@ class RublonHelper {
 						break;
 					case 'CR':
 						$errorMessage = __('Rublon activation failed. Please try again. Should the error occur again, contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon');
+						break;
+					case 'NL':
+						$no_code = true;
 						break;
 				}
 				if (($delimiter = strpos($msgCode, '|')) !== false) {
@@ -1487,13 +1577,34 @@ class RublonHelper {
 						$errorMessage = __('Your server\'s time seems out of sync. Please check that it is properly synchronized - Rublon won\'t be able to verify your website\'s security otherwise.', 'rublon');
 						break;
 					case 'TC_MOBILE_APP_REQUIRED':
-						$no_code = true;
 						$errorMessage = __('The authentication process has been halted.', 'rublon') . ' ' . __('This site\'s administrator requires you to confirm this operation using the Rublon mobile app.', 'rublon')
 						. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">wordpress.rublon.com</a>.', 'rublon'), RublonHelper::wordpressRublonComURL());
+						$no_code = true;
 						break;
 					case 'RC_FIRST_FACTOR_NOT_CLEARED':
-						$no_code = true;
 						$errorMessage = __('<strong>ERROR:</strong> Unauthorized access.', 'rublon');
+						$no_code = true;
+						break;
+					case 'NL_' . RublonRequests::ERROR_RUBLON_NOT_CONFIGURED:
+						$errorMessage = __('Rublon Account Security has not been properly registered in the Rublon API.', 'rublon')
+							. ' ' . __('Register the plugin in the Rublon API and try this action again.', 'rublon');
+						break;
+					case 'NL_' . RublonRequests::ERROR_INVALID_NONCE:
+						$errorMessage = __('Internal WordPress error while subscribing to the newsletter.', 'rublon')
+							. ' ' . __('Please try again in a minute.', 'rublon');
+						break;
+					case 'NL_' . RublonRequests::ERROR_NL_RUBLON_API:
+						$errorMessage = __('Rublon API error while subscribing to the newsletter.', 'rublon')
+							. ' ' . __('Please try again in a minute.', 'rublon')
+							. ' ' . __('Should the error occur again, contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon');
+							break;
+					case 'NL_' . RublonRequests::ERROR_NL_API:
+						$errorMessage = __('API error while subscribing to the newsletter.', 'rublon')
+							. ' ' . __('Please try again in a minute.', 'rublon')
+							. ' ' . __('Should the error occur again, contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon');
+						break;
+					case 'NL_' . RublonRequests::ERROR_ALREADY_SUBSCRIBED:
+						$errorMessage = __('You are already subscribed to this newsletter.', 'rublon');
 						break;
 				}
 				$result[] = array('message' => $errorMessage, 'type' => $msgType);
@@ -1515,6 +1626,9 @@ class RublonHelper {
 						break;
 					case 'POSTL_AUTHENTICATION_TYPE_CHANGED':
  						$updatedMessage = __('Since Rublon plugin version 2.0, the authentication process has been changed significantly. The accounts are now protected using the email address. We have detected that your WordPress account\'s email address differs from the one you used to create your account in the Rublon mobile app. Please change your WordPress account\'s email address accordingly or add your WordPress account\'s email address in the "Email addresses" section of the Rublon mobile app.', 'rublon');
+						break;
+					case 'NL_' . RublonRequests::SUCCESS_NL_SUBSCRIBED_SUCCESSFULLY:
+						$updatedMessage = __('You have successfully subscribed to our newsletter! Check your email inbox for more details.', 'rublon');
 						break;
 				}
 				$result[] = array('message' => $updatedMessage, 'type' => $msgType);
@@ -1637,27 +1751,11 @@ class RublonHelper {
 			$consumerRegistration = new RublonConsumerRegistrationWordPress();
 			$consumerRegistration->action($action);
 		} catch (RublonException $e) {
-			self::_handleRegistrationException($e);
+			self::handleRegistrationException($e);
 			wp_safe_redirect(admin_url());
 			exit();
 		}
 
-	}
-
-
-	/**
-	 * Initialize consumer registration (with a "busy" indicator) 
-	 */
-	static private function _initializeConsumerRegistration() {
-
-		try {
-			$consumerRegistration = new RublonConsumerRegistrationWordPress();
-			$consumerRegistration->initForWordPress();		
-		} catch (RublonException $e) {
-			self::_handleRegistrationException($e);
-			wp_safe_redirect(admin_url());
-			exit();
-		}
 	}
 
 
@@ -1710,37 +1808,45 @@ class RublonHelper {
 	 * 
 	 * @param array $error_info Error info
 	 */
-	static function notify($error_info) {
+	static public function notify($error_info, $options) {
 
-		$error_info['blog-info'] = get_bloginfo();
-		$plugin_meta = self::preparePluginMeta();
-		if (!empty($plugin_meta['meta'])) {
-			$error_info['plugin-info'] = $plugin_meta['meta'];
+		if (self::isTrackingAllowed()) {
+
+			if (!empty($options['message-type'])) {
+				$error_info['message-type'] = $options['message-type'];
+			}
+			$error_info['wp-site-title'] = get_bloginfo();
+			$plugin_meta = self::preparePluginMeta();
+			if (!empty($plugin_meta['meta'])) {
+				$error_info['wp-site-info'] = $plugin_meta['meta'];
+			}
+			$error_info['wp-site-config'] = self::_getWPConfig();
+			$error_info['php-info'] = self::_phpinfo();
+			
+			$ch = curl_init(self::RUBLON_API_DOMAIN . self::RUBLON_NOTIFY_URL_PATH);
+			$headers = array(
+					"Content-Type: application/json; charset=utf-8",
+					"Accept: application/json, text/javascript, */*; q=0.01"
+			);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+			
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($error_info));
+				
+			curl_setopt($ch, CURLOPT_HEADER, false);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_USERAGENT, 'Rublon for WordPress');
+			
+			// Execute request
+			curl_exec($ch);
+			if (curl_error($ch)) {
+				// Nothing for now
+			}
+			curl_close($ch);
+
 		}
-		$error_info['php-info'] = self::_info();				
-		
-		$ch = curl_init(self::RUBLON_API_DOMAIN . self::RUBLON_NOTIFY_URL_PATH);
-		$headers = array(
-			"Content-Type: application/json; charset=utf-8",
-			"Accept: application/json, text/javascript, */*; q=0.01"
-		);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-		
-		curl_setopt($ch, CURLOPT_POST, true);							
-		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($error_info));
-					
-		curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Rublon for WordPress');
-
-		// Execute request
-		curl_exec($ch);		
-		if (curl_error($ch)) {
-			// Nothing for now
-		}		
-		curl_close($ch);
 
 	}
 
@@ -1750,7 +1856,7 @@ class RublonHelper {
 	 * 
 	 * @return array
 	 */
-	static private function _info() {
+	static private function _phpinfo() {
 
 		$php_info = array(
 			'php-extensions' => get_loaded_extensions(),
@@ -1760,6 +1866,57 @@ class RublonHelper {
 			'php-config-options' => ini_get_all(),
 		);
 	    return $php_info;
+
+	}
+
+
+	static private function _getWPConfig() {
+
+		$wp_configuration = array(
+			'plugins' => array(),
+			'active-plugins' => array(),
+			'themes' => array(),
+			'active-theme' => array(), 
+		);
+
+		$all_plugins = get_plugins();
+		$active_plugins = get_option('active_plugins');
+		foreach ($all_plugins as $plugin_file => $plugin_data) {
+			array_push($wp_configuration['plugins'], array(
+				'plugin-name' => $plugin_data['Name'],
+				'plugin-uri' => $plugin_data['PluginURI'],
+				'plugin-version' => $plugin_data['Version'],
+				'plugin-file' => $plugin_file,
+			));
+			if (in_array($plugin_file, $active_plugins)) {
+				array_push($wp_configuration['active-plugins'], array(
+					'active-plugin-name' => $plugin_data['Name'],
+					'active-plugin-file' => $plugin_file,
+				));
+			}
+		}
+
+		$all_themes = wp_get_themes();
+		$current_theme = wp_get_theme();
+		foreach ($all_themes as $theme) {
+			if ($theme instanceof WP_Theme) {
+				array_push($wp_configuration['themes'], array(
+					'theme-name' => $theme->Name,
+					'theme-uri' => $theme->ThemeURI,
+					'theme-version' => $theme->Version,
+					'theme-dir' => $theme->get_stylesheet(),
+					'theme-parent-dir' => $theme->get_template(),
+				));
+				if ($current_theme instanceof WP_Theme && $theme->get_stylesheet() == $current_theme->get_stylesheet()) {
+					array_push($wp_configuration['active-theme'], array(
+						'theme-name' => $theme->Name,
+						'theme-dir' => $theme->get_stylesheet(),
+					));
+				}
+			}
+		}
+
+		return $wp_configuration;
 
 	}
 
@@ -1903,9 +2060,17 @@ class RublonHelper {
 		}
 
 		$plugin_meta = array(
+			'site-url' => site_url(),
 			'wordpress-version' => get_bloginfo('version'),
+			'wordpress-language' => get_bloginfo('language'),
 			'plugin-version' => self::getCurrentPluginVersion(),
 		);
+
+		$current_user = wp_get_current_user();
+		if ($current_user instanceof WP_User) {
+			$plugin_meta['admin-email'] = RublonHelper::getUserEmail($current_user);
+		}
+
 		foreach ($role_count as $role_name => $count) {
 			$plugin_meta['registered-' . $role_name . 's'] = $count;
 		}
@@ -2609,7 +2774,7 @@ class RublonHelper {
 ?>
 <a id="rublon-email2fa"></a>
 <h3 class="rublon-header">
-<?php _e('Rublon Account Protection ', 'rublon'); ?>
+<?php _e('Rublon - Account Protection', 'rublon'); ?>
 </h3>
 <table class="form-table">
 <tr>
@@ -2693,6 +2858,50 @@ class RublonHelper {
 
 	}
 
+	static public function printSocialSection() {
+?>
+<h3><?php _e('Keep in touch', 'rublon'); ?></h3>
+<table class="form-table">
+<tr>
+	<th>
+		<?php _e('Social media', 'rublon'); ?>
+	</th>
+	<td>
+		<?php _e('Join our community', 'rublon'); ?>:
+		<a href="https://www.facebook.com/RublonApp" target="_blank">Facebook</a> |
+		<a href="https://twitter.com/rublon" target="_blank">Twitter</a> | 
+		<a href="http://instagram.com/rublon" target="_blank">Instagram</a> | 
+		<a href="https://www.linkedin.com/company/2772205" target="_blank">LinkedIn</a>
+	</td>
+</tr>
+<tr>
+	<th>
+		<?php _e('Newsletter', 'rublon'); ?>
+	</th>
+<?php
+	$current_user = wp_get_current_user();
+	$user_email = ($current_user instanceof WP_User) ? self::getUserEmail($current_user) : '';
+?>
+	<td id="rublon-newsletter-form-container">
+		<form method="POST" action="<?php echo wp_nonce_url( self::getActionURL( 'newsletter_subscribe' ), 'newsletter_subscribe' ) ; ?>" id="rublon-newsletter-form">
+			<input type="text" name="email" id="rublon-newsletter-email" value="<?php echo htmlspecialchars($user_email); ?>" class="regular-text" />
+			<div class="rublon-busy-spinner-anchor hidden"></div>
+			<input type="submit" name="subscribe" id="rublon-newsletter-subscribe" class="button button-primary" value="<?php _e('Subscribe', 'rublon'); ?>" />
+			</div>
+		</form>
+		<br />
+		<?php _e('Stay up to date on new product releases, events, WordPress news and special promotions.', 'rublon'); ?>
+	</td>
+</tr>
+</table>
+<script type="text/javascript">//<![CDATA[
+	if (RublonWP) {
+		RublonWP.setUpSubscribeListener();
+	}
+//]]></script>
+<?php
+	}
+
 
 	/**
 	 * Print a JS that sets localized messages for Rublon JS scripts
@@ -2765,7 +2974,9 @@ class RublonHelper {
 	 */
 	static public function rubloncomUrl($withLang = true, $path = null) {
 	
-		$url = 'https://rublon.com';
+		$url = str_replace( 'developers', '', self::RUBLON_REGISTRATION_DOMAIN );
+		$url = str_replace( '-', '', $url ); 
+		$url = str_replace( '/.', '/', $url );
 		if ($withLang) {
 			$lang = self::getBlogLanguage();
 			$url .= ($lang != 'en') ? ('/' . $lang) : '';

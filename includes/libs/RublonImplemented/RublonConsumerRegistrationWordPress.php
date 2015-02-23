@@ -4,6 +4,9 @@ require_once dirname(__FILE__) . '/../RublonConsumerRegistration/RublonConsumerR
 
 class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemplate {
 
+	const TEMPLATE_FORM_POST = '<form action="%s" method="POST" id="rublon-consumer-registration">
+			%s
+		</form>';
 
 	protected function finalSuccess() {
 
@@ -18,6 +21,16 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		$pluginMeta = RublonHelper::preparePluginMeta();
 		$pluginMeta['action'] = 'activation';
 		RublonHelper::pluginHistoryRequest($pluginMeta);
+
+		$other_settings = RublonHelper::getSettings('other');
+		if (!empty($other_settings['newsletter_signup'])) {
+			foreach ($other_settings['newsletter_signup'] as $email) {
+				$rublon_req = new RublonRequests();
+				$rublon_req->subscribeToNewsletter($email);
+			}
+			unset($other_settings['newsletter_signup']);
+			RublonHelper::saveSettings($other_settings, 'other');
+		}
 		
 		$this->_redirect(admin_url(RublonHelper::WP_RUBLON_PAGE));
 
@@ -233,16 +246,12 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		$data['msg'] = $msg;
 		$data['request_uri'] = $_SERVER['REQUEST_URI'];
 	
-		if (!function_exists('curl_init')) {
-			return '<img src="' . RublonHelper::RUBLON_API_DOMAIN . RublonHelper::RUBLON_NOTIFY_URL_PATH . '/' . base64_encode(urlencode($msg)) . '" style="display: none">';
-		} else {
-			try {
-				RublonHelper::notify($data);
-			} catch (RublonException $e) {
-				// Should an error occur here, don't inform the user about it, too low-level
-			}
-			return '';
+		try {
+			RublonHelper::notify($data, array('message-type' => RublonHelper::RUBLON_NOTIFY_TYPE_ERROR));
+		} catch (Exception $e) {
+			// Do nothing.
 		}
+		return '';
 	
 	}
 
@@ -302,41 +311,34 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 	}
 
 
+	public function retrieveRegistrationForm() {
+
+		$temp_key = RublonSignatureWrapper::generateRandomString(self::SECRET_KEY_LENGTH);
+		$this->saveInitialParameters($temp_key, time());
+		$reg_form = $this->getRegistrationForm();
+		return $reg_form;
+
+	}
+
+
 	/**
-	 * Initialize consumer registration
-	 * 
-	 * WordPress needs its own initialize method
-	 * to print out a "busy" indicator along with the
-	 * registration form.
-	 * 
-	 * @throws UserUnauthorized_RublonConsumerException
+	 * Get the registration form.
+	 *
+	 * @return string
 	 */
-	public function initForWordPress() {
-
-		if ($this->canUserActivate()) {
-			$tempKey = RublonSignatureWrapper::generateRandomString(self::SECRET_KEY_LENGTH);
-			$this->saveInitialParameters($tempKey, time());
-			$regForm = $this->getRegistrationForm();
-			$pageTemplate = RublonHelper::pageTemplate();
-			$busyPageContent = RublonHelper::busyPageContentTemplate();
-			$pageContent = sprintf($busyPageContent,
-				'',
-				__('Rublon is being configured.', 'rublon') . '<br />' . __('This will only take a moment.', 'rublon'),
-				RublonHelper::spinnerTemplate(' rublon-reg-spinner'),
-				$regForm
-			);
-			$styles = RublonHelper::busyPageStyles(true);
-			$page = sprintf($pageTemplate,
-				__('Rublon Configuration', 'rublon'),
-				$styles,
-				$pageContent
-			);
-			echo $page;
-			exit();
-		} else {
-			throw new UserUnauthorized_RublonConsumerException;
-		}
-
+	protected function getRegistrationForm() {
+	
+		$action = $this->getAPIDomain() . self::URL_PATH_ACTION . '/' . self::ACTION_INITIALIZE;
+		$action = htmlspecialchars($action);
+	
+		$content = $this->getInputHidden(self::FIELD_PROJECT_URL, $this->getProjectUrl())
+		. $this->getInputHidden(self::FIELD_PROJECT_CALLBACK_URL, $this->getCallbackUrl())
+		. $this->getInputHidden(self::FIELD_PROJECT_DATA, json_encode($this->getProjectData()))
+		. $this->getInputHidden(self::FIELD_COMMUNICATION_URL, $this->getCommunicationUrl())
+		. $this->getInputHidden(self::FIELD_TEMP_KEY, $this->getTempKey());
+	
+		return sprintf(self::TEMPLATE_FORM_POST, $action, $content);
+	
 	}
 
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon 2.0\n"
-"POT-Creation-Date: 2015-02-04 11:10+0100\n"
-"PO-Revision-Date: 2015-02-04 11:11+0100\n"
+"POT-Creation-Date: 2015-02-09 13:24+0100\n"
+"PO-Revision-Date: 2015-02-09 13:43+0100\n"
 "Last-Translator: emre <emre@amacdizayn.com>\n"
 "Language-Team: Mehmet Emre Baş, Tarık ÇAYIR <amacdizayn@gmail.com, "
 "tarikcayir@gmail.com>\n"
@@ -15,10 +15,13 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: D:\\eclipse-workspace-kepler\\WordPress2FA\n"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/classes/class-rublon-pointers.php:40
 msgid "Rublon API registration"
 msgstr "Rublon API kaydi"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/classes/class-rublon-pointers.php:42
 msgid ""
 "Rublon Account Protection works by talking to the Rublon API. This requires "
 "an API key, which needs to be generated specifically for your website."
@@ -26,6 +29,8 @@ msgstr ""
 "Rublon Hesap Koruma eklentisi Rublon API ile çalışır. Siteniz için "
 "oluşturulmuş özel bir API anahtarına ihtiyaç duyar."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/classes/class-rublon-pointers.php:44
+#, php-format
 msgid ""
 "Due to security reasons, this requires a registration with your email "
 "address: <strong>%s</strong>. In order to register with a different email "
@@ -35,6 +40,8 @@ msgstr ""
 "Farklı bir email adresi ile kayıt olmak için, <a href=\"%s\">profil "
 "ayarları</a> sayfanıza giderek e mail adresinizi değiştirin."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/classes/class-rublon-pointers.php:51
+#, php-format
 msgid ""
 "I agree to the <a href=\"%s\" target=\"_blank\">Rublon API Terms of Service</"
 "a>."
@@ -42,18 +49,25 @@ msgstr ""
 "<a href=\"%s\" target=\"_blank\">Rublon API Hizmet Şartlarını</a> okudum ve "
 "kabul ediyorum."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/classes/class-rublon-pointers.php:65
 msgid "Cancel"
 msgstr "Vazgeç"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/classes/class-rublon-pointers.php:70
 msgid "Activate"
 msgstr "Etkinleştir"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:76
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:79
+#, php-format
 msgid ""
 "Your account is protected by <a href=\"%s\" target=\"_blank\">Rublon</a>."
 msgstr ""
 "Hesabınız <a href=\"%s\" target=\"_blank\"Rublon</a> tarafından "
 "korunmaktadır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:80
+#, php-format
 msgid ""
 "Get the <a href=\"%s/get\" target=\"_blank\">Rublon mobile app</a> for more "
 "security."
@@ -61,9 +75,14 @@ msgstr ""
 "Daha fazla güvenlik için <a href=\"%s/get\" target=\"_blank\">Rublon mobil "
 "uygulamasını</a> yükleyiniz."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:85
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:309
 msgid "Warning!"
 msgstr "Uyarı"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php:86
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:310
+#, php-format
 msgid ""
 "Your account is not protected. Go to <a href=\"%s\">your profile page</a> to "
 "enable account protection."
@@ -71,39 +90,60 @@ msgstr ""
 "Hesabınız korunmuyor. <a href=\"%s\">Profil</a> sayfanıza gidin ve korumayı "
 "etkinleştirin."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:69
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1510
 msgid "Rublon error code: "
 msgstr "Rublon hata kodu:"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:324
 msgid "Rublon is being configured."
 msgstr "Rublon yapılandırılıyor."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:324
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2515
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2541
 msgid "This will only take a moment."
 msgstr "Bu sadece bir dakika sürecek."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:330
 msgid "Rublon Configuration"
 msgstr "Rublon Ayarları"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:65
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:286
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:353
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:376
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:467
 msgid "Rublon"
 msgstr "Rublon"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:68
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:118
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/rublon2factor.php:34
 msgid "Settings"
 msgstr "Ayarlar"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:73
 msgid "Trusted Devices"
 msgstr "Güvenilir Cihazlar"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:78
 msgid "Access Control"
 msgstr "Giriş Kontrolü"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:119
 msgid "Protection"
 msgstr "Koruma"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:120
 msgid "XML-RPC"
 msgstr "XML-RPC"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:121
 msgid "Real-Time Remote Logout"
 msgstr "Gerçek Zamanlı Uzaktan Çıkış İşlemi"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:151
 msgid ""
 "Every user is protected via email by default. You can turn this off for "
 "selected roles. For more security, you can also require selected roles to "
@@ -114,9 +154,12 @@ msgstr ""
 "istediğiniz hesap türü için mobil onay ile doğrulamayı aktif hale "
 "getirebilirsiniz."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:152
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2668
 msgid "Notice:"
 msgstr "Not:"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:153
 msgid ""
 "Users of the Rublon mobile app are always protected, regardless of this "
 "setting. Users with no minimum protection can turn on protection via email "
@@ -129,18 +172,23 @@ msgstr ""
 "seviyesine sahip kullanıcılar korumayı kapalı konuma getiremezler. Bu yetki "
 "sadece yönetici seviyesindeki kullanıcılara aittir."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:161
 msgid "Minimum Protection"
 msgstr "Minimum Koruma"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:202
 msgid "Mobile app"
 msgstr "Mobil uygulama"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:203
 msgid "Email"
 msgstr "E-posta"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:204
 msgid "None"
 msgstr "Hiçbiri"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:241
 msgid ""
 "XML-RPC allows external applications to administer your website without "
 "having to authenticate through Rublon. We strongly recommend to keep it "
@@ -150,12 +198,17 @@ msgstr ""
 "işlemi olmadan sitenize erişim vermenizi sağlar. Pasif konumda olmasını "
 "şiddetle öneriyoruz"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:243
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:272
 msgid "Disabled"
 msgstr "Pasif"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:244
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:271
 msgid "Enabled"
 msgstr "Aktif"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:269
 msgid ""
 "Users get logged out from a trusted device in real-time directly upon "
 "removing it. Disable this if you experience slower page load times. Remote "
@@ -166,6 +219,9 @@ msgstr ""
 "olursa pasif hale getirebilirsiniz. Bu özelliği pasif hale getirirseniz "
 "kullanıcı sayfasını yenilediğinde sistemden çıkış yapmış olur."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:296
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:356
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:379
 msgid ""
 "Rublon instantly protects all accounts with effortless, email-based two-"
 "factor authentication."
@@ -173,20 +229,31 @@ msgstr ""
 "Rublon, email tabanlı 2 adımlı doğrulama özelliğini kullanan bütün kullanıcı "
 "hesaplarını korur."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:297
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:357
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:380
 msgid "Get the optional mobile app for more security!"
 msgstr "Daha fazla güvenlik için mobil uygulamayı indirin."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:298
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:358
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:381
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1501
+#, php-format
 msgid ""
 "Learn more at <a href=\"%s\" target=\"_blank\">wordpress.rublon.com</a>."
 msgstr ""
 "Detaylı bilgi:  <a href=\"%s\" target=\"_blank\">wordpress.rublon.com</a>."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:353
 msgid "Trusted Device Manager"
 msgstr "Güvenilir Cihaz Yöneticisi"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:376
 msgid "Access Control Manager"
 msgstr "Giriş Kontrol Yöneticisi"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:413
 msgid ""
 "Warning! The PHP version of your server is too old to run Rublon. Please "
 "upgrade your server's PHP version."
@@ -194,18 +261,23 @@ msgstr ""
 "PHP sürümünüz eski olduğu için Rublon çalışamıyor.  Lütfen sunucu PHP "
 "sürümünü yükseltin."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:414
 msgid "Required PHP version:"
 msgstr "Gerekli PHP sürümü"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:415
 msgid "(or above)"
 msgstr "(ya da yukarıda)"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:415
 msgid "Your PHP version:"
 msgstr "PHP sürümünüz:"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:421
 msgid "Warning! The cURL library has not been found on this server."
 msgstr "Uyarı! İlgili cURL kütüphanesi sunucunuzda bulunamamıştır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:421
 msgid ""
 "It is a crucial component of the Rublon plugin and its absence will prevent "
 "it from working properly. Please have the cURL library installed or consult "
@@ -214,67 +286,108 @@ msgstr ""
 "Bu bileşen Rublon eklentisinin sorunsuz çalışması için gereklidir. Lütfen "
 "cURL kütüphanesini yüklemek için sunucu yöneticinize başvurun."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:425
+msgid "Warning! The Hash PHP extension has not been found on this server."
+msgstr "Uyarı! İlgili Hash PHP kütüphanesi sunucunuzda bulunamamıştır."
+
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:425
+msgid ""
+"It is a crucial component of the Rublon plugin and its absence will prevent "
+"it from working properly. Please have the Hash extension installed or "
+"consult your server administrator about it."
+msgstr ""
+"Bu bileşen Rublon eklentisinin sorunsuz çalışması için gereklidir. Lütfen "
+"Hash kütüphanesini yüklemek için sunucu yöneticinize başvurun."
+
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:510
 msgid "Account protected by Rublon"
 msgstr "Hesabınız Rublon tarafından koruma altındadır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:558
 msgid "Protected by Rublon"
 msgstr "Rublon tarafından korunmaktadır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:612
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_admin.php:613
 msgid "Rublon Two-Factor Authentication"
 msgstr "Rublon 2 Adımlı Doğrulama"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:466
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:628
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:965
 msgid "Your profile is being updated."
 msgstr "Profiliniz güncellendi."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:537
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:693
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:972
 msgid "Rublon settings are being updated."
 msgstr "Rublon ayarları güncellendi."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:566
 msgid "Do you confirm changing your protection type?"
 msgstr "Korumu türünüzü değiştirmeyi onaylıyor musunuz?"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:573
+#, php-format
 msgid ""
 "Do you confirm changing your protection type, your email address to: %s, as "
 "well as your password?"
 msgstr "E-posta adresinizin %s olarak değiştirilmesini onaylıyor musunuz?"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:575
+#, php-format
 msgid ""
 "Do you confirm changing your protection type and your email address to: %s?"
 msgstr ""
 "Koruma türünü ve e-posta adresinizi %s olarak değiştirmeyi onaylıyor "
 "musunuz: ?"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:580
+#, php-format
 msgid ""
 "Do you confirm changing your email address to: %s, as well as your password?"
 msgstr ""
 "E-posta adresinizin: %s ve şifrenizin değiştirilmesini onaylıyor musunuz?"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:582
+#, php-format
 msgid "Do you confirm changing your email address to: %s?"
 msgstr "E-posta adresinizin, %s olarak değiştirilmesini onaylıyor musunuz?"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:589
 msgid "Do you confirm changing your protection type, as well as your password?"
 msgstr "Koruma türünü ve  şifrenizin değiştirmesini onaylıyor musun?"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:591
 msgid "Do you confirm changing your password?"
 msgstr "Şifre değişikliğini onaylıyor musunuz?"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:657
 msgid "Do you confirm changing minimum protection levels?"
 msgstr "Minimum koruma seviyesine geçmeyi onaylıyor musunuz?"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:828
 msgid "Profile update"
 msgstr "Profil güncel."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1024
 msgid "Operation aborted."
 msgstr "İşlem durduruldu."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1036
 msgid "Operation cancelled."
 msgstr "İşlem iptal edildi."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1097
 msgid "Error details: "
 msgstr "Hata detayları:"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1444
 msgid "There was a problem during the authentication process."
 msgstr "Doğrulama esnasında bir sorun oluştu."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1447
 msgid ""
 "Rublon activation failed. Please try again. Should the error occur again, "
 "contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
@@ -283,15 +396,20 @@ msgstr ""
 "karşılaşırsanız lütfen bizimle iletişime geçin. Email: <a href=\"mailto:"
 "support@rublon.com\">support@rublon.com</a>."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1457
 msgid "You cannot protect an account already protected by Rublon."
 msgstr "Bu hesap zaten Rublon ile koruma altındadır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1460
 msgid "Unable to protect your account with Rublon."
 msgstr "Rublon ile koruma başarısız."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1463
 msgid "Unable to disable Rublon protection."
 msgstr "Rublon pasif konuma getirilemedi"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1466
+#, php-format
 msgid ""
 "The version of Rublon for Wordpress that you are trying to activate is "
 "outdated. Please go to the <a href=\"%s\">Plugins</a> page and update it to "
@@ -300,9 +418,12 @@ msgstr ""
 "Rublon versiyonu eski. Lütfen <a href=\"%s\"> Eklentiler </a>sayfasına gidin "
 "ve eklentiyi son sürümüne güncelleyin."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1468
 msgid "update now"
 msgstr "şimdi güncelle"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1471
+#, php-format
 msgid ""
 "Thank you! Now all of your users can protect their accounts with Rublon. "
 "However, there has been a problem with protecting your account. Go to <a "
@@ -312,6 +433,8 @@ msgstr ""
 "koruyabilirler.  Ancak koruma esnasında bir sorun oluştu. Hesap güvenliğiniz "
 "için <a href=\"%s\">Rublon </a>sayfasını ziyaret edin."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1477
+#, php-format
 msgid ""
 "Due to security purposes, your administrator requires you to install the <a "
 "href=\"%s\" target=\"_blank\">Rublon mobile app</a>. Enter your WordPress "
@@ -321,6 +444,8 @@ msgstr ""
 "gerekmektedir. Kayıt işleminde WordPress kullanıcı e-posta adresinizi "
 "kullanmalısınız: %s."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1482
+#, php-format
 msgid ""
 "If you already have the Rublon mobile app, please go to <a href=\"%s\" "
 "target=\"_blank\">www.rublon.com</a> and log in to your User Panel in order "
@@ -330,6 +455,7 @@ msgstr ""
 "rublon.com</a> adresini ziyaret edin ve kullanıcı adınıza ait e-posta "
 "adresiniz ile giriş yapın."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1496
 msgid ""
 "Your server's time seems out of sync. Please check that it is properly "
 "synchronized - Rublon won't be able to verify your website's security "
@@ -338,20 +464,25 @@ msgstr ""
 "Sunucu saati senkronize değil. Sunucu saati senkronize olmadan Rublon "
 "çalışmayacaktır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1500
 msgid "The authentication process has been halted."
 msgstr "Kimlik doğrulama işlemi durdurulmuştur."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1500
 msgid ""
 "This site's administrator requires you to confirm this operation using the "
 "Rublon mobile app."
 msgstr "Site yöneticiniz Rublon mobil kullanmanıza izin vermesi gerekmektedir."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1505
 msgid "<strong>ERROR:</strong> Unauthorized access."
 msgstr "<strong>HATA:</strong> Erişim için yetkiniz yok."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1517
 msgid "Your account is now protected by Rublon."
 msgstr "Hesabınız Rublon tarafından korunmatadır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1520
 msgid ""
 "Rublon protection has been disabled. You are now protected by a password "
 "only, which may result in unauthorized access to your account. We strongly "
@@ -360,10 +491,12 @@ msgstr ""
 "Rublon koruması deaktif durumda. Hesabınız sadece şifre ile korunmaktadır. "
 "Hesabınızı Rublon ile koruma altına almanızı öneriyoruz."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1523
 msgid "Thank you! All accounts are now protected by Rublon."
 msgstr ""
 "Teşekkürler. Artık bütün kullanıcı hesapları Rublon tarafından korunmaktadır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1526
 msgid ""
 "Since Rublon plugin version 2.0, the authentication process has been changed "
 "significantly. The accounts are now protected using the email address. We "
@@ -381,6 +514,7 @@ msgstr ""
 "uygulamasında e-posta adresiniz bölümüne kullandığınız e mail adresinizi "
 "ekleyiniz."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:1884
 msgid ""
 "Plugin requires database modification but you do not have permission to do "
 "it."
@@ -388,6 +522,7 @@ msgstr ""
 "Eklenti veritabanında değişiklik yapmak istiyor. Fakat sizin bu işlem için "
 "yetkiniz yok."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2016
 msgid ""
 "Rublon provides stronger security for online accounts through invisible two-"
 "factor authentication. It protects your accounts from sign-ins from unknown "
@@ -397,24 +532,32 @@ msgstr ""
 "sağlar. Şifreniz çalınmış olsa dahi bilinmeyen cihazlardan hesabınıza giriş "
 "yapılmasını engeller."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2621
 msgid "Rublon Account Protection "
 msgstr "Rublon Hesap Güvenliği "
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2626
 msgid "Protection via Email"
 msgstr "Email ile Koruma"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2634
 msgid "Protection via Email is not necessary for you."
 msgstr "E-posta ile koruma sizin için gerekli değildir."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2635
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2683
 msgid "You are already protected via Mobile App."
 msgstr "Mobil uygulama ile hesap güvenliğiniz sağlanmaktadır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2642
 msgid "You are protected via Email."
 msgstr "Email doğrulaması ile güvenliğiniz sağlanmaktadır. "
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2663
 msgid "Enable account protection via email"
 msgstr "Hesap güvenliğini e-posta ile aktif et."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2667
 msgid ""
 "You will need to confirm every sign in from a new device via email. You will "
 "also need to confirm changes to important settings like your password or "
@@ -424,12 +567,16 @@ msgstr ""
 "gerekmektedir. Ayrıca e-posta adresi ya da şifre değişiklik işlemlerinde de "
 "mail ile onay işlemini yapmanız gerekmektedir."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2668
 msgid "Administrators can always change your settings without your consent."
 msgstr "Yöneticiler sizin izniniz olmadan ayarlarınızı değiştirebilir."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2677
 msgid "Protection via Mobile App"
 msgstr "Mobil Uygulama ile  Koruma"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2686
+#, php-format
 msgid ""
 "This will be automatically enabled once you install the <a href=\"%s/get\" "
 "target=\"_blank\">Rublon mobile app</a>. Your phone will be required for "
@@ -441,12 +588,16 @@ msgstr ""
 "işlemi için telefonunuz gerekli olacaktır. Bu özellik aktif edildiğinde e-"
 "posta ile doğrulama işleminin yerini alacaktır."
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_helper.php:2720
 msgid "Close"
 msgstr "Kapat"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_hooks.php:411
 msgid "Account Protection"
 msgstr "Hesap Koruması"
 
+#: D:\eclipse-workspace-kepler\WordPress2FA/sources/rublon/includes/rublon2factor_hooks.php:465
+#, php-format
 msgid ""
 "The new user account will be automatically protected by <a href=\"%s\" "
 "target=\"_blank\">Rublon</a>."

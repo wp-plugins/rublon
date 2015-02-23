@@ -15,6 +15,7 @@ class Rublon_Garbage_Man {
 	public function collectTrash() {
 
 		$this->removeOldTransients();
+		$this->removeOldRublonTransients();
 
 	}
 
@@ -40,6 +41,19 @@ class Rublon_Garbage_Man {
 						AND b.option_value < UNIX_TIMESTAMP()";
 
 		$wpdb->query($clean_sql);
+
+	}
+
+	private function removeOldRublonTransients() {
+
+		$transient_settings = RublonHelper::getSettings( 'transient' );
+		$new_transient_settings = array();
+		foreach ( $transient_settings as $key => $setting ) {
+			if ( $setting[Rublon_Transients::EXPIRES_KEY] >= time() ) {
+				$new_transient_settings[$key] = $setting;
+			}
+		}
+		RublonHelper::saveSettings( $new_transient_settings, 'transient' );
 
 	}
 

@@ -26,22 +26,12 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 
 		return self::$instance;
 	}
-	
-	
 
 
-	public function getActivationURL() {
-
-		return site_url('?rublon=init-registration&rublon_nonce=');
-
-	}
-	
-	
 	public function getConsumerScript() {
 		// Don't show consumer script, it will be embeded in the footer action using self::renderConsumerScript() method.
 		return '';
 	}
-
 
 
 	/**

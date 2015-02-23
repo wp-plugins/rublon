@@ -1,4 +1,4 @@
-=== Rublon Account Protection: Two-Factor Auth+ ===
+=== Rublon Account Security: Two-Factor Auth+ ===
 Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification, Zwei-Faktor-Authentifizierung, dwuskładnikowe uwierzytelnianie, dwuskładnikowe logowanie, logowanie, uwierzytelnianie
 Requires at least: 3.3.x
@@ -11,12 +11,12 @@ Instantly protects all accounts with effortless, email-based two-factor authenti
  
 == Description ==
 
-= Account Protection for WordPress =
+= Account Security for WordPress =
 - Instantly increase security for all users
 - 1-click download; 1-click activation
 - No configuration or training needed
 
-> #### The Most Advanced and Intuitive Account Protection Solution
+> #### The Most Advanced and Intuitive Account Security Solution
 > 10 Reasons Rublon Rocks: [http://wordpress.rublon.com/](http://wordpress.rublon.com/)
 >
 > #### Recommended by Security Experts and Industry Professionals
@@ -29,13 +29,13 @@ Instantly protects all accounts with effortless, email-based two-factor authenti
 > *"Two-factor authentication for our thousands of customers" &mdash; Steve Truman, [a3rev](http://a3rev.com)* <br>
 > [Read more](http://wordpress.rublon.com/)
 
-= Why Do I Need Account Protection? =
-Botnets carry out brute force attacks against thousands of WordPress sites and blogs every day, regardless of size. Once inside, botnets infect your visitors with malware. A compromised website leads to delisting by search engines or blocking by your hosting provider. Account protection prevents such attacks.
+= Why Do I Need Account Security? =
+Botnets carry out brute force attacks against thousands of WordPress sites and blogs every day, regardless of size. Once inside, botnets infect your visitors with malware. A compromised website leads to delisting by search engines or blocking by your hosting provider. Rublon Account Security prevents such attacks.
 
 = Why are Passwords Not Enough? =
 Many people use a simple, easy-to-guess password. It can be easily stolen when they use multiple devices; the same password across multiple services; or on unsecured connections, such as public Wi-Fi networks. Botnets hammer at your WordPress site trying to compromise it using millions of common passwords and character combinations.
 
-= How Does Rublon Account Protection Work? =
+= How Does Rublon Account Security Work? =
 During the first login, confirm your identity by clicking on the link you’ll receive via email. Your next login from the same device will only require your WordPress password. For additional security, the Rublon mobile app scans a Rublon Code to confirm your identity.
 
 = Why Should I Use Rublon? =
@@ -101,7 +101,7 @@ Rublon for WordPress is free and always will be. Our paid Business Plan offers p
  
 == Screenshots ==
 
-1. Rublon Account Protection Badge displayed on wp-login.php
+1. Rublon Account Security Badge displayed on wp-login.php
 2. Identity confirmation via email
 3. Identity confirmation via Mobile App
 4. Decide whether this is your trusted device or not
@@ -115,6 +115,15 @@ Rublon for WordPress is free and always will be. Our paid Business Plan offers p
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 2.1.18 =
+* Plugin name changed to "Rublon Account Security"
+* Improved compatibility with some popular caching plugins
+* A warning message about possibly missing PHP components added
+* The user is now asked to permit the plugin to send anonymous stats 
+* The user may now subscribe to the Rublon Newsletter
+* Links to Rublon social media added on the plugin's settings page
+* Rublon Badge updated 
 
 = 2.1.17 =
 * Improved registration with the Rublon API

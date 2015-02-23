@@ -23,7 +23,7 @@ function rublon2factor_login_message($message) {
 	} else {
 		$result = '';
 	}
-	if ($messages) {
+	if (!empty($messages)) {
 		$wpVersion = get_bloginfo('version');
 		if (version_compare($wpVersion, '3.8', 'ge')) {
 			$result .= RublonHelper::transformMessagesToVersion($messages);
@@ -495,17 +495,60 @@ function rublon2factor_wp_loaded() {
 
 add_action('wp_loaded', 'rublon2factor_wp_loaded');
 
-function rublon2factor_dismiss_api_registration() {
+require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
 
-	require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
+function rublon2factor_dismiss_api_registration() {
 
 	$post = $_POST;
 	$other_settings = RublonHelper::getSettings('other');
 	if (!empty($post['nonce']) && wp_verify_nonce($post['nonce'], Rublon_Pointers::API_REGISTRATION_DISMISSED)) {
 		$other_settings[Rublon_Pointers::API_REGISTRATION_DISMISSED] = RublonHelper::YES;
+		$current_user = wp_get_current_user();
+		if (!empty($post['newsletter_signup']) && $post['newsletter_signup'] == 'true') {
+			$other_settings['newsletter_signup'] = array(RublonHelper::getUserEmail($current_user));
+		}
 		RublonHelper::saveSettings($other_settings, 'other');
 	}
 
 }
 
-add_action('wp_ajax_rublon_apireg_dismissed', 'rublon2factor_dismiss_api_registration');
+add_action( 'wp_ajax_' . Rublon_Pointers::AJAX_API_REGISTRATION_ACTION, 'rublon2factor_dismiss_api_registration' );
+
+function rublon2factor_anonymous_stats_agreement() {
+
+	$post = $_POST;
+	$other_settings = RublonHelper::getSettings('other');
+	if (!empty($post['nonce']) && wp_verify_nonce($post['nonce'], Rublon_Pointers::ANONYMOUS_STATS_ALLOWED)) {
+		$other_settings[Rublon_Pointers::ANONYMOUS_STATS_ALLOWED] = $post['answer'];
+		RublonHelper::saveSettings($other_settings, 'other');
+		if ($post['answer'] == RublonHelper::YES) {
+			try {
+				RublonHelper::notify(array('msg' => 'Preliminary statistics from a WordPress site.'), array('message-type' => RublonHelper::RUBLON_NOTIFY_TYPE_STATS));
+			} catch (Exception $e) {
+				// Do nothing.
+			}
+		}
+	}
+
+}
+
+add_action( 'wp_ajax_' . Rublon_Pointers::AJAX_ANONYMOUS_STATS_ACTION, 'rublon2factor_anonymous_stats_agreement' );
+
+/**
+ * Add the Rublon Badge to the login page
+ *
+ */
+function rublon2factor_modify_login_form() {
+
+	$rublonBadgeUrl = RublonHelper::rubloncomUrl(false, '/img/rublon_badge_32.png');
+	echo '<div style="display: none;" id="rublon-badge"><div class="rublon-badge-link"><a href="' . RublonHelper::rubloncomUrl() . '" target="_blank" title="Rublon Account Security">'
+			. '<img class="rublon-badge-image rublon-image" src="' . $rublonBadgeUrl .  '" alt="Rublon Account Security" /></a></div></div>';
+	echo '<script>//<![CDATA[
+		if (RublonWP) {
+			RublonWP.showBadge();
+		}
+	//]]></script>';
+
+}
+
+add_action('login_footer', 'rublon2factor_modify_login_form');
