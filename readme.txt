@@ -116,6 +116,10 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.19 =
+* Improved WordPress menubar handling
+* Minor text improvements
+
 = 2.1.18 =
 * Plugin name changed to "Rublon Account Security"
 * Improved compatibility with some popular caching plugins

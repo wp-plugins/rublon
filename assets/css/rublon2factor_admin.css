@@ -54,6 +54,14 @@ li#toplevel_page_rublon.current div.wp-menu-image {
 #rublon-toolbar-logo {
 	border: 0 !important;
 	background: transparent !important;
+	width: 16px;
+	height: 16px;
+	padding: 0;
+	line-height: 24px;
+	vertical-align: middle;
+	margin: -4px 0 0 6px;
+	float: none;
+	display: inline;
 }
 
 .rublon-bold {

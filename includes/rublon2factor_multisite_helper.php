@@ -291,6 +291,7 @@ class RublonMultisiteHelper extends RublonHelper {
 			delete_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
 			delete_option(RublonHelper::RUBLON_OTHER_SETTINGS_KEY);
 			delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+			delete_option(RublonHelper::RUBLON_TRANSIENTS_SETTINGS_KEY);
 			
 			// Changed to bulk delete:
 // 			$all_user_ids = get_users('fields=id');
@@ -308,6 +309,7 @@ class RublonMultisiteHelper extends RublonHelper {
 		delete_site_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
 		delete_site_option(RublonHelper::RUBLON_OTHER_SETTINGS_KEY);
 		delete_site_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);		
+		delete_site_option(RublonHelper::RUBLON_TRANSIENTS_SETTINGS_KEY);
 
 	}
 

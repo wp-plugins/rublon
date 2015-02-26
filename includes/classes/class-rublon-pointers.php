@@ -54,7 +54,7 @@ if (!class_exists('Rublon_Pointers')) {
 			$selector = '#wpadminbar';
 
 			$content = '<h3>' . __('Help improve Rublon Account Security', 'rublon') . '</h3>';
-			$content .= '<p>' . __('You\'ve just installed Rublon Account Security. Please helps us improve it by allowing us to gather anonymous usage stats so we know which configurations, plugins and themes to test with.', 'rublon') . '</p>';
+			$content .= '<p>' . __('Thank you for installing Rublon Account Security for WordPress! Please help us improve it by allowing us to gather configuration data that give us the possibility to maintain high compatibility with different servers, plugins and themes.', 'rublon') . '</p>';
 
 			$options = array(
 					'content' => $content,

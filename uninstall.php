@@ -34,6 +34,7 @@ function rublon2factor_plugin_uninstall() {
 		delete_option(RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
 		delete_option(RublonHelper::RUBLON_OTHER_SETTINGS_KEY);
 		delete_option(RublonHelper::RUBLON_REGISTRATION_SETTINGS_KEY);
+		delete_option(RublonHelper::RUBLON_TRANSIENTS_SETTINGS_KEY);
 		
 		// Bulk delete user meta
 		$wpdb->query($wpdb->prepare("DELETE FROM $wpdb->usermeta WHERE meta_key IN (%s, %s, %s)",
