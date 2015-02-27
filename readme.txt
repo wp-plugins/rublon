@@ -116,6 +116,9 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 2.1.20 =
+* Improved WordPress menubar handling on front-end
+
 = 2.1.19 =
 * Improved WordPress menubar handling
 * Minor text improvements

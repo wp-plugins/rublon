@@ -6,3 +6,16 @@
 .rublon-login-message > a.rublon-link {
 	color: #0074a2 !important;	
 }
+
+@media screen and (max-width: 782px) {
+	#rublon-toolbar-logo {
+		position: absolute !important;
+		right: 46px !important;
+		top: 14px !important;
+		height: 26px;
+		width: 26px;
+	}
+	#wpadminbar #wp-admin-bar-my-account > .ab-item {
+		width: 82px !important;
+	}
+}

@@ -588,7 +588,7 @@ add_action( 'wp_before_admin_bar_render', 'rublon2factor_modify_admin_toolbar', 
  * Include the Rublon css and JS to the frontend and login page
  * 
  */
-function rublon2factor_add_frontend_files() {
+function rublon2factor_add_login_page_files() {
 
 	// check if the site is running WordPress 3.8+, which brought
 	// some visual style changes
@@ -610,4 +610,25 @@ function rublon2factor_add_frontend_files() {
 
 }
 
-add_action('login_enqueue_scripts', 'rublon2factor_add_frontend_files');
+add_action( 'login_enqueue_scripts', 'rublon2factor_add_login_page_files' );
+
+function rublon2factor_add_frontend_files() {
+
+	// check if the site is running WordPress 3.8+, which brought
+	// some visual style changes
+	$wp_version = get_bloginfo('version');
+	$addCompatStyles = false;
+	if (version_compare($wp_version, '3.8', 'ge')) {
+		$addCompatStyles = true;
+	}
+
+	$currentPluginVersion = RublonHelper::getCurrentPluginVersion();
+	wp_enqueue_style('rublon2factor_frontend', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_frontend.css', false, $currentPluginVersion);
+	if ($addCompatStyles) {
+		wp_enqueue_style('rublon2factor_frontend_38plus', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_frontend_wp_3.8_plus.css', false, $currentPluginVersion);
+	}
+
+}
+
+
+add_action( 'wp_enqueue_scripts', 'rublon2factor_add_frontend_files' );
