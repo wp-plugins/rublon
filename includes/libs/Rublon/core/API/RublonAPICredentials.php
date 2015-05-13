@@ -19,6 +19,16 @@ class RublonAPICredentials extends RublonAPIClient {
 	const FIELD_CONFIRM_RESULT = 'answer';
 	
 	/**
+	 * Field name for the Rublon profile ID.
+	 */
+	const FIELD_PROFILE_ID = 'profileId';
+	
+	/**
+	 * Field name for the Rublon user's email.
+	 */
+	const FIELD_EMAIL = 'email';
+	
+	/**
 	 * Field name for device ID.
 	 */
 	const FIELD_DEVICE_ID = 'deviceId';
@@ -94,6 +104,37 @@ class RublonAPICredentials extends RublonAPIClient {
 	public function getConfirmResult() {
 		if (isset($this->response[self::FIELD_RESULT][self::FIELD_CONFIRM_RESULT])) {
 			return $this->response[self::FIELD_RESULT][self::FIELD_CONFIRM_RESULT];
+		}
+	}
+	
+	
+	/**
+	 * Get Rublon user's ID.
+	 *
+	 * @return int
+	 */
+	public function getProfileId() {
+		if (isset($this->response[self::FIELD_RESULT][self::FIELD_PROFILE_ID])) {
+			return $this->response[self::FIELD_RESULT][self::FIELD_PROFILE_ID];
+		}
+	}
+	
+	
+	/**
+	 * Get Rublon user's email address.
+	 *
+	 * @return string
+	 */
+	public function getUserEmail() {
+		if (isset($this->response[self::FIELD_RESULT][self::FIELD_EMAIL])) {
+			return $this->response[self::FIELD_RESULT][self::FIELD_EMAIL];
+		}
+	}
+	
+	
+	public function getDeviceId() {
+		if (isset($this->response[self::FIELD_RESULT][self::FIELD_DEVICE_ID])) {
+			return $this->response[self::FIELD_RESULT][self::FIELD_DEVICE_ID];
 		}
 	}
 

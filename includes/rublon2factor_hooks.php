@@ -96,14 +96,11 @@ function rublon2factor_authenticate($user, $username, $password) {
 		$user_id = RublonHelper::getUserId($user);
 		if (is_user_member_of_blog($user_id) && RublonHelper::isSiteRegistered()) {
  			wp_logout();
-			$protection_type = array(
-				RublonHelper::roleProtectionType($user),
-				RublonHelper::userProtectionType($user)
-			);
 			$remember = !empty($_POST['rememberme']);
-			$authURL = RublonHelper::authenticateWithRublon($user, $protection_type, $remember);
+			$authURL = RublonHelper::authenticateWithRublon($user, $remember);
 			if (empty($authURL)) {
-				if (in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protection_type)) {
+				$levels = RublonRolesProtection::getProtectionTypesLevels();
+				if ($levels[RublonHelper::getUserProtectionType()] >= $levels[RublonHelper::PROTECTION_TYPE_MOBILE]) {
 					$user_email = RublonHelper::getUserEmail($user);
 					$obfuscated_email = RublonHelper::obfuscateEmail($user_email);
 					RublonHelper::setMessage('ROLE_BLOCKED|' . base64_encode($obfuscated_email), 'error', 'LM');
@@ -139,7 +136,7 @@ add_filter('authenticate', 'rublon2factor_authenticate', 10, 3);
  */
 function rublon2factor_init() {
 
-	RublonHelper::cookieTransfer();
+	RublonHelper::cookieTransfer();	
 
 }
 
@@ -342,13 +339,13 @@ add_action('wp_login', 'rublon2factor_wp_login', 10, 2);
 function rublon2factor_show_user_profile() {
 
 	if (RublonHelper::isSiteRegistered()) {
-		echo '<script>//<![CDATA[
-			document.addEventListener(\'DOMContentLoaded\', function() {
-				if (RublonWP) {
-					RublonWP.setUpFormSubmitListener("your-profile", "rublon-confirmation-form");
-				}
-			}, false);
-		//]]></script>';
+// 		echo '<script>//<![CDATA[
+// 			document.addEventListener(\'DOMContentLoaded\', function() {
+// 				if (RublonWP) {
+// 					RublonWP.setUpFormSubmitListener("your-profile", "rublon-confirmation-form");
+// 				}
+// 			}, false);
+// 		//]]></script>';
 		$current_user = wp_get_current_user();
 		echo new RublonConsumerScript(
 			RublonHelper::getRublon(),
@@ -356,6 +353,7 @@ function rublon2factor_show_user_profile() {
 			RublonHelper::getUserEmail($current_user)
 		);
 		if ($current_user && $current_user instanceof WP_User) {
+			// Rublon Protection section
 			RublonHelper::printProfileSectionAdditions($current_user);
 		}
 	}
@@ -364,6 +362,14 @@ function rublon2factor_show_user_profile() {
 
 add_action('show_user_profile', 'rublon2factor_show_user_profile');
 
+/**
+ * 
+ * @deprecated
+ * @TODO remove function
+ * @param unknown $errors
+ * @param unknown $update
+ * @param unknown $user
+ */
 function rublon2factor_user_profile_update_errors(&$errors, $update, &$user) {
 
 	global $pagenow;
@@ -386,7 +392,7 @@ function rublon2factor_user_profile_update_errors(&$errors, $update, &$user) {
 	
 }
 
-add_action('user_profile_update_errors', 'rublon2factor_user_profile_update_errors', 10, 3);
+// add_action('user_profile_update_errors', 'rublon2factor_user_profile_update_errors', 10, 3);
 
 function rublon2factor_update_field_additional_settings($new_value, $old_value) {
 
@@ -400,8 +406,8 @@ function rublon2factor_update_field_additional_settings($new_value, $old_value) 
 	}
 
 }
-
 add_filter('pre_update_option_rublon2factor_additional_settings', 'rublon2factor_update_field_additional_settings', 10, 2);
+
 
 function rublon2factor_add_dashboard_device_widget() {
 

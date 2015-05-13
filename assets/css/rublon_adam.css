@@ -1,0 +1,148 @@
+@CHARSET "UTF-8";
+
+
+html,body {
+	height: 100%;
+}
+#login {
+	padding-top: 100px;
+}
+.login {
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+
+@media ( max-width : 801px) {
+	#main_login_form_widget_style {
+		margin: 0 auto;
+		position: fixed;
+		
+		bottom: 0;
+		left: 50%;
+			transform: translate(-50%, 0);
+			-webkit-transform: translate(-50%, 0);
+		width: 410px;
+		z-index: 0;	
+	}
+
+	.triangle {
+		position: relative;
+		width: 290px;
+		height: auto;
+		margin-left: 45px;
+		background: none repeat scroll 0% 0% #FFF;
+		box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.13);
+		color: #777;
+		font-size: 14px;
+		padding: 15px;
+		display: block;		 
+		float: left;
+	}
+	.triangle:after {
+		content: "";
+		display: block; /* reduce the damage in FF3.0 */
+		position: absolute;
+		bottom: -7px;
+		left: 32px;
+		width: 0;
+		border-width: 8px 9px 0;
+		border-style: solid;
+		border-color: #fff transparent transparent
+	}
+	.triangle:before {
+		content: "";
+		position: absolute;
+		border-style: solid;
+		border-width: 10px 12px 0;
+		border-color: rgba(0, 0, 0, 0.05) transparent;
+		display: block;
+		width: 0;
+		z-index: 0;
+		bottom: -10px;
+		left: 29px;
+	}
+	
+	#imgbox_login_form_widget_style {	
+		width: 82px;
+		display: block;
+		margin-top: 4%;
+		margin-left: 49px;
+		float: left;
+		/*position: absolute;*/
+		bottom: 0px;
+		/*left: 0px;*/
+	}	
+}
+
+@media ( min-width : 800px ) {
+	#main_login_form_widget_style {
+		margin: 0 auto;
+		position: fixed;		
+		bottom: 0;
+		left: 50%;
+			transform: translate(-50%, 0);
+			-webkit-transform: translate(-50%, 0);
+		width: 530px;	
+	}
+	
+	.triangle {
+		position: relative;
+		width: 290px;
+		height: auto;
+		margin-right: 105px;		
+		background: none repeat scroll 0% 0% #FFF;
+		box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.13);
+		color: #777;
+		font-size: 14px;
+		padding: 15px;
+		float: right;
+	}
+	.triangle:after {
+		content: "";
+		display: block; /* reduce the damage in FF3.0 */
+		position: absolute;
+		bottom: 15px;
+		left: -10px;
+		width: 0;
+		border-width: 7px 10px 7px 0;
+		border-style: solid;
+		border-color: transparent #fff transparent
+	}
+	.triangle:before {
+		content: "";
+		position: absolute;
+		border-style: solid;
+		border-width: 9px 12px 9px 0;
+		border-color: transparent rgba(0, 0, 0, 0.05);
+		display: block;
+		width: 0;
+		z-index: 0;
+		bottom: 13px;
+		left: -12px;
+	}
+	
+	#imgbox_login_form_widget_style {	
+		width: 82px;
+		display: block;
+		margin-top: 12%;
+		margin-left: 0px;
+		float: left;
+		/*position: absolute;*/
+		bottom: 0px;
+		/*left: 0px;*/
+	}
+}
+
+@media ( max-height: 900px ) {
+	#main_login_form_widget_style {
+		padding-top: 30px;
+		position: relative;
+		margin: 0;
+	}
+}
+
+.adam_image {
+	background-image:
+		url('../../assets/images/rublon_adam.gif');
+	height: 120px;	
+}

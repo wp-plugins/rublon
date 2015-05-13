@@ -93,14 +93,33 @@ var RublonWP = {
 							var role = event.target.id.replace(/rublon-role-([a-z\-]+)-dropdown/, '$1');
 							var locked1 = document.querySelector('label.rublon-label-' + role + ' .rublon-locked-container.rublon-' + role + '-locked');
 							var locked2 = document.querySelector('label.rublon-label-' + role + ' .rublon-locked-container.rublon-' + role + '-locked2');
+							var locked3 = document.querySelector('label.rublon-label-' + role + ' .rublon-locked-container.rublon-' + role + '-locked3');
 							var unlocked = document.querySelector('label.rublon-label-' + role + ' .rublon-unlocked-container.rublon-' + role + '-unlocked');
 							switch (event.target.value) {
+								case 'mobileEverytime': {
+									if (locked1) {
+										RublonWPTools.show(locked1);
+									}
+									if (locked2) {
+										RublonWPTools.show(locked2);
+									}
+									if (locked3) {
+										RublonWPTools.show(locked3);
+									}
+									if (unlocked) {
+										RublonWPTools.hide(unlocked);
+									}
+									break;
+								}
 								case 'mobile': {
 									if (locked1) {
 										RublonWPTools.show(locked1);
 									}
 									if (locked2) {
 										RublonWPTools.show(locked2);
+									}
+									if (locked3) {
+										RublonWPTools.hide(locked3);
 									}
 									if (unlocked) {
 										RublonWPTools.hide(unlocked);
@@ -114,6 +133,9 @@ var RublonWP = {
 									if (locked2) {
 										RublonWPTools.hide(locked2);
 									}
+									if (locked3) {
+										RublonWPTools.hide(locked3);
+									}
 									if (unlocked) {
 										RublonWPTools.hide(unlocked);
 									}
@@ -125,6 +147,9 @@ var RublonWP = {
 									}
 									if (locked2) {
 										RublonWPTools.hide(locked2);
+									}
+									if (locked3) {
+										RublonWPTools.hide(locked3);
 									}
 									if (unlocked) {
 										RublonWPTools.show(unlocked);

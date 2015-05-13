@@ -11,8 +11,7 @@
 /**
  * Add plugin css
  **/
-function rublon2factor_admin_css() {
-
+function rublon2factor_admin_css() {    
 	$currentPluginVersion = RublonHelper::getCurrentPluginVersion();
 	
 	// check if the site is running WordPress 3.8+, which brought
@@ -32,8 +31,8 @@ function rublon2factor_admin_css() {
 		}
 		if ($addCompatStyles) {
 			wp_register_style('rublon2factor_admin_wp_3.8_plus_css', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon2factor_admin_wp_3.8_plus.css', false, $currentPluginVersion);
-		}
-	}
+		}		
+	}	
 
 	if (did_action ('wp_print_styles'))	{
 		wp_print_styles('rublon2factor_admin_css');
@@ -42,7 +41,7 @@ function rublon2factor_admin_css() {
 		}
 		if ($addCompatStyles) {
 			wp_print_styles('rublon2factor_admin_wp_3.8_plus_css');
-		}
+		}		
 	} else {
 		wp_enqueue_style('rublon2factor_admin_css');
 		if ($addSafari) {
@@ -50,9 +49,8 @@ function rublon2factor_admin_css() {
 		}
 		if ($addCompatStyles) {
 			wp_enqueue_style('rublon2factor_admin_wp_3.8_plus_css');
-		}
-	}
-
+		}		
+	}	
 }
 
 add_action('admin_print_styles', 'rublon2factor_admin_css');
@@ -70,12 +68,17 @@ function rublon2factor_add_menu_entries() {
 
 	if (RublonHelper::isSiteRegistered()) {
 	
+		if (RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_OPERATION_CONFIRMATION)) {
+			$confirmationTitle = __('Confirmations', 'rublon');
+			add_submenu_page('rublon', 'Rublon: ' . $confirmationTitle, $confirmationTitle, 'manage_options', 'rublon_confirmations', 'rublon2factor_render_confirmations_page');
+		}
+	
 		$trusted_title = __('Trusted Devices', 'rublon');
 		add_submenu_page('rublon', 'Rublon: ' . $trusted_title, $trusted_title, 'read', 'rublon_tdm', 'rublon2factor_render_tdm_page');
 	
 		$current_user = wp_get_current_user();
 		if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
-			$acm_title = __('Access Control', 'rublon');
+			$acm_title = __('Account Sharing', 'rublon');
 			add_submenu_page('rublon', 'Rublon: ' . $acm_title, $acm_title, 'read', 'rublon_acm', 'rublon2factor_render_acm_page');
 		}
 
@@ -118,10 +121,24 @@ function rublon2factor_register_settings() {
 
 	// register additional settings
 	register_setting('rublon2factor_additional_settings_group', RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
-	add_settings_section('rublon2factor-additional-settings', __('Settings', 'rublon'), 'rublon2factor_render_additional_settings', 'rublon');
-	add_settings_field('rublon2factor_protection_types', __('Protection', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');
-	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-additional-settings');
-	add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-additional-settings');
+	add_settings_section('rublon2factor-additional-settings', __('Protection', 'rublon'), 'rublon2factor_render_additional_settings', 'rublon');
+	add_settings_field('rublon2factor_protection_types', __('Role protection level', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');
+	
+	add_settings_section('rublon2factor-other-settings', __('Other settings', 'rublon'), 'rublon2factor_render_other_settings', 'rublon');
+	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-other-settings');
+	add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-other-settings');
+	
+	if (RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_IDENTITY_PROVIDING)) {
+		add_settings_field('rublon2factor_access_control', __('Account Sharing Widget', 'rublon'), 'rublon2factor_render_access_control', 'rublon', 'rublon2factor-other-settings');
+	}
+	
+	if (RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_BUFFERED_CONFIRMATION)) {
+		add_settings_field('rublon2factor_buffered_confirmation_time', __('Buffered confirmation time', 'rublon'), 'rublon2factor_render_buffered_confirmation_time', 'rublon', 'rublon2factor-other-settings');
+	}
+	
+	register_setting('rublon2factor_confirmations_settings_group', RublonHelper::RUBLON_CONFIRMATIONS_SETTINGS_KEY);
+	add_settings_section('rublon2factor-confirmations-settings', __('Confirmations', 'rublon'), 'rublon2factor_render_confirmations_settings', 'rublon_confirmations');
+	add_settings_field('rublon2factor_confirmations', __('Confirmations', 'rublon'), 'rublon2factor_render_confirmations', 'rublon_confirmations', 'rublon2factor-confirmations-settings');
 
 	if (RublonHelper::canPluginAttemptRegistration() || RublonHelper::isSiteRegistered()) {
 		if (RublonHelper::isTrackingAllowed() === null) {
@@ -141,8 +158,42 @@ add_action('admin_init', 'rublon2factor_register_settings');
 
 function rublon2factor_render_additional_settings() {
 
-	echo '';
+}
 
+
+function rublon2factor_render_confirmations_settings() {
+	
+}
+
+
+function rublon2factor_render_confirmations() {
+	echo '<p class="rublon-settings-desc">' . __('Choose operations which will be protected by the additional confirmation using Rublon.', 'rublon') . '</p>';
+	if (RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_OPERATION_CONFIRMATION)) {
+		
+		$settings = RublonConfirmations::getSettings();
+		
+		echo '<div class="rublon-settings-confirmations">';
+		
+		$actions = RublonConfirmations::getUIActions();
+		foreach ($actions as $key => $action) {
+			printf('<label><input type="checkbox" name="%s[]" value="%s"%s /> %s</label>',
+				RublonHelper::RUBLON_CONFIRMATIONS_SETTINGS_KEY,
+				$key,
+				checked(true, in_array($key, $settings), false),
+				__($action, 'rublon')
+			);
+		}
+		
+		echo '</div>';
+
+	} else {
+		echo '<p class="rublon-settings-desc rublon-inactive-feature"><span class="dashicons dashicons-shield-alt"></span>' . __('This feature is available only for the Rublon Business Edition premium users.', 'rublon') . '</p>';
+	}
+}
+
+
+function rublon2factor_render_other_settings() {
+	
 }
 
 
@@ -180,24 +231,35 @@ function rublon2factor_render_protection_types() {
 			$lock1Visibility = '';
 			$lock2Visibility = '';
 			$lock3Visibility = '';
-			switch ($settings[$role_id]) {
+// 			switch ($settings[$role_id]) {
+			switch (RublonRolesProtection::getRoleProtectionType($role)) {
+				case RublonHelper::PROTECTION_TYPE_MOBILE_EVERYTIME:
+					$mobileEverytimeSelected = ' selected';
+					$lock1Visibility = 'hidden';
+					$lock2Visibility = 'visible';
+					$lock3Visibility = 'visible';
+					$lock4Visibility = 'visible';
+					break;
 				case RublonHelper::PROTECTION_TYPE_MOBILE:
 					$mobileSelected = ' selected';
 					$lock1Visibility = 'hidden';
 					$lock2Visibility = 'visible';
 					$lock3Visibility = 'visible';
+					$lock4Visibility = 'hidden';
 					break;
 				case RublonHelper::PROTECTION_TYPE_EMAIL:
 					$emailSelected = ' selected';
 					$lock1Visibility = 'hidden';
 					$lock2Visibility = 'visible';
 					$lock3Visibility = 'hidden';
+					$lock4Visibility = 'hidden';
 					break;
 				case RublonHelper::PROTECTION_TYPE_NONE:
 					$noneSelected = ' selected';
 					$lock1Visibility = 'visible';
 					$lock2Visibility = 'hidden';
 					$lock3Visibility = 'hidden';
+					$lock4Visibility = 'hidden';
 					break;
 			}
 		}
@@ -207,7 +269,13 @@ function rublon2factor_render_protection_types() {
 		echo '<div class="rublon-settings-setting-name">';
 		echo '	<label for="rublon-role-' . $role_id . '-dropdown" class="rublon-settings-setting-label"><div class="rublon-settings-setting-label">' . translate_user_role(before_last_bar($role)) . '</div></label>';
 		echo '	<select id="rublon-role-' . $role_id . '-dropdown" name="' . RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '[' . $role_id . ']">';
+		$forceMobileApp = RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_FORCE_MOBILE_APP);
+		if ($forceMobileApp AND RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_IGNORE_TRUSTED_DEVICE)) {
+			echo '		<option value="mobileEverytime"'. $mobileEverytimeSelected . '>' . __('Mobile app everytime', 'rublon') . '</option>';
+		}
+		if ($forceMobileApp) {
 		echo '		<option value="mobile"'. $mobileSelected . '>' . __('Mobile app', 'rublon') . '</option>';
+		}
 		echo '		<option value="email"'. $emailSelected . '>' . __('Email', 'rublon') . '</option>';
 		echo '		<option value="none"'. $noneSelected . '>' . __('None', 'rublon') . '</option>';
 		echo '	</select>';
@@ -215,6 +283,7 @@ function rublon2factor_render_protection_types() {
 		echo '	<div class="rublon-lock-container rublon-unlocked-container rublon-' . $role_id . '-unlocked ' . $lock1Visibility . '"><img class="rublon-lock rublon-unlocked" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/unlocked.png" /></div>';
 		echo '	<div class="rublon-lock-container rublon-locked-container rublon-' . $role_id . '-locked ' . $lock2Visibility . '"><img class="rublon-lock rublon-locked" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/locked.png" /></div>';
 		echo '	<div class="rublon-lock-container rublon-locked-container rublon-' . $role_id . '-locked2 ' . $lock3Visibility . '"><img class="rublon-lock rublon-locked" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/locked.png" /></div>';
+		echo '	<div class="rublon-lock-container rublon-locked-container rublon-' . $role_id . '-locked3 ' . $lock4Visibility . '"><img class="rublon-lock rublon-locked" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/locked.png" /></div>';
 		echo '</label>';
 		echo '</div>';
 	}
@@ -274,13 +343,50 @@ function rublon2factor_render_rl_activelistener() {
 		$offSelected = ' selected';
 	}
 
-	echo '<p class="rublon-settings-desc">' . __('Users get logged out from a trusted device in real-time directly upon removing it. Disable this if you experience slower page load times. Remote Logout will still work, but only after refreshing the page.', 'rublon') . '</p>';
+	echo '<p class="rublon-settings-desc">' . __('Users get logged out from a trusted device in real-time directly upon removing it. Disable this if you experience slower page load times. Remote Logout will still work, but using Wordpress standard heart-beat mechanism.', 'rublon') . '</p>';
 	echo '<select id="rublon-rl-activelistener-dropdown" name="' . RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '[rl-active-listener]">';
 	echo '	<option value="on"' . $onSelected . '>' . __('Enabled', 'rublon') . '</option>';
 	echo '	<option value="off"' . $offSelected . '>' . __('Disabled', 'rublon') . '</option>';
 	echo '</select>';
 
 }
+
+
+function rublon2factor_render_access_control() {
+
+	$additional_settings = RublonHelper::getSettings('additional');
+	$offSelected = '';
+	$onSelected = '';
+	if (RublonHelper::isAccessControlWidgetEnabled()) {
+		$onSelected = ' selected';
+	} else {
+		$offSelected = ' selected';
+	}
+
+	echo '<p class="rublon-settings-desc">' . __('Users can choose other Rublon users to login to his accounts. Disable this if you want to avoid multiple users using the same WP account.', 'rublon') . '</p>';
+	echo '<select id="rublon-access-control-dropdown" name="' . RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '[access-control]">';
+	echo '	<option value="on"' . $onSelected . '>' . __('Enabled', 'rublon') . '</option>';
+	echo '	<option value="off"' . $offSelected . '>' . __('Disabled', 'rublon') . '</option>';
+	echo '</select>';
+
+}
+
+function rublon2factor_render_buffered_confirmation_time() {
+
+	$additional_settings = RublonHelper::getSettings('additional');
+	$offSelected = '';
+	$onSelected = '';
+
+	echo '<p class="rublon-settings-desc">' . __('User\'s confirmations can be remembered for selected amount of time. Set 0 to disable.', 'rublon') . '</p>';
+	$fieldName = RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '['. RublonFeature::BUFFERED_CONFIRMATION_OPTION_KEY .']';
+	printf('<input type="number" name="%s" value="%s" style="width:5em" /> %s',
+		esc_attr($fieldName),
+		esc_attr(RublonFeature::getBufferedConfirmationOptionValue()),
+		__('minutes', 'rublon')
+	);
+
+}
+
 
 /**
  * Display the Rublon page
@@ -292,8 +398,32 @@ function rublon2factor_render_settings_page() {
 	<div id="rublon2factor_page">
 		<h2 class="rublon-header">
 			<?php _e('Rublon', 'rublon'); ?>
-		</h2>
-
+		</h2>			
+		
+		<?php if (!RublonFeature::isBusinessEdition()): ?>
+				<div class="updated rublon-be-infobox-container">
+        			<div id="message" class="rublon-be-infobox-content">
+        				<p>
+    				    <?php					 					   
+                           echo sprintf(__('Need enterprise-grade authentication security for your website? <a href="mailto:%s?subject=%s">Upgrade</a> to the %s and get access to:', 'rublon'), 
+                               RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), 
+                               '<strong>' . __('Rublon Business Edition') . '</strong>');					   					
+    					?>				        															
+        				<ul type="disc">
+        				    <li><strong><?php _e('Priority Support', 'rublon'); ?></strong><br /><?php _e('Always be at the front of the queue. We will provide advanced technical support and even log in to your website to solve your problem. Your requests will be answered as fast as possible.', 'rublon'); ?></li>
+        					<li><strong><?php _e('Operation Confirmation', 'rublon'); ?></strong><br /><?php _e('Protect your sensitive data against unauthorized changes. A must-have if you don\'t use SSL!', 'rublon'); ?></li>
+        					<li><strong><?php _e('Force Mobile App', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity using their phone. Highly recommended for administrators.', 'rublon'); ?></li>
+        					<li><strong><?php _e('Force Identity Verification', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity during each login, even if they\'re using a trusted device. Important if you store sensitive customer data and need to comply with regulations.', 'rublon'); ?></li>
+        					<li><strong><?php _e('Account Sharing', 'rublon'); ?></strong><br /><?php _e('Make Rublon-protected user accounts accessible by several people, from their devices, using the same login credentials. Useful if more than one person is working on the same account. Rublon is the only two-factor authentication system that makes this possible.', 'rublon'); ?></li>
+        				</ul>
+        				
+                            <?php echo sprintf(__('Please contact <a href="mailto:%s">%s</a> for more information.', 'rublon'), RublonHelper::RUBLON_EMAIL_SALES, RublonHelper::RUBLON_EMAIL_SALES); ?>
+        				        				
+        				</p>
+        			</div>
+        		</div>
+	    <?php endif; ?>
+		
 		<?php
 
 			// necessary, otherwise "updated" messages won't be visible
@@ -324,11 +454,23 @@ function rublon2factor_render_settings_page() {
 				// Rublon settings
 				if (current_user_can('manage_options')): // START_BLOCK: Is user authorized to manage plugins? ?>
 
-				<form method="post" action="options.php" id="rublon-plugin-additional-settings">
+				<form method="post" action="options.php"
+			id="rublon-plugin-additional-settings">
 				<?php
 
 					settings_fields('rublon2factor_additional_settings_group');
 					do_settings_sections('rublon');
+					
+					// Cache purge button
+					printf('<p style="float:right;"><a href="%s" class="button">%s</a></p>',
+						esc_attr(admin_url(
+							sprintf('admin.php?page=rublon&action=%s&nonce=%s',
+								esc_attr(urlencode(RublonHelper::CACHE_PURGE_ACTION)),
+								wp_create_nonce(RublonHelper::CACHE_PURGE_NONCE)
+						))),
+						__('Purge cache', 'rublon')
+					);
+					
 					submit_button();
 					echo '<script>//<![CDATA[
 						document.addEventListener(\'DOMContentLoaded\', function() {
@@ -353,6 +495,77 @@ function rublon2factor_render_settings_page() {
 </div>
 <?php 
 }
+
+
+function rublon2factor_render_confirmations_page() {
+	?>
+<div class="wrap">
+	<div id="rublon2factor_page">
+		<h2 class="rublon-header">
+			<?php _e('Rublon', 'rublon'); ?>
+		</h2>
+
+			<?php
+
+			// necessary, otherwise "updated" messages won't be visible
+			settings_errors();
+
+			// Header text
+			echo '<p>'
+				. __('Rublon instantly protects all accounts with effortless, email-based two-factor authentication.', 'rublon')
+				. ' ' . __('Get the optional mobile app for more security!', 'rublon')
+				. ' ' . sprintf(__('Learn more at <a href="%s" target="_blank">wordpress.rublon.com</a>.', 'rublon'), RublonHelper::wordpressRublonComURL())
+				. '</p>';
+
+			// Consumer script
+			$current_user = wp_get_current_user();
+			
+			if (RublonHelper::isSiteRegistered()) {
+
+				// No protection warning
+				if (!RublonHelper::isUserProtected($current_user) && is_user_member_of_blog()) {
+					printf(
+						'<span style="color: red; font-weight: bold;">' . __('Warning!', 'rublon') . '</span>'
+							. ' ' . __('Your account is not protected. Go to <a href="%s">your profile page</a> to enable account protection.', 'rublon'),
+						admin_url(RublonHelper::WP_PROFILE_PAGE . RublonHelper::WP_PROFILE_EMAIL2FA_SECTION)
+					);
+				}
+
+				// Rublon settings
+				if (current_user_can('manage_options')): // START_BLOCK: Is user authorized to manage plugins? ?>
+
+				<form method="post" action="options.php"
+			id="rublon-plugin-confirmations-settings">
+					<?php
+					
+					settings_fields('rublon2factor_confirmations_settings_group');
+					do_settings_sections('rublon_confirmations');
+					
+					submit_button();
+					echo '<script>//<![CDATA[
+						document.addEventListener(\'DOMContentLoaded\', function() {
+ 							if (RublonWP) {
+								RublonWP.setUpFormSubmitListener("rublon-plugin-confirmations-settings", "rublon-confirmation-form");
+ 							}
+ 							if (RublonSDK) {
+ 								RublonSDK.initConfirmationForms();
+ 							}
+						}, false);
+					//]]></script>';
+
+
+				?>
+				</form>
+			<?php
+
+				endif; // END_BLOCK: Is user authorized to manage plugins?
+
+			} ?>
+	</div>
+</div>
+<?php 
+}
+
 
 function rublon2factor_render_tdm_page() {
 ?>
@@ -382,7 +595,7 @@ function rublon2factor_render_acm_page() {
 <div class="wrap">
 	<div id="rublon2factor_acm_page">
 		<h2 class="rublon-header">
-			<?php echo __('Rublon', 'rublon') . ' - ' . __('Access Control Manager', 'rublon'); ?>
+			<?php echo __('Rublon', 'rublon') . ' - ' . __('Account Sharing Manager', 'rublon'); ?>
 		</h2>
 		<p>
 			<?php echo __('Rublon instantly protects all accounts with effortless, email-based two-factor authentication.', 'rublon')
@@ -512,8 +725,10 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 				(!empty($rublon_mobile_users)
 					&& !empty($rublon_mobile_users[$user_id])
 					&& $rublon_mobile_users[$user_id] == RublonHelper::YES)
-				|| in_array(RublonHelper::PROTECTION_TYPE_EMAIL, $protectionType)
-				|| in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protectionType)) {
+						|| RublonRolesProtection::isGrater(RublonHelper::getUserProtectionType($user), RublonHelper::PROTECTION_TYPE_NONE)
+// 						|| in_array(RublonHelper::PROTECTION_TYPE_EMAIL, $protectionType)
+// 						|| in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protectionType)
+					) {
 				$lang = RublonHelper::getBlogLanguage();
 				$value = sprintf('<a href="%s"', RublonHelper::rubloncomUrl())
 					. ' target="_blank"><img class="rublon-protected rublon-image" src="'
@@ -632,3 +847,22 @@ function rublon2factor_add_frontend_files() {
 
 
 add_action( 'wp_enqueue_scripts', 'rublon2factor_add_frontend_files' );
+
+function login_page_custom_css() {    
+    wp_enqueue_style('rublon_adam', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon_adam.css');    
+}
+add_action( 'login_enqueue_scripts', 'login_page_custom_css' );
+
+function add_login_footer() {
+    ?>
+<div id="main_login_form_widget_style">
+	<div class="triangle">
+		<div><?php echo RublonHelper::adam_says(); ?></div>
+	</div>
+	<div id="imgbox_login_form_widget_style">
+		<div class="adam_image">&nbsp;</div>
+	</div>
+</div>
+<?php
+}
+add_action( 'login_footer', 'add_login_footer' );

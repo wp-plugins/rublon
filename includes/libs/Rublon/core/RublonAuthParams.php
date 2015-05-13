@@ -135,6 +135,12 @@ class RublonAuthParams {
 	const FIELD_CAN_USE_EMAIL2FA = 'canUseEmail2FA';
 	
 	/**
+	 * Field name to force ignoring the existing Trusted Device
+	 * during the authentication.
+	 */
+	const FIELD_IGNORE_TRUSTED_DEVICE = 'ignoreTrustedDevice';
+	
+	/**
 	 * Field name to add a custom URI query parameter to the callback URL.
 	 */
 	const FIELD_CUSTOM_URI_PARAM = 'customURIParam';

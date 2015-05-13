@@ -15,12 +15,13 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 				RublonHelper::getRublon(),
 				RublonHelper::getUserId($current_user),
 				RublonHelper::getUserEmail($current_user),
-				$logout_listener = false // Now we are using the WP Heartbeat
+				$logout_listener = RublonHelper::isLogoutListenerEnabled()
 			);
 
 			// Embed consumer script
 			if (RublonHelper::isSiteRegistered()) {
-				add_action('admin_footer', array(self::$instance, 'renderConsumerScript'));
+				add_action('wp_footer', array(self::$instance, 'renderConsumerScript'), PHP_INT_MAX);
+				add_action('admin_footer', array(self::$instance, 'renderConsumerScript'), PHP_INT_MAX);
 			}
 		}
 

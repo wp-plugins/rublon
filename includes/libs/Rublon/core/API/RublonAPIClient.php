@@ -139,30 +139,32 @@ class RublonAPIClient {
 	
 	
 	protected function validateResponse() {
-		if (!empty($this->rawResponseBody)) {
-			$this->response = json_decode($this->rawResponseBody, true);
-			if (!empty($this->response) AND is_array($this->response)) {
-				if (!empty($this->response[self::FIELD_STATUS])) {
-					if ($this->response[self::FIELD_STATUS] == self::STATUS_OK) {
-						if ($signature = $this->getHeader(self::HEADER_SIGNATURE)) {
-							if ($this->validateSignature($signature, $this->rawResponseBody)) {
-								return true;
-							} else throw new InvalidSignature_RublonClientException($this);
-						} else throw new MissingHeader_RublonClientException($this, self::HEADER_SIGNATURE);
-					}
-					else if ($this->response[self::FIELD_STATUS] == self::STATUS_ERROR) {
-						if (!empty($this->response[self::FIELD_RESULT])) {
-							if (!empty($this->response[self::FIELD_RESULT][self::FIELD_EXCEPTION])) {
-								throw $this->constructException($this->response[self::FIELD_RESULT]);
-							}
-							else if (!empty($this->response[self::FIELD_RESULT][self::FIELD_ERROR_MSG])) {
-								throw new ErrorResponse_RublonClientException($this);
-							} else throw new ErrorResponse_RublonClientException($this);
-						} else throw new ErrorResponse_RublonClientException($this);
-					} else throw new InvalidResponse_RublonClientException($this);
-				} else throw new MissingField_RublonClientException($this, self::FIELD_STATUS);
-			} else throw new InvalidJSON_RublonClientException($this);
-		} else throw new EmptyResponse_RublonClientException($this);
+		if ($this->responseHTTPStatusCode == 200) {
+			if (!empty($this->rawResponseBody)) {
+				$this->response = json_decode($this->rawResponseBody, true);
+				if (!empty($this->response) AND is_array($this->response)) {
+					if (!empty($this->response[self::FIELD_STATUS])) {
+						if ($this->response[self::FIELD_STATUS] == self::STATUS_OK) {
+							if ($signature = $this->getHeader(self::HEADER_SIGNATURE)) {
+								if ($this->validateSignature($signature, $this->rawResponseBody)) {
+									return true;
+								} else throw new InvalidSignature_RublonClientException($this, 'Invalid response signature: '. $signature);
+							} else throw new MissingHeader_RublonClientException($this, self::HEADER_SIGNATURE);
+						}
+						else if ($this->response[self::FIELD_STATUS] == self::STATUS_ERROR) {
+							if (!empty($this->response[self::FIELD_RESULT])) {
+								if (!empty($this->response[self::FIELD_RESULT][self::FIELD_EXCEPTION])) {
+									throw $this->constructException($this->response[self::FIELD_RESULT]);
+								}
+								else if (!empty($this->response[self::FIELD_RESULT][self::FIELD_ERROR_MSG])) {
+									throw new ErrorResponse_RublonClientException($this, $this->response[self::FIELD_RESULT][self::FIELD_ERROR_MSG]);
+								} else throw new ErrorResponse_RublonClientException($this, 'Server returns error status with empty error message.');
+							} else throw new ErrorResponse_RublonClientException($this, 'Server returns empty result.');
+						} else throw new InvalidResponse_RublonClientException($this, 'Invalid status field: '. $this->response[self::FIELD_STATUS]);
+					} else throw new MissingField_RublonClientException($this, self::FIELD_STATUS);
+				} else throw new InvalidJSON_RublonClientException($this);
+			} else throw new EmptyResponse_RublonClientException($this, 'Empty response body.');
+		} else throw new InvalidResponse_RublonClientException($this, 'Unexpected response HTTP status code: '. $this->responseHTTPStatusCode);
 	}
 	
 	
@@ -331,6 +333,7 @@ class RublonAPIClient {
 		$headers = array(
 			self::HEADER_CONTENT_TYPE,
 			self::HEADER_ACCEPT,
+			'Expect: 200-OK',
 			sprintf('%s: %s', self::HEADER_SIGNATURE, $this->signMessage($rawPostBody)),
 			sprintf('%s: %s', self::HEADER_TECHNOLOGY, $this->getRublon()->getTechnology()),
 			sprintf('%s: %s', self::HEADER_API_VERSION, $this->getRublon()->getVersion()),
@@ -508,4 +511,4 @@ class AccessTokenExpired_RublonAPIException extends RublonAPIException {}
 class UnknownAccessToken_RublonAPIException extends RublonAPIException {}
 class SessionRestore_RublonAPIException extends RublonAPIException {}
 class UnauthorizedUser_RublonAPIException extends RublonAPIException {}
-
+class ForbiddenMethod_RublonAPIException extends RublonAPIException {}

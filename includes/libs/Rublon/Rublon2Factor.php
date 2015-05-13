@@ -6,8 +6,8 @@ require_once 'Rublon2FactorGUI.php';
 require_once 'core/HTML/RublonButton.php';
 require_once 'core/API/RublonAPICredentials.php';
 require_once 'core/API/RublonAPIBeginTransaction.php';
-require_once 'core/API/RublonAPICheckRCS.php';
 require_once 'core/API/RublonAPINotification.php';
+require_once 'core/API/RublonAPIGetAvailableFeatures.php';
 
 /**
  * Class provides methods used by `Rublon Two Factor` service process.
@@ -61,39 +61,20 @@ class Rublon2Factor extends RublonConsumer {
 			trigger_error(RublonConsumer::TEMPLATE_CONFIG_ERROR, E_USER_ERROR);
 			return null;
 		}
-		
-		// Check whether this user is not a Rublon user by matching his email address on the Rublon Cache Server.
-		$checkRCS = new RublonAPICheckRCS($this, $userEmail);
-		$checkRCS->perform();
-		if ($checkRCS->isUserNotFound() AND empty($consumerParams[RublonAuthParams::FIELD_CAN_USE_EMAIL2FA])) {
 			
+		if ($lang = $this->getLang()) {
+			$consumerParams[RublonAuthParams::FIELD_LANG] = $lang;
+		}
+				
+		try {
+			$beginTransaction = new RublonAPIBeginTransaction($this, $callbackUrl, $userEmail, $userId, $consumerParams);
+			$beginTransaction->perform();
+			return $beginTransaction->getWebURI();
+		} catch (UserNotFound_RublonAPIException $e) {
 			// bypass Rublon
-			return null;
-		
-		} else {
-			
-			if ($lang = $this->getLang()) {
-				$consumerParams[RublonAuthParams::FIELD_LANG] = $lang;
-			}
-			
-			// RCS says the user is a Rublon user. Check protection on Rublon server.
-			try {
-				$beginTransaction = new RublonAPIBeginTransaction($this, $callbackUrl, $userEmail, $userId, $consumerParams);
-				$beginTransaction->perform();
-				return $beginTransaction->getWebURI();
-			} catch (UserNotFound_RublonAPIException $e) {
-				if ($checkRCS->getResult() == RublonAPICheckRCS::RESULT_FOUND) {
-					throw $e;
-				} else {
-					
-					// bypass Rublon
-					return null;
-					
-				}
-			} catch (RublonException $e) {
-				throw $e;
-			}
-			
+			return null;									
+		} catch (RublonException $e) {
+			throw $e;
 		}
 		
 	}

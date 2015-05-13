@@ -4,7 +4,7 @@ Plugin Name: Rublon Account Security
 Text Domain: rublon
 Plugin URI: http://wordpress.org/plugins/rublon/
 Description: Rublon instantly protects all accounts with effortless, email-based two-factor authentication. Works out-of-the-box, no configuration or training needed. Install the Rublon mobile app on your phone for more security and control. No more tokens or one-time passwords. Just click a link (email) or scan a Rublon Code (phone) to confirm your identity. Set up trusted devices that let you log in without having to confirm your identity.
-Version: 2.1.20
+Version: 3.0.0
 Author: Rublon
 Author URI: https://rublon.com
 License: http://opensource.org/licenses/gpl-license.php GNU Public License, version 2 
@@ -47,6 +47,10 @@ require_once dirname(__FILE__) . '/includes/libs/RublonImplemented/Rublon2Factor
 /*
  * Include plug-in files
 */
+require_once dirname(__FILE__) . '/includes/classes/RublonFlashMessage.php';
+require_once dirname(__FILE__) . '/includes/classes/features/RublonFeature.php';
+require_once dirname(__FILE__) . '/includes/classes/RublonRolesProtection.php';
+require_once dirname(__FILE__) . '/includes/classes/confirmations/RublonConfirmations.php';
 require_once dirname(__FILE__) . '/includes/rublon2factor_helper.php';
 require_once dirname(__FILE__) . '/includes/rublon2factor_multisite_helper.php';
 require_once dirname(__FILE__) . '/includes/classes/class-rublon-transients.php';
@@ -64,3 +68,5 @@ require_once dirname(__FILE__) . '/includes/libs/RublonImplemented/RublonConsume
 
 // Initialize rublon2factor plug-in
 add_action('plugins_loaded', 'rublon2factor_plugins_loaded', 9);
+
+

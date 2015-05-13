@@ -6,14 +6,6 @@
  */
 class Rublon2FactorCallback {
 	
-	
-	// Defined errors
-	const ERROR_MISSING_ACCESS_TOKEN = 1;
-	const ERROR_REST_CREDENTIALS = 2;
-	const ERROR_USER_NOT_AUTHORIZED = 5;
-	const ERROR_DIFFERENT_USER = 6;
-	const ERROR_API_ERROR = 7;
-	
 	/**
 	 * State GET parameter name.
 	 */
@@ -122,7 +114,7 @@ class Rublon2FactorCallback {
 				break;
 	
 			case self::STATE_ERROR:
-				throw new RublonException('Rublon error status.', self::ERROR_API_ERROR);
+				throw new RublonCallbackException('Rublon error status.', RublonCallbackException::ERROR_API_ERROR);
 				break;
 				
 			case self::STATE_LOGOUT:
@@ -154,14 +146,14 @@ class Rublon2FactorCallback {
 			try /* to connect to the Rublon API and get user's ID to authenticate */ {
 				$this->credentials = $this->getRublon()->getCredentials($accessToken);
 			} catch (RublonException $e) {
-				throw new RublonException("Rublon API credentials error.", self::ERROR_REST_CREDENTIALS, $e);
+				throw new RublonCallbackException("Rublon API credentials error.", RublonCallbackException::ERROR_REST_CREDENTIALS, $e);
 			}
 			
 			// Authenticate user:
 			$this->success($this->credentials->getUserId());
 			
 		} else {
-			throw new RublonException("Missing access token.", self::ERROR_MISSING_ACCESS_TOKEN);
+			throw new RublonCallbackException("Missing access token.", RublonCallbackException::ERROR_MISSING_ACCESS_TOKEN);
 		}
 	
 	}
@@ -304,4 +296,16 @@ class Rublon2FactorCallback {
 	}
 	
 
+}
+
+
+class RublonCallbackException extends RublonException {
+	
+	// Defined errors
+	const ERROR_MISSING_ACCESS_TOKEN = 1;
+	const ERROR_REST_CREDENTIALS = 2;
+	const ERROR_USER_NOT_AUTHORIZED = 5;
+	const ERROR_DIFFERENT_USER = 6;
+	const ERROR_API_ERROR = 7;
+	
 }

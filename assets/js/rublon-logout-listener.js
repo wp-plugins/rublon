@@ -9,3 +9,8 @@
 		}
 	});
 }(jQuery));
+
+function RublonLogoutCallback() {
+	window.onbeforeunload = null;
+	location.reload();
+}

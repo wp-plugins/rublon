@@ -35,7 +35,6 @@ class RublonAPINotification extends RublonAPIClient {
 	 * Constructor.
 	 * 
 	 * @param RublonConsumer $rublon
-	 * @param string $accessToken
 	 */
 	public function __construct(RublonConsumer $rublon) {
 		

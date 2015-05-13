@@ -21,12 +21,12 @@ abstract class RublonConsumer {
 	/**
 	 * Latest version release of this library.
 	 */
-	const VERSION = '3.5.0';
+	const VERSION = '3.6.0';
 	
 	/**
 	 * Latest version release date of this library.
 	 */
-	const VERSION_DATE = '2014-12-02';
+	const VERSION_DATE = '2015-03-21';
 	
 	/**
 	 * Default API domain.

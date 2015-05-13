@@ -74,7 +74,7 @@ class RublonAPIBeginTransaction extends RublonAPIClient {
 		if (parent::validateResponse()) {
 			if (!empty($this->response[self::FIELD_RESULT][self::FIELD_WEB_URI])) {
 				return true;
-			} else throw new MissingField_RublonClientException(self::FIELD_WEB_URI, $this->rawResponseBody); 
+			} else throw new MissingField_RublonClientException($this, self::FIELD_WEB_URI);
 		}
 	}
 	

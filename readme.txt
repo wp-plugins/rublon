@@ -116,6 +116,11 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.0.0 =
+* Core changes regarding Rublon Business Edition
+* Information about Business Edition added on the Rublon settings page
+* Adam talks about WordPress, Rublon and security beneath the login form on wp-login.php
+
 = 2.1.20 =
 * Improved WordPress menubar handling on front-end
 

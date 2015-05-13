@@ -20,15 +20,18 @@ class RublonHelper {
 
 	const RUBLON_API_DOMAIN = 'https://code.rublon.com';
 	const RUBLON_REGISTRATION_DOMAIN = 'https://developers.rublon.com';
-
+	const RUBLON_EMAIL_SALES = 'sales@rublon.com';
+	
 	const RUBLON_SETTINGS_KEY = 'rublon2factor_settings';
 	const RUBLON_REGISTRATION_SETTINGS_KEY = 'rublon2factor_registration_settings';
 	const RUBLON_ADDITIONAL_SETTINGS_KEY = 'rublon2factor_additional_settings';
+	const RUBLON_CONFIRMATIONS_SETTINGS_KEY = 'rublon2factor_confirmations_settings';
 	const RUBLON_OTHER_SETTINGS_KEY = 'rublon2factor_other_settings';
 	const RUBLON_FIRSTINSTALL_SETTINGS_KEY = 'rublon2factor_firstinstall_settings';
 	const RUBLON_TRANSIENTS_SETTINGS_KEY = 'rublon2factor_transient_settings';
 
 	const RUBLON_SETTINGS_RL_ACTIVE_LISTENER = 'rl-active-listener';
+	const RUBLON_SETTINGS_ACCESS_CONTROL = 'access-control';
 
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	const RUBLON_META_AUTH_CHANGED_MSG = 'rublon_auth_changed_msg';
@@ -74,12 +77,14 @@ class RublonHelper {
 	const PROTECTION_TYPE_NONE = 'none';
 	const PROTECTION_TYPE_EMAIL = 'email';
 	const PROTECTION_TYPE_MOBILE = 'mobile';
+	const PROTECTION_TYPE_MOBILE_EVERYTIME = 'mobileEverytime';
 
 	const PROTTYPE_SETT_PREFIX = 'prottype-for-';
 
 	const WP_PROFILE_PAGE = 'profile.php';
 	const WP_OPTIONS_PAGE = 'options.php';
 	const WP_RUBLON_PAGE = 'admin.php?page=rublon';
+	const WP_RUBLON_CONFIRMATIONS_PAGE = 'admin.php?page=rublon_confirmations';
 	const WP_PROFILE_EMAIL2FA_SECTION = '#rublon-email2fa';
 	
 	const LOGOUT_LISTENER_HEARTBEAT_INTERVAL = 5;
@@ -92,6 +97,11 @@ class RublonHelper {
 	const INSTALL_OBSTACLE_PHP_VERSION_TOO_LOW = 'php_version_too_low';
 	const INSTALL_OBSTACLE_CURL_NOT_AVAILABLE = 'curl_not_available';
 	const INSTALL_OBSTACLE_HASH_NOT_AVAILABLE = 'hash_not_available';
+	
+	const CACHE_PURGE_ACTION = 'cache-purge';
+	const CACHE_PURGE_NONCE = 'rublon-cache-purge';
+	const CACHE_PURGE_CAPABILITY = 'manage_options';
+	
 	
 	/**
 	 * An instance of the Rublon2FactorWordPress class
@@ -139,7 +149,7 @@ class RublonHelper {
 	 * Load i18n files and check for possible plugin update
 	 * 
 	 */
-	static public function init() {
+	static public function plugins_loaded() {
 
 		require_once dirname(__FILE__) . '/classes/class-rublon-garbage-man.php';
 
@@ -162,7 +172,27 @@ class RublonHelper {
 		$garbage_man = new Rublon_Garbage_Man();
 		$garbage_man->collectTrash();
 		
+		add_action('init', array(__CLASS__, 'init'));
+		
+	}
+	
+	
+	static public function init() {
+		
 		self::initLogoutListener();
+
+		// Custom admin actions
+		if (is_admin() AND !empty($_GET['page']) AND $_GET['page'] == 'rublon') {
+			if (!empty($_GET['action'])) switch ($_GET['action']) {
+				case self::CACHE_PURGE_ACTION:
+					if (current_user_can(self::CACHE_PURGE_CAPABILITY)
+							AND !empty($_GET['nonce']) AND wp_verify_nonce($_GET['nonce'], self::CACHE_PURGE_NONCE)) {
+						delete_transient('rublon_features');
+	}
+					wp_redirect(admin_url('admin.php?page=rublon'));
+					break;
+			}
+		}
 
 	}
 
@@ -230,10 +260,21 @@ class RublonHelper {
 			// Check for transient-stored profile update form
 			self::_checkForStoredPUForm();
 			self::_checkForStoredASUForm();
+			
+			self::_saveAdamSaidFirstSentence();						
 		}
 	
 	}
-
+    
+	/**
+	 * Store in the cookie information about Adam seid first sentence
+	 */
+	static private function _saveAdamSaidFirstSentence() {
+	    $has_adam_said_first_sentence = RublonCookies::getAdamsCookie();
+	    if (empty($has_adam_said_first_sentence)) {
+	        RublonCookies::storeAdamsCookie();
+	    }    
+	}
 
 	/**
 	 * Check if Rublon action permitted on current page
@@ -285,13 +326,9 @@ class RublonHelper {
 				$current_user_id = self::getUserId($current_user);
 				if ($current_user_id && is_user_logged_in()) {
 					if (!self::isUserAuthenticated($current_user)) {
-						$protection_type = array(
-							self::roleProtectionType($current_user),
-							self::userProtectionType($current_user)
-						);
-						$authURL = self::authenticateWithRublon($current_user, $protection_type);
+						$authURL = self::authenticateWithRublon($current_user);
 						if (empty($authURL)) {
-							if (in_array(self::PROTECTION_TYPE_MOBILE, $protection_type)) {
+							if (RublonRolesProtection::isGrater(RublonHelper::getUserProtectionType(), RublonHelper::PROTECTION_TYPE_MOBILE, true)) {
 								wp_logout();
 								$user_email = self::getUserEmail($current_user);
 								$obfuscated_email = self::obfuscateEmail($user_email);
@@ -414,6 +451,8 @@ class RublonHelper {
 	 * a Rublon-confirmed change - the Rublon profile update
 	 * token should be present in DB and the POST data then.
 	 * 
+	 * @deprecated
+	 * @TODO remove function
 	 * @param array $post POST form data
 	 */
 	static public function checkPostDataProfileUpdate($post) {
@@ -442,7 +481,7 @@ class RublonHelper {
 				} else {
 					unset($_POST[self::PROFILE_UPDATE_TOKEN_NAME]);
 					if (!empty($post[self::FIELD_USER_PROTECTION_TYPE])) {
-						self::_setUserProtectionType(
+						self::setUserProtectionType(
 							$current_user, 
 							$post[self::FIELD_USER_PROTECTION_TYPE]
 						);
@@ -454,7 +493,7 @@ class RublonHelper {
 			} else {
 				// See if a Rublon-confirmed change is in the works.
 				$change = self::_pUChangeRequiresConfirmation($post);
-				if ($change > 0) {
+				if ($change > 0 AND RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_OPERATION_CONFIRMATION)) {
 					self::_storeForm(
 						$current_user_id,
 						$post,
@@ -489,7 +528,13 @@ class RublonHelper {
 
 	}
 
-	
+	/**
+	 * 
+	 * @param unknown $post
+	 * @param unknown $new_value
+	 * @param unknown $old_value
+	 * @return unknown
+	 */
 	static public function checkPostDataAddSettUpdate($post, $new_value, $old_value) {
 
 		$current_user = wp_get_current_user();
@@ -523,8 +568,9 @@ class RublonHelper {
 				}
 			} else {
 				// See if a Rublon-confirmed change is in the works.
-				$change = self::_aSUChangeRequiresConfirmation($new_value, $old_value);
-				if ($change > 0) {
+				$forceMobileApp = false;
+				$change = self::_aSUChangeRequiresConfirmation($new_value, $old_value, $forceMobileApp);
+				if ($change > 0 AND RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_OPERATION_CONFIRMATION)) {
 					self::_storeForm(
 						$current_user_id,
 						$post,
@@ -532,7 +578,7 @@ class RublonHelper {
 						self::UPDATE_FORM_LIFETIME
 					);
 					// Confirm transaction with Rublon
-					self::_confirmASUWithRublon($post, $change);
+					self::_confirmASUWithRublon($post, $change, $forceMobileApp);
 				} else {
 					// Let the update go forth.
 					$rublonASUToken = self::_generateToken();
@@ -561,6 +607,12 @@ class RublonHelper {
 	}
 
 	
+	/**
+	 * User profile change confirmation.
+	 * 
+	 * @param unknown $post
+	 * @param unknown $change
+	 */
 	static private function _confirmPUWithRublon($post, $change) {
 	
 		$current_user = wp_get_current_user();
@@ -572,8 +624,15 @@ class RublonHelper {
 		$authParams = array();
 		$roleProtectionType = self::roleProtectionType($current_user);
 		$userProtectionType = self::userProtectionType($current_user);
-		if ($roleProtectionType == self::PROTECTION_TYPE_EMAIL || $userProtectionType == self::PROTECTION_TYPE_EMAIL) {
+		$protection_type = array($roleProtectionType, $userProtectionType);
+		if (in_array(self::PROTECTION_TYPE_EMAIL, $protection_type)) {
 			$authParams[RublonAuthParams::FIELD_CAN_USE_EMAIL2FA] = true;
+		}
+		if (RublonHelper::getUserProtectionType($current_user) == RublonHelper::PROTECTION_TYPE_MOBILE_EVERYTIME AND RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_IGNORE_TRUSTED_DEVICE)) {
+			$authParams[RublonAuthParams::FIELD_IGNORE_TRUSTED_DEVICE] = true;
+		}
+		if ($timeBuffer = RublonFeature::getBufferedConfirmationTime()) {
+			$authParams[RublonAuthParams::FIELD_CONFIRM_TIME_BUFFER] = $timeBuffer * 60;
 		}
 		$authParams[self::FLAG_PROFILE_UPDATE] = true;
 		$authParams['customURIParam'] = self::FLAG_PROFILE_UPDATE;
@@ -647,6 +706,8 @@ class RublonHelper {
 					);
 				}
 			}
+		} catch (ForbiddenMethod_RublonAPIException $e) {
+			self::_abortConfirmation(self::rublonUrl(), 'FORBIDDEN_METHOD');
 		} catch (RublonException $e) {
 			self::_handleCallbackException($e);
 			self::_abortConfirmation(self::profileUrl());
@@ -654,8 +715,7 @@ class RublonHelper {
 	}
 
 
-	static private function _confirmASUWithRublon($post, $change) {
-
+	static private function _confirmASUWithRublon($post, $change, $forceMobileApp = false) {
 		$current_user = wp_get_current_user();
 		$user_id = self::getUserId($current_user);
 		$user_email = self::getUserEmail($current_user);
@@ -663,10 +723,23 @@ class RublonHelper {
 		$rublon = self::getRublon();
 		
 		$authParams = array();
+		
+		if ($forceMobileApp) {
+			$roleProtectionType = $userProtectionType = self::PROTECTION_TYPE_MOBILE;
+			$userProtectionType = null;
+		} else {
 		$roleProtectionType = self::roleProtectionType($current_user);
 		$userProtectionType = self::userProtectionType($current_user);
-		if ($roleProtectionType == self::PROTECTION_TYPE_EMAIL || $userProtectionType == self::PROTECTION_TYPE_EMAIL) {
+		}
+		$protection_type = array($roleProtectionType, $userProtectionType);
+		if (in_array(self::PROTECTION_TYPE_EMAIL, $protection_type)) {
 			$authParams[RublonAuthParams::FIELD_CAN_USE_EMAIL2FA] = true;
+		}
+		if (RublonHelper::getUserProtectionType($current_user) == RublonHelper::PROTECTION_TYPE_MOBILE_EVERYTIME AND RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_IGNORE_TRUSTED_DEVICE)) {
+			$authParams[RublonAuthParams::FIELD_IGNORE_TRUSTED_DEVICE] = true;
+		}
+		if ($timeBuffer = RublonFeature::getBufferedConfirmationTime()) {
+			$authParams[RublonAuthParams::FIELD_CONFIRM_TIME_BUFFER] = $timeBuffer * 60;
 		}
 		$authParams[self::FLAG_ADDSETT_UPDATE] = true;
 		$authParams['customURIParam'] = self::FLAG_ADDSETT_UPDATE;
@@ -712,6 +785,8 @@ class RublonHelper {
 					);
 				}
 			}
+		} catch (ForbiddenMethod_RublonAPIException $e) {
+			self::_abortConfirmation(self::rublonUrl(), 'FORBIDDEN_METHOD');
 		} catch (RublonException $e) {
 			self::_handleCallbackException($e);
 			self::_abortConfirmation(self::rublonUrl());
@@ -858,41 +933,63 @@ class RublonHelper {
 	 * Some of the profile fields are protected by Rublon-based
 	 * confirmation. These include user email and password.
 	 * 
+	 * @deprecated
+	 * @TODO remove function
 	 * @param array $post
 	 * @return boolean
 	 */
 	static private function _pUChangeRequiresConfirmation($post = array()) {
 
 		$change = 0;
-		if (!empty($post['pass1'])) {
+		if (!empty($post['pass1']) AND RublonConfirmations::isConfirmationRequired(RublonConfirmations::ACTION_OWN_PASSWORD_UPDATE)) {
 			$change += 1;
 		}
 		$current_user = wp_get_current_user();
-		if (!empty($post['email']) && $post['email'] !== self::getUserEmail($current_user)) {
+		if (!empty($post['email']) && $post['email'] !== self::getUserEmail($current_user)
+				AND RublonConfirmations::isConfirmationRequired(RublonConfirmations::ACTION_OWN_EMAIL_UPDATE)) {
 			$change += 2;
 		}
 		$userProtectionType = self::userProtectionType($current_user);
 		if (!empty($post[self::FIELD_USER_PROTECTION_TYPE])
 			&& $post[self::FIELD_USER_PROTECTION_TYPE] == self::PROTECTION_TYPE_NONE
-			&& $userProtectionType == self::PROTECTION_TYPE_EMAIL) {
+				&& $userProtectionType == self::PROTECTION_TYPE_EMAIL
+				&& RublonConfirmations::isConfirmationRequired(RublonConfirmations::ACTION_OWN_EMAIL2FA_DISABLE)) {
 			$change += 4;
 		}
 		return $change;
 
 	}
 
-	static private function _aSUChangeRequiresConfirmation($new_value, $old_value) {
+	/**
+	 * 
+	 * @param unknown $new_value
+	 * @param unknown $old_value
+	 * @param unknown $forceMobileApp
+	 * @return number
+	 */
+	static private function _aSUChangeRequiresConfirmation($new_value, $old_value, &$forceMobileApp) {
 
-		$levels = array(
-			self::PROTECTION_TYPE_NONE => 0,
-			self::PROTECTION_TYPE_EMAIL => 1,
-			self::PROTECTION_TYPE_MOBILE => 2,
-		);
 		$change = 0;
+		
+		if (!RublonConfirmations::isConfirmationRequired(RublonConfirmations::ACTION_REDUCE_ROLE_PROTECTION_LEVEL)) {
+			return $change;
+		}
+		
+		$levels = array_flip(RublonRolesProtection::getProtectionTypes());
+		$myRolesIds = RublonHelper::getMyRolesIds();
 		foreach ($new_value as $key => $value) {
+			$isMyRole = in_array($key, $myRolesIds);
 			if (strpos($key, self::PROTTYPE_SETT_PREFIX) !== false && isset($old_value[$key])) {
-				if ($levels[$value] < $levels[$old_value[$key]]) {
+				if ($levels[$value] < $levels[$old_value[$key]]) { // reducing the security level
 					$change++;
+				}
+				else if ($levels[$value] > $levels[$old_value[$key]] AND $isMyRole) {
+					// Requiring mobile app from one of my role
+					$change++;
+					if ($levels[$value] >= $levels[self::PROTECTION_TYPE_MOBILE]) {
+						// Forcing mobile app to protect from blocking my account:
+						$forceMobileApp = true;
+					}
 				}
 			}
 		}
@@ -932,6 +1029,10 @@ class RublonHelper {
 				if (!$usingEmail2FA) {
 					self::setMobileUserStatus($user);
 				}
+				
+				// Try new confirmation method:
+				RublonConfirmations::callbackSuccess($callback);
+				
 				if (RublonAPICredentials::CONFIRM_RESULT_YES == $callback->getCredentials()->getConfirmResult()) {
 					$consumerParams = $callback->getCredentials()->getResponse();
 					if (!empty($consumerParams['result'])) {
@@ -946,6 +1047,7 @@ class RublonHelper {
 							$transient_token_prefix = self::TRANSIENT_ADDSETT_TOKEN_PREFIX;
 							$update_token_name = self::ADDSETT_UPDATE_TOKEN_NAME;
 						} else {
+							// If failed:
 							self::_abortConfirmation(
 								$fallbackUrl,
 								'MALFORMED_AUTHENTICATION_DATA'
@@ -1017,6 +1119,9 @@ class RublonHelper {
 
 	static public function confirmationFailure($callback) {
 
+		// Try new confirmation class:
+		RublonConfirmations::callbackFailure($callback);
+		
 		$failureUrl = self::_determineConfirmationReturnUrl();
 		self::_abortConfirmation(
 			$failureUrl,
@@ -1123,11 +1228,12 @@ class RublonHelper {
 
 		$errorCode = $e->getCode();
 		$errorMessage = $e->getMessage();
+		if ($e instanceof RublonCallbackException) {
 		switch($errorCode) {
-			case Rublon2FactorCallbackWordPress::ERROR_MISSING_ACCESS_TOKEN:
+				case RublonCallbackException::ERROR_MISSING_ACCESS_TOKEN:
 				$errorCode = 'MISSING_ACCESS_TOKEN';
 				break;
-			case Rublon2FactorCallbackWordPress::ERROR_REST_CREDENTIALS:
+				case RublonCallbackException::ERROR_REST_CREDENTIALS:
 				$errorCode = 'REST_CREDENTIALS_FAILURE';
 				$previous = $e->getPrevious();
 				if (!empty($previous)) {
@@ -1138,17 +1244,20 @@ class RublonHelper {
 					}
 				}
 				break;
-			case Rublon2FactorCallbackWordPress::ERROR_USER_NOT_AUTHORIZED:
+				case RublonCallbackException::ERROR_USER_NOT_AUTHORIZED:
 				$errorCode = 'USER_NOT_AUTHENTICATED';
 				break;
-			case Rublon2FactorCallbackWordPress::ERROR_DIFFERENT_USER:
+				case RublonCallbackException::ERROR_DIFFERENT_USER:
 				$errorCode = 'DIFFERENT_USER';
 				break;
-			case Rublon2FactorCallbackWordPress::ERROR_API_ERROR:
+				case RublonCallbackException::ERROR_API_ERROR:
 				$errorCode = 'API_ERROR';
 				break;
 			default:
 				$errorCode = 'API_ERROR';
+		}
+		} else {
+			$errorCode = 'API_ERROR';
 		}
 		
 		self::setMessage($errorCode, 'error', $prefix);
@@ -1252,16 +1361,25 @@ class RublonHelper {
 	 * Perform Rublon2Factor authentication
 	 * 
 	 */
-	static public function authenticateWithRublon($user, $protection_type, $remember = false) {
+	static public function authenticateWithRublon($user, $remember = false) {
+
+		$protection_type = array(
+			RublonHelper::roleProtectionType($user),
+			RublonHelper::userProtectionType($user)
+		);
 
 		$rublon = self::getRublon();
 		$here = RublonCookies::getReturnURL();
 		$authParams = array(
 			'remember' => $remember,
 		);
-		if (in_array(self::PROTECTION_TYPE_EMAIL, $protection_type)
-			&& !in_array(self::PROTECTION_TYPE_MOBILE, $protection_type)) {
+		if (in_array(self::PROTECTION_TYPE_EMAIL, $protection_type) && !in_array(self::PROTECTION_TYPE_MOBILE, $protection_type)
+				&& !in_array(self::PROTECTION_TYPE_MOBILE_EVERYTIME, $protection_type)) {
 			$authParams[RublonAuthParams::FIELD_CAN_USE_EMAIL2FA] = true;
+		}
+		if (RublonHelper::getUserProtectionType($user) == RublonHelper::PROTECTION_TYPE_MOBILE_EVERYTIME
+				AND RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_IGNORE_TRUSTED_DEVICE)) {
+			$authParams[RublonAuthParams::FIELD_IGNORE_TRUSTED_DEVICE] = true;
 		}
 		if (!empty($here)) {
 			$authParams['customURIParam'] = '[[CUSTOM]]' . $here;
@@ -1372,6 +1490,9 @@ class RublonHelper {
 		switch ($group) {
 			case 'additional':
 				$key = self::RUBLON_ADDITIONAL_SETTINGS_KEY;
+				break;
+			case 'confirmations':
+				$key = self::RUBLON_CONFIRMATIONS_SETTINGS_KEY;
 				break;
 			case 'other':
 				$key = self::RUBLON_OTHER_SETTINGS_KEY;
@@ -2092,8 +2213,8 @@ class RublonHelper {
 	 * @param WP_User $user User object
 	 * @return int 
 	 */
-	static public function getUserId($user) {
-
+	static public function getUserId($user = null) {
+		if (empty($user)) $user = wp_get_current_user();
 		if ($user instanceof WP_User) {
 			return isset($user->ID) ? $user->ID : $user->id;
 		} else {
@@ -2111,8 +2232,8 @@ class RublonHelper {
 	 * @param WP_User $user User object
 	 * @return string
 	 */
-	static public function getUserEmail($user) {
-
+	static public function getUserEmail($user = null) {
+		if (empty($user)) $user = wp_get_current_user();
 		if ($user instanceof WP_User) {
 			return $user->user_email;
 		} else {
@@ -2396,43 +2517,48 @@ class RublonHelper {
 
 
 	/**
-	 * Check if any of the user's roles requires 2FA 
-	 * 
-	 * @param WP_User $user
-	 * @return boolean
-	 */
-	static public function roleProtectionType($user) {
-
-		$settings = self::getSettings('additional');
-		$role_protection_type = self::PROTECTION_TYPE_NONE;
-		foreach ($user->roles as $role) {
-			$role_id = self::prepareRoleId($role);
-			if (!empty($settings[$role_id]) && $settings[$role_id] == self::PROTECTION_TYPE_EMAIL && $role_protection_type == self::PROTECTION_TYPE_NONE) {
-				$role_protection_type = self::PROTECTION_TYPE_EMAIL;
-			} elseif (!empty($settings[$role_id]) && $settings[$role_id] == self::PROTECTION_TYPE_MOBILE) {
-				$role_protection_type = self::PROTECTION_TYPE_MOBILE;
-			}
-		}
-		return $role_protection_type;
-
-	}
-
-
-	/**
-	 * Get a user's protection type
+	 * Get a user's roles maximum protection type.
 	 * 
 	 * @param WP_User $user
 	 * @return string
 	 */
-	static public function userProtectionType($user) {
+	static public function roleProtectionType($user) {
+		return RublonRolesProtection::getUserRolesMaxProtectionType($user);
+	}
 
+
+
+	/**
+	 * Get a user's protection type (only user's, excluding roles protection).
+	 * 
+	 * @param WP_User $user
+	 * @return string
+	 */
+	static public function userProtectionType($user = null) {
+		if (is_null($user)) $user = wp_get_current_user();
+		self::getMobileUserStatus($user);
 		$user_protection_type = get_user_meta(self::getUserId($user), self::RUBLON_META_USER_PROTTYPE, true);
 		if ($user_protection_type) {
-			return $user_protection_type;
+			return RublonRolesProtection::getMinimumProtectionType($user_protection_type);
 		} else {
 			return self::PROTECTION_TYPE_NONE;
 		}
+	}
+	
 
+	/**
+	 * Get a user's protection type (including roles protection).
+	 * 
+	 * @param WP_User $user
+	 * @return string
+	 */
+	static public function getUserProtectionType($user = null) {
+		if (is_null($user)) $user = wp_get_current_user();
+		if (empty($user) OR !($user instanceof WP_User)) return array();
+		else return RublonRolesProtection::getMaximumProtectionType(array(
+			self::userProtectionType($user),
+			self::roleProtectionType($user),
+		));
 	}
 
 
@@ -2442,7 +2568,7 @@ class RublonHelper {
 	 * @param WP_User $user
 	 * @param string $type
 	 */
-	static private function _setUserProtectionType($user, $type) {
+	static public function setUserProtectionType($user, $type) {
 
 		update_user_meta(
 			self::getUserId($user),
@@ -2465,14 +2591,15 @@ class RublonHelper {
 	 * @param string $protection_type If set to "yes", the protection level will be returned in this variable
 	 * @return boolean
 	 */
-	static public function isUserProtected($user, &$protection_type = self::NO) {
+	static public function isUserProtected($user = null, &$protection_type = self::NO) {
 
+		if (empty($user)) $user = wp_get_current_user();
+		if (!($user instanceof WP_User)) return false;
 		$role_protection_type = self::roleProtectionType($user);
 		$user_protection_type = self::userProtectionType($user);
 		$mobile_user_status = self::getMobileUserStatus($user, true);
 		if ($protection_type == self::YES) {
-			if ($mobile_user_status == self::YES
-				|| $role_protection_type == self::PROTECTION_TYPE_MOBILE) {
+			if ($mobile_user_status == self::YES OR $role_protection_type == self::PROTECTION_TYPE_MOBILE) {
 				$protection_type = self::PROTECTION_TYPE_MOBILE;
 			} elseif ($role_protection_type == self::PROTECTION_TYPE_EMAIL
 				|| $user_protection_type == self::PROTECTION_TYPE_EMAIL) {
@@ -2658,14 +2785,16 @@ class RublonHelper {
 	 * @param string $text
 	 * @param true $withMarkup Include <script></script> tags
 	 */
-	static private function _reloadParentFrame($text, $withMarkup = false) {
+	static function _reloadParentFrame($text, $withMarkup = false) {
 
 		$script = ($withMarkup) ? '<script type="text/javascript">//<![CDATA[' : '';
 		$script .= '
 			if (window && window.parent && window.parent.RublonWP) {
 				var RublonWP = window.parent.RublonWP;
+				setTimeout(function() {
 				RublonWP.reloadPage();
-			}
+				}, 100);
+			} else location.reload();
 		';
 		$script .= ($withMarkup) ? '//]]></script>' : '';
 		$text .= '<br />' . __('This will only take a moment.', 'rublon');
@@ -2690,7 +2819,11 @@ class RublonHelper {
 		$script .= '
 			if (window && window.parent && window.parent.RublonWP) {
 				var RublonWP = window.parent.RublonWP;
+				setTimeout(function() {
 				RublonWP.goToPage(' . json_encode($url) . ');
+				}, 100);
+			} else {
+				location.href = ' . json_encode($url) . ';
 			}
 		';
 		$script .= ($withMarkup) ? '//]]></script>' : '';
@@ -2747,7 +2880,7 @@ class RublonHelper {
 	 * @param int $length
 	 * @return string
 	 */
-	static private function _generateToken($length = 32) {
+	static function _generateToken($length = 32) {
 
 		$chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 		$result = '';
@@ -3079,15 +3212,15 @@ class RublonHelper {
 	 * @return boolean
 	 */
 	static public function canShowACM() {
-
-		$other_settings = self::getSettings('other');
-		return (isset($other_settings[self::SETTING_CAN_SHOW_ACM]) && $other_settings[self::SETTING_CAN_SHOW_ACM] == self::YES);
+		return (RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_IDENTITY_PROVIDING) AND RublonHelper::isAccessControlWidgetEnabled());
+// 		$other_settings = self::getSettings('other');
+// 		return (isset($other_settings[self::SETTING_CAN_SHOW_ACM]) && $other_settings[self::SETTING_CAN_SHOW_ACM] == self::YES);
 
 	}
 
 
 	/**
-	 * Set the site's permission to use ACM (Access Control Manager)
+	 * Set the site's permission to use ACM (Account Sharing Manager)
 	 * 
 	 * @param string $status Permission status
 	 */
@@ -3121,6 +3254,22 @@ class RublonHelper {
 		return $wp_roles->get_names();
 
 
+	}
+
+
+	/**
+	 * Prepare an array of current site's user roles converted into ids.
+	 * 
+	 * @return array
+	 */
+	static public function getMyRolesIds() {
+		$result = array();
+		if (is_user_logged_in() AND $userId = get_current_user_id() AND $user = get_userdata($userId)) {
+			foreach ($user->roles as $role) {
+				$result[] = self::prepareRoleId($role);
+			}
+		}
+		return $result;
 	}
 
 
@@ -3160,18 +3309,23 @@ class RublonHelper {
 
 	static public function initLogoutListener() {
 
-		if (is_user_logged_in() AND RublonHelper::isLogoutListenerEnabled()) {
+		if (is_user_logged_in()) {
 			
-			// Embed JavaScript
+			if (RublonHelper::isLogoutListenerEnabled()) { // Rublon-push listener
+				// Get GUI instance to embed consumer script:
+				Rublon2FactorGUIWordPress::getInstance();
+			} else {
+				// Increase the Heartbeat pulse delay:
+				add_filter( 'heartbeat_settings', array(__CLASS__, 'heartbeatSettings') );
+			}
+				
+			// Embed JavaScript for logout listener
 			if (is_admin()) {
 				remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
 				add_action('admin_enqueue_scripts', array(__CLASS__, 'initLogoutListenerScripts'));
 			} else {
 				add_action('wp_enqueue_scripts', array(__CLASS__, 'initLogoutListenerScripts'));
 			}
-			
-			// Change the Heartbeat pulse delay:
-			add_filter( 'heartbeat_settings', array(__CLASS__, 'heartbeatSettings') );
 			
 		}
 
@@ -3207,8 +3361,20 @@ class RublonHelper {
 	 */
 	static public function isLogoutListenerEnabled() {
 		$additional_settings = RublonHelper::getSettings('additional');
-		return (empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER])
-					|| $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on');
+		return (!empty($additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER])
+					&& $additional_settings[RublonHelper::RUBLON_SETTINGS_RL_ACTIVE_LISTENER] == 'on');
+	}
+	
+
+	/**
+	 * Check if Account Sharing widget has been enabled in the Rublon plugin settings.
+	 *
+	 * @return boolean
+	 */
+	static public function isAccessControlWidgetEnabled() {
+		$additional_settings = RublonHelper::getSettings('additional');
+		return (!empty($additional_settings[RublonHelper::RUBLON_SETTINGS_ACCESS_CONTROL])
+			AND $additional_settings[RublonHelper::RUBLON_SETTINGS_ACCESS_CONTROL] == 'on');
 	}
 	
 	
@@ -3235,6 +3401,48 @@ class RublonHelper {
 		return memory_get_usage() - $start_memory;
 
 	}
+	
+	/**
+	 * Returns Adams sentence to be said on login screen
+	 * 
+	 * @return String Adams sentence
+	 */
+	static public function adam_says() {
+	    $sentences = array(
+	    __('Hello, Thanks for using Rublon Account Security. My name is Adam and I wish to share with you interesting facts about WordPress and security.', 'rublon'),	    
+	    __('It might interest you to know that over 600,000 account logins are compromised daily on Facebook alone. The good news is that we now have Rublon Account Security.', 'rublon'),	    
+	    __('WordPress was first released on May 27 in 2003 by Matt Mullenweg and Mike Little as free software, licensed under GPLv2. That is quite some time now.', 'rublon'),	    
+	    __('WordPress powers over 23% of the World Wide Web. This translates to over 60 Million websites. Wow!', 'rublon'),	    
+	    __('Did you know that such known companies as CNN, Best Buy, Forbes, Mashable, TechCrunch and The New Yorker use WordPress to power their websites? It must be a solid platform, indeed!', 'rublon'),	    
+	    __('Rublon Account Security is just one of the over 30,000 free WordPress plugins. Have you already taken a look at them?', 'rublon'),	    
+	    __('How are you? WordPress is available in over 50 languages. Quite impressive, huh? I didn\'t even know that so many exist!', 'rublon'),	    
+        __('Brute force attacks against WordPress have been very common. On some days, WordPress is hit by over 200,000 login attempts! Rublon Account Security protects you from them.', 'rublon'),        	    
+        __('When did you last change your password? You don\'t have to do it monthly, but it\'s wise to change your password occasionally.', 'rublon'),        	    
+        __('Your password doesn\'t have to be complicated, as long as your account is protected by Rublon Account Security. Even if someone guesses it, they probably won\'t have access to your email account or phone.', 'rublon'),        	    
+        __('Are you using the Rublon mobile app? It enables you to scan a Rublon Code using your phone whenever you sign in from an unknown device. This means enhanced security for all!', 'rublon'),        	    
+        __('The Rublon mobile app allows you to view and remove your trusted devices directly from the app. This is great for people on the go — like me!', 'rublon'),        	    
+        __('Did you know that it is possible to log out remotely by simply removing a trusted device using any other of your devices? Last time I forgot to log out from my office computer, Rublon saved my butt!', 'rublon'),        	    
+        __('I like how Rublon Account Security works with Bitcoin exchanges. Before any money transfer can be made, I need to confirm it using my phone.', 'rublon'),        	    
+        __('I\'m going to reveal to you a little secret. Now that my accounts are protected by Rublon Account Security, I\'m using very simple passwords! I can finally remember them now.', 'rublon'),        	    
+        __('Are you an administrator of this website? Did you know that you can request certain groups to state their identity each time they log in, regardless of whether they are using a trusted device or not? This only works with the Business Edition though.', 'rublon'),        	    
+        __('Did you know that 1 in 10 social network users acknowledged falling victim to a scam or fake link on social network platforms? Watch out!', 'rublon'),        	    
+        __('The US Navy sees over 100,000 cyber attacks per hour. It is a creepy world out there!', 'rublon'),        	    
+        __('Small and medium sized businesses have lately become popular targets because they don\'t invest much in cyber security. The good thing is that you now have Rublon Account Security!', 'rublon'),	    
+	    __('Want to give someone temporary access to your account? Give him your login credentials and add his email address to your Account Sharing Manager! This only works with Rublon Account Security Business Edition.', 'rublon')	        
+	    );
+	    
+	    $sentence = '';	    
+	    $has_adam_said_first_sentence = RublonCookies::getAdamsCookie();	    
+	    if (empty($has_adam_said_first_sentence)) { // Show first sentence only once
+	        $sentence = $sentences[0];	        
+	    } else {
+    	    // seed generator
+    	    srand ((double) microtime() * 10000000);
+    	    $sentence = $sentences[rand(1, 19)];
+	    } 
+	    
+	    return $sentence; 
+	}       
 
 
 }

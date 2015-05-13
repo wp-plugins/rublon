@@ -20,6 +20,7 @@ class RublonCookies {
 	const COOKIE_AUTHENTICATED = 'auth';
 	const COOKIE_LOGIN_TOKEN_ID = 'login';
 	const COOKIE_RETURNURL = 'return_url';
+	const COOKIE_ADAM = 'adam_said';
 
 
 	/**
@@ -324,7 +325,8 @@ class RublonCookies {
 			$settings = RublonHelper::getSettings();
 			$cookie_data = hash_hmac('SHA256', $user_data, $settings['rublon_secret_key']);
 		} else {
-			$pass_frag = substr($user->user_pass, 8, 4);
+		    srand(microtime());
+			$pass_frag = rand(1000, 9999);
 			$key = wp_hash($user->user_login . '|' . $pass_frag . '|' . $expiration, 'auth');
 			$hash = hash_hmac('SHA256', $user->user_login . '|' . $expiration, $key);
 			$cookie_data = $user->user_login . '|' . $expiration . '|' . $hash;
@@ -403,6 +405,30 @@ class RublonCookies {
 			'cookie_expires' => $cookie_expires,
 			'cookie_secure' => $cookie_secure,
 		);
+	
+	}
+	
+	/**
+	 * Retrieve information if Adam has already said first sentence
+	 *
+	 * @return array|null
+	 */
+	static public function getAdamsCookie() {
+	
+	    $cookieName = self::COOKIE_PREFIX . self::COOKIE_ADAM;	    	    	    
+	    return self::_getCookieData($cookieName);
+	
+	}
+	
+	/**
+	 * Save information if Adam has already said first sentence
+	 *
+	 * @return array|null
+	 */
+	static public function storeAdamsCookie() {
+	
+	    $cookieName = self::COOKIE_PREFIX . self::COOKIE_ADAM;
+	    return self::_setCookieData($cookieName, 1);
 	
 	}
 
