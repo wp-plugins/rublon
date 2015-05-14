@@ -2,7 +2,7 @@
 Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification, Zwei-Faktor-Authentifizierung, dwuskładnikowe uwierzytelnianie, dwuskładnikowe logowanie, logowanie, uwierzytelnianie
 Requires at least: 3.3.x
-Tested up to: 4.1
+Tested up to: 4.2.2
 Stable tag: 3.0.1
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
@@ -117,7 +117,7 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 3.0.1 =
-* Fix for the loop problem in version 3.0.0
+* Fix for the version 3.0.0 (loop problem)
 
 = 3.0.0 =
 * Core changes regarding Rublon Business Edition
