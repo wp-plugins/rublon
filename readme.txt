@@ -116,6 +116,9 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.0.1 =
+* Fix for the loop problem in version 3.0.0
+
 = 3.0.0 =
 * Core changes regarding Rublon Business Edition
 * Information about Business Edition added on the Rublon settings page

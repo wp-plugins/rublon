@@ -325,8 +325,7 @@ class RublonCookies {
 			$settings = RublonHelper::getSettings();
 			$cookie_data = hash_hmac('SHA256', $user_data, $settings['rublon_secret_key']);
 		} else {
-		    srand(microtime());
-			$pass_frag = rand(1000, 9999);
+			$pass_frag = substr($user->user_pass, 8, 4);
 			$key = wp_hash($user->user_login . '|' . $pass_frag . '|' . $expiration, 'auth');
 			$hash = hash_hmac('SHA256', $user->user_login . '|' . $expiration, $key);
 			$cookie_data = $user->user_login . '|' . $expiration . '|' . $hash;
