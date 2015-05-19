@@ -40,6 +40,14 @@ function rublon2factor_add_settings_link($links, $file) {
 
 add_filter('plugin_action_links', 'rublon2factor_add_settings_link', 10, 2);
 
+// For compatibility with version 3.5.x
+if (!function_exists('wp_get_session_token')) {
+    function wp_get_session_token() {
+        $cookie = wp_parse_auth_cookie( '', 'logged_in' );
+        return ! empty( $cookie['token'] ) ? $cookie['token'] : '';
+    }
+}
+
 require_once dirname(__FILE__) . '/includes/libs/RublonImplemented/Rublon2FactorWordPress.php';
 require_once dirname(__FILE__) . '/includes/libs/RublonImplemented/Rublon2FactorCallbackWordPress.php';
 require_once dirname(__FILE__) . '/includes/libs/RublonImplemented/Rublon2FactorGUIWordPress.php';
