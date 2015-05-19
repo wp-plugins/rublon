@@ -126,7 +126,11 @@ function rublon2factor_register_settings() {
 	
 	add_settings_section('rublon2factor-other-settings', __('Other settings', 'rublon'), 'rublon2factor_render_other_settings', 'rublon');
 	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-other-settings');
-	add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-other-settings');
+
+	// Remote logout available since WordPress version 3.6.0
+	if (version_compare(get_bloginfo('version'), '3.6', 'ge')) {
+	   add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-other-settings');
+	}
 	
 	if (RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_IDENTITY_PROVIDING)) {
 		add_settings_field('rublon2factor_access_control', __('Account Sharing Widget', 'rublon'), 'rublon2factor_render_access_control', 'rublon', 'rublon2factor-other-settings');

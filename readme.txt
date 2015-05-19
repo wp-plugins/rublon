@@ -116,6 +116,9 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.0.2 =
+* Added compatibility with version 3.5.x
+
 = 3.0.1 =
 * Fix for the version 3.0.0 (loop problem)
 

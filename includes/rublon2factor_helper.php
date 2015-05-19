@@ -1327,6 +1327,7 @@ class RublonHelper {
 	/**
 	 * On creating auth cookie add a user meta to associate device ID with user's session.
 	 * The 'auth_cookie' filter.
+	 * Default value (NULL) added for $token because of compatybility with WordPress version 3.5.x
 	 *
 	 * @see wp_generate_auth_cookie()
 	 * @param string $cookie
@@ -1336,7 +1337,13 @@ class RublonHelper {
 	 * @param string $token
 	 * @return string
 	 */
-	static public function associateSessionWithDevice($cookie, $user_id, $expiration, $scheme, $token) {
+	static public function associateSessionWithDevice($cookie, $user_id, $expiration, $scheme, $token = NULL) {
+	    
+	    // Compatybility with WordPress version 3.5.x
+	    if (empty($token)) {
+	        $token = md5(time());	        
+	    }
+	    
 		if (!empty(self::$deviceId) AND !empty($token)) {
 			add_user_meta($user_id, RublonHelper::RUBLON_META_DEVICE_ID .'_'. self::$deviceId, hash( 'sha256', $token ), $unque = false);
 		}
@@ -3311,21 +3318,24 @@ class RublonHelper {
 
 		if (is_user_logged_in()) {
 			
-			if (RublonHelper::isLogoutListenerEnabled()) { // Rublon-push listener
-				// Get GUI instance to embed consumer script:
-				Rublon2FactorGUIWordPress::getInstance();
-			} else {
-				// Increase the Heartbeat pulse delay:
-				add_filter( 'heartbeat_settings', array(__CLASS__, 'heartbeatSettings') );
-			}
-				
-			// Embed JavaScript for logout listener
-			if (is_admin()) {
-				remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
-				add_action('admin_enqueue_scripts', array(__CLASS__, 'initLogoutListenerScripts'));
-			} else {
-				add_action('wp_enqueue_scripts', array(__CLASS__, 'initLogoutListenerScripts'));
-			}
+		    // Remote logout available since WordPress version 3.6.0
+		    if (version_compare(get_bloginfo('version'), '3.6', 'ge')) {		    
+    			if (RublonHelper::isLogoutListenerEnabled()) { // Rublon-push listener
+    				// Get GUI instance to embed consumer script:
+    				Rublon2FactorGUIWordPress::getInstance();
+    			} else {
+    				// Increase the Heartbeat pulse delay:
+    				add_filter( 'heartbeat_settings', array(__CLASS__, 'heartbeatSettings') );
+    			}
+    				
+    			// Embed JavaScript for logout listener
+    			if (is_admin()) {
+    				remove_action( 'admin_enqueue_scripts', 'wp_auth_check_load' );
+    				add_action('admin_enqueue_scripts', array(__CLASS__, 'initLogoutListenerScripts'));
+    			} else {
+    				add_action('wp_enqueue_scripts', array(__CLASS__, 'initLogoutListenerScripts'));
+    			}
+		    }
 			
 		}
 
