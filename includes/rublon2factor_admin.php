@@ -122,11 +122,14 @@ function rublon2factor_register_settings() {
 	// register additional settings
 	register_setting('rublon2factor_additional_settings_group', RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
 	add_settings_section('rublon2factor-additional-settings', __('Protection', 'rublon'), 'rublon2factor_render_additional_settings', 'rublon');
-	add_settings_field('rublon2factor_protection_types', __('Role protection level', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');
+	add_settings_field('rublon2factor_protection_types', __('Role protection level', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');	
 	
 	add_settings_section('rublon2factor-other-settings', __('Other settings', 'rublon'), 'rublon2factor_render_other_settings', 'rublon');
-	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-other-settings');
-
+	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-other-settings');	
+    
+	// Enable/disable Adam on login page
+	add_settings_field('rublon2factor_enable_adam', __('Show Adam on the login page', 'rublon'), 'rublon2factor_render_enable_adam', 'rublon', 'rublon2factor-other-settings');
+	
 	// Remote logout available since WordPress version 3.6.0
 	if (version_compare(get_bloginfo('version'), '3.6', 'ge')) {
 	   add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-other-settings');
@@ -336,6 +339,25 @@ function rublon2factor_render_disable_xmlrpc() {
 
 }
 
+function rublon2factor_render_enable_adam() {
+    
+    $settings = RublonHelper::getSettings('additional');
+    $offSelected = '';
+    $onSelected = '';
+    
+    if (!empty($settings['enable-adam']) && $settings['enable-adam'] == 'on') {
+        $onSelected = ' selected';        
+    } else {
+        $offSelected = ' selected';                               
+    }
+    
+    echo '<p class="rublon-settings-desc">' . __('Enable or disable Adam talking about WordPress, Rublon and security beneath the login form on wp-login.php', 'rublon') . '</p>';
+    echo '<select id="rublon-adam-dropdown" name="' . RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY . '[enable-adam]">';
+    echo '	<option value="off"' . $offSelected . '>' . __('Disabled', 'rublon') . '</option>';
+    echo '	<option value="on"' . $onSelected . '>' . __('Enabled', 'rublon') . '</option>';
+    echo '</select>';    
+}
+
 function rublon2factor_render_rl_activelistener() {
 
 	$additional_settings = RublonHelper::getSettings('additional');
@@ -415,6 +437,7 @@ function rublon2factor_render_settings_page() {
     					?>				        															
         				<ul type="disc">
         				    <li><strong><?php _e('Priority Support', 'rublon'); ?></strong><br /><?php _e('Always be at the front of the queue. We will provide advanced technical support and even log in to your website to solve your problem. Your requests will be answered as fast as possible.', 'rublon'); ?></li>
+        				    <li><strong><?php _e('Custom design', 'rublon'); ?></strong><br /><?php _e('Customize the look and feel of the authentication pages and email messages.', 'rublon'); ?></li>
         					<li><strong><?php _e('Operation Confirmation', 'rublon'); ?></strong><br /><?php _e('Protect your sensitive data against unauthorized changes. A must-have if you don\'t use SSL!', 'rublon'); ?></li>
         					<li><strong><?php _e('Force Mobile App', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity using their phone. Highly recommended for administrators.', 'rublon'); ?></li>
         					<li><strong><?php _e('Force Identity Verification', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity during each login, even if they\'re using a trusted device. Important if you store sensitive customer data and need to comply with regulations.', 'rublon'); ?></li>
@@ -852,21 +875,26 @@ function rublon2factor_add_frontend_files() {
 
 add_action( 'wp_enqueue_scripts', 'rublon2factor_add_frontend_files' );
 
-function login_page_custom_css() {    
-    wp_enqueue_style('rublon_adam', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon_adam.css');    
+// Shows Adam on the login page
+if (RublonHelper::isAdamEnabled()) {
+    function login_page_custom_css() {    
+        wp_enqueue_style('rublon_adam', RUBLON2FACTOR_PLUGIN_URL . '/assets/css/rublon_adam.css');    
+    }
+    
+    add_action( 'login_enqueue_scripts', 'login_page_custom_css' );
+    
+    function add_login_footer() {
+        ?>
+    <div id="main_login_form_widget_style">
+    	<div class="triangle">
+    		<div><?php echo RublonHelper::adam_says(); ?></div>
+    	</div>
+    	<div id="imgbox_login_form_widget_style">
+    		<div class="adam_image">&nbsp;</div>
+    	</div>
+    </div>
+    <?php
+    }
+    
+    add_action( 'login_footer', 'add_login_footer' );
 }
-add_action( 'login_enqueue_scripts', 'login_page_custom_css' );
-
-function add_login_footer() {
-    ?>
-<div id="main_login_form_widget_style">
-	<div class="triangle">
-		<div><?php echo RublonHelper::adam_says(); ?></div>
-	</div>
-	<div id="imgbox_login_form_widget_style">
-		<div class="adam_image">&nbsp;</div>
-	</div>
-</div>
-<?php
-}
-add_action( 'login_footer', 'add_login_footer' );

@@ -32,6 +32,7 @@ class RublonHelper {
 
 	const RUBLON_SETTINGS_RL_ACTIVE_LISTENER = 'rl-active-listener';
 	const RUBLON_SETTINGS_ACCESS_CONTROL = 'access-control';
+	const RUBLON_SETTINGS_ADAM = 'enable-adam';
 
 	const RUBLON_META_PROFILE_ID = 'rublon_profile_id';
 	const RUBLON_META_AUTH_CHANGED_MSG = 'rublon_auth_changed_msg';
@@ -1688,7 +1689,7 @@ class RublonHelper {
 							'<strong>' . $obfs_email . '</strong>')
 						. '<br /><br />'
 						. sprintf(
-							__('If you already have the Rublon mobile app, please go to <a href="%s" target="_blank">www.rublon.com</a> and log in to your User Panel in order to add the above email address as an additional one.', 'rublon'),
+						    __('If you already have the Rublon mobile app installed on your phone, please add the above email address as an additional email address after pressing the "@" symbol inside the app.', 'rublon'),
 							self::rubloncomUrl())
 						. '<br /><br />'
 						. '<div class="rublon-app-button"><a href="' . self::appStoreUrl('android')  . '" target="_blank"><img src="https://rublon.com/img/play_store_small.png" /></a></div>'
@@ -2122,6 +2123,12 @@ class RublonHelper {
 		if (!isset($additional_settings['disable-xmlrpc'])) {
 			$additional_settings['disable-xmlrpc'] = 'on';
 			self::saveSettings($additional_settings, 'additional');
+		}
+		
+		// Enable Adam on login page by default
+		if (!isset($additional_settings['enable-adam'])) {		    
+		    $additional_settings['enable-adam'] = 'on';
+		    self::saveSettings($additional_settings, 'additional');
 		}
 		
 		$admin_role = self::prepareRoleId('administrator');
@@ -3453,6 +3460,12 @@ class RublonHelper {
 	    
 	    return $sentence; 
 	}       
+
+	static public function isAdamEnabled() {
+	    $additional_settings = RublonHelper::getSettings('additional');
+	    return (!empty($additional_settings[RublonHelper::RUBLON_SETTINGS_ADAM])
+	        AND $additional_settings[RublonHelper::RUBLON_SETTINGS_ADAM] == 'on');
+	}
 
 
 }

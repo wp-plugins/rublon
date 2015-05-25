@@ -319,13 +319,14 @@ class RublonCookies {
 	static private function _prepareAuthCookieData($user, $expiration, $plugin_version = '2.0.2') {
 
 		$user_id = RublonHelper::getUserId($user);
+		$settings = RublonHelper::getSettings();
+		
 		if (version_compare($plugin_version, '2.0.2', 'lt')) {
 			$user_login = $user->user_login;
-			$user_data = $user_login . $user_id;
-			$settings = RublonHelper::getSettings();
+			$user_data = $user_login . $user_id;			
 			$cookie_data = hash_hmac('SHA256', $user_data, $settings['rublon_secret_key']);
 		} else {
-			$pass_frag = substr($user->user_pass, 8, 4);
+			$pass_frag = substr($settings['rublon_secret_key'], 8, 4);			
 			$key = wp_hash($user->user_login . '|' . $pass_frag . '|' . $expiration, 'auth');
 			$hash = hash_hmac('SHA256', $user->user_login . '|' . $expiration, $key);
 			$cookie_data = $user->user_login . '|' . $expiration . '|' . $hash;

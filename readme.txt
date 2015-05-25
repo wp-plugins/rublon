@@ -116,6 +116,11 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.0.3 =
+* Added possibility to disable Adam on the login page
+* Updated translations
+* Rublon core libraries update 
+
 = 3.0.2 =
 * Added compatibility with WordPress version 3.5.x
 
