@@ -33,7 +33,7 @@ class RublonConfirmStrategy_DeleteTrashPost extends RublonConfirmStrategyButton 
 	}
 	
 	
-	function appendScript() {
+	function appendScript($selector = NULL) {
 		parent::appendScript();
 		echo self::getFilterScript();
 	}

@@ -122,11 +122,11 @@ function rublon2factor_register_settings() {
 	// register additional settings
 	register_setting('rublon2factor_additional_settings_group', RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
 	add_settings_section('rublon2factor-additional-settings', __('Protection', 'rublon'), 'rublon2factor_render_additional_settings', 'rublon');
-	add_settings_field('rublon2factor_protection_types', __('Role protection level', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');	
+	add_settings_field('rublon2factor_protection_types', __('Role protection level', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');
 	
 	add_settings_section('rublon2factor-other-settings', __('Other settings', 'rublon'), 'rublon2factor_render_other_settings', 'rublon');
-	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-other-settings');	
-    
+	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-other-settings');
+
 	// Enable/disable Adam on login page
 	add_settings_field('rublon2factor_enable_adam', __('Show Adam on the login page', 'rublon'), 'rublon2factor_render_enable_adam', 'rublon', 'rublon2factor-other-settings');
 	

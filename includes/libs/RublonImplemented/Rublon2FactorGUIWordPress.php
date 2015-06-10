@@ -109,7 +109,10 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 
 	}
 
-
+	public function getBadgeWidget() {	    
+	    return new RublonBadge();
+	}
+    
 	public function userBox() {
 
 		return '';

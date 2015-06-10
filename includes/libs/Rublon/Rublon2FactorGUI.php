@@ -3,6 +3,7 @@
 require_once('Rublon2Factor.php');
 require_once('core/HTML/RublonButton.php');
 require_once('core/HTML/RublonConsumerScript.php');
+require_once('core/HTML/RublonBadge.php');
 
 /**
  * Class to create Rublon GUI elements.

@@ -170,7 +170,7 @@ abstract class RublonConfirmStrategy {
 	}
 	
 	
-	function appendScript() {
+	function appendScript($selector = NULL) {
 		
 	}
 	

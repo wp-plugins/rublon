@@ -323,7 +323,7 @@ class RublonCookies {
 		
 		if (version_compare($plugin_version, '2.0.2', 'lt')) {
 			$user_login = $user->user_login;
-			$user_data = $user_login . $user_id;			
+			$user_data = $user_login . $user_id;
 			$cookie_data = hash_hmac('SHA256', $user_data, $settings['rublon_secret_key']);
 		} else {
 			$pass_frag = substr($settings['rublon_secret_key'], 8, 4);			

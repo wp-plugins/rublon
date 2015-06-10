@@ -546,9 +546,15 @@ add_action( 'wp_ajax_' . Rublon_Pointers::AJAX_ANONYMOUS_STATS_ACTION, 'rublon2f
  */
 function rublon2factor_modify_login_form() {
 
-	$rublonBadgeUrl = RublonHelper::rubloncomUrl(false, '/img/rublon_badge_32.png');
-	echo '<div style="display: none;" id="rublon-badge"><div class="rublon-badge-link"><a href="' . RublonHelper::rubloncomUrl() . '" target="_blank" title="Rublon Account Security">'
-			. '<img class="rublon-badge-image rublon-image" src="' . $rublonBadgeUrl .  '" alt="Rublon Account Security" /></a></div></div>';
+// 	$rublonBadgeUrl = RublonHelper::rubloncomUrl(false, '/img/rublon_badge_32.png');
+// 	echo '<div style="display: none;" id="rublon-badge"><div class="rublon-badge-link"><a href="' . RublonHelper::rubloncomUrl() . '" target="_blank" title="Rublon Account Security">'
+// 			. '<img class="rublon-badge-image rublon-image" src="' . $rublonBadgeUrl .  '" alt="Rublon Account Security" /></a></div></div>';	
+	
+    $gui = Rublon2FactorGUIWordPress::getInstance();
+    $gui->renderConsumerScript();
+    
+	echo '<div style="display: none;" id="rublon-badge"><div class="rublon-badge-link">' . $gui->getBadgeWidget() . '</div></div>';
+	
 	echo '<script>//<![CDATA[
 		if (RublonWP) {
 			RublonWP.showBadge();
