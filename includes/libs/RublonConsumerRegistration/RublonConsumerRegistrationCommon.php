@@ -5,7 +5,7 @@ abstract class RublonConsumerRegistrationCommon {
 	/**
 	 * Library version date.
 	 */
-	const VERSION = '2014-05-20';
+	const VERSION = '2014-06-10';
 	
 	/**
 	 * Default registration API domain.

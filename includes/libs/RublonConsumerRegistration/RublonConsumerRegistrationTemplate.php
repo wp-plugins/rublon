@@ -205,7 +205,7 @@ abstract class RublonConsumerRegistrationTemplate extends RublonConsumerRegistra
 		if ($this->validateGeneral()) {
 			if ($this->canUserActivate()) {
 				try {
-					$systemToken = $this->parseSystemToken($this->inputGET(RublonAuthParams::FIELD_SYSTEM_TOKEN));
+					$systemToken = $this->parseSystemToken($this->inputPOST(RublonAuthParams::FIELD_SYSTEM_TOKEN));
 					if (empty($systemToken)) {
 						throw new MissingField_RublonClientException($this->getAPIClient(), self::FIELD_SYSTEM_TOKEN);
 					}
@@ -278,6 +278,17 @@ abstract class RublonConsumerRegistrationTemplate extends RublonConsumerRegistra
 		return (isset($_GET[$name]) ? $_GET[$name] : NULL);
 	}
 	
+	/**
+	 * Get POST parameter.
+	 *
+	 * If your system have an ususual way to get POST parameters, override this method in a subclass.
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	protected function inputPOST($name) {
+	    return (isset($_POST[$name]) ? $_POST[$name] : NULL);
+	}
 
 	/**
 	 * Get the registration form.
