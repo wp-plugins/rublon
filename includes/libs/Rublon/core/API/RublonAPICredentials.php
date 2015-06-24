@@ -11,7 +11,7 @@ class RublonAPICredentials extends RublonAPIClient {
 	/**
 	 * Invalid access token error.
 	 */
-	const ERROR_ACCESS_TOKEN = 'Invalid access token.';
+	const ERROR_ACCESS_TOKEN = 'Invalid access token';
 	
 	/**
 	 * Field name with the additional confirmation result.

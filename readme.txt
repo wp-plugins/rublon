@@ -116,6 +116,10 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.0.6 =
+* Improved error handling 
+* Rublon core libraries update
+
 = 3.0.5 =
 * Improved compatibility with popular security plugin
 * Rublon core libraries update

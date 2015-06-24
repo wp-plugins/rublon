@@ -249,38 +249,38 @@ class RublonSignatureWrapper {
 	static function parseMessage($jsonStr, $secretKey, $config = array()) {
 		
 		if (empty($secretKey)) {
-			throw new RublonException('Empty secret');
+			throw new RublonException('Empty secret', RublonException::CODE_INVALID_RESPONSE_EMPTY_SECRET_KEY);
 		}
 		if (empty($jsonStr)) {
-			throw new RublonException('Empty response', RublonException::CODE_INVALID_RESPONSE);
+			throw new RublonException('Empty API response', RublonException::CODE_INVALID_RESPONSE_EMPTY_JSON_STRING);
 		}
 		
 		// Verify response JSON
-		$response = json_decode($jsonStr, true);
-		if (empty($response)) {
-			throw new RublonException('Invalid response: '. $jsonStr, RublonException::CODE_INVALID_RESPONSE);
+		$response = json_decode($jsonStr, true);		 
+	    if (empty($response)) {
+			throw new RublonException('Cannot parse empty API response: '. $jsonStr, RublonException::CODE_EMPTY_JSON_RESPONSE);
 		}
-		if (!empty($response[self::FIELD_STATUS]) AND $response[self::FIELD_STATUS] == self::STATUS_ERROR) {
-			$msg = isset($response[self::FIELD_MSG]) ? $response[self::FIELD_STATUS] : 'Error response: '. $jsonStr;
-			throw new RublonException($msg, RublonException::CODE_INVALID_RESPONSE);
+		if (!empty($response[self::FIELD_STATUS]) AND $response[self::FIELD_STATUS] == self::STATUS_ERROR) {		    		    
+			$msg = (isset($response[self::FIELD_MSG]) ? $response[self::FIELD_MSG] : 'Cannot parse incorrect API response');						
+			throw new RublonException($msg, RublonException::CODE_API_RESPONSE_STATUS_ERROR);
 		}
 		if (empty($response[self::FIELD_DATA])) {
-			throw new RublonException('Missing data field', RublonException::CODE_INVALID_RESPONSE);
+			throw new RublonException('Invalid API response', RublonException::CODE_INVALID_RESPONSE_MISSING_JSON_DATA_FIELD);
 		}
 		if (empty($response[self::FIELD_SIGN])) {
-			throw new RublonException('Missing sign field', RublonException::CODE_INVALID_RESPONSE);
+			throw new RublonException('Invalid API response', RublonException::CODE_INVALID_RESPONSE_MISSING_JSON_SIGN_FIELD);
 		}
 		if (!RublonSignatureWrapper::verifyData($response[self::FIELD_DATA], $secretKey, $response[self::FIELD_SIGN])) {
-			throw new RublonException('Invalid signature', RublonException::CODE_INVALID_RESPONSE);
+			throw new RublonException('Invalid signature', RublonException::CODE_INVALID_RESPONSE_INVALID_SIGNATURE);
 		}
 		
 		// Verify data field
 		$data = json_decode($response[self::FIELD_DATA], true);
 		if (empty($data) OR !is_array($data)) {
-			throw new RublonException('Invalid response', RublonException::CODE_INVALID_RESPONSE);
+			throw new RublonException('Invalid API response', RublonException::CODE_INVALID_RESPONSE_INVALID_JSON_DATA_FIELD);
 		}
 		if (!isset($data[self::FIELD_HEAD]) OR !is_array($data[self::FIELD_HEAD]) OR empty($data[self::FIELD_HEAD])) {
-			throw new RublonException('Invalid response data (invalid header)', RublonException::CODE_INVALID_RESPONSE);
+			throw new RublonException('Invalid API response', RublonException::CODE_INVALID_RESPONSE_INVALID_JSON_HEAD_FIELD);
 		}
 		
 		// Verify head field
@@ -289,7 +289,7 @@ class RublonSignatureWrapper {
 			throw new RublonException('Invalid message time', RublonException::CODE_TIMESTAMP_ERROR);
 		}
 		if (!isset($data[self::FIELD_BODY]) OR !is_string($data[self::FIELD_BODY])) {
-			throw new RublonException('Invalid response data (no body)', RublonException::CODE_INVALID_RESPONSE);
+			throw new RublonException('Invalid API response', RublonException::CODE_INVALID_RESPONSE_MISSING_JSON_BODY_FIELD);
 		}
 		
 		// Verify body field

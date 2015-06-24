@@ -75,7 +75,10 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		}
 		
 		$notifierMessage = 'Consumer registration error.<br /><br />';
-		$errorCode = 'API_ERROR';
+		$msg_data = explode(':', $msg);
+		$errorCode = (!empty($msg_data[1]) ? $msg_data[1] : '');
+		$errorMessage = (!empty($msg_data[0]) ? $msg_data[0] : '');
+		
 		if (!empty($msg)) {
 			if (stripos($msg, 'ERROR_CODE:') !== false) {
 				$errorCode = str_replace('ERROR_CODE: ', '', $msg);
@@ -84,7 +87,7 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 				$notifierMessage .= 'Rublon error message: [' . $msg . ']';
 			}
 		}
-		RublonHelper::setMessage($errorCode, 'error', 'CR');
+		RublonHelper::setMessage($errorCode, 'error', 'CR', false, $errorMessage);
 		
 		// send issue notify
 		echo $this->_notify($notifierMessage);

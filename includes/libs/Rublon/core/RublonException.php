@@ -40,6 +40,53 @@ class RublonException extends Exception {
 	 * Invalid access token.
 	 */
 	const CODE_INVALID_ACCESS_TOKEN = 7;
+	
+	/**
+	 * Cannot parse empty Json response.
+	 */
+	const CODE_EMPTY_JSON_RESPONSE = 8;
+	
+	/**
+	 * Cannot parse incorrect Json response
+	 */
+	const CODE_CANNOT_PARSE_JSON_RESPONSE = 9;
+	
+	/**
+	 * Cannot parse invalid field "data" in Json response
+	 */
+	const CODE_INVALID_RESPONSE_MISSING_JSON_DATA_FIELD = 10;
+	
+	/**
+	 * Cannot parse invalid field "sign" in Json response
+	 */
+	const CODE_INVALID_RESPONSE_MISSING_JSON_SIGN_FIELD = 11;
+	
+	/**
+	 * Empty Json string
+	 */
+	const CODE_INVALID_RESPONSE_EMPTY_JSON_STRING = 12;
+	
+	/**
+	 * Empty Secret Key	  
+	 */
+	const CODE_INVALID_RESPONSE_EMPTY_SECRET_KEY = 13;
+	
+	/**
+	 * Error status returned by Rublon API (developers)	  
+	 */
+	const CODE_API_RESPONSE_STATUS_ERROR = 14;
+	
+	/**
+	 * Invalid signature
+	 */
+	const CODE_INVALID_RESPONSE_INVALID_SIGNATURE = 15;
+	
+	/**
+	 * Invalid Json "data" field	  
+	 */
+	const CODE_INVALID_RESPONSE_INVALID_JSON_DATA_FIELD = 16;
+	const CODE_INVALID_RESPONSE_INVALID_JSON_HEAD_FIELD = 17;
+	const CODE_INVALID_RESPONSE_MISSING_JSON_BODY_FIELD = 18;
 
 
 	/**
@@ -58,7 +105,7 @@ class RublonException extends Exception {
 	 * @param Exception $prev (optional)
 	 */
 	public function __construct($msg = "", $code = 0, Exception $prev = null) {
-
+        
 		// For backward compatibility check if getPrevious() method exists
 		if (method_exists($this, 'getPrevious')) {
 			parent::__construct($msg, $code, $prev);

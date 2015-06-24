@@ -326,7 +326,7 @@ class RublonAPIClient {
 		$this->getRublon()->log(__METHOD__ . ' -- ' . $url);
 		
 		if (!function_exists('curl_init')) {
-			throw new RublonClientException($this, 'cURL functions are not available.');
+			throw new RublonClientException($this, 'cURL functions are not available', RublonException::CODE_CURL_NOT_AVAILABLE);
 		}
 		
 		$ch = curl_init($url);
@@ -378,10 +378,10 @@ class RublonAPIClient {
 		$response = curl_exec($ch);
 		$this->rawRequestHeader = curl_getinfo($ch, CURLINFO_HEADER_OUT );
 		
-		if ($error = curl_error($ch)) {
+		if ($error = curl_error($ch)) {		    		   
 			$errno = curl_errno($ch);
 			curl_close($ch);
-			throw new RublonClientException($this, $error .' ('. $errno .')');
+			throw new RublonClientException($this, $error .' ('. $errno .')', RublonClientException::CODE_CURL_ERROR);
 		} else {
 			
 			$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -447,8 +447,8 @@ class RublonAPIClient {
 
 class RublonClientException extends RublonException {
 	protected $client = null;
-	function __construct(RublonAPIClient $client, $msg = null) {
-		parent::__construct($msg);
+	function __construct(RublonAPIClient $client, $msg = null, $code = 0) {
+		parent::__construct($msg, $code);
 		$this->client = $client;
 	}
 	public function getClient() {

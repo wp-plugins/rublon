@@ -68,7 +68,7 @@ class RublonRequests {
 	}
 
 	public function subscribeToNewsletter($email) {
-
+        
 		if (RublonHelper::isSiteRegistered()) {
 			require_once dirname(__FILE__) . '/libs/RublonImplemented/RublonAPINewsletterSignup.php';
 			$signup = new RublonAPINewsletterSignup($this->rublon, $email);

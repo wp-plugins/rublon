@@ -115,7 +115,7 @@ abstract class RublonConsumerRegistrationTemplate extends RublonConsumerRegistra
 			case self::ACTION_FINAL_SUCCESS: // Final success
 				$this->finalSuccess();
 				break;
-			case self::ACTION_FINAL_ERROR: // Final error
+			case self::ACTION_FINAL_ERROR: // Final error			    			    
 				$this->finalError(self::DEVELOPERS_ERROR);
 				break;
 		}
@@ -204,12 +204,13 @@ abstract class RublonConsumerRegistrationTemplate extends RublonConsumerRegistra
 	final protected function updateSystemToken() {
 		if ($this->validateGeneral()) {
 			if ($this->canUserActivate()) {
-				try {
+				try {				    
 					$systemToken = $this->parseSystemToken($this->inputPOST(RublonAuthParams::FIELD_SYSTEM_TOKEN));
 					if (empty($systemToken)) {
 						throw new MissingField_RublonClientException($this->getAPIClient(), self::FIELD_SYSTEM_TOKEN);
 					}
 				} catch (RublonException $e) {
+				    
 					throw $e;
 				}
 				$this->saveSystemToken($systemToken);
