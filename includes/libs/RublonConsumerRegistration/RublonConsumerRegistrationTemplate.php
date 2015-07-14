@@ -205,12 +205,12 @@ abstract class RublonConsumerRegistrationTemplate extends RublonConsumerRegistra
 		if ($this->validateGeneral()) {
 			if ($this->canUserActivate()) {
 				try {				    
+				    
 					$systemToken = $this->parseSystemToken($this->inputPOST(RublonAuthParams::FIELD_SYSTEM_TOKEN));
 					if (empty($systemToken)) {
 						throw new MissingField_RublonClientException($this->getAPIClient(), self::FIELD_SYSTEM_TOKEN);
 					}
 				} catch (RublonException $e) {
-				    
 					throw $e;
 				}
 				$this->saveSystemToken($systemToken);

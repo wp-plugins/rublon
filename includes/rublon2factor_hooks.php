@@ -546,7 +546,14 @@ add_action( 'wp_ajax_' . Rublon_Pointers::AJAX_ANONYMOUS_STATS_ACTION, 'rublon2f
  */
 function rublon2factor_modify_login_form() {
     
-        echo '<div style="display: none;" id="rublon-badge"><div class="rublon-badge-link"><div id="RublonBadgeWidget"></div></div></div>';
+        echo '<div style="display: none;" id="rublon-badge">
+                <div class="rublon-badge-link">
+                    <div id="RublonBadgeWidget">
+                        <img src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon_badge.svg">
+                    </div>
+                    <a id="RublonBadgeLink" href="' . RublonHelper::rubloncomUrl() . '" target="_blank">' . __('Rublon 2FA', 'rublon') . '</a>
+                </div>
+              </div>';
                 
         echo '<script>//<![CDATA[
             

@@ -87,7 +87,7 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 				$notifierMessage .= 'Rublon error message: [' . $msg . ']';
 			}
 		}
-		RublonHelper::setMessage($errorCode, 'error', 'CR', false, $errorMessage);
+		RublonHelper::setMessage($errorCode, 'error', 'CR', false, strtolower($errorCode));
 		
 		// send issue notify
 		echo $this->_notify($notifierMessage);

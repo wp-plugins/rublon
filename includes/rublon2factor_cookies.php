@@ -31,11 +31,13 @@ class RublonCookies {
 	static public function getMessagesFromCookie() {
 
 		$cookieName = self::COOKIE_PREFIX . self::COOKIE_MESSAGES;
-		$messages = self::_getCookieData($cookieName);
+		$messages = self::_getCookieData($cookieName);		
+		
 		self::_clearCookieData($cookieName);
 		if (!empty($messages)) {
-			$messages = explode(':', $messages);
-		}
+			$messages = json_decode(stripslashes($messages), true);
+		}		
+		
 		return $messages;
 	
 	}
@@ -69,10 +71,11 @@ class RublonCookies {
 		if (empty($messages)) {
 			$messages = array();
 		} else {
-			$messages = explode(':', $messages);
+			$messages = json_decode(stripslashes($messages), true);
 		}
 		array_push($messages, $msg);
-		$messages = implode(':', $messages);
+		$messages = json_encode($messages);
+		
 		self::_setCookieData($cookieName, $messages);
 
 	}

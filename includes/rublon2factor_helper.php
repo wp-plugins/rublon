@@ -1171,7 +1171,7 @@ class RublonHelper {
 
 
 	static public function handleRegistrationException($e, $no_redirect = false) {
-
+        	    
 		$exception_code = $e->getCode();
 		$exception_message = $e->getMessage();
 		$exception_class = get_class($e);
@@ -1229,36 +1229,39 @@ class RublonHelper {
 	static private function _handleCallbackException($e, $prefix = 'RC') {
 
 		$errorCode = $e->getCode();	
+		if ($errorCode == 0) {
+            $errorCode = strtoupper(get_class($e));
+        }
 		$errno = $errorCode;	
 		$errorMessage = $e->getMessage();
 		if ($e instanceof RublonCallbackException) {
-		switch($errorCode) {
-				case RublonCallbackException::ERROR_MISSING_ACCESS_TOKEN:
-				$errorCode = 'MISSING_ACCESS_TOKEN';
-				break;
-				case RublonCallbackException::ERROR_REST_CREDENTIALS:
-				$errorCode = 'REST_CREDENTIALS_FAILURE';
-				$previous = $e->getPrevious();
-				if (!empty($previous)) {
-					if ($previous->getCode() == RublonException::CODE_TIMESTAMP_ERROR) {
-						$errorCode = 'CODE_TIMESTAMP_ERROR';
-					} else {
-						$additionalErrorMessage = __('Error details: ', 'rublon') . $previous->getMessage();
-					}
-				}
-				break;
-				case RublonCallbackException::ERROR_USER_NOT_AUTHORIZED:
-				$errorCode = 'USER_NOT_AUTHENTICATED';
-				break;
-				case RublonCallbackException::ERROR_DIFFERENT_USER:
-				$errorCode = 'DIFFERENT_USER';
-				break;
-				case RublonCallbackException::ERROR_API_ERROR:
-				$errorCode = 'API_ERROR';
-				break;
-			default:
-				$errorCode = 'API_ERROR';
-		}
+    		switch($errorCode) {
+    				case RublonCallbackException::ERROR_MISSING_ACCESS_TOKEN:
+    				$errorCode = 'MISSING_ACCESS_TOKEN';
+    				break;
+    				case RublonCallbackException::ERROR_REST_CREDENTIALS:
+    				$errorCode = 'REST_CREDENTIALS_FAILURE';
+    				$previous = $e->getPrevious();
+    				if (!empty($previous)) {
+    					if ($previous->getCode() == RublonException::CODE_TIMESTAMP_ERROR) {
+    						$errorCode = 'CODE_TIMESTAMP_ERROR';
+    					} else {
+    						$additionalErrorMessage = __('Error details: ', 'rublon') . $previous->getMessage();
+    					}
+    				}
+    				break;
+    				case RublonCallbackException::ERROR_USER_NOT_AUTHORIZED:
+    				$errorCode = 'USER_NOT_AUTHENTICATED';
+    				break;
+    				case RublonCallbackException::ERROR_DIFFERENT_USER:
+    				$errorCode = 'DIFFERENT_USER';
+    				break;
+    				case RublonCallbackException::ERROR_API_ERROR:
+    				$errorCode = 'API_ERROR';
+    				break;
+    			default:
+    				$errorCode = 'API_ERROR';
+    		}
 		} else {
 			$errorCode = 'API_ERROR';
 		}		
@@ -1403,9 +1406,12 @@ class RublonHelper {
 			);
 			return $authUrl;
 		} catch (RublonException $e) {
+		    
+		    $errorCode = $e->getCode()?$e->getCode():strtoupper(get_class($e));
+		    
 			$error_data = array(
 				'msg' => 'Authentication error',
-				'errorCode' => $e->getCode(),
+				'errorCode' => $errorCode,
 				'errorMessage' => $e->getMessage(),
 			);
 			$previous_exception = $e->getPrevious();
@@ -1414,7 +1420,7 @@ class RublonHelper {
 				$error_data['previousMessage'] = $previous_exception->getMessage();
 			}
 			try {
-			    self::setMessage($e->getCode(), 'error', 'RC', false, $e->getMessage());
+			    self::setMessage($errorCode, 'error', 'RC', false, $e->getMessage());
 				self::notify($error_data, array('message-type' => self::RUBLON_NOTIFY_TYPE_ERROR));
 			} catch (Exception $e) {
 				// Do nothing.								
@@ -1639,7 +1645,7 @@ class RublonHelper {
 	 * @return array
 	 */
 	static private function _explainMessages($messages) {
-
+        
 		$result = array();
 		$errorMessage = '';
 		foreach ($messages as $message) {
@@ -1722,6 +1728,9 @@ class RublonHelper {
 						$errorMessage = __('<strong>ERROR:</strong> Unauthorized access.', 'rublon');
 						$no_code = true;
 						break;
+
+					// --- Newsletter subscription exceptions --- //
+						
 					case 'NL_' . RublonRequests::ERROR_RUBLON_NOT_CONFIGURED:
 						$errorMessage = __('Rublon Account Security has not been properly registered in the Rublon API.', 'rublon')
 							. ' ' . __('Register the plugin in the Rublon API and try this action again.', 'rublon');
@@ -1743,6 +1752,9 @@ class RublonHelper {
 					case 'NL_' . RublonRequests::ERROR_ALREADY_SUBSCRIBED:
 						$errorMessage = __('You are already subscribed to this newsletter.', 'rublon');
 						break;
+						
+				    // --- API registration exceptions --- //
+				    
 					case 'CR_2':
 					    $errorMessage = __('There is something wrong with Rublon API response. Probably the response was incomplete.', 'rublon');
 					    break;
@@ -1752,6 +1764,33 @@ class RublonHelper {
 				    case 'CR_9':
 				        // Incorrect Json parse faild. Displaying general registration error message.
 				        break;
+				    case 'CR_10':
+				        // Missing field "data" in JSON string
+				        break;    
+				    case 'CR_11':
+				        // Missing field "sign" in JSON string
+				        break;
+				    case 'CR_12':
+				        // Empty JSON response
+				        break;
+				    case 'CR_13':
+				        // Secret Key is missing
+				        break;
+				    case 'CR_14':
+				        // Invalid signatur
+				        break;
+				    case 'CR_15':
+				        
+				        break;
+				    case 'CR_16':
+				        // Empty JSON field "data"
+				        break;     
+				    case 'CR_17':
+				        // Invalid JSON field "head"
+				        break;    
+			        case 'CR_18':
+			            // Missing field "body" in JSON string
+			            break;
 				        
 				    // Handle errors from Rublon API    
 			        case 'CR_INVALID_INITIAL_PARAMETERS':
@@ -1791,59 +1830,143 @@ class RublonHelper {
                         $msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_7';
                         break;
-                    case 'CR_UNSUPPORTEDREQUESTMETHOD_RUBLONAPIEXCEPTION':
+                    case strtoupper('cr_UnsupportedRequestMethod_RublonAPIException'):
                         // Invalid request method
-                        $msgContent = __('Registration process faild', 'rublon');
+                        //$msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_8';
                         break;
                     case strtoupper('cr_MissingHeader_RublonAPIException'):
                         // Missing X-Rublon headers
-                        $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_9';
                         break;
                     case strtoupper('cr_UnsupportedVersion_RublonAPIException'):
                         // Unsupported sdk version
-                        $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_10';
                         break;
                     case strtoupper('cr_EmptyInput_RublonAPIException'):
                         // Unsupported sdk version
-                        $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_11';
                         break;
                     case strtoupper('cr_InvalidJSON_RublonAPIException'):
                         // Unsupported sdk version
-                        $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_12';
                         break;
                     case strtoupper('cr_MissingField_RublonAPIException'):
                         // Unsupported sdk version
-                        $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_13';
                         break;
                     case strtoupper('cr_ConsumerNotFound_RublonAPIException'):
                         // Consumer not found
-                        $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_14';
                         break;
                     case strtoupper('cr_InvalidSignature_RublonAPIException'):
                         // Invalid signature
-                        $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process faild', 'rublon');
                         $errorCode = 'CR_API_15';
                         break;                            
+                    case strtoupper('cr_InvalidSignature_RublonAPIException'):
+                        // Invalid signature
+                        // $msgContent = __('Registration process faild', 'rublon');
+                        $errorCode = 'CR_API_16';
+                        break;
+                    case strtoupper('cr_InvalidSignature_RublonAPIException'):
+                        // Invalid signature
+                        // $msgContent = __('Registration process faild', 'rublon');
+                        $errorCode = 'CR_API_17';
+                        break;
+                    case strtoupper('cr_InvalidSignature_RublonAPIException'):
+                        // Invalid signature
+                        // $msgContent = __('Registration process faild', 'rublon');
+                        $errorCode = 'CR_API_18';
+                        break;
                                                 
-			        // --
+			        // -- Authentication exceptions
 			            
 				    case 'RC_1':
-				        $errorMessage = __('cURL library missing. Rublon requires cURL enabled to make API calls.', 'rublon');
+				        $errorMessage = __('The cURL module is not available on this server. Please ask your server administrator to activate it.', 'rublon');
 				        break;
 			        case 'RC_4':
 			            $errorMessage = __('There is a cURL error occured. Please see the message below.', 'rublon');
 			            break;
+		            case strtoupper('rc_InvalidResponse_RublonClientException'):		                
+		                $errorCode = 'RC_200';
+		                break;
+	                case strtoupper('rc_MissingField_RublonClientException'):
+	                    $errorCode = 'RC_201';
+	                    break;
+                    case strtoupper('rc_InvalidJSON_RublonClientException'):
+                        $errorCode = 'RC_202';
+                        break;
+                    case strtoupper('rc_EmptyResponse_RublonClientException'):
+                        $errorCode = 'RC_203';
+                        break;
+                    case strtoupper('rc_InvalidResponseHTTPStatusCode_RublonClientException'):
+                        $errorCode = 'RC_204';
+                        break;       
+                    case strtoupper('rc_EmptyResponseField_RublonClientException'):
+                        $errorCode = 'RC_205';
+                        break;
+                    case strtoupper('rc_EmptyErrorResponseField_RublonClientException'):
+                        $errorCode = 'RC_206';
+                        break;
+                    case strtoupper('rc_ErrorResponse_RublonClientException'):
+                        $errorCode = 'RC_207';
+                        break;
+                        
+                    case strtoupper('rc_MissingHeader_RublonAPIException'):
+                        $errorCode = 'RC_API_208';
+                        break;
+                    case strtoupper('rc_UnsupportedRequestMethod_RublonAPIException'):
+                        $errorCode = 'RC_API_209';
+                        break;
+                    case strtoupper('rc_EmptyInput_RublonAPIException'):
+                        $errorCode = 'RC_API_210';
+                        break;
+                    case strtoupper('rc_InvalidJSON_RublonAPIException'):
+                        $errorCode = 'RC_API_211';
+                        break;
+                    case strtoupper('rc_InvalidSignature_RublonAPIException'):
+                        $errorCode = 'RC_API_212';
+                        break;
+                    case strtoupper('rc_ConsumerNotFound_RublonAPIException'):
+                        $errorCode = 'RC_API_213';
+                        break;
+                    case strtoupper('rc_UnsupportedVersion_RublonAPIException'):
+                        $errorCode = 'RC_API_214';
+                        break;
+                    case strtoupper('rc_UserNotFound_RublonAPIException'):
+                        $errorCode = 'RC_API_215';
+                        break;
+                    case strtoupper('rc_AccessTokenExpired_RublonAPIException'):
+                        $errorCode = 'RC_API_216';
+                        break;
+                    case strtoupper('rc_UnknownAccessToken_RublonAPIException'):
+                        $errorCode = 'RC_API_217';
+                        break;
+                    case strtoupper('rc_SessionRestore_RublonAPIException'):
+                        $errorCode = 'RC_API_218';
+                        break;
+                    case strtoupper('rc_UnauthorizedUser_RublonAPIException'):
+                        $errorCode = 'RC_API_219';
+                        break;
+                    case strtoupper('rc_ForbiddenMethod_RublonAPIException'):
+                        $errorCode = 'RC_API_220';
+                        break;
+                    default:
+                        $errorCode = 'E_0';    
+                        
+                        
+	                    
 				}
 				$result[] = array('message' => $errorMessage, 'type' => $msgType);
 				if ($no_code == false) {			    
-					$result[] = array('message' => __('Rublon error code: ', 'rublon') . '<strong>' . (!empty($msgContent)?$msgContent . '['.$errorCode.']':$errorCode) . '</strong>', 'type' => $msgType);
+					$result[] = array('message' => __('Rublon error code: ', 'rublon') . '<strong>' . (!empty($msgContent)?$msgContent . ' ['.$errorCode.']':$errorCode) . '</strong>', 'type' => $msgType);
 				}
 				
 			} elseif ($msgType == 'updated') {
@@ -3030,11 +3153,11 @@ class RublonHelper {
 <?php _e('Rublon - Account Protection', 'rublon'); ?>
 </h3>
 <table class="form-table">
-<tr>
-	<th>
+	<tr>
+		<th>
 		<?php _e('Protection via Email', 'rublon'); ?>
 	</th>
-	<td>
+		<td>
 <?php
 		if ($role_protection_type == self::PROTECTION_TYPE_MOBILE || $mobile_user_status == self::YES): 
 ?>
@@ -3064,29 +3187,41 @@ class RublonHelper {
 				$unlockedVisible = 'visible';
 			}
 ?>
-		<label class="rublon-label rublon-label-userprotectiontype" for="rublon-userprotectiontype-checkbox">
-			<input type="hidden" name="<?php echo self::FIELD_USER_PROTECTION_TYPE; ?>" value="none" />
-			<input type="checkbox" name="<?php echo self::FIELD_USER_PROTECTION_TYPE; ?>" id="rublon-userprotectiontype-checkbox" value="email"<?php echo $emailChecked; ?> />
-			<div class="rublon-lock-container rublon-unlocked-container rublon-userprotectiontype rublon-userprotectiontype-unlocked <?php echo $unlockedVisible; ?>"><img class="rublon-lock rublon-unlocked" src="<?php echo RUBLON2FACTOR_PLUGIN_URL; ?>/assets/images/unlocked.png" /></div>
-			<div class="rublon-lock-container rublon-locked-container rublon-userprotectiontype rublon-userprotectiontype-locked <?php echo $lockedVisible; ?>"><img class="rublon-lock rublon-locked" src="<?php echo RUBLON2FACTOR_PLUGIN_URL; ?>/assets/images/locked.png" /></div>
+		<label class="rublon-label rublon-label-userprotectiontype"
+			for="rublon-userprotectiontype-checkbox"> <input type="hidden"
+				name="<?php echo self::FIELD_USER_PROTECTION_TYPE; ?>" value="none" />
+				<input type="checkbox"
+				name="<?php echo self::FIELD_USER_PROTECTION_TYPE; ?>"
+				id="rublon-userprotectiontype-checkbox" value="email"
+				<?php echo $emailChecked; ?> />
+				<div
+					class="rublon-lock-container rublon-unlocked-container rublon-userprotectiontype rublon-userprotectiontype-unlocked <?php echo $unlockedVisible; ?>">
+					<img class="rublon-lock rublon-unlocked"
+						src="<?php echo RUBLON2FACTOR_PLUGIN_URL; ?>/assets/images/unlocked.png" />
+				</div>
+				<div
+					class="rublon-lock-container rublon-locked-container rublon-userprotectiontype rublon-userprotectiontype-locked <?php echo $lockedVisible; ?>">
+					<img class="rublon-lock rublon-locked"
+						src="<?php echo RUBLON2FACTOR_PLUGIN_URL; ?>/assets/images/locked.png" />
+				</div>
 			<?php _e('Enable account protection via email', 'rublon'); ?> 
-		</label>
-		<br />
-		<div class="rublon-description"><span class="description"><?php
+		</label> <br />
+			<div class="rublon-description">
+				<span class="description"><?php
 		echo __('You will need to confirm every sign in from a new device via email. You will also need to confirm changes to important settings like your password or email address.', 'rublon')
 			. '<br /><strong>' . __('Notice:', 'rublon') . '</strong> ' . __('Administrators can always change your settings without your consent.', 'rublon'); ?></span>
-		</div>
-	</td>	
-</tr>
+			</div>
+		</td>
+	</tr>
 <?php
 		endif;
 ?>
 <tr>
-	<th>
+		<th>
 		<?php _e('Protection via Mobile App', 'rublon'); ?>
 	</th>
-	<td>
-		<div class="rublon-description">
+		<td>
+			<div class="rublon-description">
 <?php
 		if ($role_protection_type == self::PROTECTION_TYPE_MOBILE || $mobile_user_status == self::YES) {
 			_e('You are already protected via Mobile App.', 'rublon');
@@ -3098,8 +3233,8 @@ class RublonHelper {
 		}
 ?>
 		</div>
-	</td>	
-</tr>
+		</td>
+	</tr>
 <?php //endif; ?>
 </table>
 <script>//<![CDATA[
@@ -3115,20 +3250,20 @@ class RublonHelper {
 ?>
 <h3><?php _e('Keep in touch', 'rublon'); ?></h3>
 <table class="form-table">
-<tr>
-	<th>
+	<tr>
+		<th>
 		<?php _e('Social media', 'rublon'); ?>
 	</th>
-	<td>
+		<td>
 		<?php _e('Join our community', 'rublon'); ?>:
-		<a href="https://www.facebook.com/RublonApp" target="_blank">Facebook</a> |
-		<a href="https://twitter.com/rublon" target="_blank">Twitter</a> | 
-		<a href="http://instagram.com/rublon" target="_blank">Instagram</a> | 
-		<a href="https://www.linkedin.com/company/2772205" target="_blank">LinkedIn</a>
-	</td>
-</tr>
-<tr>
-	<th>
+		<a href="https://www.facebook.com/RublonApp" target="_blank">Facebook</a>
+			| <a href="https://twitter.com/rublon" target="_blank">Twitter</a> |
+			<a href="http://instagram.com/rublon" target="_blank">Instagram</a> |
+			<a href="https://www.linkedin.com/company/2772205" target="_blank">LinkedIn</a>
+		</td>
+	</tr>
+	<tr>
+		<th>
 		<?php _e('Newsletter', 'rublon'); ?>
 	</th>
 <?php
@@ -3136,16 +3271,21 @@ class RublonHelper {
 	$user_email = ($current_user instanceof WP_User) ? self::getUserEmail($current_user) : '';
 ?>
 	<td id="rublon-newsletter-form-container">
-		<form method="POST" action="<?php echo wp_nonce_url( self::getActionURL( 'newsletter_subscribe' ), 'newsletter_subscribe' ) ; ?>" id="rublon-newsletter-form">
-			<input type="text" name="email" id="rublon-newsletter-email" value="<?php echo htmlspecialchars($user_email); ?>" class="regular-text" />
-			<div class="rublon-busy-spinner-anchor hidden"></div>
-			<input type="submit" name="subscribe" id="rublon-newsletter-subscribe" class="button button-primary" value="<?php _e('Subscribe', 'rublon'); ?>" />
-			</div>
-		</form>
-		<br />
+			<form method="POST"
+				action="<?php echo wp_nonce_url( self::getActionURL( 'newsletter_subscribe' ), 'newsletter_subscribe' ) ; ?>"
+				id="rublon-newsletter-form">
+				<input type="text" name="email" id="rublon-newsletter-email"
+					value="<?php echo htmlspecialchars($user_email); ?>"
+					class="regular-text" />
+				<div class="rublon-busy-spinner-anchor hidden"></div>
+				<input type="submit" name="subscribe"
+					id="rublon-newsletter-subscribe" class="button button-primary"
+					value="<?php _e('Subscribe', 'rublon'); ?>" />
+				</div>
+			</form> <br />
 		<?php _e('Stay up to date on new product releases, events, WordPress news and special promotions.', 'rublon'); ?>
 	</td>
-</tr>
+	</tr>
 </table>
 <script type="text/javascript">//<![CDATA[
 	if (RublonWP) {

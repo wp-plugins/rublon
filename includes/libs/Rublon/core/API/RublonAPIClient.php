@@ -158,13 +158,13 @@ class RublonAPIClient {
 								}
 								else if (!empty($this->response[self::FIELD_RESULT][self::FIELD_ERROR_MSG])) {
 									throw new ErrorResponse_RublonClientException($this, $this->response[self::FIELD_RESULT][self::FIELD_ERROR_MSG]);
-								} else throw new ErrorResponse_RublonClientException($this, 'Server returns error status with empty error message.');
-							} else throw new ErrorResponse_RublonClientException($this, 'Server returns empty result.');
-						} else throw new InvalidResponse_RublonClientException($this, 'Invalid status field: '. $this->response[self::FIELD_STATUS]);
-					} else throw new MissingField_RublonClientException($this, self::FIELD_STATUS);
-				} else throw new InvalidJSON_RublonClientException($this);
-			} else throw new EmptyResponse_RublonClientException($this, 'Empty response body.');
-		} else throw new InvalidResponse_RublonClientException($this, 'Unexpected response HTTP status code: '. $this->responseHTTPStatusCode);
+								} else throw new EmptyErrorResponseField_RublonClientException($this, 'Error result with empty field `'.self::FIELD_ERROR_MSG.'`');
+							} else throw new EmptyResponseField_RublonClientException($this, 'Empty response field('.self::FIELD_RESULT.')');
+						} else throw new InvalidResponse_RublonClientException($this, 'Invalid response status ('. $this->response[self::FIELD_STATUS].')');
+					} else throw new MissingField_RublonClientException($this, 'Missing field `'.self::FIELD_STATUS.'`');
+				} else throw new InvalidJSON_RublonClientException($this, 'Invalid API response');
+			} else throw new EmptyResponse_RublonClientException($this, 'Invalid API response');
+		} else throw new InvalidResponseHTTPStatusCode_RublonClientException($this, 'Invalid API response HTTP Status Code `'.$this->responseHTTPStatusCode.'`');
 	}
 	
 	
@@ -326,7 +326,7 @@ class RublonAPIClient {
 		$this->getRublon()->log(__METHOD__ . ' -- ' . $url);
 		
 		if (!function_exists('curl_init')) {
-			throw new RublonClientException($this, 'cURL functions are not available', RublonException::CODE_CURL_NOT_AVAILABLE);
+			throw new RublonClientException($this, 'cURL functions are not available', RublonClientException::CODE_CURL_NOT_AVAILABLE);
 		}
 		
 		$ch = curl_init($url);
@@ -446,7 +446,8 @@ class RublonAPIClient {
 // Clients exceptions
 
 class RublonClientException extends RublonException {
-	protected $client = null;
+	protected $client = null;	
+	
 	function __construct(RublonAPIClient $client, $msg = null, $code = 0) {
 		parent::__construct($msg, $code);
 		$this->client = $client;
@@ -456,13 +457,17 @@ class RublonClientException extends RublonException {
 	}
 }
 
-class RublonClientResponseException extends RublonClientException {}
+class RublonClientResponseException extends RublonClientException {    
+    function __construct(RublonAPIClient $client, $msg = null, $code = 0) {
+        parent::__construct($client, $msg, $code);
+    }
+}
 
 class InvalidSignature_RublonClientException extends RublonClientResponseException {}
 class MissingField_RublonClientException extends RublonClientResponseException {
 	protected $itemName;
 	function __construct(RublonAPIClient $client, $itemName) {
-		parent::__construct($client, '['. get_class($this) .'] '. $itemName);
+		parent::__construct($client, $itemName . ' ['. get_class($this) .']');
 		$this->itemName = $itemName;
 	}
 	function getName() {
@@ -471,9 +476,13 @@ class MissingField_RublonClientException extends RublonClientResponseException {
 }
 class MissingHeader_RublonClientException extends MissingField_RublonClientException {}
 class ErrorResponse_RublonClientException extends RublonClientResponseException {}
+class EmptyErrorResponse_RublonClientException extends ErrorResponse_RublonClientException {}
 class EmptyResponse_RublonClientException extends RublonClientResponseException {}
+class EmptyResponseField_RublonClientException extends ErrorResponse_RublonClientException {}
+class EmptyErrorResponseField_RublonClientException extends ErrorResponse_RublonClientException {}
 class InvalidResponse_RublonClientException extends RublonClientResponseException {}
 class InvalidJSON_RublonClientException extends InvalidResponse_RublonClientException {}
+class InvalidResponseHTTPStatusCode_RublonClientException extends InvalidResponse_RublonClientException {}
 
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -492,7 +501,7 @@ class RublonAPIException extends RublonException {
 class MissingField_RublonAPIException extends RublonAPIException {
 	protected $itemName;
 	function __construct(RublonAPIClient $client, $itemName) {
-		parent::__construct($client, '['. get_class($this) .'] '. $itemName);
+		parent::__construct($client, $itemName . ' ['. get_class($this) .']');
 		$this->itemName = $itemName;
 	}
 	function getName() {

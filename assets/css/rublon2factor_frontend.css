@@ -14,12 +14,19 @@
 .rublon-badge-link {
 	float: right;
 	position: relative;
+	font-size: 10px;	
+}
+
+.rublon-badge-link a {
+  text-decoration: none;
 }
 
 #rublon-badge {
 	padding-top: 10px;
 	padding-bottom: 8px;
 	clear: both;
+	text-align: center;
+	overflow: hidden;
 }
 
 #rublon-badge p.submit input {

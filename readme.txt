@@ -116,6 +116,11 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.0.7 =
+* Further improvements of error handling
+* Improved CSS loading 
+* Rublon core libraries update
+
 = 3.0.6 =
 * Improved error handling 
 * Rublon core libraries update

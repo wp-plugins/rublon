@@ -249,7 +249,7 @@ class RublonSignatureWrapper {
 	static function parseMessage($jsonStr, $secretKey, $config = array()) {
 		
 		if (empty($secretKey)) {
-			throw new RublonException('Empty secret', RublonException::CODE_INVALID_RESPONSE_EMPTY_SECRET_KEY);
+			throw new RublonException('Invalid API response', RublonException::CODE_INVALID_RESPONSE_EMPTY_SECRET_KEY);
 		}
 		if (empty($jsonStr)) {
 			throw new RublonException('Empty API response', RublonException::CODE_INVALID_RESPONSE_EMPTY_JSON_STRING);
@@ -260,6 +260,7 @@ class RublonSignatureWrapper {
 	    if (empty($response)) {
 			throw new RublonException('Cannot parse empty API response: '. $jsonStr, RublonException::CODE_EMPTY_JSON_RESPONSE);
 		}
+		
 		if (!empty($response[self::FIELD_STATUS]) AND $response[self::FIELD_STATUS] == self::STATUS_ERROR) {		    		    
 			$msg = (isset($response[self::FIELD_MSG]) ? $response[self::FIELD_MSG] : 'Cannot parse incorrect API response');						
 			throw new RublonException($msg, RublonException::CODE_API_RESPONSE_STATUS_ERROR);
