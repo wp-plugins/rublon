@@ -1328,7 +1328,7 @@ class RublonHelper {
 				if ($projectOwner === -1) { // Personal edition disabled - clear cashed features
 				    RublonFeature::deleteFeaturesFromCache();
 				} elseif ($projectOwner) {
-    				self::saveProjectOwner();    				
+    				self::saveProjectOwner($user);    				
 				}				
 				
 				wp_logout();
@@ -3759,9 +3759,11 @@ class RublonHelper {
         return RublonFeature::isBusinessEdition() || self::isProjectOwner();
     }
     
-    static public function saveProjectOwner() {
-        $user = wp_get_current_user();
-        if ($user && $user instanceof WP_User) {
+    static public function saveProjectOwner($user = null) {
+        if (empty($user)) {
+          $user = wp_get_current_user();
+        }        
+        if ($user && $user instanceof WP_User && !empty($user->user_email)) {            
             $settings = self::getSettings();
             $settings[self::SETTING_PROJECT_OWNER_EMAIL] = $user->user_email;
             self::saveSettings($settings);
