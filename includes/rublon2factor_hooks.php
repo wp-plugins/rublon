@@ -64,6 +64,7 @@ function rublon2factor_login_redirect($redirect_to) {
 
 	if (!empty($redirect_to)) {
 		RublonCookies::storeReturnURL($redirect_to);
+		Rublon_Transients::setTransient('rublon_login_redirect', $redirect_to);
 	}
 	return $redirect_to;
 
@@ -214,7 +215,8 @@ function rublon2factor_pre_user_query(&$query) {
 	global $pagenow;
 
 	// Check if plugin is active and we're on the user list page
-	if (RublonHelper::isSiteRegistered() && $pagenow == 'users.php') {
+	if (RublonHelper::isSiteRegistered() && $pagenow == 'users.php') {	    
+	    
 		$query_vars = $query->query_vars;
 		// Check whether the query was manually executed by the plugin
 		// in order to avoid an infinite loop.
@@ -235,13 +237,13 @@ function rublon2factor_pre_user_query(&$query) {
 						$mobile_user_status = RublonHelper::getMobileUserStatus($user);
 						if ($mobile_user_status === false) {
 							array_push($requested_users, $user);
-							if (empty($check)) {
+							if (empty($check)) {							    
 								$check = new RublonAPICheckProtection(
 									RublonHelper::getRublon(),
 									$user_id,
 									RublonHelper::getUserEmail($user)
 								);
-							} else {
+							} else {							    
 								$check->appendUser(
 									$user_id,
 									RublonHelper::getUserEmail($user)
@@ -254,7 +256,7 @@ function rublon2factor_pre_user_query(&$query) {
 				}
 				$user_id = null;
 				if (!empty($requested_users)) {
-					try {
+					try {					    
 						$check->perform();
 					} catch (RublonException $e) {
 						// Assume no info available.
@@ -352,7 +354,7 @@ function rublon2factor_show_user_profile() {
 			RublonHelper::getUserId($current_user),
 			RublonHelper::getUserEmail($current_user)
 		);
-		if ($current_user && $current_user instanceof WP_User) {
+		if (RublonFeature::isBusinessEdition() && $current_user && $current_user instanceof WP_User) {
 			// Rublon Protection section
 			RublonHelper::printProfileSectionAdditions($current_user);
 		}

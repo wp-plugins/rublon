@@ -20,7 +20,7 @@ class RublonCookies {
 	const COOKIE_AUTHENTICATED = 'auth';
 	const COOKIE_LOGIN_TOKEN_ID = 'login';
 	const COOKIE_RETURNURL = 'return_url';
-	const COOKIE_ADAM = 'adam_said';
+	const COOKIE_ADAM = 'adam_said';	
 
 
 	/**
@@ -91,6 +91,11 @@ class RublonCookies {
 		$cookieName = self::COOKIE_PREFIX . self::COOKIE_RETURNURL;
 		$returnURL = self::_getCookieData($cookieName);
 		self::_clearCookieData($cookieName);
+		
+		if (empty($returnURL)) {
+		    $returnURL = Rublon_Transients::getTransient('rublon_login_redirect');
+		}
+		
 		return !empty($returnURL) ? $returnURL : '';
 
 	}
@@ -433,7 +438,6 @@ class RublonCookies {
 	    $cookieName = self::COOKIE_PREFIX . self::COOKIE_ADAM;
 	    return self::_setCookieData($cookieName, 1);
 	
-	}
-
+	}	
 
 }

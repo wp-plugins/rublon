@@ -31,7 +31,13 @@ class RublonAPICredentials extends RublonAPIClient {
 	/**
 	 * Field name for device ID.
 	 */
-	const FIELD_DEVICE_ID = 'deviceId';
+	const FIELD_DEVICE_ID = 'deviceId';	
+	
+	/**
+	 * Field name for keeping info wether is project owner or not
+	 * @var unknown
+	 */
+	const FIELD_PROJECT_OWNER = 'projectOwner';
 	
 	/**
 	 * User pressed the "Yes" button on the additional confirmation of the transaction.

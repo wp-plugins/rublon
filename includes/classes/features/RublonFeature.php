@@ -120,7 +120,7 @@ abstract class RublonFeature {
 	 * @return boolean
 	 */
 	static function isBusinessEdition() {
-		return RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_FORCE_MOBILE_APP);
+		return RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_FLAG_BUSINESS_EDITION);
 	}
 	
 	
@@ -156,5 +156,13 @@ abstract class RublonFeature {
 		}
 	}
 	
+	/**
+	 * Removes features list from cache.
+	 *
+	 * @return bool
+	 */
+	static function deleteFeaturesFromCache() {
+	    return delete_transient(self::getTransientName());
+	}
 	
 }

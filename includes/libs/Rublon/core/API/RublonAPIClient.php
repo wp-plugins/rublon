@@ -521,3 +521,4 @@ class UnknownAccessToken_RublonAPIException extends RublonAPIException {}
 class SessionRestore_RublonAPIException extends RublonAPIException {}
 class UnauthorizedUser_RublonAPIException extends RublonAPIException {}
 class ForbiddenMethod_RublonAPIException extends RublonAPIException {}
+class PersonalEditionLimited_RublonApiException extends RublonAPIException {}

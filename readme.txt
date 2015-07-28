@@ -116,6 +116,10 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.1.0 =
+* Introduction of Personal Edition
+* Improved login_redirect filter
+
 = 3.0.7 =
 * Further improvements of error handling
 * Improved CSS loading 

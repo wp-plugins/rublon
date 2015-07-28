@@ -15,6 +15,7 @@ class RublonAPIGetAvailableFeatures extends RublonAPIClient {
 	const FEATURE_OPERATION_CONFIRMATION = 'operationConfirmation';
 	const FEATURE_BUFFERED_CONFIRMATION = 'bufferedAutoConfirmation';
 	const FEATURE_IDENTITY_PROVIDING = 'accessControlManager';
+	const FEATURE_FLAG_BUSINESS_EDITION = 'businessEdition';	
 	
 	
 	/**
@@ -46,7 +47,7 @@ class RublonAPIGetAvailableFeatures extends RublonAPIClient {
 	
 	public function perform() {
 		$this->addRequestParams(array(
-			self::FIELD_SYSTEM_TOKEN => $this->getRublon()->getSystemToken(),
+			self::FIELD_SYSTEM_TOKEN => $this->getRublon()->getSystemToken(),		    
 		));
 		return parent::perform();
 	}

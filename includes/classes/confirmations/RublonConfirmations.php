@@ -151,7 +151,7 @@ class RublonConfirmations {
 // 			echo $e->getClient()->getRawRequest();exit;
 			RublonHelper::_handleCallbackException($e);
 			RublonConfirmations::abortConfirmation('API_ERROR');
-		}
+		}		
 		
 		if (!empty($authUrl)) {
 			wp_redirect($authUrl);

@@ -58,30 +58,35 @@ class Rublon2FactorGUIWordPress extends Rublon2FactorGUI {
 		$result = '';
 
 		if (RublonHelper::isSiteRegistered()) {
-
-			$current_user = wp_get_current_user();
-			$protection_type = RublonHelper::YES;
-			RublonHelper::isUserProtected($current_user, $protection_type);
-			switch ($protection_type) {
-				case RublonHelper::PROTECTION_TYPE_MOBILE:
-					$result .= '<p>' . sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl()) . '</p>';
-					break;
-				case RublonHelper::PROTECTION_TYPE_EMAIL:
-					$result .= '<p>' . sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl())
-						. ' ' . sprintf(__('Get the <a href="%s/get" target="_blank">Rublon mobile app</a> for more security.', 'rublon'), RublonHelper::rubloncomUrl()) . '</p>';
-					break;
-				case RublonHelper::PROTECTION_TYPE_NONE:
-					$lang = RublonHelper::getBlogLanguage();
-					$result .= '<p>' . sprintf(
-						'<span style="color: red; font-weight: bold;">' . __('Warning!', 'rublon') . '</span>'
-							. ' ' . __('Your account is not protected. Go to <a href="%s">your profile page</a> to enable account protection.', 'rublon'),
-						admin_url(RublonHelper::WP_PROFILE_PAGE . RublonHelper::WP_PROFILE_EMAIL2FA_SECTION)
-					) . '</p>';
-					break;
-			}
-	
-			$result .= $this->getDeviceWidget();
-	
+            
+		    if (RublonHelper::canShowTDMWidget()) {
+		    
+    			$current_user = wp_get_current_user();
+    			$protection_type = RublonHelper::YES;
+    			RublonHelper::isUserProtected($current_user, $protection_type);
+    			switch ($protection_type) {
+    				case RublonHelper::PROTECTION_TYPE_MOBILE:
+    					$result .= '<p>' . sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl()) . '</p>';
+    					break;
+    				case RublonHelper::PROTECTION_TYPE_EMAIL:
+    					$result .= '<p>' . sprintf(__('Your account is protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'), RublonHelper::rubloncomUrl())
+    						. ' ' . sprintf(__('Get the <a href="%s/get" target="_blank">Rublon mobile app</a> for more security.', 'rublon'), RublonHelper::rubloncomUrl()) . '</p>';
+    					break;
+    				case RublonHelper::PROTECTION_TYPE_NONE:
+    					$lang = RublonHelper::getBlogLanguage();
+    					$result .= '<p>' . sprintf(
+    						'<span style="color: red; font-weight: bold;">' . __('Warning!', 'rublon') . '</span>'
+    							. ' ' . __('Your account is not protected. Go to <a href="%s">your profile page</a> to enable account protection.', 'rublon'),
+    						admin_url(RublonHelper::WP_PROFILE_PAGE . RublonHelper::WP_PROFILE_EMAIL2FA_SECTION)
+    					) . '</p>';
+    					break;
+    			}
+    	
+    			$result .= $this->getDeviceWidget();
+		    } else {
+		        $result = '<p>' . __('Your account isn\'t protected by Rublon and thus vulnerable to password theft and brute force attacks. Please contact your administrator. ') . '</p>';    
+		    }
+		    	
 		}
 
 		return $result;

@@ -60,6 +60,7 @@ class RublonHelper {
 	
 	const SETTING_CAN_SHOW_ACM = 'can_show_acm';
 	const SETTING_FORCED_REGISTRATION = 'forced_registration';
+	const SETTING_PROJECT_OWNER_EMAIL = 'project_owner_email';
 	
 	const YES = 'yes';
 	const NO = 'no';
@@ -101,7 +102,7 @@ class RublonHelper {
 	
 	const CACHE_PURGE_ACTION = 'cache-purge';
 	const CACHE_PURGE_NONCE = 'rublon-cache-purge';
-	const CACHE_PURGE_CAPABILITY = 'manage_options';
+	const CACHE_PURGE_CAPABILITY = 'manage_options';	
 	
 	
 	/**
@@ -321,6 +322,12 @@ class RublonHelper {
 		if (self::isAjaxRequest()) {
 			return;
 		}
+		
+		// Skip checking permission since the edition is personal
+		if (self::isPersonalEdition()) {			    	    
+		    return;
+		}
+		
 		if (self::isSiteRegistered()) {
 			$current_user = wp_get_current_user();
 			if (!empty($current_user)) {
@@ -883,12 +890,14 @@ class RublonHelper {
 
 		$user_id = self::getUserId($user);
 		$mobile_user_status = get_transient(self::TRANSIENT_MOBILE_USER . $user_id);
-		if ($refresh && $mobile_user_status === false) {
+		
+		if ($refresh && ($mobile_user_status === false || $mobile_user_status == 'no')) {
 			$rublon_req = new RublonRequests();
 			$mobile_user_status = $rublon_req->checkMobileStatus($user);
 			self::setMobileUserStatus($user, $mobile_user_status);
-		}
-		return $mobile_user_status;
+		}		
+		
+		return (($mobile_user_status === false || $mobile_user_status == self::NO)?false:true);
 
 	}
 
@@ -1213,7 +1222,7 @@ class RublonHelper {
 				'RublonHelper::callbackSuccess',
 				'RublonHelper::callbackFailure'
 			);
-		} catch (RublonException $e) {
+		} catch (RublonException $e) {		    
 			self::_handleCallbackException($e);
 			self::_returnToPage();
 		}
@@ -1226,7 +1235,7 @@ class RublonHelper {
 	 * 
 	 * @param RublonException $e
 	 */
-	static private function _handleCallbackException($e, $prefix = 'RC') {
+	static public function _handleCallbackException($e, $prefix = 'RC') {
 
 		$errorCode = $e->getCode();	
 		if ($errorCode == 0) {
@@ -1313,11 +1322,20 @@ class RublonHelper {
 				}
 				$deviceId = $callback->getConsumerParam(RublonAPICredentials::FIELD_DEVICE_ID);
 				$remember = $callback->getConsumerParam('remember');
+				
+				// Save info about project owner
+				$projectOwner = $callback->getConsumerParam(RublonAPICredentials::FIELD_PROJECT_OWNER);				
+				if ($projectOwner === -1) { // Personal edition disabled - clear cashed features
+				    RublonFeature::deleteFeaturesFromCache();
+				} elseif ($projectOwner) {
+    				self::saveProjectOwner();    				
+				}				
+				
 				wp_logout();
 				self::$deviceId = $deviceId;
 				add_filter('auth_cookie', array(__CLASS__, 'associateSessionWithDevice'), 10, 5);
 				RublonCookies::setLoggedInCookie($user, $remember);
-				RublonCookies::setAuthCookie($user, $remember);
+				RublonCookies::setAuthCookie($user, $remember);							
 				do_action('wp_login', $user->user_login, $user);
 			} else {
 				self::setMessage('FIRST_FACTOR_NOT_CLEARED', 'error', 'RC');
@@ -1396,8 +1414,9 @@ class RublonHelper {
 		}
 		if (!empty($here)) {
 			$authParams['customURIParam'] = '[[CUSTOM]]' . $here;
-		}
-		try {
+		}		
+		
+		try {		    		    		    
 			$authUrl = $rublon->auth(
 				self::getLoginURL('callback'),
 				self::getUserId($user),
@@ -1407,7 +1426,12 @@ class RublonHelper {
 			return $authUrl;
 		} catch (RublonException $e) {
 		    
-		    $errorCode = $e->getCode()?$e->getCode():strtoupper(get_class($e));
+		    $errorCode = $e->getCode()?$e->getCode():strtoupper(get_class($e));	
+
+		    if ($e instanceof PersonalEditionLimited_RublonApiException) {
+		        // Clear cashed features
+		        RublonFeature::deleteFeaturesFromCache();
+		    }
 		    
 			$error_data = array(
 				'msg' => 'Authentication error',
@@ -1957,6 +1981,9 @@ class RublonHelper {
                         break;
                     case strtoupper('rc_ForbiddenMethod_RublonAPIException'):
                         $errorCode = 'RC_API_220';
+                        break;
+                    case strtoupper('rc_PersonalEditionLimited_RublonAPIException'):
+                        $errorCode = 'RC_API_221';
                         break;
                     default:
                         $errorCode = 'E_0';    
@@ -3713,5 +3740,32 @@ class RublonHelper {
 	        AND $additional_settings[RublonHelper::RUBLON_SETTINGS_ADAM] == 'on');
 	}
 
-
+	/**
+	 * Check wheter Rublon is working as personal edition.
+	 * @return boolean
+	 */
+    static public function isPersonalEdition() {        
+        return !RublonFeature::isBusinessEdition();
+    }
+    
+    static public function isProjectOwner() {
+        $settings = self::getSettings();
+        $user = wp_get_current_user();
+        
+        return !empty($settings[self::SETTING_PROJECT_OWNER_EMAIL]) && ($settings[self::SETTING_PROJECT_OWNER_EMAIL] == $user->user_email); 
+    }
+    
+    static public function canShowTDMWidget() {
+        return RublonFeature::isBusinessEdition() || self::isProjectOwner();
+    }
+    
+    static public function saveProjectOwner() {
+        $user = wp_get_current_user();
+        if ($user && $user instanceof WP_User) {
+            $settings = self::getSettings();
+            $settings[self::SETTING_PROJECT_OWNER_EMAIL] = $user->user_email;
+            self::saveSettings($settings);
+        }
+    }
+         
 }

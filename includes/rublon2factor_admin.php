@@ -72,14 +72,16 @@ function rublon2factor_add_menu_entries() {
 			$confirmationTitle = __('Confirmations', 'rublon');
 			add_submenu_page('rublon', 'Rublon: ' . $confirmationTitle, $confirmationTitle, 'manage_options', 'rublon_confirmations', 'rublon2factor_render_confirmations_page');
 		}
-	
-		$trusted_title = __('Trusted Devices', 'rublon');
-		add_submenu_page('rublon', 'Rublon: ' . $trusted_title, $trusted_title, 'read', 'rublon_tdm', 'rublon2factor_render_tdm_page');
-	
-		$current_user = wp_get_current_user();
-		if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
-			$acm_title = __('Account Sharing', 'rublon');
-			add_submenu_page('rublon', 'Rublon: ' . $acm_title, $acm_title, 'read', 'rublon_acm', 'rublon2factor_render_acm_page');
+
+		if (RublonHelper::canShowTDMWidget()) {
+    		$trusted_title = __('Trusted Devices', 'rublon');
+    		add_submenu_page('rublon', 'Rublon: ' . $trusted_title, $trusted_title, 'read', 'rublon_tdm', 'rublon2factor_render_tdm_page');
+    	
+    		$current_user = wp_get_current_user();
+    		if (RublonHelper::canShowACM() && RublonHelper::isUserAuthenticated($current_user)) {
+    			$acm_title = __('Account Sharing', 'rublon');
+    			add_submenu_page('rublon', 'Rublon: ' . $acm_title, $acm_title, 'read', 'rublon_acm', 'rublon2factor_render_acm_page');
+    		}
 		}
 
 	}
@@ -121,8 +123,12 @@ function rublon2factor_register_settings() {
 
 	// register additional settings
 	register_setting('rublon2factor_additional_settings_group', RublonHelper::RUBLON_ADDITIONAL_SETTINGS_KEY);
-	add_settings_section('rublon2factor-additional-settings', __('Protection', 'rublon'), 'rublon2factor_render_additional_settings', 'rublon');
-	add_settings_field('rublon2factor_protection_types', __('Role protection level', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');
+	
+	// Below settings works only when plugin works as Business Edition
+	if (RublonFeature::isBusinessEdition()) {
+    	add_settings_section('rublon2factor-additional-settings', __('Protection', 'rublon'), 'rublon2factor_render_additional_settings', 'rublon');
+    	add_settings_field('rublon2factor_protection_types', __('Role protection level', 'rublon'), 'rublon2factor_render_protection_types', 'rublon', 'rublon2factor-additional-settings');
+	}
 	
 	add_settings_section('rublon2factor-other-settings', __('Other settings', 'rublon'), 'rublon2factor_render_other_settings', 'rublon');
 	add_settings_field('rublon2factor_disable_xmlrpc', __('XML-RPC', 'rublon'), 'rublon2factor_render_disable_xmlrpc', 'rublon', 'rublon2factor-other-settings');
@@ -130,9 +136,12 @@ function rublon2factor_register_settings() {
 	// Enable/disable Adam on login page
 	add_settings_field('rublon2factor_enable_adam', __('Show Adam on the login page', 'rublon'), 'rublon2factor_render_enable_adam', 'rublon', 'rublon2factor-other-settings');
 	
-	// Remote logout available since WordPress version 3.6.0
-	if (version_compare(get_bloginfo('version'), '3.6', 'ge')) {
-	   add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-other-settings');
+	// Below settings works only when plugin works as Business Edition
+	if (RublonFeature::isBusinessEdition()) {
+        // Remote logout available since WordPress version 3.6.0
+        if (version_compare(get_bloginfo('version'), '3.6', 'ge')) {
+           add_settings_field('rublon2factor_rl_activelistener', __('Real-Time Remote Logout', 'rublon'), 'rublon2factor_render_rl_activelistener', 'rublon', 'rublon2factor-other-settings');
+        }
 	}
 	
 	if (RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_IDENTITY_PROVIDING)) {
@@ -429,22 +438,35 @@ function rublon2factor_render_settings_page() {
 		<?php if (!RublonFeature::isBusinessEdition()): ?>
 				<div class="updated rublon-be-infobox-container">
         			<div id="message" class="rublon-be-infobox-content">
+        			    <p>
+        			    <?php echo __('Currently you are using <b>Rublon Personal Edition</b> which protects only an administrator account. All other accounts are still able to log in, but without Rublon protection.', 'rublon'); ?>
+        			    </p> 
         				<p>
-    				    <?php					 					   
-                           echo sprintf(__('Need enterprise-grade authentication security for your website? <a href="mailto:%s?subject=%s">Upgrade</a> to the %s and get access to:', 'rublon'), 
+    				    <?php					
+    				       echo sprintf(__('In order to protect up to 20 user accounts, please <a href="mailto:%s?subject=%s">upgrade</a> to the %s <b>for only $99/year</b>. It also allows you to enforce the mobile app for selected user groups. If you want to protect more than 20 accounts or want to use Rublon on many websites, please contact <a href="mailto:%s?subject=%s">%s</a> for a custom offer.', 'rublon'), 
                                RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), 
-                               '<strong>' . __('Rublon Business Edition') . '</strong>');					   					
-    					?>				        															
+                               '<strong>' . __('Rublon Business Edition') . '</strong>',
+    				           RublonHelper::RUBLON_EMAIL_SALES, 
+    				           __('Rublon Business Edition'),
+    				           RublonHelper::RUBLON_EMAIL_SALES
+    				           );	    				       			   
+//                            echo sprintf(__('Need enterprise-grade authentication security for your website? <a href="mailto:%s?subject=%s">Upgrade</a> to the %s and get access to:', 'rublon'), 
+//                                RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), 
+//                                '<strong>' . __('Rublon Business Edition') . '</strong>');					   					
+    					?>				        											
+    					</p>
+    					<p>
+    					<?php echo __('Furthermore we offer following paid features to extend your current Rublon plugin', 'rublon'); ?>:				
         				<ul type="disc">
         				    <li><strong><?php _e('Priority Support', 'rublon'); ?></strong><br /><?php _e('Always be at the front of the queue. We will provide advanced technical support and even log in to your website to solve your problem. Your requests will be answered as fast as possible.', 'rublon'); ?></li>
         				    <li><strong><?php _e('Custom design', 'rublon'); ?></strong><br /><?php _e('Customize the look and feel of the authentication pages and email messages.', 'rublon'); ?></li>
         					<li><strong><?php _e('Operation Confirmation', 'rublon'); ?></strong><br /><?php _e('Protect your sensitive data against unauthorized changes. A must-have if you don\'t use SSL!', 'rublon'); ?></li>
-        					<li><strong><?php _e('Force Mobile App', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity using their phone. Highly recommended for administrators.', 'rublon'); ?></li>
+        					<li><strong><?php _e('Force Mobile App (included in Business Edition)', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity using their phone. Highly recommended for administrators.', 'rublon'); ?></li>
         					<li><strong><?php _e('Force Identity Verification', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity during each login, even if they\'re using a trusted device. Important if you store sensitive customer data and need to comply with regulations.', 'rublon'); ?></li>
         					<li><strong><?php _e('Account Sharing', 'rublon'); ?></strong><br /><?php _e('Make Rublon-protected user accounts accessible by several people, from their devices, using the same login credentials. Useful if more than one person is working on the same account. Rublon is the only two-factor authentication system that makes this possible.', 'rublon'); ?></li>
         				</ul>
         				
-                            <?php echo sprintf(__('Please contact <a href="mailto:%s">%s</a> for more information.', 'rublon'), RublonHelper::RUBLON_EMAIL_SALES, RublonHelper::RUBLON_EMAIL_SALES); ?>
+                            <?php echo sprintf(__('If you would like to upgrade your plugin to %s or buy one or more features listed above please contact us at <a href="mailto:%s?subject=%s">%s</a>.', 'rublon'), '<strong>' . __('Rublon Business Edition') . '</strong>',  RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), RublonHelper::RUBLON_EMAIL_SALES); ?>
         				        				
         				</p>
         			</div>
@@ -752,10 +774,11 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 				(!empty($rublon_mobile_users)
 					&& !empty($rublon_mobile_users[$user_id])
 					&& $rublon_mobile_users[$user_id] == RublonHelper::YES)
-						|| RublonRolesProtection::isGrater(RublonHelper::getUserProtectionType($user), RublonHelper::PROTECTION_TYPE_NONE)
+						|| (RublonFeature::isBusinessEdition() && RublonRolesProtection::isGrater(RublonHelper::getUserProtectionType($user), RublonHelper::PROTECTION_TYPE_NONE))
 // 						|| in_array(RublonHelper::PROTECTION_TYPE_EMAIL, $protectionType)
 // 						|| in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protectionType)
 					) {
+					    
 				$lang = RublonHelper::getBlogLanguage();
 				$value = sprintf('<a href="%s"', RublonHelper::rubloncomUrl())
 					. ' target="_blank"><img class="rublon-protected rublon-image" src="'

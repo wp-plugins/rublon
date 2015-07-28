@@ -32,6 +32,9 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 			RublonHelper::saveSettings($other_settings, 'other');
 		}
 		
+		// Save project owner information
+		RublonHelper::saveProjectOwner();
+		
 		$this->_redirect(admin_url(RublonHelper::WP_RUBLON_PAGE));
 
 	}
