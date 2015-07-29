@@ -45,7 +45,7 @@ Rublon is simple and easy. Activate the plugin and you're done. Your users don't
 Traditional two-factor authentication solutions demand users enter a one-time password each time they want to login. That’s why people don’t like them. Rublon is different. With Rublon, you confirm your identity by simply clicking on a link or scanning a Rublon Code.
 
 = What Does Rublon Cost? =
-Nothing! The basic Rublon plugin is free and always will be. Premium features like custom branding are available through our paid Business Plan. Please contact sales@rublon.com.
+By default, the Rublon for WordPress plugin makes use of the Rublon Personal Edition that protects up to 1 account and is available for free. In order to protect more accounts or for premium features, you need access to the paid Rublon Business Edition. Please contact <sales@rublon.com> for more information. 
 
 = In What Languages Is Rublon Available? =
 - English
@@ -76,13 +76,13 @@ Nothing! The basic Rublon plugin is free and always will be. Premium features li
 == Frequently Asked Questions ==
 
 = How can I protect my account with Rublon? =
-Simply install the Rublon for WordPress plugin and activate it. After activation, all accounts have instant protection with email-based, two-factor authentication.
+Simply install the Rublon for WordPress plugin and activate it. After activation, your administrator account will be instantly protected with email-based two-factor authentication. In order to protect more accounts, please upgrade to the Business Edition by contacting <sales@rublon.com>. 
 
 = I want more than email-based, two-factor authentication. Does Rublon support phone-based, out-of-band two-factor authentication? =
 Yes! Just install the Rublon mobile app onto your phone (available for Android, iOS and Windows Phone). After entering your WordPress login credentials, you will be prompted to scan a Rublon Code with your phone.
 
 = Do all my users have to be protected by Rublon? =
-Plugin activation instantly protects all accounts. The minimum (default) protection level for all user groups is set to "Email." You may change this setting to "None" for any user group at any time. However, users who install the Rublon mobile app will have additional protection regardless of the setting you’ve selected.
+Plugin activation instantly protects your administrator account. The minimum (default) protection level for all user groups is set to "Email". You may change this setting to "None" for any user group at any time. However, users who install the Rublon mobile app will have additional protection regardless of the setting you’ve selected. Please keep in mind that you need access to the Rublon Business Edition in order to protect more than 1 account per website.
 
 = Will my login credentials be known to Rublon? =
 No. Rublon never knows your credentials or those of your users.  They are never transmitted to our servers. Rublon does its work in the background only after WordPress verifies your password. It's an independent security layer that sits beneath the login form.
@@ -94,10 +94,10 @@ For accounts protected via email, the email address is transmitted to Rublon ser
 The Rublon mobile app holds your digital identity with your private encryption key, which never leaves your phone. With any action requiring the mobile app, such as confirming your identity, the Rublon app generates an unique encrypted digital signature. Gaining access to an email account without two-factor authentication is easier than stealing your private key from your phone and reusing it.
 
 = What if I use the Rublon mobile app and I lose my phone? =
-Simply deactivate your phone using the "Lost phone" feature on the Help Page at Rublon.com. Once deactivated, recover your account by installing the Rublon mobile app on a new phone.
+Simply deactivate your phone on [lost.rublon.com](http://lost.rublon.com). Once deactivated, recover your account by installing the Rublon mobile app on a new phone. 
 
 = How much does Rublon cost? =
-Rublon for WordPress is free and always will be. Our paid Business Plan offers premium features.
+Rublon for WordPress gives you access to the free Rublon Personal Edition, which lets you protect up to 1 account. For more accounts and features, please upgrade to the Rublon Business Edition by contacting <sales@rublon.com>.
  
 == Screenshots ==
 
@@ -118,7 +118,7 @@ After a successful installation, the plugin can be updated automatically in the 
 
 = 3.1.0 =
 * Introduction of Personal Edition
-* Improved login_redirect filter
+* Rublon core libraries update
 
 = 3.0.7 =
 * Further improvements of error handling
