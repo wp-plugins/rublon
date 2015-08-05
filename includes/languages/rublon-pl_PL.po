@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rublon Account Security 3.0.3\n"
-"POT-Creation-Date: 2015-07-28 11:45+0100\n"
-"PO-Revision-Date: 2015-07-28 11:46+0100\n"
+"POT-Creation-Date: 2015-08-05 14:47+0100\n"
+"PO-Revision-Date: 2015-08-05 14:48+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl_PL\n"
@@ -102,7 +102,7 @@ msgstr ""
 "rolach korzystanie z mobilnej aplikacji Rublon."
 
 #: rublon/includes/rublon2factor_admin.php:227
-#: rublon/includes/rublon2factor_helper.php:3245
+#: rublon/includes/rublon2factor_helper.php:3241
 msgid "Notice:"
 msgstr "Uwaga:"
 
@@ -348,7 +348,7 @@ msgstr ""
 #: rublon/includes/rublon2factor_admin.php:566
 #: rublon/includes/rublon2factor_admin.php:629
 #: rublon/includes/rublon2factor_admin.php:652
-#: rublon/includes/rublon2factor_helper.php:1754
+#: rublon/includes/rublon2factor_helper.php:1750
 #, php-format
 msgid ""
 "Learn more at <a href=\"%s\" target=\"_blank\">wordpress.rublon.com</a>."
@@ -433,11 +433,11 @@ msgstr ""
 "prawidłowe działanie wtyczki. Zainstaluj rozszerzenie PHP Hash lub poproś o "
 "to administratora tego serwera."
 
-#: rublon/includes/rublon2factor_admin.php:806
+#: rublon/includes/rublon2factor_admin.php:813
 msgid "Account protected by Rublon"
 msgstr "Konto zabezpieczone Rublonem"
 
-#: rublon/includes/rublon2factor_admin.php:854
+#: rublon/includes/rublon2factor_admin.php:861
 msgid "Protected by Rublon"
 msgstr "Konto zabezpieczone Rublonem"
 
@@ -512,11 +512,11 @@ msgstr "Operacja anulowana."
 msgid "Error details: "
 msgstr "Szczegóły błędu: "
 
-#: rublon/includes/rublon2factor_helper.php:1692
+#: rublon/includes/rublon2factor_helper.php:1688
 msgid "There was a problem during the authentication process."
 msgstr "Wystąpił błąd podczas procesu uwierzytelniania."
 
-#: rublon/includes/rublon2factor_helper.php:1695
+#: rublon/includes/rublon2factor_helper.php:1691
 msgid ""
 "Rublon activation failed. Please try again. Should the error occur again, "
 "contact us at <a href=\"mailto:support@rublon.com\">support@rublon.com</a>."
@@ -525,19 +525,19 @@ msgstr ""
 "powtórzy, skontaktuj się z nami na <a href=\"mailto:support@rublon.com"
 "\">support@rublon.com</a>."
 
-#: rublon/includes/rublon2factor_helper.php:1710
+#: rublon/includes/rublon2factor_helper.php:1706
 msgid "You cannot protect an account already protected by Rublon."
 msgstr "Nie można zabezpieczyć konta już zabezpieczonego Rublonem."
 
-#: rublon/includes/rublon2factor_helper.php:1713
+#: rublon/includes/rublon2factor_helper.php:1709
 msgid "Unable to protect your account with Rublon."
 msgstr "Nie udało się zabezpieczyć konta Rublonem."
 
-#: rublon/includes/rublon2factor_helper.php:1716
+#: rublon/includes/rublon2factor_helper.php:1712
 msgid "Unable to disable Rublon protection."
 msgstr "Nie udało się usunąć Rublona z Twojego konta."
 
-#: rublon/includes/rublon2factor_helper.php:1719
+#: rublon/includes/rublon2factor_helper.php:1715
 #, php-format
 msgid ""
 "The version of Rublon for Wordpress that you are trying to activate is "
@@ -548,11 +548,11 @@ msgstr ""
 "Przejdź do strony <a href=\"%s\">Zainstalowane wtyczki</a> i zaktualizuj "
 "Rublona do najnowszej wersji lub"
 
-#: rublon/includes/rublon2factor_helper.php:1721
+#: rublon/includes/rublon2factor_helper.php:1717
 msgid "update now"
 msgstr "zaktualizuj teraz"
 
-#: rublon/includes/rublon2factor_helper.php:1724
+#: rublon/includes/rublon2factor_helper.php:1720
 #, php-format
 msgid ""
 "Thank you! Now all of your users can protect their accounts with Rublon. "
@@ -563,7 +563,7 @@ msgstr ""
 "Rublonem, jednak nie udało się zabezpieczyć Twojego konta. Przejdź do <a "
 "href=\"%s\">sekcji Rublon</a> by zabezpieczyć konto."
 
-#: rublon/includes/rublon2factor_helper.php:1730
+#: rublon/includes/rublon2factor_helper.php:1726
 #, php-format
 msgid ""
 "Due to security purposes, your administrator requires you to install the <a "
@@ -575,7 +575,7 @@ msgstr ""
 "a>. Podczas rejestracji wpisz w aplikacji adres email swojego konta "
 "WordPress: %s."
 
-#: rublon/includes/rublon2factor_helper.php:1735
+#: rublon/includes/rublon2factor_helper.php:1731
 msgid ""
 "If you already have the Rublon mobile app installed on your phone, please "
 "add the above email address as an additional email address after pressing "
@@ -584,7 +584,7 @@ msgstr ""
 "Jeżeli posiadasz już zainstalowaną aplikację mobilną Rublon, dodaj powyższy "
 "adres jako dodatkowy, klikając w symbol \"@\" widoczny w aplikacji."
 
-#: rublon/includes/rublon2factor_helper.php:1750
+#: rublon/includes/rublon2factor_helper.php:1746
 msgid ""
 "Your server's time seems out of sync. Please check that it is properly "
 "synchronized - Rublon won't be able to verify your website's security "
@@ -594,11 +594,11 @@ msgstr ""
 "czas serwera jest właściwie zsynchronizowany - w przeciwnym wypadku Rublon "
 "nie będzie w stanie zweryfikować bezpieczeństwa Twojej strony."
 
-#: rublon/includes/rublon2factor_helper.php:1753
+#: rublon/includes/rublon2factor_helper.php:1749
 msgid "The authentication process has been halted."
 msgstr "Proces uwierzytelniania został zatrzymany."
 
-#: rublon/includes/rublon2factor_helper.php:1753
+#: rublon/includes/rublon2factor_helper.php:1749
 msgid ""
 "This site's administrator requires you to confirm this operation using the "
 "Rublon mobile app."
@@ -606,36 +606,36 @@ msgstr ""
 "Administrator wymaga użycia aplikacji mobilnej Rublon do potwierdzenia tej "
 "operacji."
 
-#: rublon/includes/rublon2factor_helper.php:1758
+#: rublon/includes/rublon2factor_helper.php:1754
 msgid "<strong>ERROR:</strong> Unauthorized access."
 msgstr "<strong>BŁĄD:</strong> Nie przyznano dostępu."
 
-#: rublon/includes/rublon2factor_helper.php:1765
+#: rublon/includes/rublon2factor_helper.php:1761
 msgid ""
 "Rublon Account Security has not been properly registered in the Rublon API."
 msgstr ""
 "Rublon Account Security nie został poprawnie zarejestrowany w API Rublona."
 
-#: rublon/includes/rublon2factor_helper.php:1766
+#: rublon/includes/rublon2factor_helper.php:1762
 msgid "Register the plugin in the Rublon API and try this action again."
 msgstr "Zarejestruj wtyczkę w Rublon API i wykonaj tę operację ponownie."
 
-#: rublon/includes/rublon2factor_helper.php:1769
+#: rublon/includes/rublon2factor_helper.php:1765
 msgid "Internal WordPress error while subscribing to the newsletter."
 msgstr "Wewnętrzny błąd WordPressa podczas zapisywania do newslettera."
 
+#: rublon/includes/rublon2factor_helper.php:1766
 #: rublon/includes/rublon2factor_helper.php:1770
-#: rublon/includes/rublon2factor_helper.php:1774
-#: rublon/includes/rublon2factor_helper.php:1779
+#: rublon/includes/rublon2factor_helper.php:1775
 msgid "Please try again in a minute."
 msgstr "Spróbuj ponownie za minutę."
 
-#: rublon/includes/rublon2factor_helper.php:1773
+#: rublon/includes/rublon2factor_helper.php:1769
 msgid "Rublon API error while subscribing to the newsletter."
 msgstr "Błąd API Rublona podczas zapisywania do newslettera."
 
-#: rublon/includes/rublon2factor_helper.php:1775
-#: rublon/includes/rublon2factor_helper.php:1780
+#: rublon/includes/rublon2factor_helper.php:1771
+#: rublon/includes/rublon2factor_helper.php:1776
 msgid ""
 "Should the error occur again, contact us at <a href=\"mailto:support@rublon."
 "com\">support@rublon.com</a>."
@@ -643,41 +643,41 @@ msgstr ""
 "Gdyby błąd pojawił się ponownie, skontaktuj się z nami na <a href=\"mailto:"
 "support@rublon.com\">support@rublon.com</a>."
 
-#: rublon/includes/rublon2factor_helper.php:1778
+#: rublon/includes/rublon2factor_helper.php:1774
 msgid "API error while subscribing to the newsletter."
 msgstr "Błąd API podczas zapisywania do newslettera."
 
-#: rublon/includes/rublon2factor_helper.php:1783
+#: rublon/includes/rublon2factor_helper.php:1779
 msgid "You are already subscribed to this newsletter."
 msgstr "Znajdujesz się już na liście subskrybentów tego newslettera."
 
-#: rublon/includes/rublon2factor_helper.php:1789
+#: rublon/includes/rublon2factor_helper.php:1785
 msgid ""
 "There is something wrong with Rublon API response. Probably the response was "
 "incomplete."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:1828
+#: rublon/includes/rublon2factor_helper.php:1824
 msgid "Initial plugin registration parematers are invalid"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:1833
-#: rublon/includes/rublon2factor_helper.php:1839
-#: rublon/includes/rublon2factor_helper.php:1844
-#: rublon/includes/rublon2factor_helper.php:1849
-#: rublon/includes/rublon2factor_helper.php:1855
-#: rublon/includes/rublon2factor_helper.php:1860
-msgid "Registration process faild"
+#: rublon/includes/rublon2factor_helper.php:1829
+#: rublon/includes/rublon2factor_helper.php:1835
+#: rublon/includes/rublon2factor_helper.php:1840
+#: rublon/includes/rublon2factor_helper.php:1845
+#: rublon/includes/rublon2factor_helper.php:1851
+#: rublon/includes/rublon2factor_helper.php:1856
+msgid "Registration process failed"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:1838
+#: rublon/includes/rublon2factor_helper.php:1834
 #, php-format
 msgid ""
 "Invalid email address %s. Please enter a valid email address on <a href=\"%s"
 "\">your profile page</a>."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:1854
+#: rublon/includes/rublon2factor_helper.php:1850
 msgid ""
 "Registration limit reached. Please contact us at <a href=\"mailto:"
 "support@rublon.com\">support@rublon.com</a>."
@@ -685,26 +685,26 @@ msgstr ""
 "Osiągnięto limit aktywacji, skontaktuj się z nami na <a href=\"mailto:"
 "support@rublon.com\">support@rublon.com</a>."
 
-#: rublon/includes/rublon2factor_helper.php:1922
+#: rublon/includes/rublon2factor_helper.php:1918
 msgid ""
 "The cURL module is not available on this server. Please ask your server "
 "administrator to activate it."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:1925
+#: rublon/includes/rublon2factor_helper.php:1921
 msgid "There is a cURL error occured. Please see the message below."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:2002
+#: rublon/includes/rublon2factor_helper.php:1998
 #: rublon/includes/libs/RublonImplemented/RublonConsumerRegistrationWordPress.php:88
 msgid "Rublon error code: "
 msgstr "Kod błędu: "
 
-#: rublon/includes/rublon2factor_helper.php:2010
+#: rublon/includes/rublon2factor_helper.php:2006
 msgid "Your account is now protected by Rublon."
 msgstr "Twoje konto jest teraz zabezpieczone Rublonem. "
 
-#: rublon/includes/rublon2factor_helper.php:2013
+#: rublon/includes/rublon2factor_helper.php:2009
 msgid ""
 "Rublon protection has been disabled. You are now protected by a password "
 "only, which may result in unauthorized access to your account. We strongly "
@@ -714,11 +714,12 @@ msgstr ""
 "może doprowadzić do nieautoryzowanego dostępu do Twojego konta. Zdecydowanie "
 "zalecamy zabezpieczyć konto Rublonem."
 
-#: rublon/includes/rublon2factor_helper.php:2016
-msgid "Thank you! All accounts are now protected by Rublon."
-msgstr "Dziękujemy! Wszystkie konta są teraz chronione Rublonem."
+#: rublon/includes/rublon2factor_helper.php:2012
+#, fuzzy
+msgid "Thank you! Your account is now protected by Rublon."
+msgstr "Twoje konto jest teraz zabezpieczone Rublonem. "
 
-#: rublon/includes/rublon2factor_helper.php:2019
+#: rublon/includes/rublon2factor_helper.php:2015
 msgid ""
 "Since Rublon plugin version 2.0, the authentication process has been changed "
 "significantly. The accounts are now protected using the email address. We "
@@ -736,21 +737,21 @@ msgstr ""
 "aplikacji mobilnej lub dodaj aktualnie używany w WordPressie adres w sekcji "
 "\"Adresy email\" aplikacji mobilnej Rublon."
 
-#: rublon/includes/rublon2factor_helper.php:2022
+#: rublon/includes/rublon2factor_helper.php:2018
 msgid ""
 "You have successfully subscribed to our newsletter! Check your email inbox "
 "for more details."
 msgstr ""
 "Udało ci się zapisać do naszego newslettera! Sprawdź swoją skrzynkę email."
 
-#: rublon/includes/rublon2factor_helper.php:2429
+#: rublon/includes/rublon2factor_helper.php:2425
 msgid ""
 "Plugin requires database modification but you do not have permission to do "
 "it."
 msgstr ""
 "Wtyczka wymaga zmian w bazie danych, ale brak uprawnień do jej modyfikacji."
 
-#: rublon/includes/rublon2factor_helper.php:2569
+#: rublon/includes/rublon2factor_helper.php:2565
 msgid ""
 "Rublon provides stronger security for online accounts through invisible two-"
 "factor authentication. It protects your accounts from sign-ins from unknown "
@@ -760,37 +761,37 @@ msgstr ""
 "niewidoczne uwierzytelnianie dwuskładnikowe. Chroni Twoje konta przed "
 "dostępem z nieznanych urządzeń, nawet jeśli Twoje hasła zostaną skradzione."
 
-#: rublon/includes/rublon2factor_helper.php:3076
-#: rublon/includes/rublon2factor_helper.php:3106
+#: rublon/includes/rublon2factor_helper.php:3072
+#: rublon/includes/rublon2factor_helper.php:3102
 msgid "This will only take a moment."
 msgstr "To zajmie tylko chwilę."
 
-#: rublon/includes/rublon2factor_helper.php:3186
+#: rublon/includes/rublon2factor_helper.php:3182
 msgid "Rublon - Account Protection"
 msgstr "Rublon - ochrona konta"
 
-#: rublon/includes/rublon2factor_helper.php:3191
+#: rublon/includes/rublon2factor_helper.php:3187
 msgid "Protection via Email"
 msgstr "Ochrona poprzez email"
 
-#: rublon/includes/rublon2factor_helper.php:3199
+#: rublon/includes/rublon2factor_helper.php:3195
 msgid "Protection via Email is not necessary for you."
 msgstr "Ochrona poprzez email nie jest dla ciebie wymagana."
 
-#: rublon/includes/rublon2factor_helper.php:3200
-#: rublon/includes/rublon2factor_helper.php:3260
+#: rublon/includes/rublon2factor_helper.php:3196
+#: rublon/includes/rublon2factor_helper.php:3256
 msgid "You are already protected via Mobile App."
 msgstr "Twoje konto już jest zabezpieczone aplikacją mobilną."
 
-#: rublon/includes/rublon2factor_helper.php:3207
+#: rublon/includes/rublon2factor_helper.php:3203
 msgid "You are protected via Email."
 msgstr "Jesteś chroniony poprzez email."
 
-#: rublon/includes/rublon2factor_helper.php:3240
+#: rublon/includes/rublon2factor_helper.php:3236
 msgid "Enable account protection via email"
 msgstr "Włącz ochronę poprzez email"
 
-#: rublon/includes/rublon2factor_helper.php:3244
+#: rublon/includes/rublon2factor_helper.php:3240
 msgid ""
 "You will need to confirm every sign in from a new device via email. You will "
 "also need to confirm changes to important settings like your password or "
@@ -800,16 +801,16 @@ msgstr ""
 "ważnych ustawień takich jak hasło albo adres email będziesz również musiał "
 "potwierdzić."
 
-#: rublon/includes/rublon2factor_helper.php:3245
+#: rublon/includes/rublon2factor_helper.php:3241
 msgid "Administrators can always change your settings without your consent."
 msgstr ""
 "Administratorzy zawsze mogą zmieniać Twoje ustawienia bez Twojego zezwolenia."
 
-#: rublon/includes/rublon2factor_helper.php:3254
+#: rublon/includes/rublon2factor_helper.php:3250
 msgid "Protection via Mobile App"
 msgstr "Ochrona poprzez aplikację mobilną"
 
-#: rublon/includes/rublon2factor_helper.php:3263
+#: rublon/includes/rublon2factor_helper.php:3259
 #, php-format
 msgid ""
 "This will be automatically enabled once you install the <a href=\"%s/get\" "
@@ -822,27 +823,27 @@ msgstr ""
 "smartfon będzie potrzebny, by potwierdzić Twoją tożsamość lub niektóre "
 "operacje, co zastąpi ochronę przez email."
 
-#: rublon/includes/rublon2factor_helper.php:3284
+#: rublon/includes/rublon2factor_helper.php:3280
 msgid "Keep in touch"
 msgstr "Bądź na czasie"
 
-#: rublon/includes/rublon2factor_helper.php:3288
+#: rublon/includes/rublon2factor_helper.php:3284
 msgid "Social media"
 msgstr "Social media"
 
-#: rublon/includes/rublon2factor_helper.php:3291
+#: rublon/includes/rublon2factor_helper.php:3287
 msgid "Join our community"
 msgstr "Dołącz do społeczności"
 
-#: rublon/includes/rublon2factor_helper.php:3300
+#: rublon/includes/rublon2factor_helper.php:3296
 msgid "Newsletter"
 msgstr "Newsletter"
 
-#: rublon/includes/rublon2factor_helper.php:3316
+#: rublon/includes/rublon2factor_helper.php:3312
 msgid "Subscribe"
 msgstr "Zapisz mnie"
 
-#: rublon/includes/rublon2factor_helper.php:3319
+#: rublon/includes/rublon2factor_helper.php:3315
 msgid ""
 "Stay up to date on new product releases, events, WordPress news and special "
 "promotions."
@@ -850,109 +851,109 @@ msgstr ""
 "Bądź na czasie z nowymi wersjami naszego oprogramowania, wydarzeniami, "
 "informacjami ze świata WordPress i specjalnymi promocjami."
 
-#: rublon/includes/rublon2factor_helper.php:3346
+#: rublon/includes/rublon2factor_helper.php:3342
 msgid "Close"
 msgstr "Zamknij"
 
-#: rublon/includes/rublon2factor_helper.php:3708
+#: rublon/includes/rublon2factor_helper.php:3704
 msgid ""
 "Hello, Thanks for using Rublon Account Security. My name is Adam and I wish "
 "to share with you interesting facts about WordPress and security."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3709
+#: rublon/includes/rublon2factor_helper.php:3705
 msgid ""
 "It might interest you to know that over 600,000 account logins are "
 "compromised daily on Facebook alone. The good news is that we now have "
 "Rublon Account Security."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3710
+#: rublon/includes/rublon2factor_helper.php:3706
 msgid ""
 "WordPress was first released on May 27 in 2003 by Matt Mullenweg and Mike "
 "Little as free software, licensed under GPLv2. That is quite some time now."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3711
+#: rublon/includes/rublon2factor_helper.php:3707
 #, php-format
 msgid ""
 "WordPress powers over 23% of the World Wide Web. This translates to over 60 "
 "Million websites. Wow!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3712
+#: rublon/includes/rublon2factor_helper.php:3708
 msgid ""
 "Did you know that such known companies as CNN, Best Buy, Forbes, Mashable, "
 "TechCrunch and The New Yorker use WordPress to power their websites? It must "
 "be a solid platform, indeed!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3713
+#: rublon/includes/rublon2factor_helper.php:3709
 msgid ""
 "Rublon Account Security is just one of the over 30,000 free WordPress "
 "plugins. Have you already taken a look at them?"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3714
+#: rublon/includes/rublon2factor_helper.php:3710
 msgid ""
 "How are you? WordPress is available in over 50 languages. Quite impressive, "
 "huh? I didn't even know that so many exist!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3715
+#: rublon/includes/rublon2factor_helper.php:3711
 msgid ""
 "Brute force attacks against WordPress have been very common. On some days, "
 "WordPress is hit by over 200,000 login attempts! Rublon Account Security "
 "protects you from them."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3716
+#: rublon/includes/rublon2factor_helper.php:3712
 msgid ""
 "When did you last change your password? You don't have to do it monthly, but "
 "it's wise to change your password occasionally."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3717
+#: rublon/includes/rublon2factor_helper.php:3713
 msgid ""
 "Your password doesn't have to be complicated, as long as your account is "
 "protected by Rublon Account Security. Even if someone guesses it, they "
 "probably won't have access to your email account or phone."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3718
+#: rublon/includes/rublon2factor_helper.php:3714
 msgid ""
 "Are you using the Rublon mobile app? It enables you to scan a Rublon Code "
 "using your phone whenever you sign in from an unknown device. This means "
 "enhanced security for all!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3719
+#: rublon/includes/rublon2factor_helper.php:3715
 msgid ""
 "The Rublon mobile app allows you to view and remove your trusted devices "
 "directly from the app. This is great for people on the go — like me!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3720
+#: rublon/includes/rublon2factor_helper.php:3716
 msgid ""
 "Did you know that it is possible to log out remotely by simply removing a "
 "trusted device using any other of your devices? Last time I forgot to log "
 "out from my office computer, Rublon saved my butt!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3721
+#: rublon/includes/rublon2factor_helper.php:3717
 msgid ""
 "I like how Rublon Account Security works with Bitcoin exchanges. Before any "
 "money transfer can be made, I need to confirm it using my phone."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3722
+#: rublon/includes/rublon2factor_helper.php:3718
 msgid ""
 "I'm going to reveal to you a little secret. Now that my accounts are "
 "protected by Rublon Account Security, I'm using very simple passwords! I can "
 "finally remember them now."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3723
+#: rublon/includes/rublon2factor_helper.php:3719
 msgid ""
 "Are you an administrator of this website? Did you know that you can request "
 "certain groups to state their identity each time they log in, regardless of "
@@ -960,42 +961,37 @@ msgid ""
 "Business Edition though."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3724
+#: rublon/includes/rublon2factor_helper.php:3720
 msgid ""
 "Did you know that 1 in 10 social network users acknowledged falling victim "
 "to a scam or fake link on social network platforms? Watch out!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3725
+#: rublon/includes/rublon2factor_helper.php:3721
 msgid ""
 "The US Navy sees over 100,000 cyber attacks per hour. It is a creepy world "
 "out there!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3726
+#: rublon/includes/rublon2factor_helper.php:3722
 msgid ""
 "Small and medium sized businesses have lately become popular targets because "
 "they don't invest much in cyber security. The good thing is that you now "
 "have Rublon Account Security!"
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3727
+#: rublon/includes/rublon2factor_helper.php:3723
 msgid ""
 "Want to give someone temporary access to your account? Give him your login "
 "credentials and add his email address to your Account Sharing Manager! This "
 "only works with Rublon Account Security Business Edition."
 msgstr ""
 
-#: rublon/includes/rublon2factor_helper.php:3778
-#, fuzzy
-msgid "Personal Edition Limitation"
-msgstr "Potwierdzanie Operacji"
-
-#: rublon/includes/rublon2factor_hooks.php:419
+#: rublon/includes/rublon2factor_hooks.php:421
 msgid "Account Protection"
 msgstr "Ochrona konta"
 
-#: rublon/includes/rublon2factor_hooks.php:473
+#: rublon/includes/rublon2factor_hooks.php:477
 #, php-format
 msgid ""
 "The new user account will be automatically protected by <a href=\"%s\" "
@@ -1004,7 +1000,7 @@ msgstr ""
 "Nowe konto użytkownika zostanie automatycznie zabezpieczone <a href=\"%s\" "
 "target=\"_blank\">Rublonem</a>."
 
-#: rublon/includes/rublon2factor_hooks.php:556
+#: rublon/includes/rublon2factor_hooks.php:561
 msgid "Rublon 2FA"
 msgstr "Rublon 2FA"
 
@@ -1112,6 +1108,13 @@ msgid ""
 "Your account isn't protected by Rublon and thus vulnerable to password theft "
 "and brute force attacks. Please contact your administrator. "
 msgstr ""
+
+#~ msgid "Thank you! All accounts are now protected by Rublon."
+#~ msgstr "Dziękujemy! Wszystkie konta są teraz chronione Rublonem."
+
+#, fuzzy
+#~ msgid "Personal Edition Limitation"
+#~ msgstr "Potwierdzanie Operacji"
 
 #~ msgid ""
 #~ "Need enterprise-grade authentication security for your website? <a href="
