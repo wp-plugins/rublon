@@ -118,7 +118,7 @@ After a successful installation, the plugin can be updated automatically in the 
 
 = 3.1.0 =
 * Introduction of Personal Edition
-* Rublon core libraries update 
+* Rublon Core Libraries update 
 
 = 3.0.7 =
 * Further improvements of error handling
