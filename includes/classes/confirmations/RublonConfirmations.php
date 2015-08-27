@@ -217,8 +217,7 @@ class RublonConfirmations {
 			$params[self::PARAM_FALLBACK_URL] = $params[self::PARAM_ACTION_URL];
 		}
 		$params[RublonAuthParams::FIELD_CUSTOM_URI_PARAM] = self::CUSTOM_URI_PARAM_PREFIX . $params[self::PARAM_FALLBACK_URL];
-		
-// 		var_dump($params);exit;
+		 		
 		return $params;
 		
 	}

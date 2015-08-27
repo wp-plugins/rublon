@@ -370,7 +370,7 @@ class RublonHelper {
 		if (!empty($messages))
 			$cookies['messages'] = $messages;
 		self::$cookies = $cookies;
-
+				
 	}
 
 
@@ -1426,7 +1426,8 @@ class RublonHelper {
 			return $authUrl;
 		} catch (RublonException $e) {
 		    
-		    $errorCode = $e->getCode()?$e->getCode():strtoupper(get_class($e));	
+		    $errorCode = $e->getCode()?$e->getCode():strtoupper(get_class($e));
+		    $errorMessage = $e->getMessage();	
 
 		    if ($e instanceof PersonalEditionLimited_RublonApiException) {
 		        // Clear cashed features
@@ -1436,18 +1437,18 @@ class RublonHelper {
 			$error_data = array(
 				'msg' => 'Authentication error',
 				'errorCode' => $errorCode,
-				'errorMessage' => $e->getMessage(),
+				'errorMessage' => $errorMessage,
 			);
 			$previous_exception = $e->getPrevious();
 			if ($previous_exception != null) {
 				$error_data['previousCode'] = $previous_exception->getCode();
 				$error_data['previousMessage'] = $previous_exception->getMessage();
 			}
-			try {
-			    self::setMessage($errorCode, 'error', 'RC', false, $e->getMessage());
-				self::notify($error_data, array('message-type' => self::RUBLON_NOTIFY_TYPE_ERROR));
+			try {			    
+			    self::setMessage($errorCode, 'error', 'RC', false, $errorMessage);
+				self::notify($error_data, array('message-type' => self::RUBLON_NOTIFY_TYPE_ERROR)); 				
 			} catch (Exception $e) {
-				// Do nothing.								
+				// Do nothing.				
 			}
 			return '';
 		}
@@ -1604,7 +1605,7 @@ class RublonHelper {
 
 	static public function isTrackingAllowed() {
 
-		require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';
+		require_once dirname(__FILE__) . '/classes/class-rublon-pointers.php';		
 		$other_settings = self::getSettings('other');
 		if (!empty($other_settings[Rublon_Pointers::ANONYMOUS_STATS_ALLOWED])) {
 			return $other_settings[Rublon_Pointers::ANONYMOUS_STATS_ALLOWED] == self::YES;
@@ -1783,10 +1784,10 @@ class RublonHelper {
 					    $errorMessage = __('There is something wrong with Rublon API response. Probably the response was incomplete.', 'rublon');
 					    break;
 					case 'CR_8':
-					    // Empty Json parse faild. Displaying general registration error message.					        
+					    // Empty Json parse failed. Displaying general registration error message.					        
 					    break;
 				    case 'CR_9':
-				        // Incorrect Json parse faild. Displaying general registration error message.
+				        // Incorrect Json parse failed. Displaying general registration error message.
 				        break;
 				    case 'CR_10':
 				        // Missing field "data" in JSON string
@@ -1824,89 +1825,89 @@ class RublonHelper {
 			            break;
 		            case 'CR_USER_NOT_FOUND':
 		                // Cannot find users email 
-		                $msgContent = __('Registration process faild', 'rublon');
+		                $msgContent = __('Registration process failed', 'rublon');
 		                $errorCode = 'CR_API_2';
 		                break;
-	                case 'CR_EMAIL_VALIDATION_FAILD':
+	                case 'CR_EMAIL_VALIDATION_FAILED':
 	                    // Invalid email address or cannot register account email	                    
 	                    $errorMessage = sprintf(__('Invalid email address %s. Please enter a valid email address on <a href="%s">your profile page</a>.', 'rublon'), '<strong>' . self::getUserEmail(wp_get_current_user()) . '</strong>', self::WP_PROFILE_PAGE);
-	                    $msgContent = __('Registration process faild', 'rublon');
+	                    $msgContent = __('Registration process failed', 'rublon');
 	                    $errorCode = 'CR_API_3';
 	                    break;
                     case 'CR_CANNOT_CREATE_SYSTEM_TOKEN':
                         // Cannot obtain system token from ASV
-                        $msgContent = __('Registration process faild', 'rublon');
+                        $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_4';
                         break;
                     case 'CR_CANNOT_ADD_CONSUMER':
                         // Cannot add new consumer to database
-                        $msgContent = __('Registration process faild', 'rublon');
+                        $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_5';
                         break;           
                     case 'CR_CONSUMER_REGISTRATION_LIMIT_REACHED':
                         // Consumer registartion limit reached
                         $errorMessage = __('Registration limit reached. Please contact us at <a href="mailto:support@rublon.com">support@rublon.com</a>.', 'rublon');
-                        $msgContent = __('Registration process faild', 'rublon');
+                        $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_6';
                         break;
                     case 'CR_OTHER':
                         // Consumer registartion general error
-                        $msgContent = __('Registration process faild', 'rublon');
+                        $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_7';
                         break;
                     case strtoupper('cr_UnsupportedRequestMethod_RublonAPIException'):
                         // Invalid request method
-                        //$msgContent = __('Registration process faild', 'rublon');
+                        //$msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_8';
                         break;
                     case strtoupper('cr_MissingHeader_RublonAPIException'):
                         // Missing X-Rublon headers
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_9';
                         break;
                     case strtoupper('cr_UnsupportedVersion_RublonAPIException'):
                         // Unsupported sdk version
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_10';
                         break;
                     case strtoupper('cr_EmptyInput_RublonAPIException'):
                         // Unsupported sdk version
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_11';
                         break;
                     case strtoupper('cr_InvalidJSON_RublonAPIException'):
                         // Unsupported sdk version
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_12';
                         break;
                     case strtoupper('cr_MissingField_RublonAPIException'):
                         // Unsupported sdk version
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_13';
                         break;
                     case strtoupper('cr_ConsumerNotFound_RublonAPIException'):
                         // Consumer not found
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_14';
                         break;
                     case strtoupper('cr_InvalidSignature_RublonAPIException'):
                         // Invalid signature
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_15';
                         break;                            
                     case strtoupper('cr_InvalidSignature_RublonAPIException'):
                         // Invalid signature
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_16';
                         break;
                     case strtoupper('cr_InvalidSignature_RublonAPIException'):
                         // Invalid signature
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_17';
                         break;
                     case strtoupper('cr_InvalidSignature_RublonAPIException'):
                         // Invalid signature
-                        // $msgContent = __('Registration process faild', 'rublon');
+                        // $msgContent = __('Registration process failed', 'rublon');
                         $errorCode = 'CR_API_18';
                         break;
                                                 
@@ -2007,7 +2008,7 @@ class RublonHelper {
 						$updatedMessage = __('Rublon protection has been disabled. You are now protected by a password only, which may result in unauthorized access to your account. We strongly encourage you to protect your account with Rublon.', 'rublon');
 						break;
 					case 'CR_PLUGIN_REGISTERED':
-						$updatedMessage = __('Thank you! All accounts are now protected by Rublon.', 'rublon');
+						$updatedMessage = __('Thank you! Your account is now protected by Rublon.', 'rublon');
 						break;
 					case 'POSTL_AUTHENTICATION_TYPE_CHANGED':
  						$updatedMessage = __('Since Rublon plugin version 2.0, the authentication process has been changed significantly. The accounts are now protected using the email address. We have detected that your WordPress account\'s email address differs from the one you used to create your account in the Rublon mobile app. Please change your WordPress account\'s email address accordingly or add your WordPress account\'s email address in the "Email addresses" section of the Rublon mobile app.', 'rublon');
@@ -3748,11 +3749,16 @@ class RublonHelper {
         return !RublonFeature::isBusinessEdition();
     }
     
-    static public function isProjectOwner() {
+    static public function isProjectOwner($userId = 0) {        
         $settings = self::getSettings();
-        $user = wp_get_current_user();
         
-        return !empty($settings[self::SETTING_PROJECT_OWNER_EMAIL]) && ($settings[self::SETTING_PROJECT_OWNER_EMAIL] == $user->user_email); 
+        if (!empty($userId)) {
+            $user = get_user_by('id', $userId);
+        } else {
+            $user = wp_get_current_user();
+        }
+        
+        return is_object($user) && !empty($settings[self::SETTING_PROJECT_OWNER_EMAIL]) && ($settings[self::SETTING_PROJECT_OWNER_EMAIL] == $user->user_email); 
     }
     
     static public function canShowTDMWidget() {
@@ -3766,8 +3772,7 @@ class RublonHelper {
         if ($user && $user instanceof WP_User && !empty($user->user_email)) {            
             $settings = self::getSettings();
             $settings[self::SETTING_PROJECT_OWNER_EMAIL] = $user->user_email;
-            self::saveSettings($settings);
+            self::saveSettings($settings);            
         }
-    }
-         
+    }     
 }

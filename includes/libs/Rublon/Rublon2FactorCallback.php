@@ -144,7 +144,7 @@ class Rublon2FactorCallback {
 		if ($accessToken = $this->getAccessToken()) {
 			
 			try /* to connect to the Rublon API and get user's ID to authenticate */ {
-				$this->credentials = $this->getRublon()->getCredentials($accessToken);
+				$this->credentials = $this->getRublon()->getCredentials($accessToken);				
 			} catch (RublonException $e) {
 				throw new RublonCallbackException("Rublon API credentials error.", RublonCallbackException::ERROR_REST_CREDENTIALS, $e);
 			}

@@ -36,7 +36,7 @@ class RublonCookies {
 		self::_clearCookieData($cookieName);
 		if (!empty($messages)) {
 			$messages = json_decode(stripslashes($messages), true);
-		}		
+		}				
 		
 		return $messages;
 	
@@ -73,7 +73,8 @@ class RublonCookies {
 		} else {
 			$messages = json_decode(stripslashes($messages), true);
 		}
-		array_push($messages, $msg);
+		
+		array_push($messages, $msg);				
 		$messages = json_encode($messages);
 		
 		self::_setCookieData($cookieName, $messages);
@@ -270,11 +271,12 @@ class RublonCookies {
 			$cp['cookie_secure'] = $secure;
 		}
 	
-		// set cookie
+		
+		// set cookie		
 		setcookie($name, $data, $cp['cookie_expires'], $cp['cookie_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
 		if ($cp['cookie_path'] != $cp['cookie_site_path']) {
 			setcookie($name, $data, $cp['cookie_expires'], $cp['cookie_site_path'], $cp['cookie_domain'], $cp['cookie_secure'], true);
-		}
+		}							
 
 	}
 

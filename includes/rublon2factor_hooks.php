@@ -190,7 +190,7 @@ function rublon2factor_store_auth_cookie_params($auth_cookie, $expire, $expirati
 			$user,
 			RublonHelper::TRANSIENT_FLAG_UPDATE_AUTH_COOKIE
 		);
-		if ($flag === RublonHelper::YES) {
+		if ($flag === RublonHelper::YES) {		    
 			RublonCookies::setAuthCookie($user);
 		}
 	}
@@ -259,19 +259,21 @@ function rublon2factor_pre_user_query(&$query) {
 					try {					    
 						$check->perform();
 					} catch (RublonException $e) {
-						// Assume no info available.
+						// Assume no info available.						
 						$check = null; 
 					}
 				}
+				
 				foreach ($requested_users as $user) {
 					$user_id = RublonHelper::getUserId($user);
-					if (!empty($check) && $check->isProtectionEnabled($user_id)) {
+					if (!empty($check) && $check->isProtectionEnabled($user_id)) {					    
 						$rublon_mobile_users[$user_id] = true;
 						RublonHelper::setMobileUserStatus($user, RublonHelper::YES);
-					} else {
+					} else {					    
 						RublonHelper::setMobileUserStatus($user, RublonHelper::NO);
 					}
 				}
+								
 				// Store the request's result in the prerender data.
 				RublonHelper::setPrerenderData(
 					RublonHelper::PRERENDER_KEY_MOBILE_USERS,
@@ -468,20 +470,23 @@ function rublon2factor_user_new_form() {
 	echo '<label class="hidden rublon-label rublon-label-newuserrole" for="rublon-newuserrole-dropdown">';
 	echo '	<div class="rublon-lock-container rublon-locked-container rublon-newuserrole-locked"><img class="rublon-lock rublon-locked" src="' . RUBLON2FACTOR_PLUGIN_URL . '/assets/images/locked.png" /></div>';
 	echo '</label>';
-	echo '<div class="hidden rublon-secured-role-description"><span class="description">'
-		. sprintf(
-			__('The new user account will be automatically protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'),
-			RublonHelper::rubloncomUrl()
-		)
-		. '</span></div>';
-	echo '<script>//<![CDATA[
-			document.addEventListener(\'DOMContentLoaded\', function() {
-				if (RublonWP) {
-					RublonWP.roleProtectionLevels = ' . json_encode($roles_js) . ';
-					RublonWP.setUpNewUserRoleChangeListener("your-profile", "rublon-confirmation-form");
-				}
-			}, false);
-		//]]></script>';
+	
+	if (RublonFeature::isBusinessEdition()) {
+    	echo '<div class="hidden rublon-secured-role-description"><span class="description">'
+    		. sprintf(
+    			__('The new user account will be automatically protected by <a href="%s" target="_blank">Rublon</a>.', 'rublon'),
+    			RublonHelper::rubloncomUrl()
+    		)
+    		. '</span></div>';
+    	echo '<script>//<![CDATA[
+    			document.addEventListener(\'DOMContentLoaded\', function() {
+    				if (RublonWP) {
+    					RublonWP.roleProtectionLevels = ' . json_encode($roles_js) . ';
+    					RublonWP.setUpNewUserRoleChangeListener("your-profile", "rublon-confirmation-form");
+    				}
+    			}, false);
+    		//]]></script>';
+	}
 
 }
 

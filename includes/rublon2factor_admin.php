@@ -437,13 +437,13 @@ function rublon2factor_render_settings_page() {
 		
 		<?php if (!RublonFeature::isBusinessEdition()): ?>
 				<div class="updated rublon-be-infobox-container">
-        			<div id="message" class="rublon-be-infobox-content">
-        			    <p>
+			<div id="message" class="rublon-be-infobox-content">
+				<p>
         			    <?php echo __('Currently you are using <b>Rublon Personal Edition</b> which protects only an administrator account. All other accounts are still able to log in, but without Rublon protection.', 'rublon'); ?>
-        			    </p> 
-        				<p>
+        			    </p>
+				<p>
     				    <?php					
-    				       echo sprintf(__('In order to protect up to 20 user accounts, please <a href="mailto:%s?subject=%s">upgrade</a> to the %s <b>for only $99/year</b>. It also allows you to enforce the mobile app for selected user groups. If you want to protect more than 20 accounts or want to use Rublon on many websites, please contact <a href="mailto:%s?subject=%s">%s</a> for a custom offer.', 'rublon'), 
+    				       echo sprintf(__('In order to protect more accounts, please <a href="mailto:%s?subject=%s">upgrade</a> to the %s <b>starting at $29/year</b>. It also allows you to enforce the mobile app for selected user groups. If you want to protect more than 20 accounts or want to use Rublon on many websites, please contact <a href="mailto:%s?subject=%s">%s</a> for a custom offer.', 'rublon'), 
                                RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), 
                                '<strong>' . __('Rublon Business Edition') . '</strong>',
     				           RublonHelper::RUBLON_EMAIL_SALES, 
@@ -455,22 +455,25 @@ function rublon2factor_render_settings_page() {
 //                                '<strong>' . __('Rublon Business Edition') . '</strong>');					   					
     					?>				        											
     					</p>
-    					<p>
+				<p>
     					<?php echo __('Furthermore we offer following paid features to extend your current Rublon plugin', 'rublon'); ?>:				
-        				<ul type="disc">
-        				    <li><strong><?php _e('Priority Support', 'rublon'); ?></strong><br /><?php _e('Always be at the front of the queue. We will provide advanced technical support and even log in to your website to solve your problem. Your requests will be answered as fast as possible.', 'rublon'); ?></li>
-        				    <li><strong><?php _e('Custom design', 'rublon'); ?></strong><br /><?php _e('Customize the look and feel of the authentication pages and email messages.', 'rublon'); ?></li>
-        					<li><strong><?php _e('Operation Confirmation', 'rublon'); ?></strong><br /><?php _e('Protect your sensitive data against unauthorized changes. A must-have if you don\'t use SSL!', 'rublon'); ?></li>
-        					<li><strong><?php _e('Force Mobile App (included in Business Edition)', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity using their phone. Highly recommended for administrators.', 'rublon'); ?></li>
-        					<li><strong><?php _e('Force Identity Verification', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity during each login, even if they\'re using a trusted device. Important if you store sensitive customer data and need to comply with regulations.', 'rublon'); ?></li>
-        					<li><strong><?php _e('Account Sharing', 'rublon'); ?></strong><br /><?php _e('Make Rublon-protected user accounts accessible by several people, from their devices, using the same login credentials. Useful if more than one person is working on the same account. Rublon is the only two-factor authentication system that makes this possible.', 'rublon'); ?></li>
-        				</ul>
+        				
+				
+				
+				<ul type="disc">
+					<li><strong><?php _e('Priority Support', 'rublon'); ?></strong><br /><?php _e('Always be at the front of the queue. We will provide advanced technical support and even log in to your website to solve your problem. Your requests will be answered as fast as possible.', 'rublon'); ?></li>
+					<li><strong><?php _e('Custom design', 'rublon'); ?></strong><br /><?php _e('Customize the look and feel of the authentication pages and email messages.', 'rublon'); ?></li>
+					<li><strong><?php _e('Operation Confirmation', 'rublon'); ?></strong><br /><?php _e('Protect your sensitive data against unauthorized changes. A must-have if you don\'t use SSL!', 'rublon'); ?></li>
+					<li><strong><?php _e('Force Mobile App (included in Business Edition)', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity using their phone. Highly recommended for administrators.', 'rublon'); ?></li>
+					<li><strong><?php _e('Force Identity Verification', 'rublon'); ?></strong><br /><?php _e('Require selected user groups to verify their identity during each login, even if they\'re using a trusted device. Important if you store sensitive customer data and need to comply with regulations.', 'rublon'); ?></li>
+					<li><strong><?php _e('Account Sharing', 'rublon'); ?></strong><br /><?php _e('Make Rublon-protected user accounts accessible by several people, from their devices, using the same login credentials. Useful if more than one person is working on the same account. Rublon is the only two-factor authentication system that makes this possible.', 'rublon'); ?></li>
+				</ul>
         				
                             <?php echo sprintf(__('If you would like to upgrade your plugin to %s or buy one or more features listed above please contact us at <a href="mailto:%s?subject=%s">%s</a>.', 'rublon'), '<strong>' . __('Rublon Business Edition') . '</strong>',  RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), RublonHelper::RUBLON_EMAIL_SALES); ?>
         				        				
         				</p>
-        			</div>
-        		</div>
+			</div>
+		</div>
 	    <?php endif; ?>
 		
 		<?php
@@ -705,24 +708,24 @@ function rublon2factor_no_settings_warning() {
 
 add_action('admin_notices', 'rublon2factor_no_settings_warning');
 
-
 /**
  *
  * Displays messages in admin pages
  *
  */
-function rublon2factor_add_update_message() {
+function rublon2factor_show_admin_messages() {
 
-	$messages = RublonHelper::getMessages();
-	if (!empty($messages)) {
-		foreach ($messages as $message) {
-			echo "<div class='". $message['type'] ." fade'><p>" . $message['message'] . "</p></div>";
-		}
-	}
+    $messages = RublonHelper::getMessages();
+    
+    if (!empty($messages)) {
+        foreach ($messages as $message) {
+            echo "<div class='". $message['type'] ." fade'><p>" . $message['message'] . "</p></div>";
+        }
+    }
 
 }
 
-add_action('admin_notices', 'rublon2factor_add_update_message');
+add_action('admin_notices', 'rublon2factor_show_admin_messages');
 
 /**
  * Add a Rublon column to the admin's user list
@@ -770,17 +773,14 @@ function rublon2factor_manage_rublon_columns($value, $column_name, $user_id) {
 				RublonHelper::roleProtectionType($user),
 				RublonHelper::userProtectionType($user)
 			);
-			if (
-				(!empty($rublon_mobile_users)
-					&& !empty($rublon_mobile_users[$user_id])
-					&& $rublon_mobile_users[$user_id] == RublonHelper::YES)
-						|| (RublonFeature::isBusinessEdition() && RublonRolesProtection::isGrater(RublonHelper::getUserProtectionType($user), RublonHelper::PROTECTION_TYPE_NONE))
-// 						|| in_array(RublonHelper::PROTECTION_TYPE_EMAIL, $protectionType)
-// 						|| in_array(RublonHelper::PROTECTION_TYPE_MOBILE, $protectionType)
-					) {
-					    
-				$lang = RublonHelper::getBlogLanguage();
-				$value = sprintf('<a href="%s"', RublonHelper::rubloncomUrl())
+			
+			if ( 			   
+			    (RublonHelper::isPersonalEdition() && RublonHelper::isProjectOwner($user_id)) 
+			    || (RublonFeature::isBusinessEdition() && RublonRolesProtection::isGrater(RublonHelper::getUserProtectionType($user), RublonHelper::PROTECTION_TYPE_NONE))
+			) {
+                
+                $lang = RublonHelper::getBlogLanguage();
+                $value = sprintf('<a href="%s"', RublonHelper::rubloncomUrl())
 					. ' target="_blank"><img class="rublon-protected rublon-image" src="'
 					. RUBLON2FACTOR_PLUGIN_URL . '/assets/images/rublon_logo_32x32.png'
 					. '" title="' . __('Account protected by Rublon', 'rublon')
@@ -887,15 +887,15 @@ if (RublonHelper::isAdamEnabled()) {
     
     function add_login_footer() {
         ?>
-    <div id="main_login_form_widget_style">
-    	<div class="triangle">
-    		<div><?php echo RublonHelper::adam_says(); ?></div>
-    	</div>
-    	<div id="imgbox_login_form_widget_style">
-    		<div class="adam_image">&nbsp;</div>
-    	</div>
-    </div>
-    <?php
+<div id="main_login_form_widget_style">
+	<div class="triangle">
+		<div><?php echo RublonHelper::adam_says(); ?></div>
+	</div>
+	<div id="imgbox_login_form_widget_style">
+		<div class="adam_image">&nbsp;</div>
+	</div>
+</div>
+<?php
     }
     
     add_action( 'login_footer', 'add_login_footer' );

@@ -116,6 +116,10 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.1.1 =
+* Minor text changes
+* Rublon core libraries update
+
 = 3.1.0 =
 * Introduction of Personal Edition
 * Rublon core libraries update

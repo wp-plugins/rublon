@@ -89,7 +89,7 @@ class RublonAPICheckProtection extends RublonAPIClient {
 	 *
 	 * @return boolean
 	 */
-	public function isProtectionEnabled($userId) {
+	public function isProtectionEnabled($userId) {	    
 		return (
 			!empty($this->response[self::FIELD_RESULT])
 			&& !empty($this->response[self::FIELD_RESULT][$userId])
