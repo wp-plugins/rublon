@@ -7,7 +7,7 @@ Stable tag: 3.1.1
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
 
-Instantly protects all accounts with effortless, email-based two-factor authentication; optional mobile app for more security; no tokens.
+Instant account security with effortless, email-based two-factor authentication; optional mobile app for more security; no tokens.
  
 == Description ==
 
