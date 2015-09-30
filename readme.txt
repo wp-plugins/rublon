@@ -117,7 +117,7 @@ After a successful installation, the plugin can be updated automatically in the 
 == Changelog ==
 
 = 3.2.0 =
-* Added ability to purchase Rublon Business Edition online
+* Added link to Rublon Business API upgrade
 * Rublon core libraries update
 
 = 3.1.1 =
