@@ -2,7 +2,7 @@
 Contributors: Rublon
 Tags: two-factor authentication, login, password, two-factor, authentication, security, login verification, two-step verification, 2-step verification, two-step authentication, 2-step authentication, 2-factor authentication, 2-factor, 2FA, wordpress security, mobile, mobile phone, cell phone, smartphone, login protection, qr code, admin, javascript, plugin, multi-factor authentication, MFA, login approval, two-factor verification, Zwei-Faktor-Authentifizierung, dwuskładnikowe uwierzytelnianie, dwuskładnikowe logowanie, logowanie, uwierzytelnianie
 Requires at least: 3.5.x
-Tested up to: 4.2.3
+Tested up to: 4.3.1
 Stable tag: 3.1.1
 License: GNU Public License, version 2 
 License URI: http://opensource.org/licenses/gpl-license.php
@@ -11,12 +11,12 @@ Instant account security with effortless, email-based two-factor authentication;
  
 == Description ==
 
-= Account Security for WordPress =
-- Instantly increase security for all users
+= The Best Two-Factor Authentication for WordPress =
+- Instantly increase security for you (Personal Edition) and all users (Business Edition)*
 - 1-click download; 1-click activation
 - No configuration or training needed
 
-> #### The Most Advanced and Intuitive Account Security Solution
+> #### The Most Advanced and Intuitive Two-Factor Authentication
 > 10 Reasons Rublon Rocks: [http://wordpress.rublon.com/](http://wordpress.rublon.com/)
 >
 > #### Recommended by Security Experts and Industry Professionals
@@ -29,13 +29,13 @@ Instant account security with effortless, email-based two-factor authentication;
 > *"Two-factor authentication for our thousands of customers" &mdash; Steve Truman, [a3rev](http://a3rev.com)* <br>
 > [Read more](http://wordpress.rublon.com/)
 
-= Why Do I Need Account Security? =
+= Why Do I Need Two-Factor Authentication? =
 Botnets carry out brute force attacks against thousands of WordPress sites and blogs every day, regardless of size. Once inside, botnets infect your visitors with malware. A compromised website leads to delisting by search engines or blocking by your hosting provider. Rublon Account Security prevents such attacks.
 
 = Why are Passwords Not Enough? =
 Many people use a simple, easy-to-guess password. It can be easily stolen when they use multiple devices; the same password across multiple services; or on unsecured connections, such as public Wi-Fi networks. Botnets hammer at your WordPress site trying to compromise it using millions of common passwords and character combinations.
 
-= How Does Rublon Account Security Work? =
+= How Does Rublon Work? =
 During the first login, confirm your identity by clicking on the link you’ll receive via email. Your next login from the same device will only require your WordPress password. For additional security, the Rublon mobile app scans a Rublon Code to confirm your identity.
 
 = Why Should I Use Rublon? =
@@ -44,8 +44,8 @@ Rublon is simple and easy. Activate the plugin and you're done. Your users don't
 = How is Rublon Different? =
 Traditional two-factor authentication solutions demand users enter a one-time password each time they want to login. That’s why people don’t like them. Rublon is different. With Rublon, you confirm your identity by simply clicking on a link or scanning a Rublon Code.
 
-= What Does Rublon Cost? =
-By default, the Rublon for WordPress plugin makes use of the Rublon Personal Edition that protects up to 1 account and is available for free. In order to protect more accounts or for premium features, you need access to the paid Rublon Business Edition. Please contact <sales@rublon.com> for more information. 
+= *What Does Rublon Cost? =
+By default, the Rublon for WordPress plugin makes use of the free Rublon Personal API that protects up to 1 account per website. In order to protect more accounts or use business features, you need access to the paid Rublon Business API. Please contact <sales@rublon.com> for more information. 
 
 = In What Languages Is Rublon Available? =
 - English
@@ -115,6 +115,10 @@ Rublon for WordPress gives you access to the free Rublon Personal Edition, which
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 3.2.0 =
+* Added ability to purchase Rublon Business Edition online
+* Rublon core libraries update
 
 = 3.1.1 =
 * Minor text changes

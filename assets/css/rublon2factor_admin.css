@@ -339,15 +339,74 @@ fieldset.rublon-apireg-fieldset {
 	background-color: #ffffff;
 	padding: 10px;
 	margin-top: 25px;
-	width: 50%;		
+	width: 45%;		
+	margin: 15px !important;
+	margin-left: 0px !important;
 }
 
 .rublon-be-infobox-content {
 	width: 100%;
-	padding: 10px;	
+	padding: 0px;	
 }
 
 .rublon-be-infobox-content ul {
 	margin-left: 20px;
 	list-style-type: circle;
 }
+
+.rublon-button-buy-now:HOVER {
+	text-decoration: none;
+	color: #fff !important;
+	background: #76B895 !important;
+}
+
+.rublon-button-buy-now:VISITED {
+	text-decoration: none;
+	color: #fff !important;
+}
+
+.rublon-button-buy-now {
+  cursor: pointer;
+  display: inline-block;
+  height: 53px;
+  line-height: 53px;
+  border-bottom: 3px solid #1D8C51 !important;
+  background: #26C370 !important;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 18px;
+  letter-spacing: 1px;
+  padding: 0 34px;
+  text-align: center;
+  -webkit-transition: margin 0.1s ease-in-out, border 0.1s ease-in-out, opacity 0.1s ease-in-out;
+  -moz-transition: margin 0.1s ease-in-out, border 0.1s ease-in-out, opacity 0.1s ease-in-out;
+  transition: margin 0.1s ease-in-out, border 0.1s ease-in-out, opacity 0.1s ease-in-out;
+}
+
+.rublon-buy-now-subcontainer {
+	width: 100%;	
+	overflow: hidden;	
+	display: table;
+}
+
+.rublon-buy-now-left {
+	display: table-cell;
+    width: 70%;
+    vertical-align: top;
+    text-align: left;
+}
+
+.rublon-buy-now-right {
+	display: table-cell;
+    padding-right: 10px;    
+    width: 30%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.rublon-buy-now-tip {
+	color: #797979;
+	font-size: 0.8em;
+}
+

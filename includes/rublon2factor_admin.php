@@ -436,28 +436,56 @@ function rublon2factor_render_settings_page() {
 		</h2>			
 		
 		<?php if (!RublonFeature::isBusinessEdition()): ?>
-				<div class="updated rublon-be-infobox-container">
+        
+        <div class="updated rublon-be-infobox-container">
+				
+			<div id="message" class="rublon-be-infobox-content">
+			    <div class="rublon-buy-now-subcontainer">
+			        <div class="rublon-buy-now-left">  				
+        				
+                		<h3><?php echo __('Only your account is protected! Need Rublon for more accounts?', 'rublon'); ?></h3>
+                		
+        				<p>
+                		  <?php echo __('You are currently using the Rublon Personal API, which limits protection to 1 account per website.', 'rublon'); ?>                		                  		
+                		  <?php echo __('If you\'d like to protect more accounts, you need to upgrade to the Rublon Business API.', 'rublon'); ?>                		  
+                		  <?php echo __('You can easily order online.', 'rublon'); ?>                		  
+                		</p>                		
+                		<p>
+        					<a href="<?php echo RublonHelper::getBuyBusinessEditionURL(); ?>" class="rublon-button-buy-now" target="_blank"><?php echo __('Upgrade now', 'rublon')?></a>
+        				</p>
+        				<p class="rublon-buy-now-tip">
+                		  <?php echo __('After purchasing the upgrade, please click on the "Purge cache" button located in the bottom right corner of this page to activate your license.', 'rublon'); ?>
+                		</p>  
+            		</div>
+            		<div class="rublon-buy-now-right" style="display: none">
+        				<p>
+        					<a href="<?php echo RublonHelper::getBuyBusinessEditionURL(); ?>" class="rublon-button-buy-now" target="_blank"><?php echo __('Upgrade', 'rublon')?></a>
+        				</p>    			    		
+    				</div>	
+				</div>
+			</div>
+		</div>
+        				
+		<div class="updated rublon-be-infobox-container" style="display: none">
+
 			<div id="message" class="rublon-be-infobox-content">
 				<p>
         			    <?php echo __('Currently you are using <b>Rublon Personal Edition</b> which protects only an administrator account. All other accounts are still able to log in, but without Rublon protection.', 'rublon'); ?>
         			    </p>
 				<p>
-    				    <?php					
-    				       echo sprintf(__('In order to protect more accounts, please <a href="mailto:%s?subject=%s">upgrade</a> to the %s <b>starting at $29/year</b>. It also allows you to enforce the mobile app for selected user groups. If you want to protect more than 20 accounts or want to use Rublon on many websites, please contact <a href="mailto:%s?subject=%s">%s</a> for a custom offer.', 'rublon'), 
-                               RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), 
-                               '<strong>' . __('Rublon Business Edition') . '</strong>',
-    				           RublonHelper::RUBLON_EMAIL_SALES, 
-    				           __('Rublon Business Edition'),
-    				           RublonHelper::RUBLON_EMAIL_SALES
-    				           );	    				       			   
-//                            echo sprintf(__('Need enterprise-grade authentication security for your website? <a href="mailto:%s?subject=%s">Upgrade</a> to the %s and get access to:', 'rublon'), 
-//                                RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), 
-//                                '<strong>' . __('Rublon Business Edition') . '</strong>');					   					
-    					?>				        											
+    				    <?php
+        echo sprintf(__('In order to protect more accounts, please <a href="%s" target="_blank">upgrade</a> to the %s <b>starting at $29/year</b>. It also allows you to enforce the mobile app for selected user groups. If you want to protect more accounts or want to use Rublon on many websites, please contact <a href="mailto:%s?subject=%s">%s</a> for a custom offer.', 'rublon'), RublonHelper::getBuyBusinessEditionURL(), '<strong>' . __('Rublon Business Edition') . '</strong>', RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), RublonHelper::RUBLON_EMAIL_SALES);
+        // echo sprintf(__('Need enterprise-grade authentication security for your website? <a href="mailto:%s?subject=%s">Upgrade</a> to the %s and get access to:', 'rublon'),
+        // RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'),
+        // '<strong>' . __('Rublon Business Edition') . '</strong>');
+        ?>				        											
     					</p>
 				<p>
     					<?php echo __('Furthermore we offer following paid features to extend your current Rublon plugin', 'rublon'); ?>:				
         				
+				
+				
+				
 				
 				
 				<ul type="disc">
@@ -472,8 +500,9 @@ function rublon2factor_render_settings_page() {
                             <?php echo sprintf(__('If you would like to upgrade your plugin to %s or buy one or more features listed above please contact us at <a href="mailto:%s?subject=%s">%s</a>.', 'rublon'), '<strong>' . __('Rublon Business Edition') . '</strong>',  RublonHelper::RUBLON_EMAIL_SALES, __('Rublon Business Edition'), RublonHelper::RUBLON_EMAIL_SALES); ?>
         				        				
         				</p>
-			</div>
-		</div>
+            </div>
+		</div>				
+		        
 	    <?php endif; ?>
 		
 		<?php

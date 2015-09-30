@@ -3775,4 +3775,25 @@ class RublonHelper {
             self::saveSettings($settings);            
         }
     }     
+    
+    /**
+     * Generate URL to redirect to buy Business Edition.
+     * 
+     * If System Token exists then returns URL to the catalog page.
+     * If System Token doesn't exist the return sales email URL.
+     * 
+     * @return string
+     */
+    static public function getBuyBusinessEditionURL() {
+        $settings = self::getSettings();
+        $systemToken = $settings['rublon_system_token'];
+        $url = '';
+        if ($systemToken) {
+            $url = sprintf(self::RUBLON_REGISTRATION_DOMAIN . '/store/buy/%s', urlencode(base64_encode($systemToken))); 
+        } else {
+            $url = sprintf('mailto:%s?subject=%s', self::RUBLON_EMAIL_SALES, __('Rublon Business Edition'));
+        }
+        
+        return $url;
+    }
 }
