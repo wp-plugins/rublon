@@ -573,3 +573,8 @@ function rublon2factor_modify_login_form() {
 }
 
 add_action('login_footer', 'rublon2factor_modify_login_form');
+
+function businessEditionUpgrade() {
+    echo RublonHelper::showUpgradeBox('wide');    
+}
+add_action('admin_notices', 'businessEditionUpgrade');

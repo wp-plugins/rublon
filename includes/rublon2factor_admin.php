@@ -435,33 +435,41 @@ function rublon2factor_render_settings_page() {
 			<?php _e('Rublon', 'rublon'); ?>
 		</h2>			
 		
-		<?php if (!RublonFeature::isBusinessEdition()): ?>
+		<?php
         
-        <div class="updated rublon-be-infobox-container">
+        $isProjectOwner = RublonHelper::isProjectOwner();
+        $isAdministrator = current_user_can( 'manage_options' );        
+        
+        $title = $isProjectOwner ? __('Only your account is protected! Need Rublon for more accounts?', 'rublon') : __('Your account is not protected! Need Rublon for more accounts?', 'rublon');
+        $text = $isProjectOwner ? __('You are currently using the Rublon Personal API, which limits protection to 1 account per website.', 'rublon') : __('Your website is currently using the Rublon Personal API, which limits protection to 1 account per website (the administrator who has installed and activated the plugin).', 'rublon');
+        $text2 = $isProjectOwner ? __('If you\'d like to protect more accounts, you need to upgrade to the Rublon Business API.', 'rublon') : __('If you\'d like to protect your or more accounts, you need to upgrade to the Rublon Business API.', 'rublon');
+        
+        ?>
+		
+		<?php if (!RublonFeature::isBusinessEdition() && $isAdministrator): ?>
+                
+        <div class="updated rublon-be-infobox-container<?php echo (!$isProjectOwner?' rublon-warning':'');?>">
 				
 			<div id="message" class="rublon-be-infobox-content">
 			    <div class="rublon-buy-now-subcontainer">
 			        <div class="rublon-buy-now-left">  				
         				
-                		<h3><?php echo __('Only your account is protected! Need Rublon for more accounts?', 'rublon'); ?></h3>
+                		<h3><?php echo $title; ?></h3>
                 		
         				<p>
-                		  <?php echo __('You are currently using the Rublon Personal API, which limits protection to 1 account per website.', 'rublon'); ?>                		                  		
-                		  <?php echo __('If you\'d like to protect more accounts, you need to upgrade to the Rublon Business API.', 'rublon'); ?>                		  
+                		  <?php echo $text; ?>                		                  		
+                		  <?php echo $text2; ?>                		  
                 		  <?php echo __('You can easily order online.', 'rublon'); ?>                		  
-                		</p>                		
+                		</p>
+                		<?php if ($isAdministrator): ?>                		        		
                 		<p>
         					<a href="<?php echo RublonHelper::getBuyBusinessEditionURL(); ?>" class="rublon-button-buy-now" target="_blank"><?php echo __('Upgrade now', 'rublon')?></a>
-        				</p>
+        				</p>        				
         				<p class="rublon-buy-now-tip">
                 		  <?php echo __('After purchasing the upgrade, please click on the "Purge cache" button located in the bottom right corner of this page to activate your license.', 'rublon'); ?>
-                		</p>  
-            		</div>
-            		<div class="rublon-buy-now-right" style="display: none">
-        				<p>
-        					<a href="<?php echo RublonHelper::getBuyBusinessEditionURL(); ?>" class="rublon-button-buy-now" target="_blank"><?php echo __('Upgrade', 'rublon')?></a>
-        				</p>    			    		
-    				</div>	
+                		</p> 
+                		<?php endif; ?> 
+            		</div>            			
 				</div>
 			</div>
 		</div>
@@ -566,7 +574,7 @@ function rublon2factor_render_settings_page() {
 
 
 				?>
-				</form>
+				</form>							
 			<?php
 
 				endif; // END_BLOCK: Is user authorized to manage plugins?
@@ -929,3 +937,11 @@ if (RublonHelper::isAdamEnabled()) {
     
     add_action( 'login_footer', 'add_login_footer' );
 }
+
+/**
+ * Add edition name and version number to the admin footer
+ */
+function footer_add_rublon_version() {
+    echo '<div style="position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; width: 300px; height: 30px; padding: 10px 20px; text-align: center;"><p style="color: #777;">'.__('Protected by').' <i>Rublon '.(RublonHelper::isPersonalEdition()?__('Personal Edition'):__('Business Edition')).'</i> v.'.RublonHelper::getCurrentPluginVersion().'</p></div>';
+}
+add_action( 'admin_footer', 'footer_add_rublon_version' , 100);

@@ -73,6 +73,9 @@ class Rublon2Factor extends RublonConsumer {
 		} catch (UserNotFound_RublonAPIException $e) {
 			// bypass Rublon
 			return null;									
+		} catch (PersonalEditionLimited_RublonApiException $e) {
+		    // bypass Rublon
+		    return null;
 		} catch (RublonException $e) {
 			throw $e;
 		}

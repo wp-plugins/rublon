@@ -55,8 +55,11 @@ abstract class RublonConfirmStrategy {
 	
 	
 	function pluginsLoaded() {
-		add_action('admin_head', array($this, 'appendScript'));
-		add_action('admin_init', array($this, 'checkForAction'));
+	    // Append confirmation script only when Business Edition is enabled and operationconfirmation feature is active
+	    if (RublonFeature::isBusinessEdition() && RublonFeature::checkFeature(RublonAPIGetAvailableFeatures::FEATURE_OPERATION_CONFIRMATION)) {	    
+        	add_action('admin_head', array($this, 'appendScript'));
+        	add_action('admin_init', array($this, 'checkForAction'));
+	    }	    
 	}
 	
 	function hasAdminUI() {

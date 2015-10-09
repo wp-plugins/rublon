@@ -50,6 +50,7 @@ By default, the Rublon for WordPress plugin makes use of the free Rublon Persona
 = In What Languages Is Rublon Available? =
 - English
 - German
+- Japanese (translated by Digital Cube)
 - Turkish (translated by Mehmet Emre Baş, proofread by Tarık Çayır)
 - Polish
 
@@ -115,6 +116,11 @@ Rublon for WordPress gives you access to the free Rublon Personal Edition, which
 After a successful installation, the plugin can be updated automatically in the "Plugins" section of the Administation Panel.
  
 == Changelog ==
+
+= 3.2.1 =
+* Added Japanese language support (translated by Digital Cube)
+* Fixed bug with opening popup during deleting posts permanently from the trash
+* Rublon core libraries update
 
 = 3.2.0 =
 * Added link to Rublon Business API upgrade

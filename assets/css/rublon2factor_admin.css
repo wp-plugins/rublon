@@ -344,9 +344,21 @@ fieldset.rublon-apireg-fieldset {
 	margin-left: 0px !important;
 }
 
+.rublon-be-infobox-container h3 {
+	font-size: 1.1em;
+}
+
+.rublon-be-infobox-container.wide {
+	width: 90%;
+}
+
 .rublon-be-infobox-content {
 	width: 100%;
 	padding: 0px;	
+}
+
+.rublon-be-infobox-content.wide {
+	line-height: 0px !important;
 }
 
 .rublon-be-infobox-content ul {
@@ -384,6 +396,12 @@ fieldset.rublon-apireg-fieldset {
   transition: margin 0.1s ease-in-out, border 0.1s ease-in-out, opacity 0.1s ease-in-out;
 }
 
+.rublon-button-buy-now.wide {
+	height: 30px;
+  	line-height: 33px;
+  	font-size: 15px;
+}
+
 .rublon-buy-now-subcontainer {
 	width: 100%;	
 	overflow: hidden;	
@@ -397,6 +415,10 @@ fieldset.rublon-apireg-fieldset {
     text-align: left;
 }
 
+.rublon-buy-now-left.wide {	
+    width: 85%;    
+}
+
 .rublon-buy-now-right {
 	display: table-cell;
     padding-right: 10px;    
@@ -405,8 +427,17 @@ fieldset.rublon-apireg-fieldset {
     vertical-align: middle;
 }
 
+.rublon-buy-now-right.wide {
+	width: 15%;
+	text-align: right;
+}
+
 .rublon-buy-now-tip {
 	color: #797979;
 	font-size: 0.8em;
 }
 
+.rublon-warning {
+	background-color: #eee2be !important;
+	border: 1px solid #eb5e00 !important;
+}

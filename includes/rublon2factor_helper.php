@@ -104,7 +104,6 @@ class RublonHelper {
 	const CACHE_PURGE_NONCE = 'rublon-cache-purge';
 	const CACHE_PURGE_CAPABILITY = 'manage_options';	
 	
-	
 	/**
 	 * An instance of the Rublon2FactorWordPress class
 	 * 
@@ -1569,6 +1568,9 @@ class RublonHelper {
 			case 'additional':
 				$key = self::RUBLON_ADDITIONAL_SETTINGS_KEY;
 				break;
+			case 'confirmations':
+			    $key = self::RUBLON_CONFIRMATIONS_SETTINGS_KEY;
+			    break;
 			case 'other':
 				$key = self::RUBLON_OTHER_SETTINGS_KEY;
 				break;
@@ -2349,6 +2351,11 @@ class RublonHelper {
 			&& !self::isUserAuthenticated($user)) {
 			RublonCookies::setAuthCookie($user);
 		}
+		
+		// Update/re-check available features and clear cached features
+		if (self::isSiteRegistered()) {
+		    RublonFeature::getFeatures(false);
+		}
 
 		// Check for the presence of additional settings
 		// and set them if they're missing
@@ -2386,7 +2393,7 @@ class RublonHelper {
 		if (!isset($additional_settings['enable-adam'])) {		    
 		    $additional_settings['enable-adam'] = 'on';
 		    self::saveSettings($additional_settings, 'additional');
-		}
+		}				
 		
 		$admin_role = self::prepareRoleId('administrator');
 		// Enable Email2FA for all roles by default
@@ -3795,5 +3802,81 @@ class RublonHelper {
         }
         
         return $url;
+    }
+    
+    static public function showUpgradeBox($type = '') {        
+        $page = get_current_screen();
+        $isAdministrator = current_user_can( 'manage_options' );
+        $isProjectOwner = RublonHelper::isProjectOwner();
+        $class = '';        
+        $html = '';
+        
+        // Html message for normal user
+        $normalUserHtmlMessage = '<div class="updated rublon-be-infobox-container wide rublon-warning">
+                            			<div id="message" class="rublon-be-infobox-content">
+                            			    <div class="rublon-buy-now-subcontainer">
+                            			        <div class="rublon-buy-now-left">                            
+                                            		<h3>'.__('Your account is not protected!', 'rublon').'</h3>                            
+                                    				<p>
+                                            		  '.__('You have logged in successfully, but due the Personal Edition limitation your account isn\'t protected by Rublon and thus vulnerable to password theft and brute force attacks. Upgrade to the Business Edition needed (sales@rublon.com). Please contact your administrator.', 'rublon').'
+                                            		</p>                                		                        				
+                                        		</div>                            		
+                            				</div>
+                            			</div>
+                            		</div>';
+        
+        if (empty($_GET['page']) OR !current_user_can( 'manage_options' ) OR (!empty($_GET['page']) && $_GET['page'] != 'rublon')) {
+        
+            if ( RublonHelper::isSiteRegistered() && RublonHelper::isPersonalEdition() ) { 
+                
+                if ($type == 'wide') {
+                    $class = 'wide';
+                }
+                
+                if ($isProjectOwner OR $isAdministrator) {
+                    $title = $isProjectOwner ? __('Only your account is protected! Need Rublon for more accounts?', 'rublon') : __('Your account is not protected! Need Rublon for more accounts?', 'rublon');
+                    $text = $isProjectOwner ? __('You are currently using the Rublon Personal API, which limits protection to 1 account per website.', 'rublon') : __('Your website is currently using the Rublon Personal API, which limits protection to 1 account per website (the administrator who has installed and activated the plugin).', 'rublon');
+                    $text2 = $isProjectOwner ? __('If you\'d like to protect more accounts, you need to upgrade to the Rublon Business API.', 'rublon') : __('If you\'d like to protect your or more accounts, you need to upgrade to the Rublon Business API.', 'rublon');
+                    
+                    $html = '<div class="updated rublon-be-infobox-container ' . $class . '' . (! $isProjectOwner ? ' rublon-warning' : '') . '">
+                    
+                			<div id="message" class="rublon-be-infobox-content' . ($class ? ' ' . $class : '') . '">
+                			    <div class="rublon-buy-now-subcontainer">
+                			        <div class="rublon-buy-now-left wide">
+                    
+                                		<h3>' . $title . '</h3>
+                    
+                        				<p>
+                                		  ' . $text . '
+                                		  ' . $text2 . '
+                                		  ' . __('You can easily order online.', 'rublon') . '
+                        				</p>';
+                    
+                    if (! $class) {
+                        $html .= '<p>
+                            				<a href="' . RublonHelper::getBuyBusinessEditionURL() . '" class="rublon-button-buy-now" target="_blank">' . __('Upgrade', 'rublon') . '</a>
+                            			 </p>';
+                    }
+                    
+                    $html .= '
+                            		</div>';
+                    if ($class) {
+                        $html .= '<div class="rublon-buy-now-right wide">
+                            				<p>
+                            					<a href="' . RublonHelper::getBuyBusinessEditionURL() . '" class="rublon-button-buy-now wide" target="_blank">' . __('Upgrade', 'rublon') . '</a>
+                            				</p>
+                        				</div>';
+                    }
+                    
+                    $html .= '</div>
+                			</div>
+                		</div>';
+                } else { // Normal user
+                    $html = $normalUserHtmlMessage;
+                }            
+            }
+            
+            return $html;
+        }
     }
 }

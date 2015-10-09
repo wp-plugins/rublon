@@ -35,6 +35,12 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		// Save project owner information
 		RublonHelper::saveProjectOwner();
 		
+		// Clear features cache if it is not a Business Editions
+		RublonFeature::getFeatures(false);
+		if (!RublonFeature::isBusinessEdition()) {
+		    RublonFeature::deleteFeaturesFromCache();		    
+		}
+		
 		$this->_redirect(admin_url(RublonHelper::WP_RUBLON_PAGE));
 
 	}
