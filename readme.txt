@@ -50,7 +50,7 @@ By default, the Rublon for WordPress plugin makes use of the free Rublon Persona
 = In What Languages Is Rublon Available? =
 - English
 - German
-- Japanese (translated by Digital Cube)
+- Japanese (translated by [Digital Cube](https://en.digitalcube.jp))
 - Turkish (translated by Mehmet Emre Baş, proofread by Tarık Çayır)
 - Polish
 
