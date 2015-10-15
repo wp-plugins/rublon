@@ -89,17 +89,22 @@ add_action('activated_plugin', 'rublon2factor_plugin_activated_mefirst');
 function rublon2factor_authenticate($user, $username, $password) {
 
 	$user = wp_authenticate_username_password($user, $username, $password);
-
-	if (is_wp_error($user)) {
+    
+	if (is_wp_error($user)) {	    
 		return $user;
 	} else {
 		do_action('rublon_pre_authenticate', $user);
-		$user_id = RublonHelper::getUserId($user);
+		$user_id = RublonHelper::getUserId($user);		
 		if (is_user_member_of_blog($user_id) && RublonHelper::isSiteRegistered()) {
  			wp_logout();
 			$remember = !empty($_POST['rememberme']);
-			$authURL = RublonHelper::authenticateWithRublon($user, $remember);
+			$authURL = RublonHelper::authenticateWithRublon($user, $remember);			
 			if (empty($authURL)) {
+			    
+			    if (RublonHelper::canShowBusinessEditionUpgradeBoxAfterLogin($user)) {
+			        RublonHelper::setMessage('BUSINESS_EDITION_UPGRADE_BOX', 'updated', 'RC');
+			    }
+			    
 				$levels = RublonRolesProtection::getProtectionTypesLevels();
 				if ($levels[RublonHelper::getUserProtectionType()] >= $levels[RublonHelper::PROTECTION_TYPE_MOBILE]) {
 					$user_email = RublonHelper::getUserEmail($user);
@@ -111,8 +116,8 @@ function rublon2factor_authenticate($user, $username, $password) {
 				} else {
 					RublonHelper::setMobileUserStatus($user, RublonHelper::NO);
 					return $user;
-				}
-			} else {
+				}				
+			} else {			    			    			    			    
 				RublonHelper::setLoginToken($user);
 				wp_redirect($authURL);
 				exit();
@@ -574,7 +579,23 @@ function rublon2factor_modify_login_form() {
 
 add_action('login_footer', 'rublon2factor_modify_login_form');
 
+/**
+ * Show box regarding the Business Edition upgrade
+ */
 function businessEditionUpgrade() {
-    echo RublonHelper::showUpgradeBox('wide');    
+    if (RublonHelper::canShowBusinessEditionUpgradeBox()) {
+        echo RublonHelper::showUpgradeBox('wide');    
+    }
 }
 add_action('admin_notices', 'businessEditionUpgrade');
+
+
+function hide_business_edition_upgrade_box() {
+    $userId =  $_POST['data'];    
+    if (!RublonHelper::saveHideBusinessEditionUpgradeBox($userId)) {
+        echo __('Error');
+    } else {
+        echo __('Saved');
+    } 
+}
+add_action( 'wp_ajax_hide_business_edition_upgrade_box', 'hide_business_edition_upgrade_box' );

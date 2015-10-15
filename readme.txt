@@ -117,6 +117,10 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.2.2 =
+* Added ability to hide upgrade message
+* Rublon core libraries update
+
 = 3.2.1 =
 * Added Japanese language support (translated by Digital Cube)
 * Fixed bug with opening popup during deleting posts permanently from the trash

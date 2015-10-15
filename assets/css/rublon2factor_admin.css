@@ -291,6 +291,16 @@ fieldset.rublon-apireg-fieldset {
 	display: inline-block;
 }
 
+.rublon-busy-spinner.small {
+	height: 10px;
+	width: 10px;
+	position: relative;
+	display: inline-block;
+	float: right;
+	margin: 0;	
+	margin-left: 3px;
+}
+
 .rublon-busy-spinner-anchor.hidden {
 	display: none;
 }
@@ -425,6 +435,10 @@ fieldset.rublon-apireg-fieldset {
     width: 30%;
     text-align: center;
     vertical-align: middle;
+}
+
+.rublon-buy-now-right.wide.normal {
+	vertical-align: bottom;
 }
 
 .rublon-buy-now-right.wide {

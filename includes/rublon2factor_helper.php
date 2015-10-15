@@ -54,6 +54,7 @@ class RublonHelper {
 	const TRANSIENT_DEBUG = 'rublon_debug';
 	const TRANSIENT_FLAG_UPDATE_AUTH_COOKIE = 'rublon_upd_authck_';
 	const TRANSIENT_REMOVE_FLAG = '<<REMOVE_FLAG_PLEASE>>';
+	const TRANSIENT_HIDE_UPGRADE_BOX = 'rublon_hide_upgrade_box_%s_';
 	
 	const PROFILE_UPDATE_TOKEN_NAME = 'rublon_profile_update_token';
 	const ADDSETT_UPDATE_TOKEN_NAME = 'rublon_additional_settings_update_token';
@@ -70,6 +71,7 @@ class RublonHelper {
 	const MOBILE_USER_INFO_LIFETIME = 15;
 	const LOGIN_TOKEN_LIFETIME = 16;
 	const FLAG_LIFETIME = 5;
+	const UPGRADE_BOX_HIDE_TIME = 4; //4 weeks
 
 	const FLAG_PROFILE_UPDATE = 'wp_profile_update';
 	const FLAG_ADDSETT_UPDATE = 'wp_addsett_update';
@@ -1335,7 +1337,10 @@ class RublonHelper {
 				add_filter('auth_cookie', array(__CLASS__, 'associateSessionWithDevice'), 10, 5);
 				RublonCookies::setLoggedInCookie($user, $remember);
 				RublonCookies::setAuthCookie($user, $remember);							
-				do_action('wp_login', $user->user_login, $user);
+				do_action('wp_login', $user->user_login, $user);				
+				if (self::canShowBusinessEditionUpgradeBoxAfterLogin($user)) {				    				    
+				    self::setMessage('BUSINESS_EDITION_UPGRADE_BOX', 'updated', 'RC');
+				}
 			} else {
 				self::setMessage('FIRST_FACTOR_NOT_CLEARED', 'error', 'RC');
 				wp_logout();
@@ -1421,7 +1426,7 @@ class RublonHelper {
 				self::getUserId($user),
 				self::getUserEmail($user),
 				$authParams
-			);
+			);			
 			return $authUrl;
 		} catch (RublonException $e) {
 		    
@@ -2018,10 +2023,14 @@ class RublonHelper {
 					case 'NL_' . RublonRequests::SUCCESS_NL_SUBSCRIBED_SUCCESSFULLY:
 						$updatedMessage = __('You have successfully subscribed to our newsletter! Check your email inbox for more details.', 'rublon');
 						break;
+					case 'RC_BUSINESS_EDITION_UPGRADE_BOX':
+					    $updatedMessage = self::showUpgradeBox('wide', false);					    
+					    break;
 				}
 				$result[] = array('message' => $updatedMessage, 'type' => $msgType);
 			}
 		}
+				
 		return $result;
 
 	}
@@ -3804,41 +3813,57 @@ class RublonHelper {
         return $url;
     }
     
-    static public function showUpgradeBox($type = '') {        
+    static public function showUpgradeBox($type = '', $hideButtonVisible = true)
+    {
         $page = get_current_screen();
-        $isAdministrator = current_user_can( 'manage_options' );
+        $isAdministrator = current_user_can('manage_options');
         $isProjectOwner = RublonHelper::isProjectOwner();
-        $class = '';        
+        $user = wp_get_current_user();
+        $containerId = 'rublon-be-infobox-container';
+        $hideButtonId = 'rublon-be-hide-button';
+        $class = '';
         $html = '';
+        $textMsg = '';
         
         // Html message for normal user
-        $normalUserHtmlMessage = '<div class="updated rublon-be-infobox-container wide rublon-warning">
+        $normalUserHtmlMessage = '<div id="' . $containerId . '" class="' . ($hideButtonVisible ? 'updated ' : '') . 'wide">
                             			<div id="message" class="rublon-be-infobox-content">
                             			    <div class="rublon-buy-now-subcontainer">
                             			        <div class="rublon-buy-now-left">                            
-                                            		<h3>'.__('Your account is not protected!', 'rublon').'</h3>                            
+                                            		<h3>' . __('Your account is not protected!', 'rublon') . '</h3>                            
                                     				<p>
-                                            		  '.__('You have logged in successfully, but due the Personal Edition limitation your account isn\'t protected by Rublon and thus vulnerable to password theft and brute force attacks. Upgrade to the Business Edition needed (sales@rublon.com). Please contact your administrator.', 'rublon').'
+                                            		  ' . __('You have logged in successfully, but due the Personal Edition limitation your account isn\'t protected by Rublon and thus vulnerable to password theft and brute force attacks. Upgrade to the Business Edition needed (sales@rublon.com). Please contact your administrator.', 'rublon') . '
                                             		</p>                                		                        				
-                                        		</div>                            		
+                                        		</div>';
+        
+        if ($hideButtonVisible) {
+            $normalUserHtmlMessage .= '
+        					                    <div class="rublon-buy-now-right wide normal">					                                                    				
+        					                        <p>
+        					                            <a id="'.$hideButtonId.'" href="javascript:RublonWP.hideBusinessEditionUpgradeBox(' . $user->ID . ')">[' . __('hide this message for a month') . ']</a>
+        					                        </p>
+                                				</div>';
+        }
+        
+        $normalUserHtmlMessage .= '                            		
                             				</div>
                             			</div>
                             		</div>';
         
-        if (empty($_GET['page']) OR !current_user_can( 'manage_options' ) OR (!empty($_GET['page']) && $_GET['page'] != 'rublon')) {
-        
-            if ( RublonHelper::isSiteRegistered() && RublonHelper::isPersonalEdition() ) { 
+        if ( (!empty($_GET['page']) && $_GET['page'] != 'rublon') or !isset($_GET['page']) ) {
+            
+            if (RublonHelper::isSiteRegistered() && RublonHelper::isPersonalEdition()) {
                 
                 if ($type == 'wide') {
                     $class = 'wide';
                 }
                 
-                if ($isProjectOwner OR $isAdministrator) {
+                if ($isProjectOwner or $isAdministrator) {
                     $title = $isProjectOwner ? __('Only your account is protected! Need Rublon for more accounts?', 'rublon') : __('Your account is not protected! Need Rublon for more accounts?', 'rublon');
                     $text = $isProjectOwner ? __('You are currently using the Rublon Personal API, which limits protection to 1 account per website.', 'rublon') : __('Your website is currently using the Rublon Personal API, which limits protection to 1 account per website (the administrator who has installed and activated the plugin).', 'rublon');
                     $text2 = $isProjectOwner ? __('If you\'d like to protect more accounts, you need to upgrade to the Rublon Business API.', 'rublon') : __('If you\'d like to protect your or more accounts, you need to upgrade to the Rublon Business API.', 'rublon');
                     
-                    $html = '<div class="updated rublon-be-infobox-container ' . $class . '' . (! $isProjectOwner ? ' rublon-warning' : '') . '">
+                    $html = '<div id="' . $containerId . '" class="' . ($hideButtonVisible ? 'updated ' : '') . $class . '' . (! $isProjectOwner ? '' : '') . '">
                     
                 			<div id="message" class="rublon-be-infobox-content' . ($class ? ' ' . $class : '') . '">
                 			    <div class="rublon-buy-now-subcontainer">
@@ -3851,7 +3876,6 @@ class RublonHelper {
                                 		  ' . $text2 . '
                                 		  ' . __('You can easily order online.', 'rublon') . '
                         				</p>';
-                    
                     if (! $class) {
                         $html .= '<p>
                             				<a href="' . RublonHelper::getBuyBusinessEditionURL() . '" class="rublon-button-buy-now" target="_blank">' . __('Upgrade', 'rublon') . '</a>
@@ -3861,11 +3885,18 @@ class RublonHelper {
                     $html .= '
                             		</div>';
                     if ($class) {
-                        $html .= '<div class="rublon-buy-now-right wide">
+                        $html .= '<div class="rublon-buy-now-right wide">					                        
                             				<p>
-                            					<a href="' . RublonHelper::getBuyBusinessEditionURL() . '" class="rublon-button-buy-now wide" target="_blank">' . __('Upgrade', 'rublon') . '</a>
-                            				</p>
-                        				</div>';
+                            					<a href="' . RublonHelper::getBuyBusinessEditionURL() . '" class="rublon-button-buy-now wide" target="_blank">' . __('Upgrade', 'rublon') . '</a>					                       
+                            				</p>';
+                        
+                        if ($hideButtonVisible) {
+                            $html .= '<p>
+    					                            <a id="'.$hideButtonId.'" href="javascript:RublonWP.hideBusinessEditionUpgradeBox(' . $user->ID . ')">[' . __('hide this message for a month') . ']</a>
+    					                        </p>';
+                        }
+                        
+                        $html .= '</div>';
                     }
                     
                     $html .= '</div>
@@ -3873,10 +3904,42 @@ class RublonHelper {
                 		</div>';
                 } else { // Normal user
                     $html = $normalUserHtmlMessage;
-                }            
+                }
             }
             
             return $html;
         }
+    }
+    
+    /**
+     * Store hiding upgrade box info in a transient option
+     *
+     * @param int $userId User ID
+     */
+    static public function saveHideBusinessEditionUpgradeBox($userId) {
+        if ($userId) {    
+            set_transient(
+                sprintf(self::TRANSIENT_HIDE_UPGRADE_BOX, $userId),
+                1,
+                self::UPGRADE_BOX_HIDE_TIME * WEEK_IN_SECONDS
+            );
+            return true;
+        } 
+        return false;
+    }
+    
+    static public function canShowBusinessEditionUpgradeBox() {
+        $user = wp_get_current_user();
+        return !get_transient(sprintf(self::TRANSIENT_HIDE_UPGRADE_BOX, $user->ID)); 
+    }
+    
+    static public function canShowBusinessEditionUpgradeBoxAfterLogin($user = null) {
+        if (empty($user)) {
+          $user = wp_get_current_user();
+        }        
+        if ($user && $user instanceof WP_User && !empty($user->ID)) {        
+            return get_transient(sprintf(self::TRANSIENT_HIDE_UPGRADE_BOX, $user->ID));
+        }
+        return false;
     }
 }

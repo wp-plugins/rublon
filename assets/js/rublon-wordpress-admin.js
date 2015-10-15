@@ -295,6 +295,21 @@ var RublonWP = {
 			}, false);
 		}
 
+	},
+	
+	hideBusinessEditionUpgradeBox: function(userId) {
+		
+		jQuery('#rublon-be-hide-button').append('<div class="rublon-busy-spinner small"></div>');
+		jQuery.post(
+			    ajaxurl, 
+			    {
+			        'action': 'hide_business_edition_upgrade_box',
+			        'data':   userId
+			    }, 
+			    function(response){
+			        jQuery('#rublon-be-infobox-container').hide(200);
+			    }
+			);
 	}
 
 };
