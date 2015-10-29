@@ -318,6 +318,7 @@ class RublonConsumerRegistrationWordPress extends RublonConsumerRegistrationTemp
 		$email = RublonHelper::getUserEmail($current_user);
 		$projectData['project-owner-email'] = $email;
 		$projectData['project-owner-email-hash'] = self::hash($email);
+		$projectData[RublonConsumerRegistrationCommon::FIELD_PARTNER_KEY] = RublonHelper::getPartnerKey();
 		return $projectData;
 
 	}

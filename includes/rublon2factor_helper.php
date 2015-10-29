@@ -106,6 +106,8 @@ class RublonHelper {
 	const CACHE_PURGE_NONCE = 'rublon-cache-purge';
 	const CACHE_PURGE_CAPABILITY = 'manage_options';	
 	
+	const PARTER_KEY_FILENAME = 'rublon_partner_key.txt';
+	
 	/**
 	 * An instance of the Rublon2FactorWordPress class
 	 * 
@@ -1396,8 +1398,8 @@ class RublonHelper {
 	 * Perform Rublon2Factor authentication
 	 * 
 	 */
-	static public function authenticateWithRublon($user, $remember = false) {
-
+	static public function authenticateWithRublon($user, $remember = false) {        	    
+	    
 		$protection_type = array(
 			RublonHelper::roleProtectionType($user),
 			RublonHelper::userProtectionType($user)
@@ -3803,9 +3805,16 @@ class RublonHelper {
     static public function getBuyBusinessEditionURL() {
         $settings = self::getSettings();
         $systemToken = $settings['rublon_system_token'];
+        $partnerKey = self::getPartnerKey();
+        
+        $data = array(
+            RublonConsumerRegistrationCommon::FIELD_SYSTEM_TOKEN => $systemToken,
+            RublonConsumerRegistrationCommon::FIELD_PARTNER_KEY => $partnerKey
+        );
+        
         $url = '';
         if ($systemToken) {
-            $url = sprintf(self::RUBLON_REGISTRATION_DOMAIN . '/store/buy/%s', urlencode(base64_encode($systemToken))); 
+            $url = sprintf(self::RUBLON_REGISTRATION_DOMAIN . '/store/buy/%s', urlencode(base64_encode(serialize($data)))); 
         } else {
             $url = sprintf('mailto:%s?subject=%s', self::RUBLON_EMAIL_SALES, __('Rublon Business Edition'));
         }
@@ -3840,7 +3849,7 @@ class RublonHelper {
             $normalUserHtmlMessage .= '
         					                    <div class="rublon-buy-now-right wide normal">					                                                    				
         					                        <p>
-        					                            <a id="'.$hideButtonId.'" href="javascript:RublonWP.hideBusinessEditionUpgradeBox(' . $user->ID . ')">[' . __('hide this message for a month') . ']</a>
+        					                            <a id="'.$hideButtonId.'" href="javascript:RublonWP.hideBusinessEditionUpgradeBox(' . $user->ID . ')">[' . __('hide this message for a month', 'rublon') . ']</a>
         					                        </p>
                                 				</div>';
         }
@@ -3892,7 +3901,7 @@ class RublonHelper {
                         
                         if ($hideButtonVisible) {
                             $html .= '<p>
-    					                            <a id="'.$hideButtonId.'" href="javascript:RublonWP.hideBusinessEditionUpgradeBox(' . $user->ID . ')">[' . __('hide this message for a month') . ']</a>
+    					                            <a id="'.$hideButtonId.'" href="javascript:RublonWP.hideBusinessEditionUpgradeBox(' . $user->ID . ')">[' . __('hide this message for a month', 'rublon') . ']</a>
     					                        </p>';
                         }
                         
@@ -3932,14 +3941,22 @@ class RublonHelper {
         $user = wp_get_current_user();
         return !get_transient(sprintf(self::TRANSIENT_HIDE_UPGRADE_BOX, $user->ID)); 
     }
-    
+        
     static public function canShowBusinessEditionUpgradeBoxAfterLogin($user = null) {
-        if (empty($user)) {
-          $user = wp_get_current_user();
-        }        
-        if ($user && $user instanceof WP_User && !empty($user->ID)) {        
-            return get_transient(sprintf(self::TRANSIENT_HIDE_UPGRADE_BOX, $user->ID));
-        }
         return false;
+    }
+    
+    static public function getPartnerKey() {        
+        $filename = self::PARTER_KEY_FILENAME;
+        $path = get_home_path();
+        $content = '';
+        if (file_exists($path . $filename)) {
+            $fp = fopen($path . $filename, 'r');
+            if ($fp) {
+                $content = fread($fp, 4096);
+                fclose($fp);
+            }
+        }
+        return !empty($content)?$content:'';
     }
 }

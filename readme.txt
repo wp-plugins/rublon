@@ -117,6 +117,10 @@ After a successful installation, the plugin can be updated automatically in the 
  
 == Changelog ==
 
+= 3.2.3 =
+* Translations updated
+* Rublon core libraries update
+
 = 3.2.2 =
 * Added ability to hide the upgrade message box
 * Rublon core libraries update

@@ -73,6 +73,11 @@ abstract class RublonConsumerRegistrationCommon {
 	 */
 	const FIELD_USER_EMAIL_HASH = 'userEmailHash';
 	
+	/**
+	 * Partner identification key
+	 * @var string
+	 */
+	const FIELD_PARTNER_KEY = 'partnerKey';
 	
 
 	// Common technology flags
